@@ -65,7 +65,6 @@
  * MA  02111-1307  USA
  */
 
-#include "config.h"
 #include "bayestar_cosmology.h"
 #include "bayestar_sky_map.h"
 #include "bayestar_distance.h"

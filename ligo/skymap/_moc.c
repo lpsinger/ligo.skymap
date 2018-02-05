@@ -17,7 +17,6 @@
  * MA  02111-1307  USA
  */
 
-#include "config.h"
 #include <lal/bayestar_moc.h>
 #include <gsl/gsl_errno.h>
 #include <Python.h>

@@ -18,7 +18,6 @@
  */
 
 
-#include "config.h"
 #include "bayestar_distance.h"
 
 #include <gsl/gsl_cblas.h>

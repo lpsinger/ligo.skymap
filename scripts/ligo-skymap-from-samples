@@ -64,7 +64,7 @@ if __name__ == '__main__':
     import numpy as np
     import os
     import sys
-    import six.moves.cPickle as pickle
+    import pickle
     from ligo.skymap.kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
     import logging
 

@@ -25,7 +25,6 @@ import logging
 import operator
 import os.path
 from itertools import groupby
-import six
 import lal
 import lal.series
 from lalinspiral.thinca import InspiralCoincDef
@@ -55,7 +54,7 @@ def _read_xml(f, fallbackpath=None):
     elif isinstance(f, Element):
         doc = f
         filename = ''
-    elif isinstance(f, six.string_types):
+    elif isinstance(f, str):
         try:
             doc = load_filename(f, contenthandler=_ContentHandler)
         except IOError as e:

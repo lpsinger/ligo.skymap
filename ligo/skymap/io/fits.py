@@ -66,7 +66,6 @@ from glue.ligolw import lsctables
 import itertools
 import time
 import lal
-import six
 from astropy.table import Table
 from .. import moc
 
@@ -186,7 +185,7 @@ def identity(x):
 
 
 def instruments_to_fits(value):
-    if not isinstance(value, six.string_types):
+    if not isinstance(value, str):
         value = str(lsctables.instrumentsproperty.set(value))
     return value
 

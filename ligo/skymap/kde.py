@@ -18,8 +18,7 @@
 #
 
 from __future__ import division
-from six.moves import copyreg
-from six import with_metaclass
+import copyreg
 from functools import partial
 
 from astropy.coordinates import SkyCoord
@@ -407,7 +406,7 @@ def _Clustered2DSkyKDE_factory(name, frame):
     return super(Clustered2DSkyKDE, Clustered2DSkyKDE).__new__(new_cls)
 
 
-class Clustered2DSkyKDE(with_metaclass(_Clustered2DSkyKDEMeta, SkyKDE)):
+class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
     r"""Represents a kernel-density estimate of a sky-position PDF that has
     been decomposed into clusters, using a different kernel for each
     cluster.

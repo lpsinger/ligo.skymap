@@ -20,7 +20,6 @@ Base classes for reading events from search pipelines.
 
 from abc import ABCMeta, abstractproperty
 from collections import Mapping
-import six
 
 __all__ = ('EventSource', 'Event', 'SingleEvent')
 
@@ -53,7 +52,7 @@ class EventSource(Mapping):
         return '{}({{{}}})'.format(self.__class__.__name__, contents)
 
 
-class Event(six.with_metaclass(ABCMeta)):
+class Event(metaclass=ABCMeta):
     """Abstraction of a coincident trigger."""
 
     @abstractproperty
@@ -74,7 +73,7 @@ class Event(six.with_metaclass(ABCMeta)):
     __repr__ = __str__
 
 
-class SingleEvent(six.with_metaclass(ABCMeta)):
+class SingleEvent(metaclass=ABCMeta):
     """Abstraction of a single-detector trigger."""
 
     @abstractproperty

@@ -17,17 +17,16 @@
 from __future__ import absolute_import
 import os
 import pkgutil
-import six
 
 __all__ = ()
 
 # Import all symbols from all submodules of this module.
 for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]):
     if module not in {'tests'}:
-        six.exec_('from . import {0};'
-                  '__all__ += getattr({0}, "__all__", ());'
-                  'from .{0} import *'.format(module))
+        exec('from . import {0};'
+             '__all__ += getattr({0}, "__all__", ());'
+             'from .{0} import *'.format(module))
     del module
 
 # Clean up
-del os, pkgutil, six
+del os, pkgutil

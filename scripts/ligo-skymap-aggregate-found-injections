@@ -145,9 +145,7 @@ if __name__ == '__main__':
     areas = opts.area
 
     progress.update(-1, 'spawning workers')
-    if opts.jobs == 1:
-        from six.moves import map
-    else:
+    if opts.jobs != 1:
         try:
             from emcee.interruptible_pool import InterruptiblePool as Pool
         except ImportError:

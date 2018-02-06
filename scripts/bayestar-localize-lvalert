@@ -76,7 +76,6 @@ opts = parser.parse_args()
 import logging
 import os
 import sys
-import six
 from ligo.skymap.bayestar.sky_map import localize, rasterize
 from ligo.skymap.io import fits
 from ligo.skymap.io import events
@@ -118,7 +117,7 @@ if opts.disable_detector:
     event_source = events.detector_disabled.open(
         event_source, opts.disable_detector)
 
-for graceid in six.iterkeys(event_source):
+for graceid in event_source.keys():
 
     try:
         event = event_source[graceid]

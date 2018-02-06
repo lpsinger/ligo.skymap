@@ -22,8 +22,7 @@ Structured as an [Astropy affiliated package](http://www.astropy.org/affiliated/
 These should become optional because they are only needed by BAYESTAR.
 
 * glue
-* Currently depends on SWIG bindings for lal, lalsimulation and lalinference.
-* Can eliminate dependencies on lalinference.
+* Currently depends on SWIG bindings for lal and lalsimulation.
 * lal and lalsimulation should be available through `minlal` wrapper.
 
 ## Build dependencies

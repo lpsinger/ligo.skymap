@@ -21,12 +21,13 @@ Reading HDF5 posterior sample chain HDF5 files.
 import numpy as np
 import h5py
 from astropy.table import Column, Table
-from lalinference import LALInferenceHDF5PosteriorSamplesDatasetName \
-    as POSTERIOR_SAMPLES
-from lalinference import LALINFERENCE_PARAM_LINEAR as LINEAR
-from lalinference import LALINFERENCE_PARAM_CIRCULAR as CIRCULAR
-from lalinference import LALINFERENCE_PARAM_FIXED as FIXED
-from lalinference import LALINFERENCE_PARAM_OUTPUT as OUTPUT
+
+# Constants from lalinference module
+LALInferenceHDF5PosteriorSamplesDatasetName = 'posterior_samples'
+LINEAR = 0
+CIRCULAR = 1
+FIXED = 2
+OUTPUT = 3
 
 __all__ = ('read_samples', 'write_samples')
 

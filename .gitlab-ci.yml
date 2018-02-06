@@ -9,6 +9,9 @@ cache:
     - pip-cache
     - .eggs
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 before_script:
   # Configure yum cache
   - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf

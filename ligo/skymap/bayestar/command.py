@@ -413,14 +413,7 @@ def sqlite_open_a(string):
     return sqlite3.connect(string)
 
 def sqlite_open_r(string):
-    if (sys.version_info.major, sys.version_info.minor) >= (3, 4):
-        return sqlite3.connect('file:{}?mode=ro'.format(string), uri=True)
-    else:  # FIXME: remove this code path when we drop Python < 3.4
-        fd = os.open(string, os.O_RDONLY)
-        try:
-            return sqlite3.connect('/dev/fd/{}'.format(fd))
-        finally:
-            os.close(fd)
+    return sqlite3.connect('file:{}?mode=ro'.format(string), uri=True)
 
 def sqlite_open_w(string):
     with open(string, 'wb') as f:
@@ -430,8 +423,6 @@ def sqlite_open_w(string):
 
 class SQLiteType(argparse.FileType):
     """Open an SQLite database, or fail if it does not exist.
-    FIXME: use SQLite URI when we drop support for Python < 3.4.
-    See: https://docs.python.org/3.4/whatsnew/3.4.html#sqlite3
 
     Here is an example of trying to open a file that does not exist for
     reading (mode='r'). It should raise an exception:

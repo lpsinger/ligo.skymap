@@ -97,17 +97,13 @@ class HEALPixTree(object):
                 yield _HEALPixTreeVisit(nside, ipix)
         else:
             for i, child in enumerate(self.children):
-                # FIXME: Replace with `yield from` in Python 3
-                for _ in child._visit(
-                        order + 1, full_order, (ipix << 2) + i, extra):
-                    yield _
+                yield from child._visit(
+                    order + 1, full_order, (ipix << 2) + i, extra)
 
     def _visit_depthfirst(self, extra):
         order = self.order
         for ipix, child in enumerate(self.children):
-            # FIXME: Replace with `yield from` in Python 3
-            for _ in child._visit(0, order, ipix, extra):
-                yield _
+            yield from child._visit(0, order, ipix, extra)
 
     def _visit_breadthfirst(self, extra):
         return sorted(
@@ -156,9 +152,7 @@ class HEALPixTree(object):
         funcs = {'depthfirst': self._visit_depthfirst,
                  'breadthfirst': self._visit_breadthfirst}
         func = funcs[order]
-        # FIXME: Replace with `yield from` in Python 3
-        for _ in func(extra):
-            yield _
+        yield from func(extra)
 
     @property
     def flat_bitmap(self):
@@ -424,6 +418,4 @@ def reconstruct_nested(m, order='depthfirst', extra=True):
     funcs = {'depthfirst': _reconstruct_nested_depthfirst,
              'breadthfirst': _reconstruct_nested_breadthfirst}
     func = funcs[order]
-    # FIXME: Replace with `yield from` in Python 3
-    for _ in func(m, extra):
-        yield _
+    yield from func(m, extra)

@@ -19,44 +19,13 @@
 Collection of Python decorators.
 """
 
-from functools import wraps
+from functools import lru_cache, wraps
 from collections import Hashable
 from astropy.utils.misc import NumpyRNGContext
 
 __all__ = ('memoized', 'with_numpy_random_seed', 'as_dict')
 
-
-try:
-    from functools import lru_cache
-except ImportError:
-    # FIXME: Remove this when we drop support for Python < 3.2.
-    def memoized(func):
-        """Memoize a function or class by caching its return values for any
-        given arguments."""
-        cache = {}
-
-        @wraps(func)
-        def memo(*args, **kwargs):
-            # Create a key out of the arguments.
-            key = (args, frozenset(kwargs.items()))
-
-            if isinstance(args, Hashable):  # The key is immutable.
-                try:
-                    # Look up the return value for these arguments.
-                    ret = cache[key]
-                except KeyError:
-                    # Not found; invoke function and store return value.
-                    ret = cache[key] = func(*args, **kwargs)
-            else:  # The key is mutable. We can't cache it.
-                ret = func(*args, **kwargs)
-
-            # Done!
-            return ret
-
-        # Return wrapped function.
-        return memo
-else:
-    memoized = lru_cache(maxsize=None)
+memoized = lru_cache(maxsize=None)
 
 
 def with_numpy_random_seed(func, seed=0):

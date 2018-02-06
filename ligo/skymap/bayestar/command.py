@@ -56,8 +56,8 @@ mpl_version = distutils.version.LooseVersion(matplotlib.__version__)
 
 
 def get_version():
-    from .. import InferenceVCSInfo as vcs_info
-    return vcs_info.name + ' ' + vcs_info.version
+    from .. import version
+    return package.__name__.replace('.version', '') + ' ' + package.version
 
 
 @contextlib.contextmanager

@@ -35,7 +35,7 @@ from . import filter
 from . import timing
 from .. import moc
 from .. import healpix_tree
-from .. import InferenceVCSInfo as vcs_info
+from .. import version
 from .. import core
 import lal
 import lalsimulation
@@ -357,7 +357,7 @@ def localize(
     program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
     skymap.meta['creator'] = 'BAYESTAR'
     skymap.meta['origin'] = 'LIGO/Virgo'
-    skymap.meta['vcs_info'] = vcs_info
+    skymap.meta['vcs_info'] = version
     skymap.meta['gps_time'] = float(epoch)
     skymap.meta['runtime'] = float(end_time - start_time)
     skymap.meta['instruments'] = {single.detector for single in singles}

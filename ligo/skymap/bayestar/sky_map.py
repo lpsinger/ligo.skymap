@@ -155,7 +155,7 @@ def localize(
     detectors = [lalsimulation.DetectorPrefixToLALDetector(str(ifo))
         for ifo in ifos]
     responses = np.asarray([det.response for det in detectors])
-    locations = np.asarray([det.location for det in detectors])
+    locations = np.asarray([det.location for det in detectors]) / lal.C_SI
 
     # Power spectra for each detector.
     psds = [single.psd for single in singles]
@@ -202,7 +202,7 @@ def localize(
     # For LHO+LLO, this is 15.0 ms.
     # For an arbitrary terrestrial detector network, the maximum is 26.3 ms.
     max_abs_t = np.max(
-        np.sqrt(np.sum(np.square(locations / lal.C_SI), axis=1))) + 0.005
+        np.sqrt(np.sum(np.square(locations), axis=1))) + 0.005
 
     if snr_series is None:
         log.warn("No SNR time series found, so we are creating a zero-noise "

@@ -507,7 +507,7 @@ static void toa_errors(
         {
             dot += locs[i][j] * n[j];
         }
-        dt[i] = toas[i] + dot / LAL_C_SI;
+        dt[i] = toas[i] + dot;
     }
 }
 
@@ -845,7 +845,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     const double *epochs,           /* Timestamps of SNR time series */
     const float complex **snrs,     /* Complex SNR series */
     const float (**responses)[3],   /* Detector responses */
-    const double **locations,       /* Barycentered Cartesian geographic detector positions (m) */
+    const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
 ) {
     /* Initialize precalculated tables. */
@@ -1050,7 +1050,7 @@ double bayestar_log_likelihood_toa_phoa_snr(
     const double *epochs,           /* Timestamps of SNR time series */
     const float complex **snrs,     /* Complex SNR series */
     const float (**responses)[3],   /* Detector responses */
-    const double **locations,       /* Barycentered Cartesian geographic detector positions (m) */
+    const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
 ) {
     const double dec = asin(sin_dec);

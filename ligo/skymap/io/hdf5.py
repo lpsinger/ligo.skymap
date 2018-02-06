@@ -23,7 +23,7 @@ import h5py
 from astropy.table import Column, Table
 
 # Constants from lalinference module
-LALInferenceHDF5PosteriorSamplesDatasetName = 'posterior_samples'
+POSTERIOR_SAMPLES = 'posterior_samples'
 LINEAR = 0
 CIRCULAR = 1
 FIXED = 2

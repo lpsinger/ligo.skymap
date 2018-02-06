@@ -1,11 +1,10 @@
-image: ligo/builder:el7
+image: ligo/builder:stretch
 
 stages:
   - test
 
 cache:
   paths:
-    - yum-cache
     - pip-cache
     - .eggs
 
@@ -13,10 +12,6 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  # Configure yum cache
-  - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-  - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
-  - mkdir -p yum-cache
   # Configure pip cache
   - echo [global] >> /etc/pip.conf
   - echo cache-dir = $(pwd)/pip-cache >> /etc/pip.conf
@@ -26,8 +21,8 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     # Install dependencies
-    - yum install -y python-pip lalinference-python
-    - pip install --upgrade setuptools
-    - pip install pytest-cov
+    - apt-get -y install python3-pip
+    - pip3 install --upgrade setuptools
+    - pip3 install pytest-cov
     # Run tests
-    - python setup.py test -vv --cov
+    - python3 setup.py test -vv --cov

@@ -7,7 +7,7 @@ Structured as an [Astropy affiliated package](http://www.astropy.org/affiliated/
 
 ## Python dependencies
 
-* Python 2.7, 3.4, 3.5, or 3.6
+* Python >= 3.5
 * astropy
 * healpy (note, transition to astropy_healpix, which is easier to install)
 * h5py

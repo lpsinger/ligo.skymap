@@ -177,5 +177,5 @@ if eval(setup_cfg.get('edit_on_github')):
     edit_on_github_doc_root = "docs"
 
 # -- Resolving issue number to links in changelog -----------------------------
-github_issues_url = 'https://github.com/{0}/issues/'.format(setup_cfg['github_project'])
+    github_issues_url = 'https://github.com/{0}/issues/'.format(setup_cfg['github_project'])
 

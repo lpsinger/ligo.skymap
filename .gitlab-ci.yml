@@ -23,7 +23,7 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     # Install dependencies
-    - apt-get -y -qq install python3-pip
+    - apt-get -y -qq install pkg-config python3-pip
     - pip3 install --upgrade setuptools
     - pip3 install pytest-cov
     # Run tests

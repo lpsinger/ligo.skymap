@@ -31,7 +31,6 @@
 #include "bayestar_distance.h"
 #include "bayestar_moc.h"
 #include "bayestar_sky_map.h"
-#include "six.h"
 #include "omp_interruptible.h"
 
 
@@ -1025,6 +1024,3 @@ PyMODINIT_FUNC PyInit_core(void)
 done:
     return module;
 }
-
-
-SIX_COMPAT_MODULE(core)

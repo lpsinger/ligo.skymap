@@ -10,6 +10,7 @@ cache:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  GIT_STRATEGY: clone
 
 before_script:
   # Configure apt

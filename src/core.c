@@ -895,8 +895,8 @@ static PyModuleDef moduledef = {
 };
 
 
-PyMODINIT_FUNC PyInit__distance(void); /* Silence -Wmissing-prototypes */
-PyMODINIT_FUNC PyInit__distance(void)
+PyMODINIT_FUNC PyInit_core(void); /* Silence -Wmissing-prototypes */
+PyMODINIT_FUNC PyInit_core(void)
 {
     PyObject *module = NULL;
 

@@ -26,7 +26,11 @@ from glue.ligolw import array as ligolw_array
 from glue.ligolw import param as ligolw_param
 from glue.ligolw import table as ligolw_table
 from glue.ligolw import lsctables
-from lalinspiral.inspinjfind import InspiralSCExactCoincDef
+
+# Adapted from lalinspiral.inspinjfind
+InspiralSCExactCoincDef = lsctables.CoincDef(
+    search='inspiral', search_coinc_type=3,
+    description='sim_inspiral<-->coinc_event coincidences (exact)')
 
 
 def get_template_bank_f_low(xmldoc):

@@ -592,6 +592,13 @@ static PyObject *sky_map_toa_phoa_snr(
         &responses_obj, &locations_obj, &horizons_obj)) return NULL;
     #pragma GCC diagnostic pop
 
+    if (cosmology && prior_distance_power != 2)
+    {
+        PyErr_SetString(PyExc_ValueError,
+            "BAYESTAR supports cosmological priors only for for prior_distance_power=2");
+        return NULL;
+    }
+
     /* Determine number of detectors */
     {
         Py_ssize_t n = PySequence_Length(epochs_obj);
@@ -661,7 +668,13 @@ static PyObject *sky_map_toa_phoa_snr(
     PyErr_CheckSignals();
 
     if (!pixels)
+    {
+        /* This should be the only error that can cause
+         * bayestar_sky_map_toa_phoa_snr to return NULL
+         * as it is called above. */
+        PyErr_SetString(PyExc_MemoryError, "Out of memory");
         goto fail;
+    }
 
     /* Prepare output object */
     PyObject *capsule = PyCapsule_New(pixels, NULL, capsule_free);

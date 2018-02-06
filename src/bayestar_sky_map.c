@@ -417,7 +417,7 @@ done:
         free(region0);
         free(region1);
         free(region2);
-        XLAL_ERROR_NULL(XLAL_ENOMEM, "not enough memory to allocate integrator");
+        GSL_ERROR_NULL("not enough memory to allocate integrator", GSL_ENOMEM);
     }
 
     integrator->region0 = region0;
@@ -636,7 +636,7 @@ static void *realloc_or_free(void *ptr, size_t size)
     if (!new_ptr)
     {
         free(ptr);
-        XLAL_ERROR_NULL(XLAL_ENOMEM, "not enough memory to resize array");
+        GSL_ERROR_NULL("not enough memory to resize array", GSL_ENOMEM);
     }
     return new_ptr;
 }
@@ -675,7 +675,7 @@ static bayestar_pixel *bayestar_pixels_alloc(size_t *len, unsigned char order)
 
     bayestar_pixel *pixels = malloc(size);
     if (!pixels)
-        XLAL_ERROR_NULL(XLAL_ENOMEM, "not enough memory to allocate sky map");
+        GSL_ERROR_NULL("not enough memory to allocate sky map", GSL_ENOMEM);
 
     *len = npix;
     for (unsigned long long ipix = 0; ipix < npix; ipix ++)
@@ -853,8 +853,9 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
 
     if (cosmology && prior_distance_power != 2)
     {
-        XLAL_ERROR_NULL(XLAL_EINVAL,
-            "BAYESTAR supports cosmological priors only for for prior_distance_power=2");
+        GSL_ERROR_NULL(
+            "BAYESTAR supports cosmological priors only for for prior_distance_power=2",
+            GSL_EINVAL);
     }
     log_radial_integrator *integrators[] = {NULL, NULL, NULL};
     {

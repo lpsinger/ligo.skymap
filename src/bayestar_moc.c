@@ -20,11 +20,11 @@
 
 #include "bayestar_moc.h"
 #include <math.h>
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <chealpix.h>
-#include <lal/XLALError.h>
 
 
 uint64_t nest2uniq64(uint8_t order, uint64_t nest)
@@ -98,7 +98,7 @@ void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t
     *npix = 12 * ((size_t) 1 << 2 * max_order);
     void *ret = calloc(*npix, itemsize);
     if (!ret)
-        XLAL_ERROR_NULL(XLAL_ENOMEM, "not enough memory to allocate image");
+        GSL_ERROR_NULL("not enough memory to allocate image", GSL_ENOMEM);
 
     /* Paint pixels into output. */
     for (size_t i = 0; i < len; i ++)

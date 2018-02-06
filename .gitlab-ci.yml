@@ -1,4 +1,4 @@
-image: ligo/builder:stretch
+image: ligo/lalsuite-dev:stretch
 
 stages:
   - test

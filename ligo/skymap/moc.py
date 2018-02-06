@@ -21,19 +21,9 @@ Multi-order coverage (MOC) HEALPix indexing.
 
 
 import numpy as np
-try:
-    from . import _moc
-except ImportError:
-    raise ImportError(
-        'Could not import the lalinference.bayestar._moc Python C '
-        'extension module. This probably means that LALInfernece was built '
-        'without HEALPix support. Please install CHEALPix '
-        '(https://sourceforge.net/projects/healpix/files/Healpix_3.30/'
-        'chealpix-3.30.0.tar.gz), rebuild LALInference, and try again.')
-from ._moc import *
+from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea
 
-
-__all__ = tuple(_ for _ in _moc.__dict__ if not _.startswith('_'))
+__all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea')
 
 
 def _add_newdoc_ufunc(func, doc):

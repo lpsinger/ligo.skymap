@@ -24,21 +24,15 @@ from __future__ import division
 import numpy as np
 import healpy as hp
 import scipy.special
-try:
-    from . import _distance
-except ImportError:
-    raise ImportError(
-        'Could not import the lalinference.bayestar._distance Python C '
-        'extension module. This probably means that LALInfernece was built '
-        'without HEALPix support. Please install CHEALPix '
-        '(https://sourceforge.net/projects/healpix/files/Healpix_3.30/'
-        'chealpix-3.30.0.tar.gz), rebuild LALInference, and try again.')
-from ._distance import *
+from .core import (conditional_pdf, conditional_cdf, conditional_ppf,
+                   moments_to_parameters, parameters_to_moments, volume_render,
+                   marginal_pdf, marginal_cdf, marginal_ppf)
 
-
-__all__ = tuple(_ for _ in _distance.__dict__ if not _.startswith('_')) + (
-    'ud_grade', 'conditional_kde', 'cartesian_kde_to_moments',
-    'principal_axes', 'parameters_to_moments')
+__all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
+           'moments_to_parameters', 'parameters_to_moments', 'volume_render',
+           'marginal_pdf', 'marginal_cdf', 'marginal_ppf', 'ud_grade',
+           'conditional_kde', 'cartesian_kde_to_moments', 'principal_axes',
+           'parameters_to_moments')
 
 
 def _add_newdoc_ufunc(func, doc):

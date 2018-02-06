@@ -36,15 +36,7 @@ from . import timing
 from .. import moc
 from .. import healpix_tree
 from .. import InferenceVCSInfo as vcs_info
-try:
-    from . import _sky_map
-except ImportError:
-    raise ImportError(
-        'Could not import the lalinference.bayestar._sky_map Python C '
-        'extension module. This probably means that LALInfernece was built '
-        'without HEALPix support. Please install CHEALPix '
-        '(https://sourceforge.net/projects/healpix/files/Healpix_3.30/'
-        'chealpix-3.30.0.tar.gz), rebuild LALInference, and try again.')
+from .. import core
 import lal
 import lalsimulation
 
@@ -322,7 +314,7 @@ def localize(
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')
     if method == 'toa_phoa_snr':
-        skymap, log_bci, log_bsn = _sky_map.toa_phoa_snr(
+        skymap, log_bci, log_bsn = core.toa_phoa_snr(
             min_distance, max_distance, prior_distance_power, cosmology, gmst,
             sample_rate, toas, snr_series, responses, locations, horizons)
         skymap = Table(skymap)
@@ -330,7 +322,7 @@ def localize(
         skymap.meta['log_bsn'] = log_bsn
     elif method == 'toa_phoa_snr_mcmc':
         skymap = localize_emcee(
-            logl=_sky_map.log_likelihood_toa_phoa_snr,
+            logl=core.log_likelihood_toa_phoa_snr,
             loglargs=(gmst, sample_rate, toas, snr_series, responses, locations,
                 horizons),
             logp=toa_phoa_snr_log_prior,
@@ -414,4 +406,4 @@ def test():
     >>> test()
     0
     """
-    return int(_sky_map.test())
+    return int(core.test())

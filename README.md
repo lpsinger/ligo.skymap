@@ -25,6 +25,7 @@ These should become optional because they are only needed by BAYESTAR.
 * glue
 * Currently depends on SWIG bindings for lal, lalsimulation, lalinspiral, and lalinference.
 * Can eliminate dependencies on lalinspiral and lalinference.
+* lal and lalsimulation should be available through `minlal` wrapper.
 
 ## Build dependencies
 

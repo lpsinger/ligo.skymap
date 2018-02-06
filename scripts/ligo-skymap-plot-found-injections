@@ -20,7 +20,6 @@
 Create summary plots for sky maps of found injections, binned cumulatively by
 false alarm rate.
 """
-from __future__ import division
 
 # Command line interface.
 import argparse

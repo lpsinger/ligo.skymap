@@ -19,8 +19,6 @@
 """
 Postprocessing utilities for HEALPix sky maps
 """
-from __future__ import division
-from __future__ import print_function
 import collections
 import pkg_resources
 

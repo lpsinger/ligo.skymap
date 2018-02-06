@@ -24,8 +24,6 @@ components (the `a` and `b` coordinates).
 This particular color map was selected from 20 random realizations of this
 construction."""
 
-from __future__ import print_function
-
 if __name__ == '__main__':
     from colormath.color_conversions import convert_color
     from colormath.color_objects import LabColor, sRGBColor

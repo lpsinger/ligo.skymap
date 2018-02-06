@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 import subprocess
 import sys
 from astropy.tests.helper import pytest

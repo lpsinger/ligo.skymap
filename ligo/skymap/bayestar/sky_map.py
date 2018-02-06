@@ -18,7 +18,6 @@
 """
 Convenience function to produce a sky map from LIGO-LW rows.
 """
-from __future__ import division
 
 import inspect
 import itertools

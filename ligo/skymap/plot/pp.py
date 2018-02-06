@@ -17,8 +17,6 @@
 """
 Axes subclass for making P--P plots
 """
-from __future__ import division
-
 import matplotlib
 from matplotlib import axes
 from matplotlib.projections import projection_registry

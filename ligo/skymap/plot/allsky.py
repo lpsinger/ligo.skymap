@@ -17,8 +17,6 @@
 """
 Axes subclasses for all-sky maps
 """
-from __future__ import division
-
 from astropy.coordinates import ITRS, SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time

@@ -17,8 +17,6 @@
 """
 Miscellaneous plotting utilities
 """
-from __future__ import division
-
 import matplotlib
 from matplotlib import text
 from matplotlib import ticker

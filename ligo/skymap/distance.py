@@ -19,8 +19,6 @@
 Distance ansatz functions.
 """
 
-from __future__ import division
-
 import numpy as np
 import healpy as hp
 import scipy.special

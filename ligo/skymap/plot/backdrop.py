@@ -18,7 +18,6 @@
 Backdrops for astronomical plots
 """
 
-from __future__ import division
 import warnings
 
 from astropy.io import fits

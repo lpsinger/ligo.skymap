@@ -18,8 +18,6 @@
 """
 Plotting tools for drawing polygons
 """
-from __future__ import division
-
 from shapely import geometry
 import numpy as np
 import healpy as hp

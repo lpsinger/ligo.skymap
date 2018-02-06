@@ -18,8 +18,6 @@
 """
 Multiresolution HEALPix trees
 """
-from __future__ import division
-
 import numpy as np
 import healpy as hp
 import collections

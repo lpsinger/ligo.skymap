@@ -19,7 +19,6 @@
 """
 Plot a volumetric posterior in three-projection view.
 """
-from __future__ import division
 
 
 # Command line interface

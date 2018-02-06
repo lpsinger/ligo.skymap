@@ -20,8 +20,6 @@
 Functions related to matched filtering.
 """
 
-from __future__ import division
-
 # General imports
 import logging
 import numpy as np

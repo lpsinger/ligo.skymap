@@ -19,7 +19,6 @@
 Functions that support the command line interface.
 """
 
-from __future__ import print_function
 import argparse
 import contextlib
 from distutils.dir_util import mkpath

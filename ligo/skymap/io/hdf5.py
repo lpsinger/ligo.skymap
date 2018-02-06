@@ -75,7 +75,7 @@ def _find_table(group, tablename):
 
     Check that we can find a file by name:
     >>> import os.path
-    >>> from lalinference.bayestar.command import TemporaryDirectory
+    >>> from ligo.skymap.bayestar.command import TemporaryDirectory
     >>> table = Table(np.eye(3), names=['a', 'b', 'c'])
     >>> with TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
@@ -150,7 +150,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Test reading a file written using the Python API:
     >>> import os.path
-    >>> from lalinference.bayestar.command import TemporaryDirectory
+    >>> from ligo.skymap.bayestar.command import TemporaryDirectory
     >>> table = Table([
     ...     Column(np.ones(10), name='foo', meta={'vary': FIXED}),
     ...     Column(np.arange(10), name='bar', meta={'vary': LINEAR}),
@@ -229,7 +229,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
 
     And now try writing an arbitrary example to a temporary file.
     >>> import os.path
-    >>> from lalinference.bayestar.command import TemporaryDirectory
+    >>> from ligo.skymap.bayestar.command import TemporaryDirectory
     >>> table = Table([
     ...     Column(np.ones(10), name='foo', meta={'vary': FIXED}),
     ...     Column(np.arange(10), name='bar', meta={'vary': LINEAR}),

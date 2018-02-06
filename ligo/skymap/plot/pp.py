@@ -33,7 +33,7 @@ class PPPlot(axes.Axes):
 
     Example usage::
 
-        import lalinference.plot
+        import ligo.skymap.plot
         from matplotlib import pyplot as plt
         import numpy as np
 
@@ -53,7 +53,7 @@ class PPPlot(axes.Axes):
     Or, you can also create an instance of ``PPPlot`` by calling its
     constructor directly::
 
-        from lalinference.plot import PPPlot
+        from ligo.skymap.plot import PPPlot
         from matplotlib import pyplot as plt
         import numpy as np
 

@@ -37,7 +37,7 @@ terminal, or redirected from a fifo):
 # Command line interface
 #
 
-from lalinference.bayestar import command
+from ligo.skymap.bayestar import command
 
 methods = '''
     toa_phoa_snr
@@ -77,9 +77,9 @@ import logging
 import os
 import sys
 import six
-from lalinference.bayestar.sky_map import localize, rasterize
-from lalinference.io import fits
-from lalinference.io import events
+from ligo.skymap.bayestar.sky_map import localize, rasterize
+from ligo.skymap.io import fits
+from ligo.skymap.io import events
 import ligo.gracedb.logging
 import ligo.gracedb.rest
 

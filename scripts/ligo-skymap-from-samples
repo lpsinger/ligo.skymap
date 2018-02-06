@@ -24,7 +24,7 @@ kernel density estimation.
 if __name__ == '__main__':
     # Command line interface.
     from argparse import FileType, SUPPRESS
-    from lalinference.bayestar.command import ArgumentParser, DirType
+    from ligo.skymap.bayestar.command import ArgumentParser, DirType
     parser = ArgumentParser()
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')
@@ -56,16 +56,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Late imports
-    from lalinference import io
-    from lalinference.bayestar.sky_map import rasterize
-    from lalinference import InferenceVCSInfo as vcs_info
+    from ligo.skymap import io
+    from ligo.skymap.bayestar.sky_map import rasterize
+    from ligo.skymap import version as vcs_info
     from astropy.table import Table
     from astropy.time import Time
     import numpy as np
     import os
     import sys
     import six.moves.cPickle as pickle
-    from lalinference.kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
+    from ligo.skymap.kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
     import logging
 
     log = logging.getLogger()

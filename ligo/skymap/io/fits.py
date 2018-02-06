@@ -467,7 +467,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
         m.meta.pop(key, None)
 
     if m.meta.pop('COORDSYS', 'C') != 'C':
-        raise ValueError('LALInference only reads and writes sky maps in '
+        raise ValueError('ligo.skymap only reads and writes sky maps in '
                          'equatorial coordinates.')
 
     try:

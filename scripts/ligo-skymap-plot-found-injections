@@ -24,7 +24,7 @@ from __future__ import division
 
 # Command line interface.
 import argparse
-from lalinference.bayestar import command
+from ligo.skymap.bayestar import command
 
 parser = command.ArgumentParser()
 parser.add_argument('--cumulative', action='store_true')
@@ -54,7 +54,7 @@ import os
 from distutils.dir_util import mkpath
 import numpy as np
 from glue.text_progress_bar import ProgressBar
-from lalinference import plot
+from ligo.skymap import plot
 
 # Create progress bar.
 pb = ProgressBar()

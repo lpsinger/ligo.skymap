@@ -32,7 +32,7 @@ import seaborn
 seaborn.set_style("white")
 
 import argparse
-from lalinference.bayestar import command
+from ligo.skymap.bayestar import command
 parser = command.ArgumentParser(parents=[command.figure_parser])
 parser.add_argument(
     '--annotate', default=False, action='store_true',
@@ -73,9 +73,9 @@ progress.update(-1, 'Starting up')
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 from matplotlib import transforms
-from lalinference import io
-from lalinference.plot import marker
-from lalinference.distance import (
+from ligo.skymap import io
+from ligo.skymap.plot import marker
+from ligo.skymap.distance import (
     parameters_to_marginal_moments, principal_axes, volume_render, marginal_pdf)
 import healpy as hp
 import numpy as np

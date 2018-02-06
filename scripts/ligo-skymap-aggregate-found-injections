@@ -37,7 +37,7 @@ from __future__ import print_function
 
 # Command line interface.
 import argparse
-from lalinference.bayestar import command
+from ligo.skymap.bayestar import command
 if __name__ == '__main__':
     parser = command.ArgumentParser()
     parser.add_argument(
@@ -71,8 +71,8 @@ if __name__ == '__main__':
 # Imports.
 import sqlite3
 import numpy as np
-from lalinference.io import fits
-from lalinference.bayestar.postprocess import find_injection_moc
+from ligo.skymap.io import fits
+from ligo.skymap.bayestar.postprocess import find_injection_moc
 
 
 def startup(dbfilename, opts_contour, opts_modes, opts_area):

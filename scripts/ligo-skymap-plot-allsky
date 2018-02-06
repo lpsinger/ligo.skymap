@@ -32,7 +32,7 @@ Public-domain cartographic data is courtesy of Natural Earth
 # Command line interface
 
 import argparse
-from lalinference.bayestar import command
+from ligo.skymap.bayestar import command
 parser = command.ArgumentParser(parents=[command.figure_parser])
 parser.add_argument(
     '--annotate', default=False, action='store_true',
@@ -69,9 +69,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import healpy as hp
 import lal
-from lalinference.io import fits
-from lalinference import plot
-from lalinference.bayestar import postprocess
+from ligo.skymap.io import fits
+from ligo.skymap import plot
+from ligo.skymap.bayestar import postprocess
 from astropy.coordinates import SkyCoord
 from astropy.time import Time
 

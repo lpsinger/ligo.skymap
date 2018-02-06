@@ -348,7 +348,7 @@ class ArgumentParser(argparse.ArgumentParser):
     - If the description is taken from the docstring, then whitespace in
       the description is preserved.
 
-    - A ``--version`` option is added that prints the version of LALInference.
+    - A ``--version`` option is added that prints the version of ligo.skymap.
     """
     def __init__(self,
                  prog=None,

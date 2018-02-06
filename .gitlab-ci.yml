@@ -23,8 +23,6 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     # Install dependencies
-    - apt-get -y -qq install libchealpix-dev libgsl-dev pkg-config python3-astropy python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-scipy python3-six python3-six
-    - pip3 install --upgrade setuptools
-    - pip3 install pytest-cov
+    - apt-get -y -qq install libchealpix-dev libgsl-dev pkg-config python3-astropy python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-six python3-six
     # Run tests
     - python3 setup.py test -vv --cov

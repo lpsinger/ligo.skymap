@@ -47,7 +47,7 @@
 
 
 /*
- * Copyright (C) 2013-2017  Leo Singer
+ * Copyright (C) 2013-2018  Leo Singer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +78,8 @@
 #include <string.h>
 #include <pthread.h>
 
-#include <lal/cubic_interp.h>
-#include <lal/DetResponse.h>
+#include "cubic_interp.h"
+#include "detresponse.h"
 
 #include <chealpix.h>
 

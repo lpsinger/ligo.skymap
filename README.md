@@ -15,6 +15,7 @@ Structured as an [Astropy affiliated package](http://www.astropy.org/affiliated/
 * pillow
 * reproject
 * scipy
+* shapely
 * six
 
 ## LALSuite dependencies

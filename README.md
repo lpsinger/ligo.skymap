@@ -6,9 +6,9 @@
 | C code analysis | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:c)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/c) |
 
 Includes sky map I/O, plotting, and postprocessing codes; BAYESTAR; and KDE
-posterior samples to FITS workflow (skyarea).
-
-Structured as an [Astropy affiliated package](http://www.astropy.org/affiliated/) and based on the [Astropy package template](https://github.com/astropy/package-template).
+posterior samples to FITS workflow (skyarea). Structured as an
+[Astropy affiliated package](http://www.astropy.org/affiliated/) and based on
+the [Astropy package template](https://github.com/astropy/package-template).
 
 ## Python dependencies
 

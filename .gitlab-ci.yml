@@ -27,3 +27,17 @@ test:
     - apt-get -y -qq install lal-python lal-python3 lalsimulation-python3 libchealpix-dev libgsl-dev pkg-config python-glue-ligolw-tools python3-astropy python3-astropy-helpers python3-glue python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-shapely python3-six python3-sphinx
     # Run tests
     - python3 setup.py --offline test -vv --coverage
+  artifacts:
+    paths:
+      - htmlcov/
+
+pages:
+  stage: deploy
+  script:
+    - mv htmlcov public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master

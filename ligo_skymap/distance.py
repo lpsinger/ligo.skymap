@@ -382,6 +382,13 @@ Returns
 -------
 r : `numpy.ndarray`
     Distance at which the cdf is equal to `p`.
+
+>>> npix = 12
+>>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
+>>> r_expected = np.linspace(0.4, 0.7)
+>>> cdf = marginal_cdf(r_expected, prob, distmu, distsigma, distnorm)
+>>> r = marginal_ppf(cdf, prob, distmu, distsigma, distnorm)
+>>> np.testing.assert_allclose(r, r_expected, rtol=1e-4)
 """)
 marginal_ppf = require_contiguous(marginal_ppf)
 

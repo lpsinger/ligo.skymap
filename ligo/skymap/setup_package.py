@@ -11,7 +11,7 @@ def get_extensions():
         'src/bayestar_distance.c',
         'src/bayestar_sky_map.c']
 
-    include_dirs = ['numpy']
+    include_dirs = ['cextern/lalsuite', 'cextern/numpy', 'numpy']
 
     if setup_helpers.use_system_library('chealix'):
         pkg_config_packages.append('chealpix')

@@ -51,7 +51,7 @@ class BoundedKDE(gaussian_kde):
     :param pts:
         ``(Ndim, Npts)`` shaped array of points (as in :class:`gaussian_kde`).
 
-    :param low: 
+    :param low:
         Lower bounds; if ``None``, assume no lower bounds.
 
     :param high:
@@ -95,21 +95,21 @@ class BoundedKDE(gaussian_kde):
                 pts[i, :] += P
                 den += super(BoundedKDE, self).evaluate(pts)
 
-                pts[i,:] -= 2.0*P
+                pts[i, :] -= 2.0*P
                 den += super(BoundedKDE, self).evaluate(pts)
 
-                pts[i,:] = pts_orig[i,:]
+                pts[i, :] = pts_orig[i,:]
 
             else:
                 if not np.isneginf(low):
-                    pts[i,:] = 2.0*low - pts[i,:]
+                    pts[i, :] = 2.0*low - pts[i,:]
                     den += super(BoundedKDE, self).evaluate(pts)
-                    pts[i,:] = pts_orig[i,:]
+                    pts[i, :] = pts_orig[i,:]
 
                 if not np.isposinf(high):
-                    pts[i,:] = 2.0*high - pts[i,:]
+                    pts[i, :] = 2.0*high - pts[i,:]
                     den += super(BoundedKDE, self).evaluate(pts)
-                    pts[i,:] = pts_orig[i,:]
+                    pts[i, :] = pts_orig[i,:]
 
         return den
 
@@ -384,16 +384,20 @@ class SkyKDE(ClusteredKDE):
 # class variable. This gets even trickier because we need both the class and
 # instance objects to be picklable.
 
+
 class _Clustered2DSkyKDEMeta(type):
     """Metaclass to make dynamically created subclasses of Clustered2DSkyKDE
     picklable."""
+
 
 def _Clustered2DSkyKDEMeta_pickle(cls):
     """Pickle dynamically created subclasses of Clustered2DSkyKDE."""
     return type, (cls.__name__, cls.__bases__, {'frame': cls.frame})
 
+
 # Register function to pickle subclasses of Clustered2DSkyKDE.
 copyreg.pickle(_Clustered2DSkyKDEMeta, _Clustered2DSkyKDEMeta_pickle)
+
 
 def _Clustered2DSkyKDE_factory(name, frame):
     """Unpickle instances of dynamically created subclasses of

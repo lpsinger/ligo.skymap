@@ -59,7 +59,7 @@ pages:
   stage: deploy
   script:
     - mkdir -p htmlcov
-    - mv htmlcov public/
+    - mv gcovr htmlcov public/
   artifacts:
     paths:
       - public

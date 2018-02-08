@@ -49,7 +49,7 @@ coverage:py:
   stage: deploy
   script:
     # Install dependencies
-    - apt-get -y -qq python3-coverage
+    - apt-get -y -qq install python3-coverage
     # Print coverage summary
     - python3 -m coverage report
 
@@ -58,8 +58,9 @@ pages:
     GIT_STRATEGY: none
   stage: deploy
   script:
-    - mkdir -p htmlcov
-    - mv gcovr htmlcov public/
+    - mkdir -p cov
+    - mv gcovr cov/c
+    - mv htmlcov cov/py
   artifacts:
     paths:
       - public

@@ -2,6 +2,7 @@ image: ligo/lalsuite-dev:stretch
 
 stages:
   - test
+  - deploy
 
 cache:
   paths:
@@ -34,6 +35,8 @@ test:
       - htmlcov/
 
 pages:
+  variables:
+    GIT_STRATEGY: none
   stage: deploy
   script:
     - mv htmlcov public/

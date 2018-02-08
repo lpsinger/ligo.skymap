@@ -317,6 +317,14 @@ Returns
 -------
 pdf : `numpy.ndarray`
     Marginal probability density according to ansatz.
+
+>>> npix = 12
+>>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
+>>> r = np.linspace(0, 1)
+>>> pdf_expected = np.dot(
+...     conditional_pdf(r[:, np.newaxis], distmu, distsigma, distnorm), prob)
+>>> pdf = marginal_pdf(r, prob, distmu, distsigma, distnorm)
+>>> np.testing.assert_allclose(pdf, pdf_expected, rtol=1e-4)
 """)
 marginal_pdf = require_contiguous(marginal_pdf)
 
@@ -341,6 +349,14 @@ Returns
 -------
 cdf : `numpy.ndarray`
     Marginal cumulative probability according to ansatz.
+
+>>> npix = 12
+>>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
+>>> r = np.linspace(0, 1)
+>>> cdf_expected = np.dot(
+...     conditional_cdf(r[:, np.newaxis], distmu, distsigma, distnorm), prob)
+>>> cdf = marginal_cdf(r, prob, distmu, distsigma, distnorm)
+>>> np.testing.assert_allclose(cdf, cdf_expected, rtol=1e-4)
 """)
 marginal_cdf = require_contiguous(marginal_cdf)
 

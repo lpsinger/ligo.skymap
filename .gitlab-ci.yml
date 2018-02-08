@@ -35,6 +35,7 @@ pages:
     GIT_STRATEGY: none
   stage: deploy
   script:
+    - mkdir -p htmlcov
     - mv htmlcov public/
   artifacts:
     paths:

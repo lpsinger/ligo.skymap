@@ -1,4 +1,4 @@
-# ligo.skymap
+# ligo-skymap
 
 Includes sky map I/O, plotting, and postprocessing codes; BAYESTAR; and KDE
 posterior samples to FITS workflow (skyarea).

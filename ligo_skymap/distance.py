@@ -286,6 +286,12 @@ Next, integrate analytically.
 Compare the two.
 >>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
 
+Check that we get the same answer if the input is in ring ordering.
+FIXME: this is a very weak test, because the input sky map is isotropic!
+>>> P = volume_render(x, y, dmax, 0, 1, R, True,
+...                   prob, distmu, distsigma, distnorm)
+>>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
+
 Last, check that we don't have a coordinate singularity at the origin.
 >>> x = np.concatenate(([0], np.logspace(1 - n, 0, n) * dmax))
 >>> y = 0.0

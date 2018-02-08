@@ -30,6 +30,7 @@ test:
     - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
   artifacts:
     paths:
+      - .coverage
       - build/temp.*/src/*.gc*
       - gcovr/
       - htmlcov/

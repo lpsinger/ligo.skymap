@@ -68,7 +68,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import healpy as hp
-import lal
 from ligo.skymap.io import fits
 from ligo.skymap import plot
 from ligo.skymap.bayestar import postprocess

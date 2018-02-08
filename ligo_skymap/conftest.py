@@ -15,6 +15,9 @@ else:
 
 from astropy.tests.helper import enable_deprecations_as_exceptions
 
+# FIXME: is there a more elegant way to pull in this pytest plugin?
+pytest_plugins = [__name__.rpartition('.')[0] + '.tests.pytest_ufunc']
+
 ## Uncomment the following line to treat all DeprecationWarnings as
 ## exceptions. For Astropy v2.0 or later, there are 2 additional keywords,
 ## as follow (although default should work for most cases).

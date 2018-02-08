@@ -1,6 +1,7 @@
 # ligo-skymap
 
 | Continuous integration | [![pipeline status](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/pipeline.svg)](https://git.ligo.org/leo-singer/ligo.skymap/commits/master) |
+| - | - |
 | Python code analysis | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:py)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/py) |
 | C code analysis | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:c)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/c) |
 

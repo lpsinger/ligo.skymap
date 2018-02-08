@@ -6,6 +6,7 @@ def get_extensions():
 
     sources = [
         'src/cubic_interp.c',
+        'src/cubic_interp_test.c',
         'src/bayestar_moc.c',
         'src/core.c',
         'src/bayestar_distance.c',

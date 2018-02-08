@@ -61,6 +61,8 @@ void bicubic_interp_free(bicubic_interp *interp);
 
 double bicubic_interp_eval(const bicubic_interp *interp, double s, double t);
 
+int cubic_interp_test(void);
+
 #endif /* !defined(SWIG) && !defined(__cplusplus) */
 
 #endif /* CUBIC_INTEPR_H */

@@ -844,7 +844,7 @@ static PyObject *test(
     int ret;
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     Py_BEGIN_ALLOW_THREADS
-    ret = bayestar_test();
+    ret = bayestar_test() + cubic_interp_test();
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
     return PyLong_FromLong(ret);

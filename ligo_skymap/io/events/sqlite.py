@@ -23,7 +23,7 @@ import sys
 
 from glue.ligolw import dbtables
 
-from ...bayestar.command import sqlite_open_r, sqlite_get_filename
+from ...command import sqlite_open_r, sqlite_get_filename
 from .ligolw import LigoLWEventSource
 
 __all__ = ('SQLiteEventSource',)

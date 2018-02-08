@@ -23,7 +23,7 @@ false alarm rate.
 
 # Command line interface.
 import argparse
-from ligo.skymap.bayestar import command
+from ligo.skymap import command
 
 parser = command.ArgumentParser()
 parser.add_argument('--cumulative', action='store_true')

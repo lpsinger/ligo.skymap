@@ -37,7 +37,7 @@ terminal, or redirected from a fifo):
 # Command line interface
 #
 
-from ligo.skymap.bayestar import command
+from ligo.skymap import command
 
 methods = '''
     toa_phoa_snr

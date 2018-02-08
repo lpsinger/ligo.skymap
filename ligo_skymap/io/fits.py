@@ -400,7 +400,7 @@ def write_sky_map(filename, m, **kwargs):
         #
         # Also this works around https://github.com/astropy/astropy/pull/5720,
         # which was fixed in astropy 1.3.1.
-        from ..bayestar.command import rm_f
+        from ..command import rm_f
         rm_f(filename)
         m.write(filename, format='fits')
 

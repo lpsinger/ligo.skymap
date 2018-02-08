@@ -24,7 +24,7 @@ kernel density estimation.
 if __name__ == '__main__':
     # Command line interface.
     from argparse import FileType, SUPPRESS
-    from ligo.skymap.bayestar.command import ArgumentParser, DirType
+    from ligo.skymap.command import ArgumentParser, DirType
     parser = ArgumentParser()
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')

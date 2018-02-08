@@ -35,7 +35,7 @@ arguments, and may also be provided as globs (such as '*.fits.gz').
 
 # Command line interface.
 import argparse
-from ligo.skymap.bayestar import command
+from ligo.skymap import command
 if __name__ == '__main__':
     parser = command.ArgumentParser()
     parser.add_argument(

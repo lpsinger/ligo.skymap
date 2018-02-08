@@ -31,7 +31,7 @@ import seaborn
 seaborn.set_style("white")
 
 import argparse
-from ligo.skymap.bayestar import command
+from ligo.skymap import command
 parser = command.ArgumentParser(parents=[command.figure_parser])
 parser.add_argument(
     '--annotate', default=False, action='store_true',

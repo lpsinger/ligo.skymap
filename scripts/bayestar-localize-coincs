@@ -47,7 +47,7 @@ integrator.
 
 # Command line interface.
 import argparse
-from ligo.skymap.bayestar import command
+from ligo.skymap import command
 
 methods = '''
     toa_phoa_snr

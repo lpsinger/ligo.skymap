@@ -35,7 +35,7 @@ import sys
 import tempfile
 import matplotlib
 from matplotlib import cm
-from ..plot import cmap
+from .plot import cmap
 
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
@@ -55,7 +55,7 @@ mpl_version = distutils.version.LooseVersion(matplotlib.__version__)
 
 
 def get_version():
-    from .. import version
+    from . import version
     return package.__name__.replace('.version', '') + ' ' + package.version
 
 

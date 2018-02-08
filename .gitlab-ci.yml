@@ -18,17 +18,40 @@ before_script:
   - mkdir -p pip-cache
 
 test:
-  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
+  variables:
+    CFLAGS: -coverage
   script:
     # Install dependencies
-    - apt-get -y -qq install lal-python lal-python3 lalsimulation-python3 libchealpix-dev libgsl-dev pkg-config python-glue-ligolw-tools python3-astropy python3-astropy-helpers python3-glue python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-shapely python3-six python3-sphinx
+    - apt-get -y -qq install gcovr lal-python lal-python3 lalsimulation-python3 libchealpix-dev libgsl-dev pkg-config python-glue-ligolw-tools python3-astropy python3-astropy-helpers python3-glue python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-shapely python3-six python3-sphinx
     # Run tests
     - python3 setup.py test -vv --coverage
-    # Print coverage results
-    - python3 -m coverage report
+    # Write gcovr test coverage
+    - mkdir gcovr
+    - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
   artifacts:
     paths:
+      - build/temp.*/src/*.gc*
+      - gcovr/
       - htmlcov/
+    expire_in: 5 minutes
+
+coverage:c:
+  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
+  stage: deploy
+  script:
+    # Install dependencies
+    - apt-get -y -qq install gcovr
+    # Display coverage summary
+    - gcovr build/temp*/src -r .
+
+coverage:py:
+  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
+  stage: deploy
+  script:
+    # Install dependencies
+    - apt-get -y -qq python3-coverage
+    # Print coverage summary
+    - python3 -m coverage report
 
 pages:
   variables:

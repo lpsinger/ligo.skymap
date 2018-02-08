@@ -3,8 +3,14 @@ Pytest plugin to discover doctests from Numpy ufuncs
 """
 
 
-from _pytest.doctest import (_is_doctest, _is_setup_py, _get_checker,
-                             get_optionflags, DoctestTextfile, DoctestItem)
+try:
+    # FIXME: this function was added in pytest 3.3.0
+    from _pytest.doctest import _is_setup_py
+except ImportError:
+    def _is_setup_py(*args, **kwargs):
+        return False
+from _pytest.doctest import (_is_doctest, _get_checker, get_optionflags,
+                             DoctestTextfile, DoctestItem)
 import pytest
 
 

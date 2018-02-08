@@ -58,14 +58,14 @@ class DetectorDisabledEvent(Event):
                 raise DetectorDisabledError(
                     'Disabling detectors {{{}}} would have no effect on this '
                     'event with detectors {{{}}}'.format(
-                        ' '.join(disabled_detectors),
-                        ' '.join(detectors)))
+                        ' '.join(sorted(disabled_detectors)),
+                        ' '.join(sorted(detectors))))
             if not detectors - disabled_detectors:
                 raise DetectorDisabledError(
                     'Disabling detectors {{{}}} would exclude all data for '
                     'this event with detectors {{{}}}'.format(
-                        ' '.join(disabled_detectors),
-                        ' '.join(detectors)))
+                        ' '.join(sorted(disabled_detectors)),
+                        ' '.join(sorted(detectors))))
         return tuple(s for s in self.base_event.singles
                      if s.detector not in disabled_detectors)
 

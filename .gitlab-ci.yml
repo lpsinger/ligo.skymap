@@ -59,9 +59,9 @@ pages:
     GIT_STRATEGY: none
   stage: deploy
   script:
-    - mkdir -p cov
-    - mv gcovr cov/c
-    - mv htmlcov cov/py
+    - mkdir -p public/cov
+    - mv gcovr public/cov/c
+    - mv htmlcov public/cov/py
   artifacts:
     paths:
       - public

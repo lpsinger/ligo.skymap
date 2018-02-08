@@ -31,6 +31,7 @@ try:
 except ImportError:
     # FIXME: drop this when we can depend on pillow >= 2.5.0
     DecompressionBombWarning = RuntimeWarning
+from reproject import reproject_interp
 
 __all__ = ('bluemarble', 'blackmarble', 'mellinger', 'reproject_interp_rgb')
 
@@ -117,10 +118,6 @@ nightlights = blackmarble
 
 
 def reproject_interp_rgb(input_data, *args, **kwargs):
-    # FIXME: move this to a module-level import once reproject percolates into
-    # older software distributions
-    from reproject import reproject_interp
-
     data = input_data.data
     wcs = WCS(input_data.header).celestial
     return np.moveaxis(np.stack([

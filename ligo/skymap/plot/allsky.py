@@ -32,6 +32,7 @@ from matplotlib.offsetbox import AnchoredOffsetbox
 from matplotlib.patches import ConnectionPatch, FancyArrowPatch, PathPatch
 from matplotlib.projections import projection_registry
 import numpy as np
+from reproject import reproject_from_healpix
 from scipy.ndimage import gaussian_filter
 import scipy.optimize
 from .angle import reference_angle_deg
@@ -174,10 +175,6 @@ class AutoScaledWCSAxes(WCSAxes):
 
     def _reproject_hpx(self, data, hdu_in=None, order='bilinear',
                        nested=False, field=0, smooth=None):
-        # FIXME: move this to a module-level import once reproject percolates
-        # into older software distributions
-        from reproject import reproject_from_healpix
-
         if isinstance(data, np.ndarray):
             data = (data, self.header['RADESYS'])
         img, mask = reproject_from_healpix(data, self.header, hdu_in=hdu_in,

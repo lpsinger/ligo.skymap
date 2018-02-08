@@ -20,8 +20,6 @@ def pytest_collect_file(path, parent):
     if path.ext == ".py":
         if config.option.doctestmodules and not _is_setup_py(config, path, parent):
             return DoctestModule(path, parent)
-    elif _is_doctest(config, path, parent):
-        return DoctestTextfile(path, parent)
 ### End copied from pytest
 
 
@@ -45,10 +43,6 @@ class DoctestModule(pytest.Module):
         optionflags = get_optionflags(self)
         runner = doctest.DebugRunner(verbose=0, optionflags=optionflags,
                                      checker=_get_checker())
-
-        for test in finder.find(module, module.__name__):
-            if test.examples:  # skip empty doctests
-                yield DoctestItem(test.name, self, runner, test)
         ### End copied from pytest
 
         for method in module.__dict__.values():

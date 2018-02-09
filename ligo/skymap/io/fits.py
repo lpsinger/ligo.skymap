@@ -225,7 +225,7 @@ FITS_META_MAPPING = (
     ('log_bsn', 'LOGBSN', 'Log Bayes factor: signal vs. noise',
      identity, identity),
     ('vcs_info', 'VCSVERS', 'Software version',
-     lambda _: _.__name__.replace('.version', '') + ' ' + _.version, None),
+     lambda _: _.__spec__.parent + ' ' + _.version, None),
     ('vcs_info', 'VCSREV', 'Software revision (Git)',
      lambda _: _.githash, None),
     ('vcs_info', 'DATE-BLD', 'Software build date',

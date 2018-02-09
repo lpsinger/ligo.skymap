@@ -289,7 +289,7 @@ def write_sky_map(filename, m, **kwargs):
     COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
     NSIDE   =                  512 / Resolution parameter of HEALPIX
     INDXSCHM= 'IMPLICIT'           / Indexing: IMPLICIT or EXPLICIT
-    VCSVERS = 'ligo_skymap ...' / Software version
+    VCSVERS = 'ligo.skymap ...' / Software version
     VCSREV  = '...' / Software revision (Git)
 
     >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.uint64))
@@ -318,7 +318,7 @@ def write_sky_map(filename, m, **kwargs):
     ORDERING= 'NUNIQ   '           / Pixel ordering scheme: RING, NESTED, or NUNIQ
     COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
     MOCORDER=                    9 / MOC resolution (best order)
-    VCSVERS = 'ligo_skymap ...' / Software version
+    VCSVERS = 'ligo.skymap ...' / Software version
     VCSREV  = '...' / Software revision (Git)
     """
 

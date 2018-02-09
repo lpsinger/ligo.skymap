@@ -24,7 +24,7 @@ def get_extensions():
     kwargs['include_dirs'].extend(include_dirs)
 
     extension = Extension(
-        name='ligo_skymap.core', language='c', sources=sources, **kwargs)
+        name='ligo.skymap.core', language='c', sources=sources, **kwargs)
 
     openmp_helpers.add_openmp_flags_if_available(extension)
 

@@ -7,12 +7,12 @@ __pycache__
 
 # Ignore .c files by default to avoid including generated code. If you want to
 # add a non-generated .c extension, use `git add -f filename.c`.
-ligo_skymap/_compiler.c
-ligo_skymap/cython_version.py
+ligo/skymap/_compiler.c
+ligo/skymap/cython_version.py
 # *.c
 
 # Other generated files
-ligo_skymap/version.py
+ligo/skymap/version.py
 */cython_version.py
 htmlcov
 .coverage

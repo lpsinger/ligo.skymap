@@ -227,7 +227,9 @@ FITS_META_MAPPING = (
     ('vcs_info', 'VCSVERS', 'Software version',
      lambda _: _.__name__.replace('.version', '') + ' ' + _.version, None),
     ('vcs_info', 'VCSREV', 'Software revision (Git)',
-     lambda _: _.githash, None))
+     lambda _: _.githash, None),
+    ('vcs_info', 'DATE-BLD', 'Software build date',
+     lambda _: _.timestamp, None))
 
 
 def write_sky_map(filename, m, **kwargs):
@@ -291,6 +293,7 @@ def write_sky_map(filename, m, **kwargs):
     INDXSCHM= 'IMPLICIT'           / Indexing: IMPLICIT or EXPLICIT
     VCSVERS = 'ligo.skymap ...' / Software version
     VCSREV  = '...' / Software revision (Git)
+    DATE-BLD= '...' / Software build date
 
     >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.uint64))
     >>> probdensity = prob / hp.nside2pixarea(nside)
@@ -320,6 +323,7 @@ def write_sky_map(filename, m, **kwargs):
     MOCORDER=                    9 / MOC resolution (best order)
     VCSVERS = 'ligo.skymap ...' / Software version
     VCSREV  = '...' / Software revision (Git)
+    DATE-BLD= '...' / Software build date
     """
 
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):

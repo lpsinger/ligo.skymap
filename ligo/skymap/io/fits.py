@@ -355,7 +355,9 @@ def write_sky_map(filename, m, **kwargs):
             ('COORDSYS', 'C',
              'Ecliptic, Galactic or Celestial (equatorial)'),
             ('MOCORDER', moc.uniq2order(m['UNIQ'].max()),
-             'MOC resolution (best order)')]
+             'MOC resolution (best order)'),
+            ('INDXSCHM', 'EXPLICIT',
+             'Indexing: IMPLICIT or EXPLICIT')]
     else:
         default_names = DEFAULT_NESTED_NAMES
         default_units = DEFAULT_NESTED_UNITS

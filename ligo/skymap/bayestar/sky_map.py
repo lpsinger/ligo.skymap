@@ -136,6 +136,9 @@ def localize(
 
     Returns a 'NESTED' ordering HEALPix image as a Numpy array.
     """
+    if len(event.singles) == 0:
+        raise ValueError('Cannot localize an event with zero detectors.')
+
     frame = inspect.currentframe()
     argstr = inspect.formatargvalues(*inspect.getargvalues(frame))
     start_time = lal.GPSTimeNow()

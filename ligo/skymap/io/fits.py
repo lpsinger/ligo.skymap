@@ -229,7 +229,7 @@ FITS_META_MAPPING = (
     ('vcs_info', 'VCSREV', 'Software revision (Git)',
      lambda _: _.githash, None),
     ('vcs_info', 'DATE-BLD', 'Software build date',
-     lambda _: _.timestamp, None))
+     lambda _: _.timestamp.isoformat(), None))
 
 
 def write_sky_map(filename, m, **kwargs):

@@ -31,6 +31,7 @@ from astropy import units as u
 from .decorator import with_numpy_random_seed
 from .. import distance
 from . import filter
+from ..io.fits import metadata_for_version_module
 from . import timing
 from .. import moc
 from .. import healpix_tree
@@ -354,9 +355,9 @@ def localize(
 
     # Fill in metadata and return.
     program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
+    skymap.meta.update(metadata_for_version_module(version))
     skymap.meta['creator'] = 'BAYESTAR'
     skymap.meta['origin'] = 'LIGO/Virgo'
-    skymap.meta['vcs_info'] = version
     skymap.meta['gps_time'] = float(epoch)
     skymap.meta['runtime'] = float(end_time - start_time)
     skymap.meta['instruments'] = {single.detector for single in singles}

@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # Late imports
     from ligo.skymap import io
     from ligo.skymap.bayestar.sky_map import rasterize
-    from ligo.skymap import version as vcs_info
+    from ligo.skymap import version
     from astropy.table import Table
     from astropy.time import Time
     import numpy as np
@@ -119,6 +119,7 @@ if __name__ == '__main__':
 
     log.info('making skymap')
     hpmap = rasterize(skypost.as_healpix())
+    hpmap.meta.update(io.fits.metadata_for_version_module(version))
     hpmap.meta['creator'] = parser.prog
     hpmap.meta['origin'] = 'LIGO/Virgo'
     hpmap.meta['gps_creation_time'] = Time.now().gps

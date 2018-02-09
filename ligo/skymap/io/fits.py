@@ -194,6 +194,12 @@ def instruments_from_fits(value):
     return {str(ifo) for ifo in lsctables.instrumentsproperty.get(value)}
 
 
+def metadata_for_version_module(version):
+    return {'vcs_version': version.__spec__.parent + ' ' + version.version,
+            'vcs_revision': version.githash,
+            'build_date': version.timestamp.isoformat()}
+
+
 DEFAULT_NUNIQ_NAMES = ('PROBDENSITY', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
 DEFAULT_NUNIQ_UNITS = (u.steradian**-1, u.Mpc, u.Mpc, u.Mpc**-2)
 DEFAULT_NESTED_NAMES = ('PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
@@ -224,12 +230,12 @@ FITS_META_MAPPING = (
      identity, identity),
     ('log_bsn', 'LOGBSN', 'Log Bayes factor: signal vs. noise',
      identity, identity),
-    ('vcs_info', 'VCSVERS', 'Software version',
-     lambda _: _.__spec__.parent + ' ' + _.version, None),
-    ('vcs_info', 'VCSREV', 'Software revision (Git)',
-     lambda _: _.githash, None),
-    ('vcs_info', 'DATE-BLD', 'Software build date',
-     lambda _: _.timestamp.isoformat(), None))
+    ('vcs_version', 'VCSVERS', 'Software version',
+     identity, identity),
+    ('vcs_revision', 'VCSREV', 'Software revision (Git)',
+     identity, identity),
+    ('build_date', 'DATE-BLD', 'Software build date',
+     identity, identity))
 
 
 def write_sky_map(filename, m, **kwargs):
@@ -272,7 +278,9 @@ def write_sky_map(filename, m, **kwargs):
     >>> import tempfile
     >>> from ligo.skymap import version
     >>> with tempfile.NamedTemporaryFile(suffix='.fits') as f:
-    ...     write_sky_map(f.name, prob, nest=True, vcs_info=version)
+    ...     write_sky_map(f.name, prob, nest=True,
+    ...                   vcs_version='foo 1.0', vcs_revision='bar',
+    ...                   build_date='2018-01-01T00:00:00')
     ...     for card in fits.getheader(f.name, 1).cards:
     ...         print(str(card).rstrip())
     XTENSION= 'BINTABLE'           / binary table extension
@@ -291,16 +299,18 @@ def write_sky_map(filename, m, **kwargs):
     COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
     NSIDE   =                  512 / Resolution parameter of HEALPIX
     INDXSCHM= 'IMPLICIT'           / Indexing: IMPLICIT or EXPLICIT
-    VCSVERS = 'ligo.skymap ...' / Software version
-    VCSREV  = '...' / Software revision (Git)
-    DATE-BLD= '...' / Software build date
+    VCSVERS = 'foo 1.0 '           / Software version
+    VCSREV  = 'bar     '           / Software revision (Git)
+    DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
     >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.uint64))
     >>> probdensity = prob / hp.nside2pixarea(nside)
     >>> moc_data = np.rec.fromarrays(
     ...     [uniq, probdensity], names=['UNIQ', 'PROBDENSITY'])
     >>> with tempfile.NamedTemporaryFile(suffix='.fits') as f:
-    ...     write_sky_map(f.name, moc_data, vcs_info=version)
+    ...     write_sky_map(f.name, moc_data,
+    ...                   vcs_version='foo 1.0', vcs_revision='bar',
+    ...                   build_date='2018-01-01T00:00:00')
     ...     for card in fits.getheader(f.name, 1).cards:
     ...         print(str(card).rstrip())
     XTENSION= 'BINTABLE'           / binary table extension
@@ -321,9 +331,9 @@ def write_sky_map(filename, m, **kwargs):
     ORDERING= 'NUNIQ   '           / Pixel ordering scheme: RING, NESTED, or NUNIQ
     COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
     MOCORDER=                    9 / MOC resolution (best order)
-    VCSVERS = 'ligo.skymap ...' / Software version
-    VCSREV  = '...' / Software revision (Git)
-    DATE-BLD= '...' / Software build date
+    VCSVERS = 'foo 1.0 '           / Software version
+    VCSREV  = 'bar     '           / Software revision (Git)
+    DATE-BLD= '2018-01-01T00:00:00' / Software build date
     """
 
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):

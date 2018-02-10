@@ -25,6 +25,7 @@ test:
     - apt-get -y -qq install gcovr lal-python lal-python3 lalsimulation-python3 libchealpix-dev libgsl-dev pkg-config python-glue-ligolw-tools python3-astropy python3-astropy-helpers python3-glue python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-shapely python3-six python3-sphinx
     # FIXME: https://github.com/astropy/astropy/pull/7170
     - pip3 install git+https://github.com/lpsinger/astropy@dotted-package-names
+    - pip3 install pytest-astropy
     # Run tests
     - python3 setup.py test --coverage -vv --args='-vv'
     # Write gcovr test coverage

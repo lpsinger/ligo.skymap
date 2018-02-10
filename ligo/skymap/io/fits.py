@@ -331,6 +331,7 @@ def write_sky_map(filename, m, **kwargs):
     ORDERING= 'NUNIQ   '           / Pixel ordering scheme: RING, NESTED, or NUNIQ
     COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
     MOCORDER=                    9 / MOC resolution (best order)
+    INDXSCHM= 'EXPLICIT'           / Indexing: IMPLICIT or EXPLICIT
     VCSVERS = 'foo 1.0 '           / Software version
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date

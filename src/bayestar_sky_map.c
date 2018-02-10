@@ -97,10 +97,6 @@
 
 #include "logaddexp.h"
 
-#ifndef _OPENMP
-#define omp ignore
-#endif
-
 
 /* Compute |z|^2. Hopefully a little faster than gsl_pow_2(cabs(z)), because no
  * square roots are necessary. */

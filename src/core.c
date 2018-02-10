@@ -31,6 +31,7 @@
 #include "bayestar_distance.h"
 #include "bayestar_moc.h"
 #include "bayestar_sky_map.h"
+#include "cubic_interp.h"
 #include "omp_interruptible.h"
 
 

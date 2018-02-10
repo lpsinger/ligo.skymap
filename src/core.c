@@ -665,13 +665,28 @@ static PyObject *sky_map_toa_phoa_snr(
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
 
-    PyErr_CheckSignals();
+    /* Give the Python interpreter a chance to check for pending signals
+     * and raise a KeyboardInterrupt if necessary.
+     *
+     * Why do we need to call free(pixels) below? Here's why. Chances are that
+     * any interrupt occurred while bayestar_sky_map_toa_phoa_snr was in one of
+     * its OpenMP parallel sections, in which case the function intercepted
+     * the signal, terminated the parallel section early, and returned NULL.
+     * However, it is possible (though unlikely) that the interrupt could have
+     * occurred during the brief serial sections and that the function could
+     * have run successfully to completion. In that case, we still need to
+     * return NULL to Python and report the exception! */
+    if (PyErr_CheckSignals())
+    {
+        free(pixels);
+        pixels = NULL;
+        goto fail;
+    }
 
     if (!pixels)
     {
-        /* This should be the only error that can cause
-         * bayestar_sky_map_toa_phoa_snr to return NULL
-         * as it is called above. */
+        /* The only remaining way for bayestar_sky_map_toa_phoa_snr to
+         * return NULL is if a call to malloc failed. */
         PyErr_SetString(PyExc_MemoryError, "Out of memory");
         goto fail;
     }

@@ -97,7 +97,10 @@ Returns
 pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
 
-Test against numerical integral of pdf:
+Examples
+--------
+Test against numerical integral of pdf.
+
 >>> import scipy.integrate
 >>> distmu = 10.0
 >>> distsigma = 5.0
@@ -131,7 +134,10 @@ Returns
 r : `numpy.ndarray`
     Distance at which the cdf is equal to `p`.
 
-Test against numerical estimate:
+Examples
+--------
+Test against numerical estimate.
+
 >>> import scipy.optimize
 >>> distmu = 10.0
 >>> distsigma = 5.0
@@ -186,8 +192,11 @@ diststd : `numpy.ndarray`
 distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
 
+Examples
+--------
 For mu=0, sigma=1, the ansatz is a chi distribution with 3 degrees of
 freedom, and the moments have simple expressions.
+
 >>> mean, std, norm = parameters_to_moments(0, 1)
 >>> expected_mean = 2 * np.sqrt(2 / np.pi)
 >>> expected_std = np.sqrt(3 - expected_mean**2)
@@ -197,6 +206,7 @@ freedom, and the moments have simple expressions.
 >>> np.testing.assert_allclose(norm, expected_norm)
 
 Check that the moments scale as expected when we vary sigma.
+
 >>> sigma = np.logspace(-8, 8)
 >>> mean, std, norm = parameters_to_moments(0, sigma)
 >>> np.testing.assert_allclose(mean, expected_mean * sigma)
@@ -204,6 +214,7 @@ Check that the moments scale as expected when we vary sigma.
 >>> np.testing.assert_allclose(norm, expected_norm / sigma**2)
 
 Check some more arbitrary values using numerical quadrature:
+
 >>> sigma = 1.0
 >>> for mu in np.linspace(-10, 10):
 ...     mean, std, norm = parameters_to_moments(mu, sigma)
@@ -254,8 +265,11 @@ Returns
 image : `numpy.ndarray`
     Rendered image
 
+Examples
+--------
 Test volume rendering of a normal unit sphere...
 First, set up the 3D sky map.
+
 >>> nside = 32
 >>> npix = hp.nside2npix(nside)
 >>> prob = np.ones(npix) / npix
@@ -265,6 +279,7 @@ First, set up the 3D sky map.
 
 The conditional distance distribution should be a chi distribution with
 3 degrees of freedom.
+
 >>> from scipy.stats import norm, chi
 >>> r = np.linspace(0, 10.0)
 >>> actual = conditional_pdf(r, distmu[0], distsigma[0], distnorm[0])
@@ -272,6 +287,7 @@ The conditional distance distribution should be a chi distribution with
 >>> np.testing.assert_almost_equal(expected, actual)
 
 Next, run the volume renderer.
+
 >>> dmax = 4.0
 >>> n = 64
 >>> s = np.logspace(-dmax, dmax, n)
@@ -281,18 +297,22 @@ Next, run the volume renderer.
 ...                   prob, distmu, distsigma, distnorm)
 
 Next, integrate analytically.
+
 >>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
 
 Compare the two.
+
 >>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
 
 Check that we get the same answer if the input is in ring ordering.
 FIXME: this is a very weak test, because the input sky map is isotropic!
+
 >>> P = volume_render(x, y, dmax, 0, 1, R, True,
 ...                   prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
 
 Last, check that we don't have a coordinate singularity at the origin.
+
 >>> x = np.concatenate(([0], np.logspace(1 - n, 0, n) * dmax))
 >>> y = 0.0
 >>> P = volume_render(x, y, dmax, 0, 1, R, False,
@@ -323,6 +343,9 @@ Returns
 -------
 pdf : `numpy.ndarray`
     Marginal probability density according to ansatz.
+
+Examples
+--------
 
 >>> npix = 12
 >>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
@@ -356,6 +379,9 @@ Returns
 cdf : `numpy.ndarray`
     Marginal cumulative probability according to ansatz.
 
+Examples
+--------
+
 >>> npix = 12
 >>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
 >>> r = np.linspace(0, 1)
@@ -388,6 +414,9 @@ Returns
 -------
 r : `numpy.ndarray`
     Distance at which the cdf is equal to `p`.
+
+Examples
+--------
 
 >>> npix = 12
 >>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
@@ -487,6 +516,9 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
         The conditional mean in direction n.
     std : float
         The conditional standard deviation in direction n.
+
+    Examples
+    --------
 
     >>> # Some imports
     >>> import scipy.stats

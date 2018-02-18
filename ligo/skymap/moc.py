@@ -109,9 +109,10 @@ def rasterize(moc_data):
     Parameters
     ----------
     moc_data : `numpy.ndarray`
-    A multi-order HEALPix dataset stored as a Numpy record array whose first
-    column is called UNIQ and contains the NUNIQ pixel index. Every point on
-    the unit sphere must be contained in exactly one pixel in the dataset.
+        A multi-order HEALPix dataset stored as a Numpy record array whose
+        first column is called UNIQ and contains the NUNIQ pixel index. Every
+        point on the unit sphere must be contained in exactly one pixel in the
+        dataset.
 
     Returns
     -------

@@ -18,43 +18,43 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Reading and writing HEALPix FITS files. An example FITS header looks like this:
+Reading and writing HEALPix FITS files. An example FITS header looks like this::
 
-$ funhead -a test.fits.gz
-SIMPLE  =                    T / conforms to FITS standard
-BITPIX  =                    8 / array data type
-NAXIS   =                    0 / number of array dimensions
-EXTEND  =                    T
-END
-      Extension: xtension
+    $ funhead -a test.fits.gz
+    SIMPLE  =                    T / conforms to FITS standard
+    BITPIX  =                    8 / array data type
+    NAXIS   =                    0 / number of array dimensions
+    EXTEND  =                    T
+    END
+          Extension: xtension
 
-XTENSION= 'BINTABLE'           / binary table extension
-BITPIX  =                    8 / array data type
-NAXIS   =                    2 / number of array dimensions
-NAXIS1  =                 4096 / length of dimension 1
-NAXIS2  =                  192 / length of dimension 2
-PCOUNT  =                    0 / number of group parameters
-GCOUNT  =                    1 / number of groups
-TFIELDS =                    1 / number of table fields
-TTYPE1  = 'PROB    '
-TFORM1  = '1024E   '
-TUNIT1  = 'pix-1   '
-PIXTYPE = 'HEALPIX '           / HEALPIX pixelisation
-ORDERING= 'RING    '           / Pixel ordering scheme, either RING or NESTED
-COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
-EXTNAME = 'xtension'           / name of this binary table extension
-NSIDE   =                  128 / Resolution parameter of HEALPIX
-FIRSTPIX=                    0 / First pixel # (0 based)
-LASTPIX =               196607 / Last pixel # (0 based)
-INDXSCHM= 'IMPLICIT'           / Indexing: IMPLICIT or EXPLICIT
-OBJECT  = 'FOOBAR 12345'       / Unique identifier for this event
-REFERENC= 'http://www.youtube.com/watch?v=0ccKPSVQcFk' / URL of this event
-DATE-OBS= '2013-04-08T21:37:32.25' / UTC date of the observation
-MJD-OBS =      56391.151064815 / modified Julian date of the observation
-DATE    = '2013-04-08T21:50:32' / UTC date of file creation
-CREATOR = 'fits.py '           / Program that created this file
-RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
-END
+    XTENSION= 'BINTABLE'           / binary table extension
+    BITPIX  =                    8 / array data type
+    NAXIS   =                    2 / number of array dimensions
+    NAXIS1  =                 4096 / length of dimension 1
+    NAXIS2  =                  192 / length of dimension 2
+    PCOUNT  =                    0 / number of group parameters
+    GCOUNT  =                    1 / number of groups
+    TFIELDS =                    1 / number of table fields
+    TTYPE1  = 'PROB    '
+    TFORM1  = '1024E   '
+    TUNIT1  = 'pix-1   '
+    PIXTYPE = 'HEALPIX '           / HEALPIX pixelisation
+    ORDERING= 'RING    '           / Pixel ordering scheme, either RING or NESTED
+    COORDSYS= 'C       '           / Ecliptic, Galactic or Celestial (equatorial)
+    EXTNAME = 'xtension'           / name of this binary table extension
+    NSIDE   =                  128 / Resolution parameter of HEALPIX
+    FIRSTPIX=                    0 / First pixel # (0 based)
+    LASTPIX =               196607 / Last pixel # (0 based)
+    INDXSCHM= 'IMPLICIT'           / Indexing: IMPLICIT or EXPLICIT
+    OBJECT  = 'FOOBAR 12345'       / Unique identifier for this event
+    REFERENC= 'http://www.youtube.com/watch?v=0ccKPSVQcFk' / URL of this event
+    DATE-OBS= '2013-04-08T21:37:32.25' / UTC date of the observation
+    MJD-OBS =      56391.151064815 / modified Julian date of the observation
+    DATE    = '2013-04-08T21:50:32' / UTC date of file creation
+    CREATOR = 'fits.py '           / Program that created this file
+    RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
+    END
 """
 
 import math
@@ -245,10 +245,10 @@ def write_sky_map(filename, m, **kwargs):
     Parameters
     ----------
 
-    filename: string
+    filename: str
         Path to the optionally gzip-compressed FITS file.
 
-    m : astropy.table.Table or numpy.array
+    m : `astropy.table.Table`, `numpy.array`
         If a Numpy record array or astorpy.table.Table instance, and has a
         column named 'UNIQ', then interpret the input as NUNIQ-style
         multi-order map [1]_. Otherwise, interpret as a NESTED or RING ordered

@@ -46,7 +46,7 @@ def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
         Distance from the origin to the outside of the crosshairs.
 
     angle : float
-        Rotation in degrees; 0 for a '+' orientation and 45 'x'.
+        Rotation in degrees; 0 for a '+' orientation and 45 for 'x'.
 
     Returns
     -------

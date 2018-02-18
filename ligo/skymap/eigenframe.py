@@ -60,12 +60,12 @@ class EigenFrame(BaseCoordinateFrame):
 
         Parameters
         ----------
-        coords : astropy.cordinates.SkyCoord
+        coords : `astropy.coordinates.SkyCoord`
             A cloud of points
 
         Returns
         -------
-        frame : EigenFrame
+        `EigenFrame`
             A new coordinate frame
         """
         obj = cls()
@@ -96,7 +96,7 @@ class EigenFrame(BaseCoordinateFrame):
 
         Returns
         -------
-        frame : EigenFrame
+        `EigenFrame`
             A new coordinate frame
         """
         R = principal_axes(prob, distmu, distsigma, nest=nest)

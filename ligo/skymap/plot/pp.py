@@ -29,6 +29,9 @@ __all__ = ('PPPlot',)
 class PPPlot(axes.Axes):
     """Construct a probability--probability (P--P) plot.
 
+    Example
+    -------
+
     Example usage::
 
         import ligo.skymap.plot
@@ -96,7 +99,7 @@ class PPPlot(axes.Axes):
         Parameters
         ----------
 
-        p_values: list or `np.ndarray`
+        p_values : `numpy.ndarray`
             One or more lists of P-values.
 
             If an entry in the list is one-dimensional, then it is interpreted
@@ -108,7 +111,7 @@ class PPPlot(axes.Axes):
             is plotted on the horizontal axis and the second subarray is
             plotted on the vertical axis.
 
-        drawstyle: ``steps`` or ``lines`` or ``default``
+        drawstyle : {'steps', 'lines', 'default'}
             Plotting style. If ``steps``, then plot steps to represent a
             piecewise constant function. If ``lines``, then connect points with
             straight lines. If ``default`` then use steps if there are more
@@ -117,7 +120,8 @@ class PPPlot(axes.Axes):
         Other parameters
         ----------------
 
-        kwargs: optional extra arguments to `~matplotlib.axes.Axes.plot`
+        kwargs :
+            optional extra arguments to `matplotlib.axes.Axes.plot`
         """
 
         # Construct sequence of x, y pairs to pass to plot()
@@ -141,7 +145,7 @@ class PPPlot(axes.Axes):
         Parameters
         ----------
 
-        p_values: list or `np.ndarray`
+        p_values : `numpy.ndarray`
             Same as in `add_series`.
         """
         series = list(self._make_series(p_values))
@@ -169,7 +173,8 @@ class PPPlot(axes.Axes):
         Other parameters
         ----------------
 
-        kwargs: optional extra arguments to `~matplotlib.axes.Axes.plot`
+        kwargs :
+            optional extra arguments to `matplotlib.axes.Axes.plot`
         """
 
         # Make copy of kwargs to pass to plot()
@@ -188,16 +193,17 @@ class PPPlot(axes.Axes):
         Parameters
         ----------
 
-        nsamples: int
+        nsamples : int
             Number of P-values in each trial
 
-        ntrials: int
+        ntrials : int
             Number of line series to draw.
 
         Other parameters
         ----------------
 
-        kwargs: optional extra arguments to `~matplotlib.axes.Axes.plot`
+        kwargs :
+            optional extra arguments to `matplotlib.axes.Axes.plot`
         """
 
         # Draw random samples
@@ -219,20 +225,20 @@ class PPPlot(axes.Axes):
         Parameters
         ----------
 
-        nsamples: int
+        nsamples : int
             Number of P-values
 
-        alpha: float, default: 0.95
+        alpha : float, default: 0.95
             Confidence level
 
-        annotate: bool, optional, default: True
+        annotate : bool, optional, default: True
             If True, then label the confidence band.
 
         Other parameters
         ----------------
 
-        kwargs: optional extra arguments to
-                `~matplotlib.axes.Axes.fill_betweenx`
+        **kwargs :
+            optional extra arguments to `matplotlib.axes.Axes.fill_betweenx`
         """
         n = nsamples
         k = np.arange(0, n + 1)

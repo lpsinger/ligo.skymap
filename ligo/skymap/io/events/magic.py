@@ -60,6 +60,10 @@ def MagicEventSource(f, *args, **kwargs):
     Read events from either HDF or LIGO-LW files. The format is determined
     using the POSIX `file` command, which determines the file by looking for
     'magic' byte strings (hence the name of this module).
+
+    Returns
+    -------
+    `EventSource`
     """
     if isinstance(f, h5py.File):
         opener = hdf.open

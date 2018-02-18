@@ -66,7 +66,7 @@ def _find_table(group, tablename):
 
     Returns
     -------
-    table : `h5py.Dataset`
+    `h5py.Dataset`
         The dataset whose name is `tablename`
 
     Raises
@@ -74,7 +74,10 @@ def _find_table(group, tablename):
     KeyError
         If the table is not found or if multiple matching tables are found
 
+    Examples
+    --------
     Check that we can find a file by name:
+
     >>> import os.path
     >>> from ..command import TemporaryDirectory
     >>> table = Table(np.eye(3), names=['a', 'b', 'c'])
@@ -88,6 +91,7 @@ def _find_table(group, tablename):
     <HDF5 dataset "bar": shape (3,), type "|V24">
 
     Check that an exception is raised if the table is not found:
+
     >>> with TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     table.write(filename, path='foo/bar', append=True)
@@ -100,6 +104,7 @@ def _find_table(group, tablename):
     KeyError: 'Table not found: plugh'
 
     Check that an exception is raised if multiple tables are found:
+
     >>> with TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     table.write(filename, path='foo/bar', append=True)
@@ -146,10 +151,14 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Returns
     -------
-    table : `astropy.table.Table`
+    `astropy.table.Table`
         The sample chain as an Astropy table.
 
+    Examples
+    --------
+
     Test reading a file written using the Python API:
+
     >>> import os.path
     >>> from ..command import TemporaryDirectory
     >>> table = Table([
@@ -165,6 +174,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     10
 
     Test reading a file that was written using the LAL HDF5 C API:
+
     >>> from pkg_resources import resource_filename
     >>> filename = resource_filename(__name__, '../tests/data/test.hdf5')
     >>> table = read_samples(filename)
@@ -216,7 +226,11 @@ def write_samples(table, filename, metadata=None, **kwargs):
     kwargs: dict
         Any keyword arguments for `astropy.table.Table.write`.
 
+    Examples
+    --------
+
     Check that we catch columns that are supposed to be FIXED but are not:
+
     >>> table = Table([
     ...     Column(np.arange(10), name='foo', meta={'vary': FIXED})
     ... ])
@@ -229,6 +243,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...
 
     And now try writing an arbitrary example to a temporary file.
+
     >>> import os.path
     >>> from ..command import TemporaryDirectory
     >>> table = Table([

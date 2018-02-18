@@ -30,7 +30,11 @@ def _fmt(obj, keys):
 
 
 class EventSource(Mapping):
-    """Abstraction of a source of coincident events."""
+    """Abstraction of a source of coincident events.
+
+    This is a mapping from event IDs (which may be any hashable type, but are
+    generally integers or strings) to instances of `Event`.
+    """
 
     def __str__(self):
         try:
@@ -53,16 +57,22 @@ class EventSource(Mapping):
 
 
 class Event(metaclass=ABCMeta):
-    """Abstraction of a coincident trigger."""
+    """Abstraction of a coincident trigger.
+
+    Attributes
+    ----------
+    singles : list, tuple
+        Sequence of `SingleEvent`
+    template_args : dict
+        Dictionary of template parameters
+    """
 
     @abstractproperty
     def singles(self):
-        """Tuple of single-detector triggers."""
         raise NotImplementedError
 
     @abstractproperty
     def template_args(self):
-        """Dictionary of template parameters."""
         raise NotImplementedError
 
     __str_keys = ('singles',)
@@ -74,42 +84,52 @@ class Event(metaclass=ABCMeta):
 
 
 class SingleEvent(metaclass=ABCMeta):
-    """Abstraction of a single-detector trigger."""
+    """Abstraction of a single-detector trigger.
+
+    Attributes
+    ----------
+    detector : str
+        Instrument name (e.g. 'H1')
+    snr : float
+        Signal to noise ratio
+    phase : float
+        Phase on arrival
+    time : float
+        GPS time on arrival
+    zerolag_time : float
+        GPS time on arrival in zero-lag data, without time slides applied
+    psd : `REAL8FrequencySeries`
+        Power spectral density
+    snr_series : `COMPLEX8TimeSeries`
+        SNR time series
+    """
 
     @abstractproperty
     def detector(self):
-        """Instrument name (e.g. 'H1')"""
         raise NotImplementedError
 
     @abstractproperty
     def snr(self):
-        """Signal to noise ratio (float)"""
         raise NotImplementedError
 
     @abstractproperty
     def phase(self):
-        """Phase on arrival (float)"""
         raise NotImplementedError
 
     @abstractproperty
     def time(self):
-        """Time on arrival (float, GPS)"""
         raise NotImplementedError
 
     @abstractproperty
     def zerolag_time(self):
-        """Time on arrival in zero-lag data, without time slides applied
-        (float, GPS)"""
         raise NotImplementedError
 
     @abstractproperty
     def psd(self):
-        """PSD (REAL8FrequencySeries)"""
         raise NotImplementedError
 
     @property
     def snr_series(self):
-        """SNR time series (COMPLEX8TimeSeries)"""
         return None
 
     __str_keys = ('detector', 'snr', 'phase', 'time')

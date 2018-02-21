@@ -31,12 +31,15 @@ test:
     # Write gcovr test coverage
     - mkdir gcovr
     - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
+    # Generate docs
+    - python setup.py build_docs
   artifacts:
     paths:
       - .coverage
       - build/temp.*/src/*.gc*
       - gcovr/
       - htmlcov/
+      - docs/_build/html
     expire_in: 5 minutes
 
 coverage:c:
@@ -62,7 +65,7 @@ pages:
     GIT_STRATEGY: none
   stage: deploy
   script:
-    - mkdir -p public/cov
+    - mv docs/_build/html public
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
   artifacts:

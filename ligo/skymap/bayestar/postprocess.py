@@ -614,13 +614,9 @@ def get_detector_pair_axis(ifo1, ifo2, gmst):
     Example
     -------
 
-    >>> ra, dec, dt = get_detector_pair_axis('H1', 'L1', 41758.384193753656)
-    >>> np.around(ra, 5)
-    5.94546
-    >>> np.around(dec, 5)
-    -0.47622
-    >>> np.around(dt, 5)
-    0.01001
+    >>> ret = get_detector_pair_axis('H1', 'L1', 41758.384193753656)
+    >>> print(*np.around(ret, 5))
+    5.94546 -0.47622 0.01001
     """
     ifo1 = _get_detector_location(ifo1)
     ifo2 = _get_detector_location(ifo2)

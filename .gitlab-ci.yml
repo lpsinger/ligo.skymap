@@ -66,6 +66,7 @@ pages:
   stage: deploy
   script:
     - mv docs/_build/html public
+    - mkdir -p public/cov
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
   artifacts:

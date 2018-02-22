@@ -10,3 +10,4 @@ ligo.skymap
    fits
    hdf5
    moc
+   postprocess

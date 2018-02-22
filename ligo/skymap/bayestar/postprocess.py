@@ -22,15 +22,15 @@ Postprocessing utilities for HEALPix sky maps
 import collections
 import pkg_resources
 
+from astropy import constants
 from astropy.coordinates import (CartesianRepresentation, SkyCoord,
                                  UnitSphericalRepresentation)
 from astropy import units as u
 from astropy.wcs import WCS
 import healpy as hp
-import lal
-import lalsimulation
 import numpy as np
 from scipy.interpolate import interp1d
+import six
 
 from .. import distance
 from .. import moc
@@ -566,21 +566,32 @@ def find_greedy_credible_levels(p, ranking=None):
     return cls.reshape(p.shape)
 
 
+def _get_detector_location(ifo):
+    if isinstance(ifo, six.string_types):
+        try:
+            import lalsimulation
+        except ImportError:
+            raise RuntimeError('Looking up detectors by name '
+                               'requires the lalsimulation package.')
+        ifo = lalsimulation.DetectorPrefixToLALDetector(ifo)
+    try:
+        ifo = ifo.location
+    except AttributeError:
+        pass
+    return ifo
+
+
 def get_detector_pair_axis(ifo1, ifo2, gmst):
     """Find the sky position where the line between two detectors pierces the
     celestial sphere.
 
     Parameters
     ----------
-
-    ifo1 : str or `~lal.Detector` or `~np.ndarray`
-        The first detector; either the name of the detector (e.g. `'H1'`), or a
+    ifo1, ifo2 : str or `~lal.Detector` or `numpy.ndarray`
+        The detector positions. Can be specifed by name (e.g. `'H1'`), or by
         `lal.Detector` object (e.g., as returned by
-        `lalsimulation.DetectorPrefixToLALDetector('H1')` or the geocentric
-        Cartesian position of the detection in meters.
-
-    ifo2 : str or `~lal.Detector` or `~np.ndarray`
-        The second detector; same as described above.
+        `lalsimulation.DetectorPrefixToLALDetector('H1')` or by the geocentric
+        Cartesian position in meters.
 
     gmst : float
         The Greenwich mean sidereal time in radians, as returned by
@@ -599,28 +610,23 @@ def get_detector_pair_axis(ifo1, ifo2, gmst):
 
     light_travel_time : float
         The light travel time from `ifo1` to `ifo2` in seconds.
-    """
 
-    # Get location of detectors if ifo1, ifo2 are LAL detector structs
-    try:
-        ifo1 = lalsimulation.DetectorPrefixToLALDetector(ifo1)
-    except TypeError:
-        pass
-    try:
-        ifo1 = ifo1.location
-    except AttributeError:
-        pass
-    try:
-        ifo2 = lalsimulation.DetectorPrefixToLALDetector(ifo2)
-    except TypeError:
-        pass
-    try:
-        ifo2 = ifo2.location
-    except AttributeError:
-        pass
+    Example
+    -------
+
+    >>> ra, dec, dt = get_detector_pair_axis('H1', 'L1', 41758.384193753656)
+    >>> np.around(ra, 5)
+    5.94546
+    >>> np.around(dec, 5)
+    -0.47622
+    >>> np.around(dt, 5)
+    0.01001
+    """
+    ifo1 = _get_detector_location(ifo1)
+    ifo2 = _get_detector_location(ifo2)
 
     n = ifo2 - ifo1
-    light_travel_time = np.sqrt(np.sum(np.square(n))) / lal.C_SI
+    light_travel_time = np.sqrt(np.sum(np.square(n))) / constants.c.value
     (theta,), (phi,) = hp.vec2ang(n)
     pole_ra = (gmst + phi) % (2 * np.pi)
     pole_dec = 0.5 * np.pi - theta

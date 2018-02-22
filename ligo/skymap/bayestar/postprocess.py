@@ -487,7 +487,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
         # Find credible region
         indicator = (m >= level)
 
-        # Construct a graph of the eges of the contour.
+        # Construct a graph of the edges of the contour.
         graph = nx.Graph()
         face_pairs = set()
         for ipix1, ipix2 in enumerate(neighbors):

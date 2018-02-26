@@ -13,8 +13,9 @@ before_script:
   # Configure apt
   - apt-get update -qq
   # Configure pip cache
-  - echo [global] >> /etc/pip.conf
-  - echo cache-dir = $(pwd)/pip-cache >> /etc/pip.conf
+  - mkdir -p ~/.pip
+  - echo [global] > ~/.pip/pip.conf
+  - echo cache-dir = $(pwd)/pip-cache >> ~/.pip/pip.conf
   - mkdir -p pip-cache
 
 test:

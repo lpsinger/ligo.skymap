@@ -11,7 +11,7 @@ the [Astropy package template](https://github.com/astropy/package-template).
 
 ## Python dependencies
 
-* Python >= 3.5
+* Python >= 3.4
 * astropy
 * healpy (note, transition to astropy_healpix, which is easier to install)
 * h5py

@@ -10,5 +10,6 @@ ligo.skymap
    events
    fits
    hdf5
+   kde
    moc
    postprocess

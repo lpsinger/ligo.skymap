@@ -347,11 +347,13 @@ class ArgumentParser(argparse.ArgumentParser):
                  argument_default=None,
                  conflict_handler='error',
                  add_help=True):
+        parent_frame = inspect.currentframe().f_back
         if prog is None:
-            prog = os.path.basename(sys.argv[0]).replace('.py', '')
+            prog = parent_frame.f_locals.get('__file__', sys.argv[0])
+            prog = os.path.basename(prog)
+            prog = prog.replace('_', '-').replace('.py', '')
         if description is None:
-            parent_frame = inspect.currentframe().f_back
-            description = parent_frame.f_locals.get('__doc__', None)
+            description = parent_frame.f_globals.get('__doc__', None)
             if formatter_class is None:
                 formatter_class = argparse.RawDescriptionHelpFormatter
         if formatter_class is None:

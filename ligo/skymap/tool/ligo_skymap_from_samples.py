@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2011-2017  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
@@ -21,7 +20,8 @@ Generate a FITS sky map file from posterior samples using clustering and
 kernel density estimation.
 """
 
-if __name__ == '__main__':
+
+def parser():
     # Command line interface.
     from argparse import FileType, SUPPRESS
     from ligo.skymap.command import ArgumentParser, DirType
@@ -53,7 +53,11 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, help='use specified random seed '
                         '[default: use system entropy]')
     parser.add_argument('--objid', help='event ID to store in FITS header')
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = parser().parse_args()
 
     # Late imports
     from ligo.skymap import io

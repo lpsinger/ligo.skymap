@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2013-2017  Leo Singer
 #
@@ -32,11 +31,18 @@ The filenames of the sky maps may be provided as positional command line
 arguments, and may also be provided as globs (such as '*.fits.gz').
 """
 
-
-# Command line interface.
 import argparse
-from ligo.skymap import command
-if __name__ == '__main__':
+import sqlite3
+
+import numpy as np
+
+from .. import command
+from ..io import fits
+from ..bayestar.postprocess import find_injection_moc
+from ..util import sqlite
+
+
+def parser():
     parser = command.ArgumentParser()
     parser.add_argument(
         '-o', '--output', metavar='OUT.dat',
@@ -63,15 +69,7 @@ if __name__ == '__main__':
     parser.add_argument(
         'fitsfilenames', metavar='GLOB.fits[.gz]', nargs='+', action='glob',
         help='Input FITS filenames and/or globs')
-    opts = parser.parse_args()
-
-
-# Imports.
-import sqlite3
-import numpy as np
-from ligo.skymap.io import fits
-from ligo.skymap.bayestar.postprocess import find_injection_moc
-from ligo.skymap.util import sqlite
+    return parser
 
 
 def startup(dbfilename, opts_contour, opts_modes, opts_area):
@@ -134,7 +132,9 @@ def process(fitsfilename):
     return ret
 
 
-if __name__ == '__main__':
+def main():
+    opts = parser().parse_args()
+
     from glue.text_progress_bar import ProgressBar
     progress = ProgressBar()
 

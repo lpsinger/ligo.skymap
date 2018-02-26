@@ -1,32 +1,16 @@
-image: ligo/lalsuite-dev:stretch
+# This is a prebuilt Docker container that contains all of the dependencies.
+# It is prebuilt to speed up continuous integration.
+# The Dockerfile is stored on the 'docker' branch.
+image: containers.ligo.org/leo-singer/ligo.skymap
 
 stages:
   - test
   - deploy
 
-cache:
-  paths:
-    - pip-cache
-    - .eggs
-
-before_script:
-  # Configure apt
-  - apt-get update -qq
-  # Configure pip cache
-  - mkdir -p ~/.pip
-  - echo [global] > ~/.pip/pip.conf
-  - echo cache-dir = $(pwd)/pip-cache >> ~/.pip/pip.conf
-  - mkdir -p pip-cache
-
 test:
   variables:
     CFLAGS: -coverage
   script:
-    # Install dependencies
-    - apt-get -y install gcovr lal-python lal-python3 lalsimulation-python3 libchealpix-dev libgsl0-dev pkg-config python-glue-ligolw-tools python3-astropy python3-astropy-helpers python3-glue python3-h5py python3-healpy python3-matplotlib python3-pil python3-pip python3-pytest python3-pytest-cov python3-reproject python3-scipy python3-seaborn python3-shapely python3-six python3-sphinx python3-sphinx-argparse
-    # FIXME: https://github.com/astropy/astropy/pull/7170
-    - pip3 install git+https://github.com/lpsinger/astropy@dotted-package-names
-    - pip3 install pytest-astropy
     # Run tests
     - python3 setup.py test --coverage -vv --args='-vv'
     # Write gcovr test coverage
@@ -47,8 +31,6 @@ coverage:c:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   script:
-    # Install dependencies
-    - apt-get -y -qq install gcovr
     # Display coverage summary
     - gcovr build/temp*/src -r .
 
@@ -56,8 +38,6 @@ coverage:py:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   script:
-    # Install dependencies
-    - apt-get -y -qq install python3-coverage
     # Print coverage summary
     - python3 -m coverage report
 

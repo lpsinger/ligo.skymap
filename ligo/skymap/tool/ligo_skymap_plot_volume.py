@@ -20,13 +20,6 @@ Plot a volumetric posterior in three-projection view.
 """
 
 
-# Set no-op backend, because seaborn imports pyplot and we must not load X11
-import matplotlib
-matplotlib.use('Template')
-# Set seaborn style (overwrites rcParams, so has to be before argparse)
-import seaborn
-seaborn.set_style("white")
-
 import argparse
 from ligo.skymap import command
 
@@ -83,6 +76,7 @@ def main():
     import healpy as hp
     import numpy as np
     import scipy.stats
+    import seaborn
 
     # Read input, determine input resolution.
     progress.update(-1, 'Loading FITS file')

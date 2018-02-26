@@ -28,8 +28,6 @@ test:
     expire_in: 5 minutes
 
 coverage:c:
-  variables:
-    GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   script:
@@ -37,8 +35,6 @@ coverage:c:
     - gcovr build/temp*/src -r .
 
 coverage:py:
-  variables:
-    GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   script:

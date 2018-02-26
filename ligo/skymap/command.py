@@ -411,6 +411,7 @@ class SQLiteType(argparse.FileType):
     argparse.ArgumentTypeError: ...
 
     If the file already exists, then it's fine:
+
     >>> import sqlite3
     >>> filetype = SQLiteType('r')
     >>> with tempfile.NamedTemporaryFile() as f:

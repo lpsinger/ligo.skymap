@@ -2,7 +2,7 @@
 
 | **Build** | **Python code** | **C code** | **Docs** |
 | :-: | :-: | :-: | :-: |
-| [![pipeline status](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/pipeline.svg)](https://git.ligo.org/leo-singer/ligo.skymap/pipelines) | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:py)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/py) | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:c)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/c) | [latest](https://leo-singer.docs.ligo.org/ligo.skymap/) |
+| [![pipeline status](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/pipeline.svg)](https://git.ligo.org/leo-singer/ligo.skymap/pipelines) | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:py)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/py) | [![coverage report](https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:c)](https://leo-singer.docs.ligo.org/ligo.skymap/cov/c) | [Latest](https://leo-singer.docs.ligo.org/ligo.skymap/) |
 
 Includes sky map I/O, plotting, and postprocessing codes; BAYESTAR; and KDE
 posterior samples to FITS workflow (skyarea). Structured as an

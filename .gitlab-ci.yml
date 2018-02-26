@@ -1,4 +1,4 @@
-image: ligo/lalsuite-dev:stretch
+image: ligo/lalsuite-dev:jessie
 
 stages:
   - test

@@ -52,7 +52,7 @@ mpl_version = distutils.version.LooseVersion(matplotlib.__version__)
 
 def get_version():
     from . import version
-    return package.__name__.replace('.version', '') + ' ' + package.version
+    return version.__name__.replace('.version', '') + ' ' + version.version
 
 
 class GlobAction(argparse._StoreAction):

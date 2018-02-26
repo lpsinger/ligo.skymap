@@ -9,6 +9,7 @@ ligo.skymap
    eigenframe
    events
    fits
+   healpix_tree
    hdf5
    kde
    moc

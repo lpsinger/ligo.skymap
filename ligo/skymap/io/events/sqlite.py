@@ -23,7 +23,7 @@ import sys
 
 from glue.ligolw import dbtables
 
-from ...command import sqlite_open_r, sqlite_get_filename
+from ...util import sqlite
 from .ligolw import LigoLWEventSource
 
 __all__ = ('SQLiteEventSource',)
@@ -34,14 +34,14 @@ class SQLiteEventSource(LigoLWEventSource):
     def __init__(self, f, *args, **kwargs):
         if isinstance(f, sqlite3.Connection):
             db = f
-            filename = sqlite_get_filename(f)
+            filename = sqlite.get_filename(f)
         else:
             if hasattr(f, 'read'):
                 filename = f.name
                 f.close()
             else:
                 filename = f
-            db = sqlite_open_r(filename)
+            db = sqlite.open(filename, 'r')
         super(SQLiteEventSource, self).__init__(dbtables.get_xml(db),
                                                 *args, **kwargs)
         self._fallbackpath = os.path.dirname(filename) if filename else None

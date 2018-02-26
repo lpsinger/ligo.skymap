@@ -20,23 +20,19 @@ Functions that support the command line interface.
 """
 
 import argparse
-import contextlib
 from distutils.dir_util import mkpath
 from distutils.errors import DistutilsFileError
-import errno
 import glob
 import inspect
 import itertools
 import logging
 import os
-import shutil
-import sqlite3
 import sys
 import tempfile
 import matplotlib
 from matplotlib import cm
 from .plot import cmap
-
+from .util import sqlite
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
 # until we have determined that it is necessary based on the command line
@@ -57,16 +53,6 @@ mpl_version = distutils.version.LooseVersion(matplotlib.__version__)
 def get_version():
     from . import version
     return package.__name__.replace('.version', '') + ' ' + package.version
-
-
-@contextlib.contextmanager
-def TemporaryDirectory(suffix='', prefix='tmp', dir=None, delete=True):
-    try:
-        dir = tempfile.mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
-        yield dir
-    finally:
-        if delete:
-            shutil.rmtree(dir)
 
 
 class GlobAction(argparse._StoreAction):
@@ -409,24 +395,13 @@ class DirType(object):
         return string
 
 
-def sqlite_open_a(string):
-    return sqlite3.connect(string)
-
-def sqlite_open_r(string):
-    return sqlite3.connect('file:{}?mode=ro'.format(string), uri=True)
-
-def sqlite_open_w(string):
-    with open(string, 'wb') as f:
-        pass
-    return sqlite3.connect(string)
-
-
 class SQLiteType(argparse.FileType):
     """Open an SQLite database, or fail if it does not exist.
 
     Here is an example of trying to open a file that does not exist for
     reading (mode='r'). It should raise an exception:
 
+    >>> import tempfile
     >>> filetype = SQLiteType('r')
     >>> filename = tempfile.mktemp()
     >>> # Note, simply check or a FileNotFound error in Python 3.
@@ -436,6 +411,7 @@ class SQLiteType(argparse.FileType):
     argparse.ArgumentTypeError: ...
 
     If the file already exists, then it's fine:
+    >>> import sqlite3
     >>> filetype = SQLiteType('r')
     >>> with tempfile.NamedTemporaryFile() as f:
     ...     with sqlite3.connect(f.name) as db:
@@ -488,55 +464,10 @@ class SQLiteType(argparse.FileType):
         self.mode = mode
 
     def __call__(self, string):
-        if string in {'-', '/dev/stdin', '/dev/stdout'}:
-            raise argparse.ArgumentTypeError(
-                'Cannot open stdin/stdout as an SQLite database')
-        openers = {'a': sqlite_open_a, 'r': sqlite_open_r, 'w': sqlite_open_w}
-        opener = openers[self.mode]
         try:
-            return opener(string)
-        except (OSError, sqlite3.Error) as e:
-            raise argparse.ArgumentTypeError(
-                'Failed to open database {}: {}'.format(string, e))
-
-
-def sqlite_get_filename(connection):
-    """Get the name of the file associated with an SQLite connection"""
-    result = connection.execute('pragma database_list').fetchall()
-    try:
-        (_, _, filename), = result
-    except ValueError:
-        raise RuntimeError('Expected exactly one attached database')
-    return filename
-
-
-def rename(src, dst):
-    """Like os.rename(src, dst), but works across different devices because it
-    catches and handles EXDEV ('Invalid cross-device link') errors."""
-    try:
-        os.rename(src, dst)
-    except OSError as e:
-        if e.errno == errno.EXDEV:
-            dir, suffix = os.path.split(dst)
-            tmpfid, tmpdst = tempfile.mkstemp(dir=dir, suffix=suffix)
-            try:
-                os.close(tmpfid)
-                shutil.copy2(src, tmpdst)
-                os.rename(tmpdst, dst)
-            except:
-                os.remove(tmpdst)
-                raise
-        else:
-            raise
-
-
-def rm_f(filename):
-    """Remove a file, or be silent if the file does not exist, like `rm -f`."""
-    try:
-        os.remove(filename)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
+            return sqlite.open(string, self.mode)
+        except OSError as e:
+            raise argparse.ArgumentTypeError(e)
 
 
 def _sanitize_arg_value_for_xmldoc(value):

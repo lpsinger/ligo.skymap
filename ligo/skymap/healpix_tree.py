@@ -143,7 +143,9 @@ class HEALPixTree(object):
         samples : list, present if extra=True
             The list of samples contained in the node.
 
-        Example:
+        Example
+        -------
+
         >>> ipix = np.arange(12, dtype=np.uint64) * HEALPIX_MACHINE_NSIDE**2
         >>> tree = HEALPixTree(ipix, max_samples_per_pixel=1, max_order=1)
         >>> [tuple(_) for _ in tree.visit(extra=False)]
@@ -248,7 +250,7 @@ def interpolate_nested(m, nest=False):
     smooths out the stair-step effect that may be noticeable in contour plots.
 
     Here is how it works. Consider a coarse tile surrounded by base tiles, like
-    this:
+    this::
 
                 +---+---+
                 |   |   |
@@ -378,38 +380,45 @@ def reconstruct_nested(m, order='depthfirst', extra=True):
     value : list, present if extra=True
         The value of the map at the node.
 
-    Here are some examples...
+    Examples
+    --------
 
     An nside=1 array of all zeros:
+
     >>> m = np.zeros(12)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
     >>> [tuple(_) for _ in result]
     [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
 
     An nside=1 array of distinct values:
+
     >>> m = range(12)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
     >>> [tuple(_) for _ in result]
     [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
 
     An nside=8 array of zeros:
+
     >>> m = np.zeros(768)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
     >>> [tuple(_) for _ in result]
     [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
 
     An nside=2 array, all zeros except for four consecutive distinct elements:
+
     >>> m = np.zeros(48); m[:4] = range(4)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
     >>> [tuple(_) for _ in result]
     [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (2, 0), (2, 1), (2, 2), (2, 3)]
 
     Same, but in depthfirst order:
+
     >>> result = reconstruct_nested(m, order='depthfirst', extra=False)
     >>> [tuple(_) for _ in result]
     [(2, 0), (2, 1), (2, 2), (2, 3), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
 
     An nside=2 array, all elements distinct except for four consecutive zeros:
+
     >>> m = np.arange(48); m[:4] = 0
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
     >>> [tuple(_) for _ in result]

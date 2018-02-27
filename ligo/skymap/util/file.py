@@ -64,6 +64,7 @@ def rm_f(filename):
 
 @contextlib.contextmanager
 def TemporaryDirectory(suffix='', prefix='tmp', dir=None, delete=True):
+    """Context manager for creating and cleaning up a temporary directory."""
     try:
         dir = tempfile.mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
         yield dir

@@ -46,7 +46,8 @@ class DoctestModule(pytest.Module):
         ### End copied from pytest
 
         for method in module.__dict__.values():
-            if isinstance(method, np.ufunc):
+            if isinstance(method, np.ufunc) or isinstance(
+                    getattr(method, '__wrapped__', None), np.ufunc):
                 for test in finder.find(method, module=module):
                     if test.examples:  # skip empty doctests
                         yield DoctestItem(test.name, self, runner, test)

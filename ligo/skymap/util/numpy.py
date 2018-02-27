@@ -15,6 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
+import functools
 import numpy as np
 
 __all__ = ('add_newdoc_ufunc', 'require_contiguous')
@@ -35,12 +36,11 @@ def add_newdoc_ufunc(func, doc):
 def require_contiguous(func):
     """Wrap a Numpy ufunc to guarantee that all of its inputs are
     C-contiguous arrays."""
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         n = func.nin
         args = [arg if i >= n or np.isscalar(arg)
                 else np.ascontiguousarray(arg)
                 for i, arg in enumerate(args)]
         return func(*args, **kwargs)
-    wrapper.__name__ = func.__name__
-    wrapper.__doc__ = func.__doc__
     return wrapper

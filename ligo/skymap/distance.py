@@ -25,6 +25,7 @@ import scipy.special
 from .core import (conditional_pdf, conditional_cdf, conditional_ppf,
                    moments_to_parameters, parameters_to_moments, volume_render,
                    marginal_pdf, marginal_cdf, marginal_ppf)
+from .util.numpy import add_newdoc_ufunc, require_contiguous
 
 __all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
            'moments_to_parameters', 'parameters_to_moments', 'volume_render',
@@ -33,31 +34,7 @@ __all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
            'parameters_to_moments')
 
 
-def _add_newdoc_ufunc(func, doc):
-    # The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
-    # docstring if it is `NULL`. This workaround avoids an exception
-    # when the user tries to `reload()` this module.
-    try:
-        np.lib.add_newdoc_ufunc(func, doc)
-    except ValueError as e:
-        msg = 'Cannot change docstring of ufunc with non-NULL docstring'
-        if e.args[0] == msg:
-            pass
-
-
-def require_contiguous(func):
-    def wrapper(*args, **kwargs):
-        n = func.nin
-        args = [arg if i >= n or np.isscalar(arg)
-                else np.ascontiguousarray(arg)
-                for i, arg in enumerate(args)]
-        return func(*args, **kwargs)
-    wrapper.__name__ = func.__name__
-    wrapper.__doc__ = func.__doc__
-    return wrapper
-
-
-_add_newdoc_ufunc(conditional_pdf, """\
+add_newdoc_ufunc(conditional_pdf, """\
 Conditional distance probability density function (ansatz).
 
 Parameters
@@ -78,7 +55,7 @@ pdf : `numpy.ndarray`
 """)
 
 
-_add_newdoc_ufunc(conditional_cdf, """\
+add_newdoc_ufunc(conditional_cdf, """\
 Cumulative conditional distribution of distance (ansatz).
 
 Parameters
@@ -115,7 +92,7 @@ Test against numerical integral of pdf.
 """)
 
 
-_add_newdoc_ufunc(conditional_ppf, """\
+add_newdoc_ufunc(conditional_ppf, """\
 Point percent function (inverse cdf) of distribution of distance (ansatz).
 
 Parameters
@@ -150,7 +127,7 @@ Test against numerical estimate.
 """)
 
 
-_add_newdoc_ufunc(moments_to_parameters, """\
+add_newdoc_ufunc(moments_to_parameters, """\
 Convert ansatz moments to parameters.
 This function is the inverse of `parameters_to_moments`.
 
@@ -172,7 +149,7 @@ distnorm : `numpy.ndarray`
 """)
 
 
-_add_newdoc_ufunc(parameters_to_moments, """\
+add_newdoc_ufunc(parameters_to_moments, """\
 Convert ansatz parameters to moments.
 This function is the inverse of `moments_to_parameters`.
 
@@ -232,7 +209,7 @@ Check some more arbitrary values using numerical quadrature:
 """)
 
 
-_add_newdoc_ufunc(volume_render, """\
+add_newdoc_ufunc(volume_render, """\
 Perform volumetric rendering of a 3D sky map.
 
 Parameters
@@ -323,7 +300,7 @@ Last, check that we don't have a coordinate singularity at the origin.
 volume_render = require_contiguous(volume_render)
 
 
-_add_newdoc_ufunc(marginal_pdf, """\
+add_newdoc_ufunc(marginal_pdf, """\
 Calculate all-sky marginal pdf (ansatz).
 
 Parameters
@@ -358,7 +335,7 @@ Examples
 marginal_pdf = require_contiguous(marginal_pdf)
 
 
-_add_newdoc_ufunc(marginal_cdf, """\
+add_newdoc_ufunc(marginal_cdf, """\
 Calculate all-sky marginal cdf (ansatz).
 
 Parameters
@@ -393,7 +370,7 @@ Examples
 marginal_cdf = require_contiguous(marginal_cdf)
 
 
-_add_newdoc_ufunc(marginal_ppf, """\
+add_newdoc_ufunc(marginal_ppf, """\
 Point percent function (inverse cdf) of marginal distribution of distance
 (ansatz).
 
@@ -663,3 +640,6 @@ def parameters_to_marginal_moments(prob, distmu, distsigma):
     rbar = (prob * distmean).sum()
     r2bar = (prob * (np.square(diststd) + np.square(distmean))).sum()
     return rbar, np.sqrt(r2bar - np.square(rbar))
+
+
+del add_newdoc_ufunc, require_contiguous

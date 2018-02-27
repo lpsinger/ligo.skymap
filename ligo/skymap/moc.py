@@ -23,23 +23,12 @@ Multi-order coverage (MOC) HEALPix indexing.
 import numpy as np
 from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea
 from .core import rasterize as _rasterize
+from .util.numpy import add_newdoc_ufunc
 
 __all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea', 'rasterize')
 
 
-def _add_newdoc_ufunc(func, doc):
-    # The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
-    # docstring if it is `NULL`. This workaround avoids an exception
-    # when the user tries to `reload()` this module.
-    try:
-        np.lib.add_newdoc_ufunc(func, doc)
-    except ValueError as e:
-        msg = 'Cannot change docstring of ufunc with non-NULL docstring'
-        if e.args[0] == msg:
-            pass
-
-
-_add_newdoc_ufunc(nest2uniq, """\
+add_newdoc_ufunc(nest2uniq, """\
 Convert a pixel index from NESTED to NUNIQ ordering.
 
 Parameters
@@ -56,7 +45,7 @@ uniq : `numpy.ndarray`
 """)
 
 
-_add_newdoc_ufunc(uniq2order, """\
+add_newdoc_ufunc(uniq2order, """\
 Determine the HEALPix resolution order of a HEALPix NESTED index.
 
 Parameters
@@ -71,7 +60,7 @@ order : `numpy.ndarray`
 """)
 
 
-_add_newdoc_ufunc(uniq2pixarea, """\
+add_newdoc_ufunc(uniq2pixarea, """\
 Determine the area of a HEALPix NESTED index.
 
 Parameters
@@ -86,7 +75,7 @@ area : `numpy.ndarray`
 """)
 
 
-_add_newdoc_ufunc(uniq2nest, """\
+add_newdoc_ufunc(uniq2nest, """\
 Convert a pixel index from NUNIQ to NESTED ordering.
 
 Parameters
@@ -121,3 +110,6 @@ def rasterize(moc_data):
         that were in moc_data, with the exception of the UNIQ column.
     """
     return _rasterize(moc_data)
+
+
+del add_newdoc_ufunc

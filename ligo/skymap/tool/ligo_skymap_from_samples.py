@@ -57,7 +57,8 @@ def parser():
 
 
 def main(args=None):
-    args = parser().parse_args(args)
+    _parser = parser()
+    args = _parser.parse_args(args)
 
     # Late imports
     from ligo.skymap import io
@@ -124,7 +125,7 @@ def main(args=None):
     log.info('making skymap')
     hpmap = rasterize(skypost.as_healpix())
     hpmap.meta.update(io.fits.metadata_for_version_module(version))
-    hpmap.meta['creator'] = parser.prog
+    hpmap.meta['creator'] = _parser.prog
     hpmap.meta['origin'] = 'LIGO/Virgo'
     hpmap.meta['gps_creation_time'] = Time.now().gps
     hpmap.meta['vcs_info'] = vcs_info

@@ -70,6 +70,17 @@ def test_ligolw():
     source = events.open(os.path.join(DATA_PATH, '2016_subset.xml.gz'))
     ligolw_assertions(source)
 
+    assert str(source) == '<LigoLWEventSource({...250 items...})>'
+    assert repr(source).startswith('LigoLWEventSource([(288172, <LigoLWEvent(')
+    event, *_ = source.values()
+    assert str(event).startswith(
+        "<LigoLWEvent(singles=(<LigoLWSingleEvent(detector='H1', snr=12.")
+    assert repr(event).startswith(
+        "<LigoLWEvent(singles=(<LigoLWSingleEvent(detector='H1', snr=12.")
+    single_event, *_ = event.singles
+    assert str(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
+    assert repr(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
+
 
 def test_sqlite(tmpdir):
     """Test reading events from SQLite files."""

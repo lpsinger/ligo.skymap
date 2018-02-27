@@ -26,6 +26,7 @@ Modules
    eigenframe
    events
    file
+   numpy
    sqlite
    fits
    healpix_tree

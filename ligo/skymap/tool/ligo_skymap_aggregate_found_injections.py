@@ -132,8 +132,8 @@ def process(fitsfilename):
     return ret
 
 
-def main():
-    opts = parser().parse_args()
+def main(args=None):
+    opts = parser().parse_args(args)
 
     from glue.text_progress_bar import ProgressBar
     progress = ProgressBar()

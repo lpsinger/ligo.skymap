@@ -89,8 +89,8 @@ def parser():
     return parser
 
 
-def main():
-    opts = parser().parse_args()
+def main(args=None):
+    opts = parser().parse_args(args)
 
     import logging
     log = logging.getLogger('BAYESTAR')

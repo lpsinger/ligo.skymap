@@ -56,8 +56,8 @@ def parser():
     return parser
 
 
-def main():
-    args = parser().parse_args()
+def main(args=None):
+    args = parser().parse_args(args)
 
     # Late imports
     from ligo.skymap import io

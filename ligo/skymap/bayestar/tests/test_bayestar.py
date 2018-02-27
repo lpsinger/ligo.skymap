@@ -3,7 +3,7 @@ from collections import namedtuple
 import lal
 import pytest
 
-from ..sky_map import localize
+from ..sky_map import localize, rasterize
 
 
 MockSingleEvent = namedtuple(
@@ -31,4 +31,5 @@ def test_localize_1_detector():
     test_single_event = MockSingleEvent('H1', 10, 0, 0, psd, None)
     test_event = MockEvent([test_single_event], template_args)
     skymap = localize(test_event)
+    rasterized = rasterize(skymap)
     # FIXME: work out what this should be

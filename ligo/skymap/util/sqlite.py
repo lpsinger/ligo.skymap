@@ -41,6 +41,28 @@ _openers = {'a': _open_a, 'r': _open_r, 'w': _open_w}
 
 
 def open(string, mode):
+    """Open an SQLite database with an `open`-style mode flag.
+
+    Parameters
+    ----------
+    string : str
+        Path of the SQLite database file
+    mode : {'r', 'w', 'a'}
+        Access mode: read only, clobber and overwrite, or modify in place.
+
+    Returns
+    -------
+    `sqlite3.Connection`
+
+    Raises
+    ------
+    ValueError
+        If the filename is invalid (e.g. ``/dev/stdin``)
+    KeyError
+        If the requested mode is invalid
+    OSError
+        If the database could not be opened in the specified mode
+    """
     if string in {'-', '/dev/stdin', '/dev/stdout'}:
         raise ValueError('Cannot open stdin/stdout as an SQLite database')
     try:
@@ -59,7 +81,7 @@ def get_filename(connection):
 
     Parameters
     ----------
-    `sqlite3.Connection`
+    connection : `sqlite3.Connection`
         The database connection
 
     Returns

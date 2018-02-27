@@ -25,8 +25,8 @@ import tempfile
 
 
 def rename(src, dst):
-    """Like os.rename(src, dst), but works across different devices because it
-    catches and handles EXDEV ('Invalid cross-device link') errors."""
+    """Like `os.rename`, but works across different devices because it
+    catches and handles ``EXDEV`` (``Invalid cross-device link``) errors."""
     try:
         os.rename(src, dst)
     except OSError as e:
@@ -45,7 +45,7 @@ def rename(src, dst):
 
 
 def rm_f(filename):
-    """Remove a file, or be silent if the file does not exist, like `rm -f`.
+    """Remove a file, or be silent if the file does not exist, like ``rm -f``.
 
     Example
     -------

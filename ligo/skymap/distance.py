@@ -395,8 +395,10 @@ r : `numpy.ndarray`
 Examples
 --------
 
+>>> from astropy.utils.misc import NumpyRNGContext
 >>> npix = 12
->>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
+>>> with NumpyRNGContext(0):
+...     prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
 >>> r_expected = np.linspace(0.4, 0.7)
 >>> cdf = marginal_cdf(r_expected, prob, distmu, distsigma, distnorm)
 >>> r = marginal_ppf(cdf, prob, distmu, distsigma, distnorm)

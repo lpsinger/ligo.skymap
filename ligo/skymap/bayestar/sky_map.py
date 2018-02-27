@@ -94,7 +94,7 @@ def localize_emcee(
             nburnin, niter, nthin
         )])
 
-    # Extract polar coordinates. For all likelihoodds, the first two parameters
+    # Extract polar coordinates. For all likelihoods, the first two parameters
     # are ra, sin(dec).
     theta = np.arccos(chain[:, 1])
     phi = chain[:, 0]

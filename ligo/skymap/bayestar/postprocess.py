@@ -325,6 +325,30 @@ def _vec2radec(vertices, degrees=False):
 
 
 def contour(m, levels, nest=False, degrees=False, simplify=True):
+    """Calculate contours from a HEALPix dataset.
+
+    Parameters
+    ----------
+    m : `numpy.ndarray`
+        The HEALPix dataset.
+    levels : list
+        The list of contour values.
+    nest : bool, default=False
+        Indicates whether the input sky map is in nested rather than
+        ring-indexed HEALPix coordinates (default: ring).
+    degrees : bool, default=False
+        Whether the contours are in degrees instead of radians.
+    simplify : bool, default=True
+        Whether to simplify the paths.
+
+    Returns
+    -------
+    list
+        A list with the same length as `levels`.
+        Each item is a list of disjoint polygons, of which each item is a
+        list of points, of which each is a list consisting of the right
+        ascension and declination.
+    """
     try:
         import networkx as nx
     except:

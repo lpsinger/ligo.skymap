@@ -395,7 +395,7 @@ def write_sky_map(filename, m, **kwargs):
     hdu = fits.table_to_hdu(m)
     hdu.header.extend(extra_header)
     hdulist = fits.HDUList([fits.PrimaryHDU(), hdu])
-    hdulist.writeto(filename, clobber=True)
+    hdulist.writeto(filename, overwrite=True)
 
 
 def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):

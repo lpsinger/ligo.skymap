@@ -9,6 +9,7 @@ import errno
 import gzip
 import re
 from ... import events
+from ....util import sqlite
 
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
@@ -84,6 +85,14 @@ def test_sqlite(tmpdir):
 
     source = events.open(dbfilename)
     ligolw_assertions(source)
+
+    with open(dbfilename, 'rb') as f:
+        source = events.open(f)
+        ligolw_assertions(source)
+
+    with sqlite.open(dbfilename, 'r') as db:
+        source = events.open(db)
+        ligolw_assertions(source)
 
 
 def test_gracedb():

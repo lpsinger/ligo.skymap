@@ -86,9 +86,11 @@ observing run 1 ("O1"). The default setting is likely to change in the future.\
 
 class LigoLWEventSource(OrderedDict, EventSource):
 
-    def __init__(self, f, psd_file=None, coinc_def=InspiralCoincDef, **kwargs):
+    def __init__(self, f, psd_file=None, coinc_def=InspiralCoincDef,
+                 fallbackpath=None, **kwargs):
         doc, filename = _read_xml(f)
-        self._fallbackpath = os.path.dirname(filename) if filename else None
+        self._fallbackpath = (
+            os.path.dirname(filename) if filename else fallbackpath)
         self._psds_for_file = memoized(self._psds_for_file)
         super(LigoLWEventSource, self).__init__(
             self._make_events(doc, psd_file, coinc_def))

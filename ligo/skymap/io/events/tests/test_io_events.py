@@ -8,7 +8,11 @@ import numpy as np
 import errno
 import gzip
 import re
+
+from glue.ligolw.utils import load_filename
+
 from ... import events
+from ..ligolw import _ContentHandler
 from ....util import sqlite
 
 
@@ -80,6 +84,15 @@ def test_ligolw():
     single_event, *_ = event.singles
     assert str(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
     assert repr(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
+
+
+def test_ligolw_document():
+    """Test reading events from LIGO-LW XML document."""
+    xmldoc = load_filename(
+        os.path.join(DATA_PATH, '2016_subset.xml.gz'),
+        contenthandler=_ContentHandler)
+    source = events.open(xmldoc, fallbackpath=DATA_PATH)
+    ligolw_assertions(source)
 
 
 def test_sqlite(tmpdir):

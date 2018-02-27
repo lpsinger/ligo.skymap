@@ -21,7 +21,7 @@ import os
 import sqlite3
 from subprocess import check_output
 
-from glue.ligolw.ligolw import LIGO_LW
+from glue.ligolw.ligolw import Element
 import h5py
 
 from . import hdf, ligolw, sqlite
@@ -69,7 +69,7 @@ def MagicEventSource(f, *args, **kwargs):
         opener = hdf.open
     elif isinstance(f, sqlite3.Connection):
         opener = sqlite.open
-    elif isinstance(f, LIGO_LW):
+    elif isinstance(f, Element):
         opener = ligolw.open
     else:
         filetype = _get_file_type(f)

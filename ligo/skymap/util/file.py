@@ -46,12 +46,21 @@ def rename(src, dst):
 
 
 def rm_f(filename):
-    """Remove a file, or be silent if the file does not exist, like `rm -f`."""
+    """Remove a file, or be silent if the file does not exist, like `rm -f`.
+
+    Example
+    -------
+
+    >>> with TemporaryDirectory() as d:
+    ...     rm_f('test')
+    ...     with open('test', 'w') as f:
+    ...         print('Hello world', file=f)
+    ...     rm_f('test')
+    """
     try:
         os.remove(filename)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
+    except FileNotFoundError:
+        pass
 
 
 @contextlib.contextmanager

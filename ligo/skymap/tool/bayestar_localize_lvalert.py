@@ -98,8 +98,7 @@ def main(args=None):
             'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))
 
     if opts.chain_dump:
-        chain_dump = opts.output.replace('.fits.gz', '').replace('.fits', '') + \
-            '.chain.npy'
+        chain_dump = opts.output.replace('.fits.gz', '.hdf5').replace('.fits', '.hdf5')
     else:
         chain_dump = None
 

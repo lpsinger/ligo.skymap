@@ -147,7 +147,7 @@ def main(args=None):
         for method in opts.method:
             log.info("%s:method '%s':computing sky map", coinc_event_id, method)
             if opts.chain_dump:
-                chain_dump = '%s.chain.npy' % int_coinc_event_id
+                chain_dump = '%s.hdf5' % int_coinc_event_id
             else:
                 chain_dump = None
             try:

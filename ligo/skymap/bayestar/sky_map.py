@@ -33,6 +33,7 @@ from astropy import units as u
 from .decorator import with_numpy_random_seed
 from .. import distance
 from . import filter
+from ..io.hdf5 import write_samples
 from ..io.fits import metadata_for_version_module
 from . import timing
 from .. import moc
@@ -116,10 +117,10 @@ def localize_emcee(
         )])
 
     # Optionally save posterior sample chain to file.
-    # Read back in with np.load().
     names = 'ra sin_dec distance cos_inclination twopsi time'.split()[:ndim]
     if chain_dump:
-        np.save(chain_dump, np.rec.fromrecords(chain, names=names))
+        write_samples(Table(rows=chain, names=names), chain_dump,
+                      path='/bayestar/posterior_samples', overwrite=True)
 
     # Extract polar coordinates. For all likelihoods, the first two parameters
     # are ra, sin(dec).

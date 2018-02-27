@@ -143,8 +143,8 @@ class HEALPixTree(object):
         samples : list, present if extra=True
             The list of samples contained in the node.
 
-        Example
-        -------
+        Examples
+        --------
 
         >>> ipix = np.arange(12, dtype=np.uint64) * HEALPIX_MACHINE_NSIDE**2
         >>> tree = HEALPixTree(ipix, max_samples_per_pixel=1, max_order=1)

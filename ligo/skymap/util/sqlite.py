@@ -94,8 +94,8 @@ def get_filename(connection):
     RuntimeError
         If more than one database is attached to the connection
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> from ..util.file import TemporaryDirectory
     >>> with TemporaryDirectory() as d:

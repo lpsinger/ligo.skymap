@@ -47,8 +47,8 @@ def rename(src, dst):
 def rm_f(filename):
     """Remove a file, or be silent if the file does not exist, like ``rm -f``.
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> with TemporaryDirectory() as d:
     ...     rm_f('test')

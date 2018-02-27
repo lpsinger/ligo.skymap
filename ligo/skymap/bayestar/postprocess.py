@@ -611,8 +611,8 @@ def get_detector_pair_axis(ifo1, ifo2, gmst):
     light_travel_time : float
         The light travel time from `ifo1` to `ifo2` in seconds.
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> ret = get_detector_pair_axis('H1', 'L1', 41758.384193753656)
     >>> print(*np.around(ret, 5))

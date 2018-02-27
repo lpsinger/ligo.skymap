@@ -29,8 +29,8 @@ __all__ = ('PPPlot',)
 class PPPlot(axes.Axes):
     """Construct a probability--probability (P--P) plot.
 
-    Example
-    -------
+    Examples
+    --------
 
     Example usage::
 

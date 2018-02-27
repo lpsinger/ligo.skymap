@@ -88,8 +88,8 @@ def gps_to_iso8601(gps_time):
     iso8601 : str
         ISO 8601 date string (with fractional seconds)
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> gps_to_iso8601(1000000000.01)
     '2011-09-14T01:46:25.010000'
@@ -134,8 +134,8 @@ def iso8601_to_gps(iso8601):
     gps : float
         Time in seconds since GPS epoch
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> gps_to_iso8601(1129501781.2)
     '2015-10-21T22:29:24.200000'
@@ -165,8 +165,8 @@ def gps_to_mjd(gps_time):
     mjd : float
         Modified Julian day
 
-    Example
-    -------
+    Examples
+    --------
 
     >>> '%.9f' % round(gps_to_mjd(1129501781.2), 9)
     '57316.937085648'
@@ -430,8 +430,8 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     moc: bool, optional
         If true, then preserve multi-order structure if present.
 
-    Example
-    -------
+    Examples
+    --------
 
     Test that we can read a legacy IDL-compatible file
     (https://bugs.ligo.org/redmine/issues/5168):

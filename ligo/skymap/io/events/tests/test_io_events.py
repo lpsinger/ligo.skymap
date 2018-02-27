@@ -69,6 +69,11 @@ def ligolw_assertions(source):
         'spin2z': 0.0}
 
 
+def test_unknown():
+    with pytest.raises(IOError, match='Unknown file format'):
+        events.open(__file__)
+
+
 def test_ligolw():
     """Test reading events from LIGO-LW XML files."""
     source = events.open(os.path.join(DATA_PATH, '2016_subset.xml.gz'))

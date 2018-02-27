@@ -250,11 +250,14 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...     Column(np.ones(10), name='foo', meta={'vary': FIXED}),
     ...     Column(np.arange(10), name='bar', meta={'vary': LINEAR}),
     ...     Column(np.arange(10) * np.pi, name='bat', meta={'vary': CIRCULAR}),
-    ...     Column(np.arange(10), name='baz', meta={'vary': OUTPUT})
+    ...     Column(np.arange(10), name='baz', meta={'vary': OUTPUT}),
+    ...     Column(np.ones(10), name='plugh'),
+    ...     Column(np.arange(10), name='xyzzy')
     ... ])
     >>> with TemporaryDirectory() as dir:
     ...     write_samples(
-    ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz')
+    ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
+    ...         metadata={'bat/baz': {'widget': 'shoephone'}})
     """
     # Copy the table so that we do not modify the original.
     table = table.copy()

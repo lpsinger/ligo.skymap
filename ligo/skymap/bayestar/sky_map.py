@@ -37,10 +37,18 @@ from .. import moc
 from .. import healpix_tree
 from .. import version
 from .. import core
+from ..core import log_likelihood_toa_phoa_snr
+from ..util.numpy import require_contiguous
 import lal
 import lalsimulation
 
 log = logging.getLogger('BAYESTAR')
+
+log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
+
+
+def toa_phoa_snr_log_likelihood(params, *args, **kwargs):
+    return log_likelihood_toa_phoa_snr(*params, *args, **kwargs)
 
 
 def toa_phoa_snr_log_prior(
@@ -325,7 +333,7 @@ def localize(
         skymap.meta['log_bsn'] = log_bsn
     elif method == 'toa_phoa_snr_mcmc':
         skymap = localize_emcee(
-            logl=core.log_likelihood_toa_phoa_snr,
+            logl=toa_phoa_snr_log_likelihood,
             loglargs=(gmst, sample_rate, toas, snr_series, responses, locations,
                 horizons),
             logp=toa_phoa_snr_log_prior,

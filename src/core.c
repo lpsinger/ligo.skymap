@@ -728,111 +728,56 @@ fail: /* Cleanup */
 };
 
 
-static PyObject *log_likelihood_toa_phoa_snr(
-    PyObject *NPY_UNUSED(module), PyObject *args, PyObject *kwargs)
+static void log_likelihood_toa_phoa_snr_loop(
+    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
-    /* Input arguments */
-    double ra;
-    double sin_dec;
-    double distance;
-    double u;
-    double twopsi;
-    double t;
-    double gmst;
-    unsigned int nifos;
-    unsigned long nsamples = 0;
-    double sample_rate;
-    PyObject *epochs_obj;
-    PyObject *snrs_obj;
-    PyObject *responses_obj;
-    PyObject *locations_obj;
-    PyObject *horizons_obj;
+    gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
+    const npy_intp n = dimensions[0],
+               nifos = dimensions[1],
+            nsamples = dimensions[2],
+                ndim = dimensions[3];
 
-    /* Names of arguments */
-    static const char *keywords[] = {"params", "gmst", "sample_rate", "epochs",
-        "snrs", "responses", "locations", "horizons", NULL};
+    assert(ndim == 3);
 
-    /* Parse arguments */
-    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "(dddddd)ddOOOOO",
-        keywords, &ra, &sin_dec, &distance, &u, &twopsi, &t, &gmst,
-        &sample_rate, &epochs_obj, &snrs_obj, &responses_obj, &locations_obj,
-        &horizons_obj)) return NULL;
-    #pragma GCC diagnostic pop
-
-    /* Determine number of detectors */
+    #pragma omp parallel for
+    for (npy_intp i = 0; i < n; i ++)
     {
-        Py_ssize_t n = PySequence_Length(epochs_obj);
-        if (n < 0) return NULL;
-        nifos = n;
+        const float complex *snrs_ptr = &args[9][i * steps[9]];
+        const float (*responses_ptr)[3][3] = &args[10][i * steps[10]];
+        const double (*locations_ptr)[3] = &args[11][i * steps[11]];
+
+        const float complex *snrs[nifos];
+        const float (*responses[nifos])[3];
+        const double *locations[nifos];
+
+        for (npy_intp i = 0; i < nifos; i ++)
+        {
+            snrs[i] = snrs_ptr + i * nsamples;
+            responses[i] = responses_ptr + i * nsamples;
+            locations[i] = locations_ptr + i * nsamples;
+        }
+
+        /* FIXME: args must be void ** to avoid alignment warnings */
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wcast-align"
+        *(double *) &args[13][i * steps[13]] = bayestar_log_likelihood_toa_phoa_snr(
+        *(double *) &args[0][i * steps[0]],
+        *(double *) &args[1][i * steps[1]],
+        *(double *) &args[2][i * steps[2]],
+        *(double *) &args[3][i * steps[3]],
+        *(double *) &args[4][i * steps[4]],
+        *(double *) &args[5][i * steps[5]],
+        *(double *) &args[6][i * steps[6]],
+        nifos, nsamples,
+        *(double *) &args[7][i * steps[7]],
+         (const double *) &args[8][i * steps[8]],
+         snrs, responses, locations,
+         (const double *) &args[12][i * steps[12]]);
+        #pragma GCC diagnostic pop
     }
 
-    /* Return value */
-    PyObject *out = NULL;
-
-    /* Numpy array objects */
-    PyArrayObject *epochs_npy = NULL, *snrs_npy[nifos], *responses_npy[nifos],
-        *locations_npy[nifos], *horizons_npy = NULL;
-    memset(snrs_npy, 0, sizeof(snrs_npy));
-    memset(responses_npy, 0, sizeof(responses_npy));
-    memset(locations_npy, 0, sizeof(locations_npy));
-
-    /* Arrays of pointers for inputs with multiple dimensions */
-    const float complex *snrs[nifos];
-    const float (*responses[nifos])[3];
-    const double *locations[nifos];
-
-    /* Gather C-aligned arrays from Numpy types */
-    INPUT_VECTOR_DOUBLE_NIFOS(epochs)
-    INPUT_LIST_OF_ARRAYS(snrs, NPY_CFLOAT, 1,
-        npy_intp dim = PyArray_DIM(npy, 0);
-        if (iifo == 0)
-            nsamples = dim;
-        else if ((unsigned long)dim != nsamples)
-        {
-            PyErr_SetString(PyExc_ValueError,
-                "expected elements of snrs to be vectors of the same length");
-            goto fail;
-        }
-    )
-    INPUT_LIST_OF_ARRAYS(responses, NPY_FLOAT, 2,
-        if (PyArray_DIM(npy, 0) != 3 || PyArray_DIM(npy, 1) != 3)
-        {
-            PyErr_SetString(PyExc_ValueError,
-                "expected elements of responses to be 3x3 arrays");
-            goto fail;
-        }
-    )
-    INPUT_LIST_OF_ARRAYS(locations, NPY_DOUBLE, 1,
-        if (PyArray_DIM(npy, 0) != 3)
-        {
-            PyErr_SetString(PyExc_ValueError,
-                "expected elements of locations to be vectors of length 3");
-            goto fail;
-        }
-    )
-    INPUT_VECTOR_DOUBLE_NIFOS(horizons)
-
-    /* Call function */
-    gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
-    const double ret = bayestar_log_likelihood_toa_phoa_snr(ra, sin_dec,
-        distance, u, twopsi, t, gmst, nifos, nsamples, sample_rate, epochs,
-        snrs, responses, locations, horizons);
     gsl_set_error_handler(old_handler);
-
-    /* Prepare output object */
-    out = PyFloat_FromDouble(ret);
-
-fail: /* Cleanup */
-    Py_XDECREF(epochs_npy);
-    FREE_INPUT_LIST_OF_ARRAYS(snrs)
-    FREE_INPUT_LIST_OF_ARRAYS(responses)
-    FREE_INPUT_LIST_OF_ARRAYS(locations)
-    Py_XDECREF(horizons_npy);
-    return out;
-};
+}
 
 
 static void signal_amplitude_model_loop(
@@ -886,7 +831,13 @@ static const PyUFuncGenericFunction
     uniq2nest_loops[] = {uniq2nest_loop},
     uniq2order_loops[] = {uniq2order_loop},
     uniq2pixarea_loops[] = {uniq2pixarea_loop},
+    log_likelihood_toa_phoa_snr_loops[] = {log_likelihood_toa_phoa_snr_loop},
     signal_amplitude_model_loops[] = {signal_amplitude_model_loop};
+
+static const char log_likelihood_toa_phoa_snr_types[] = {
+    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
+    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_CFLOAT, NPY_FLOAT, NPY_DOUBLE,
+    NPY_DOUBLE, NPY_DOUBLE};
 
 static const char volume_render_ufunc_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
@@ -910,8 +861,6 @@ static const char modulename[] = "core";
 static PyMethodDef methods[] = {
     {"rasterize", rasterize, METH_O, "fill me in"},
     {"toa_phoa_snr", (PyCFunction)sky_map_toa_phoa_snr,
-        METH_VARARGS | METH_KEYWORDS, "fill me in"},
-    {"log_likelihood_toa_phoa_snr", (PyCFunction)log_likelihood_toa_phoa_snr,
         METH_VARARGS | METH_KEYWORDS, "fill me in"},
     {"test", (PyCFunction)test,
         METH_NOARGS, "fill me in"},
@@ -949,6 +898,13 @@ PyMODINIT_FUNC PyInit_core(void)
     #else
     #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
     #endif
+
+    PyModule_AddObject(
+        module, "log_likelihood_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
+            log_likelihood_toa_phoa_snr_loops, no_ufunc_data,
+            log_likelihood_toa_phoa_snr_types, 1, 13, 1, PyUFunc_None,
+            "log_likelihood_toa_phoa_snr", NULL, 0,
+            "(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,ndim,ndim),(nifos,ndim),(nifos)->()"));
 
     PyModule_AddObject(
         module, "conditional_pdf", PyUFunc_FromFuncAndData(

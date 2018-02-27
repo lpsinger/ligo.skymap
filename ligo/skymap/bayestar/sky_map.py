@@ -116,26 +116,18 @@ def localize_emcee(
             nburnin, niter, nthin
         )])
 
+    # Transform back from sin_dec to dec
+    chain[:, 1] = np.arcsin(chain[:, 1])
+
     # Optionally save posterior sample chain to file.
-    names = 'ra sin_dec distance cos_inclination twopsi time'.split()[:ndim]
     if chain_dump:
+        names = 'ra dec distance cos_inclination twopsi time'.split()[:ndim]
         write_samples(Table(rows=chain, names=names), chain_dump,
                       path='/bayestar/posterior_samples', overwrite=True)
 
-    # Extract polar coordinates. For all likelihoods, the first two parameters
-    # are ra, sin(dec).
-    theta = np.arccos(chain[:, 1])
-    phi = chain[:, 0]
-    dist = chain[:, 2]
-
-    ra = phi
-    dec = 0.5 * np.pi - theta
-    pts = np.column_stack((ra, dec, dist))
     # Pass a random subset of 1000 points to the KDE, to save time.
-    pts = np.random.permutation(pts)[:1000, :]
+    pts = np.random.permutation(chain)[:1000, :3]
     ckde = Clustered2Plus1DSkyKDE(pts)
-
-    # Done!
     return ckde.as_healpix()
 
 

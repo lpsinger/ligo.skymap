@@ -55,7 +55,33 @@ def open(string, mode):
 
 
 def get_filename(connection):
-    """Get the name of the file associated with an SQLite connection"""
+    """Get the name of the file associated with an SQLite connection.
+
+    Parameters
+    ----------
+    `sqlite3.Connection`
+        The database connection
+
+    Returns
+    -------
+    str
+        The name of the file that contains the SQLite database
+
+    Raises
+    ------
+    RuntimeError
+        If more than one database is attached to the connection
+
+    Example
+    -------
+
+    >>> from ..util.file import TemporaryDirectory
+    >>> with TemporaryDirectory() as d:
+    ...     with sqlite3.connect(os.path.join(d, 'test.sqlite')) as db:
+    ...         print(get_filename(db))
+    ...
+    /.../test.sqlite
+    """
     result = connection.execute('pragma database_list').fetchall()
     try:
         (_, _, filename), = result

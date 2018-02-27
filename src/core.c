@@ -17,6 +17,8 @@
  * MA  02111-1307  USA
  */
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+
 #include <stddef.h>
 #include <chealpix.h>
 #include <gsl/gsl_errno.h>

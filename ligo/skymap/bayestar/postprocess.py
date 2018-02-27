@@ -36,138 +36,6 @@ from .. import distance
 from .. import moc
 from ..healpix_tree import *
 
-try:
-    pkg_resources.require('numpy >= 1.10.0')
-except pkg_resources.VersionConflict:
-    """FIXME: in numpy < 1.10.0, the digitize() function only works on 1D
-    arrays. Remove this workaround once we require numpy >= 1.10.0.
-
-    Example:
-    >>> digitize([3], np.arange(5))
-    array([4])
-    >>> digitize(3, np.arange(5))
-    array(4)
-    >>> digitize([[3]], np.arange(5))
-    array([[4]])
-    >>> digitize([], np.arange(5))
-    array([], dtype=int64)
-    >>> digitize([[], []], np.arange(5))
-    array([], shape=(2, 0), dtype=int64)
-    """
-    def digitize(x, *args, **kwargs):
-        x_flat = np.ravel(x)
-        x_shape = np.shape(x)
-        if len(x_flat) == 0:
-            return np.zeros(x_shape, dtype=np.intp)
-        else:
-            return np.digitize(x_flat, *args, **kwargs).reshape(x_shape)
-
-    # FIXME: np.cov() got the aweights argument in version 1.10.
-    # Until we require numpy >= 1.10, this is copied from the Numpy source.
-    def cov(m, y=None, rowvar=True, bias=False, ddof=None, fweights=None,
-            aweights=None):
-        from numpy import array, average, dot, sum
-        import warnings
-
-        # Check inputs
-        if ddof is not None and ddof != int(ddof):
-            raise ValueError(
-                "ddof must be integer")
-
-        # Handles complex arrays too
-        m = np.asarray(m)
-        if m.ndim > 2:
-            raise ValueError("m has more than 2 dimensions")
-
-        if y is None:
-            dtype = np.result_type(m, np.float64)
-        else:
-            y = np.asarray(y)
-            if y.ndim > 2:
-                raise ValueError("y has more than 2 dimensions")
-            dtype = np.result_type(m, y, np.float64)
-
-        X = array(m, ndmin=2, dtype=dtype)
-        if not rowvar and X.shape[0] != 1:
-            X = X.T
-        if X.shape[0] == 0:
-            return np.array([]).reshape(0, 0)
-        if y is not None:
-            y = array(y, copy=False, ndmin=2, dtype=dtype)
-            if not rowvar and y.shape[0] != 1:
-                y = y.T
-            X = np.concatenate((X, y), axis=0)
-
-        if ddof is None:
-            if bias == 0:
-                ddof = 1
-            else:
-                ddof = 0
-
-        # Get the product of frequencies and weights
-        w = None
-        if fweights is not None:
-            fweights = np.asarray(fweights, dtype=float)
-            if not np.all(fweights == np.around(fweights)):
-                raise TypeError(
-                    "fweights must be integer")
-            if fweights.ndim > 1:
-                raise RuntimeError(
-                    "cannot handle multidimensional fweights")
-            if fweights.shape[0] != X.shape[1]:
-                raise RuntimeError(
-                    "incompatible numbers of samples and fweights")
-            if any(fweights < 0):
-                raise ValueError(
-                    "fweights cannot be negative")
-            w = fweights
-        if aweights is not None:
-            aweights = np.asarray(aweights, dtype=float)
-            if aweights.ndim > 1:
-                raise RuntimeError(
-                    "cannot handle multidimensional aweights")
-            if aweights.shape[0] != X.shape[1]:
-                raise RuntimeError(
-                    "incompatible numbers of samples and aweights")
-            if any(aweights < 0):
-                raise ValueError(
-                    "aweights cannot be negative")
-            if w is None:
-                w = aweights
-            else:
-                w *= aweights
-
-        avg, w_sum = average(X, axis=1, weights=w, returned=True)
-        w_sum = w_sum[0]
-
-        # Determine the normalization
-        if w is None:
-            fact = X.shape[1] - ddof
-        elif ddof == 0:
-            fact = w_sum
-        elif aweights is None:
-            fact = w_sum - ddof
-        else:
-            fact = w_sum - ddof*sum(w*aweights)/w_sum
-
-        if fact <= 0:
-            warnings.warn("Degrees of freedom <= 0 for slice",
-                          RuntimeWarning, stacklevel=2)
-            fact = 0.0
-
-        X -= avg[:, None]
-        if w is None:
-            X_T = X.T
-        else:
-            X_T = (X*w).T
-        c = dot(X, X_T.conj())
-        c *= 1. / np.float64(fact)
-        return c.squeeze()
-else:
-    cov = np.cov
-    digitize = np.digitize
-
-
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.
     Based on <http://en.wikipedia.org/w/index.php?title=Flood_fill&oldid=566525693#Alternative_implementations>.
@@ -279,7 +147,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         true_phi = true_ra
         true_pix = hp.ang2pix(max_nside, true_theta, true_phi, nest=True)
         i = np.argsort(max_ipix)
-        true_idx = i[digitize(true_pix, max_ipix[i]) - 1]
+        true_idx = i[np.digitize(true_pix, max_ipix[i]) - 1]
 
     # Find the angular offset between the mode and true locations.
     mode_theta, mode_phi = hp.pix2ang(
@@ -320,7 +188,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         searched_prob = prob[true_idx]
 
     # Find the contours of the given credible levels.
-    contour_idxs = digitize(contours, prob) - 1
+    contour_idxs = np.digitize(contours, prob) - 1
 
     # For each of the given confidence levels, compute the area of the
     # smallest region containing that probability.
@@ -405,7 +273,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
             searched_vol = searched_prob_vol = np.nan
         else:
             i_radec = true_idx
-            i_dist = digitize(true_dist, r) - 1
+            i_dist = np.digitize(true_dist, r) - 1
             searched_prob_vol = P[i_radec, i_dist]
             searched_vol = V[i_radec, i_dist]
     else:
@@ -978,7 +846,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     prob = prob[keep]
 
     # Find covariance matrix.
-    c = cov(xy, aweights=prob, rowvar=False)
+    c = np.cov(xy, aweights=prob, rowvar=False)
 
     # If each point is n-sigma from the center, find n.
     nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))

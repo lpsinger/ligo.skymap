@@ -165,6 +165,9 @@ def test_detector_disabled():
         assert len(event.singles) == 1
         assert event.singles[0].detector == 'L1'
 
+    for event, base_event in zip(source.values(), base_source.values()):
+        assert event.template_args == base_event.template_args
+
     # Now test that exceptions are raised when they are called for.
     expected_message = ('Disabling detectors {H1, L1} would have no effect on '
                         'this event with detectors {H1 L1}')
@@ -179,12 +182,12 @@ def test_detector_disabled():
             event.singles
 
     # Now test that exceptions are raised when they are called for.
-    expected_message = ('Disabling detectors {V1} would have no effect on '
-                        'this event with detectors {H1 L1}')
+    expected_message = ('Disabling detectors {H1 L1 V1} would exclude all '
+                        'data for this event with detectors {H1 L1}')
     nonraising_source = events.detector_disabled.open(
-        base_source, ['V1'], raises=False)
+        base_source, ['H1', 'L1', 'V1'], raises=False)
     raising_source = events.detector_disabled.open(
-        base_source, ['V1'])
+        base_source, ['H1', 'L1', 'V1'])
     for event in nonraising_source.values():
         event.singles
     for event in raising_source.values():

@@ -21,9 +21,9 @@ __all__ = ('add_newdoc_ufunc', 'require_contiguous')
 
 
 def add_newdoc_ufunc(func, doc):
-    # The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
-    # docstring if it is `NULL`. This workaround avoids an exception
-    # when the user tries to `reload()` this module.
+    """The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
+    docstring if it is `NULL`. This workaround avoids an exception when the
+    user tries to `reload()` this module."""
     try:
         np.lib.add_newdoc_ufunc(func, doc)
     except ValueError as e:
@@ -33,6 +33,8 @@ def add_newdoc_ufunc(func, doc):
 
 
 def require_contiguous(func):
+    """Wrap a Numpy ufunc to guarantee that all of its inputs are
+    C-contiguous arrays."""
     def wrapper(*args, **kwargs):
         n = func.nin
         args = [arg if i >= n or np.isscalar(arg)

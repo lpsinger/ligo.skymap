@@ -336,8 +336,8 @@ def localize(
             logp=toa_phoa_snr_log_prior,
             logpargs=(min_distance, max_distance, prior_distance_power,
                 max_abs_t),
-            xmin=[0, -1, min_distance, -1, 0, 0],
-            xmax=[2*np.pi, 1, max_distance, 1, 2*np.pi, 2 * max_abs_t],
+            xmin=[0, -1, min_distance, -1, 0, -max_abs_t],
+            xmax=[2*np.pi, 1, max_distance, 1, 2*np.pi, max_abs_t],
             nside=nside, chain_dump=chain_dump)
     else:
         raise ValueError('Unrecognized method: %s' % method)

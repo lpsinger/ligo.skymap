@@ -70,11 +70,6 @@ from astropy.table import Table
 from .. import moc
 from ..util.file import rm_f
 
-# FIXME: Remove this after all Astropy monkeypatches are obsolete.
-import astropy
-import distutils.version
-astropy_version = distutils.version.LooseVersion(astropy.__version__)
-
 __all__ = ("read_sky_map", "write_sky_map")
 
 
@@ -397,34 +392,10 @@ def write_sky_map(filename, m, **kwargs):
             if not col.unit:
                 col.unit = default_unit
 
-    if astropy_version >= '1.3.1':
-        hdu = fits.table_to_hdu(m)
-        hdu.header.extend(extra_header)
-        hdulist = fits.HDUList([fits.PrimaryHDU(), hdu])
-        hdulist.writeto(filename, clobber=True)
-    else:
-        # FIXME: This code path works around a number of issues with older
-        # versions of Astropy. Remove it once we drop support for
-        # astropy < 1.3.1.
-        #
-        # astropy.io.fits.table_to_hdu was added in astropy 1.2.
-        # We must currently support astropy >= 1.1.1 on the LIGO Data Grid's
-        # Scientific Linux 7 computing clusters.
-        #
-        # With some old versions of astropy that we still have to
-        # support, the astropy.table.Table.write method did not support the
-        # clobber argument. So we have to manually delete the file first so
-        # that astropy.io.fits does not complain that the file exists.
-        #
-        # Also this works around https://github.com/astropy/astropy/pull/5720,
-        # which was fixed in astropy 1.3.1.
-        rm_f(filename)
-        m.write(filename, format='fits')
-
-        hdulist = fits.open(filename)
-        _, hdu = hdulist
-        hdu.header.extend(extra_header)
-        hdulist.writeto(filename, clobber=True)
+    hdu = fits.table_to_hdu(m)
+    hdu.header.extend(extra_header)
+    hdulist = fits.HDUList([fits.PrimaryHDU(), hdu])
+    hdulist.writeto(filename, clobber=True)
 
 
 def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):

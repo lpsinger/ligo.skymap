@@ -57,11 +57,36 @@ def open(string, mode):
     Raises
     ------
     ValueError
-        If the filename is invalid (e.g. ``/dev/stdin``)
-    KeyError
-        If the requested mode is invalid
+        If the filename is invalid (e.g. ``/dev/stdin``), or if the requested
+        mode is invalid
     OSError
         If the database could not be opened in the specified mode
+
+    Examples
+    --------
+
+    >>> from ..util.file import TemporaryDirectory
+    >>> with TemporaryDirectory() as d:
+    ...     open(os.path.join(d, 'test.sqlite'), 'w')
+    ...
+    <sqlite3.Connection object at 0x...>
+
+    >>> with TemporaryDirectory() as d:
+    ...     open(os.path.join(d, 'test.sqlite'), 'r')
+    ...
+    Traceback (most recent call last):
+      ...
+    OSError: Failed to open database ...
+
+    >>> open('/dev/stdin', 'r')
+    Traceback (most recent call last):
+      ...
+    ValueError: Cannot open stdin/stdout as an SQLite database
+
+    >>> open('test.sqlite', 'x')
+    Traceback (most recent call last):
+      ...
+    ValueError: Invalid mode "x". Must be one of "arw".
     """
     if string in {'-', '/dev/stdin', '/dev/stdout'}:
         raise ValueError('Cannot open stdin/stdout as an SQLite database')
@@ -69,7 +94,7 @@ def open(string, mode):
         opener = _openers[mode]
     except KeyError:
         raise ValueError('Invalid mode "{}". Must be one of "{}".'.format(
-            mode, ''.join(_openers.keys())))
+            mode, ''.join(sorted(_openers.keys()))))
     try:
         return opener(string)
     except (OSError, sqlite3.Error) as e:
@@ -103,6 +128,18 @@ def get_filename(connection):
     ...         print(get_filename(db))
     ...
     /.../test.sqlite
+
+    >>> from ..util.file import TemporaryDirectory
+    >>> with TemporaryDirectory() as d:
+    ...     with sqlite3.connect(os.path.join(d, 'test1.sqlite')) as db1, \\
+    ...          sqlite3.connect(os.path.join(d, 'test2.sqlite')) as db2:
+    ...         filename = get_filename(db1)
+    ...         db2.execute('ATTACH DATABASE "{}" AS db2'.format(filename))
+    ...         print(get_filename(db2))
+    ...
+    Traceback (most recent call last):
+      ...
+    RuntimeError: Expected exactly one attached database
     """
     result = connection.execute('pragma database_list').fetchall()
     try:

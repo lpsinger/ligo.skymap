@@ -272,6 +272,26 @@ def test_hdf(tmpdir):
                         (np.zeros(5), np.arange(5)**2)) * np.e**2
                     psd_group[str(j)].attrs['delta_f'] = 2.0
 
+    with pytest.raises(
+            ValueError,
+            match='You must provide exactly one coinc file.'):
+        source = events.open(*filenames[1:])
+
+    with pytest.raises(
+            ValueError,
+            match='You must provide exactly one template bank file.'):
+        source = events.open(*filenames[:1])
+
+    with pytest.raises(
+            ValueError,
+            match='You must provide PSD files.'):
+        source = events.open(*filenames[:2])
+
+    with pytest.raises(
+            ValueError,
+            match='You must provide trigger files.'):
+        source = events.open(*filenames[:2], filenames[3], filenames[5])
+
     # Test reading from filenames
     source = events.open(*filenames)
     assert len(source) == 5

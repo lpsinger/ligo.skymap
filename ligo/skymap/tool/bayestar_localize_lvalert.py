@@ -66,7 +66,7 @@ def parser():
 
 
 def main():
-    opts = parser.parse_args()
+    opts = parser().parse_args()
 
     import logging
     import os

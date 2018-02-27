@@ -31,8 +31,8 @@ def parser():
     # Only present for backward compatibility with --samples syntax
     parser.add_argument('--samples', action='store_false', dest='_ignored',
                         help=SUPPRESS)
-    parser.add_argument('--outdir', '-o', default='.', type=DirType(),
-                        help='output directory')
+    parser.add_argument('--outdir', '-o', default='.',
+                        type=DirType(create=True), help='output directory')
     parser.add_argument('--fitsoutname', default='skymap.fits.gz',
                         metavar='SKYMAP.fits[.gz]',
                         help='filename for the FITS file')

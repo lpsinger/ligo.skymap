@@ -63,7 +63,7 @@ def localize_emcee(
         nside=-1, chain_dump=None):
     # Set up sampler
     import emcee
-    from sky_area.sky_area_clustering import Clustered3DKDEPosterior
+    from ..kde import Clustered2Plus1DSkyKDE
     ntemps = 20
     nwalkers = 100
     nburnin = 1000
@@ -97,7 +97,7 @@ def localize_emcee(
     pts = np.column_stack((ra, dec, dist))
     # Pass a random subset of 1000 points to the KDE, to save time.
     pts = np.random.permutation(pts)[:1000, :]
-    ckde = Clustered3DKDEPosterior(pts)
+    ckde = Clustered2Plus1DSkyKDE(pts)
     _, nside, ipix = zip(*ckde._bayestar_adaptive_grid())
     uniq = (4 * np.square(nside) + ipix).astype(np.uint64)
 

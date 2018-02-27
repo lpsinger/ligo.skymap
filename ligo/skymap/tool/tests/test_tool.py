@@ -1,13 +1,12 @@
-from os.path import dirname
-from importlib import import_module
-from pkgutil import iter_modules
-
+import pkg_resources
 import pytest
 
-from ... import tool
+dist = 'ligo.skymap'
+group = 'console_scripts'
 
-entry_points = [getattr(import_module('.' + m.name, tool.__name__), 'main')
-                for m in iter_modules([dirname(tool.__file__)]) if not m.ispkg]
+entry_points = [
+    pkg_resources.load_entry_point(dist, group, name)
+    for name in pkg_resources.get_entry_map(dist, group).keys()]
 
 
 @pytest.mark.parametrize('entry_point', entry_points)

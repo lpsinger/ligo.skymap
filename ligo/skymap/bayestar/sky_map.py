@@ -117,6 +117,7 @@ def localize_emcee(
 
     # Optionally save posterior sample chain to file.
     # Read back in with np.load().
+    names = 'ra sin_dec distance cos_inclination twopsi time'.split()[:ndim]
     if chain_dump:
         np.save(chain_dump, np.rec.fromrecords(chain, names=names))
 

@@ -162,12 +162,15 @@ static void parameters_to_moments_loop(
 static void volume_render_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
+    if (dimensions[1] != 3)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
+        return;
+    }
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const long long nside = npix2nside64(dimensions[2]);
-
-    /* Assert that rotation matrix is 3x3 */
-    assert(dimensions[1] == 3);
 
     /* FIXME: Check that array arguments are stored contiguously */
 
@@ -204,12 +207,16 @@ static void volume_render_loop(
 static void marginal_pdf_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
+    /* Assert that array arguments are stored contiguously */
+    if (steps[6] != sizeof(double))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
+        return;
+    }
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
-
-    /* Assert that array arguments are stored contiguously */
-    assert(steps[6] == sizeof(double));
 
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
@@ -234,12 +241,16 @@ static void marginal_pdf_loop(
 static void marginal_cdf_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
+    /* Assert that array arguments are stored contiguously */
+    if (steps[6] != sizeof(double))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
+        return;
+    }
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
-
-    /* Assert that array arguments are stored contiguously */
-    assert(steps[6] == sizeof(double));
 
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
@@ -264,12 +275,16 @@ static void marginal_cdf_loop(
 static void marginal_ppf_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
+    /* Assert that array arguments are stored contiguously */
+    if (steps[6] != sizeof(double))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
+        return;
+    }
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
-
-    /* Assert that array arguments are stored contiguously */
-    assert(steps[6] == sizeof(double));
 
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
@@ -731,13 +746,18 @@ fail: /* Cleanup */
 static void log_likelihood_toa_phoa_snr_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
-    gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0],
                nifos = dimensions[1],
             nsamples = dimensions[2],
                 ndim = dimensions[3];
 
-    assert(ndim == 3);
+    if (ndim != 3)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
+        return;
+    }
+
+    gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
 
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)

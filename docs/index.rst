@@ -7,13 +7,13 @@ Scripts
 .. toctree::
    :maxdepth: 1
 
-   bayestar-localize-coincs
-   bayestar-localize-lvalert
-   ligo-skymap-aggregate-found-injections
-   ligo-skymap-from-samples
-   ligo-skymap-plot-found-injections
-   ligo-skymap-plot-volume
-   ligo-skymap-plot
+   ligo/skymap/tool/bayestar_localize_coincs
+   ligo/skymap/tool/bayestar_localize_lvalert
+   ligo/skymap/tool/ligo_skymap_aggregate_found_injections
+   ligo/skymap/tool/ligo_skymap_from_samples
+   ligo/skymap/tool/ligo_skymap_plot
+   ligo/skymap/tool/ligo_skymap_plot_found_injections
+   ligo/skymap/tool/ligo_skymap_plot_volume
 
 Modules
 -------
@@ -21,16 +21,16 @@ Modules
 .. toctree::
    :maxdepth: 1
 
-   command
-   distance
-   eigenframe
-   events
-   file
-   numpy
-   sqlite
-   fits
-   healpix_tree
-   hdf5
-   kde
-   moc
-   postprocess
+   ligo/skymap/bayestar/postprocess
+   ligo/skymap/command
+   ligo/skymap/distance
+   ligo/skymap/eigenframe
+   ligo/skymap/healpix_tree
+   ligo/skymap/io/events
+   ligo/skymap/io/fits
+   ligo/skymap/io/hdf5
+   ligo/skymap/kde
+   ligo/skymap/moc
+   ligo/skymap/util/file
+   ligo/skymap/util/numpy
+   ligo/skymap/util/sqlite

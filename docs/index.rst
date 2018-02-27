@@ -25,6 +25,7 @@ Modules
    distance
    eigenframe
    events
+   file
    fits
    healpix_tree
    hdf5

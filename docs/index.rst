@@ -26,6 +26,7 @@ Modules
    eigenframe
    events
    file
+   sqlite
    fits
    healpix_tree
    hdf5

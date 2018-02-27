@@ -29,6 +29,7 @@ def test_pp_plot_steps(rcparams):
     ax.add_diagonal()
     ax.add_lightning(len(p_values), 20, drawstyle='steps')
     ax.add_series(p_values, drawstyle='steps')
+    ax.add_worst(p_values)
     return fig
 
 
@@ -41,6 +42,8 @@ def test_pp_plot_lines(rcparams):
     ax.add_lightning(len(p_values), 20, drawstyle='lines')
     ax.add_series(p_values, drawstyle='lines')
     ax.add_diagonal()
+    ax.add_series(p_values)
+    ax.add_worst(p_values)
     return fig
 
 
@@ -52,6 +55,7 @@ def test_pp_plot_default(rcparams):
     ax.add_diagonal()
     ax.add_lightning(len(p_values), 20)
     ax.add_series(p_values)
+    ax.add_worst(p_values)
     return fig
 
 

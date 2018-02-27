@@ -22,7 +22,6 @@ import errno
 import os
 import shutil
 import tempfile
-_open = open
 
 
 def rename(src, dst):

@@ -19,6 +19,7 @@
 Convenience function to produce a sky map from LIGO-LW rows.
 """
 
+from collections.abc import Iterator, Sized
 import inspect
 import itertools
 import logging
@@ -26,6 +27,7 @@ import os
 import sys
 import numpy as np
 import healpy as hp
+from astropy.utils.console import ProgressBar
 from astropy.table import Column, Table
 from astropy import units as u
 from .decorator import with_numpy_random_seed
@@ -45,6 +47,20 @@ import lalsimulation
 log = logging.getLogger('BAYESTAR')
 
 log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
+
+
+class SizedIterator(Iterator, Sized):
+    """Wrapper class to give an explicit length to an iterable."""
+
+    def __init__(self, iterable, length):
+        self.__iterable = iterable
+        self.__length = length
+
+    def __next__(self):
+        return next(self.__iterable)
+
+    def __len__(self):
+        return self.__length
 
 
 def toa_phoa_snr_log_likelihood(params, *args, **kwargs):
@@ -90,7 +106,12 @@ def localize_emcee(
     chain = np.vstack([
         p[0, :, :].copy() for p, _, _
         in itertools.islice(
-            sampler.sample(p0, iterations=niter, storechain=False),
+            ProgressBar(
+                SizedIterator(
+                    sampler.sample(p0, iterations=niter, storechain=False),
+                    niter
+                )
+            ),
             nburnin, niter, nthin
         )])
 

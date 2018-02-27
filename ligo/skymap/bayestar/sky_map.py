@@ -115,6 +115,11 @@ def localize_emcee(
             nburnin, niter, nthin
         )])
 
+    # Optionally save posterior sample chain to file.
+    # Read back in with np.load().
+    if chain_dump:
+        np.save(chain_dump, np.rec.fromrecords(chain, names=names))
+
     # Extract polar coordinates. For all likelihoods, the first two parameters
     # are ra, sin(dec).
     theta = np.arccos(chain[:, 1])
@@ -127,32 +132,9 @@ def localize_emcee(
     # Pass a random subset of 1000 points to the KDE, to save time.
     pts = np.random.permutation(pts)[:1000, :]
     ckde = Clustered2Plus1DSkyKDE(pts)
-    _, nside, ipix = zip(*ckde._bayestar_adaptive_grid())
-    uniq = (4 * np.square(nside) + ipix).astype(np.uint64)
-
-    pts = np.transpose(hp.pix2vec(nside, ipix, nest=True))
-
-    datasets = [kde.dataset for kde in ckde.kdes]
-    inverse_covariances = [kde.inv_cov for kde in ckde.kdes]
-    weights = ckde.weights
-
-    # Compute marginal probability, conditional mean, and conditional
-    # standard deviation in all directions.
-    probdensity, distmean, diststd = np.transpose([distance.cartesian_kde_to_moments(
-        pt, datasets, inverse_covariances, weights)
-        for pt in pts])
-
-    # Optionally save posterior sample chain to file.
-    # Read back in with np.load().
-    if chain_dump:
-        # Undo numerical conditioning of distances; convert back to Mpc
-        names = 'ra sin_dec distance cos_inclination twopsi time'.split()[:ndim]
-        np.save(chain_dump, np.rec.fromrecords(chain, names=names))
 
     # Done!
-    return Table(
-        [uniq, probdensity, distmean, diststd],
-        names='UNIQ PROBDENSITY DISTMEAN DISTSTD'.split())
+    return ckde.as_healpix()
 
 
 def localize(
@@ -367,10 +349,15 @@ def localize(
         raise ValueError('Unrecognized method: %s' % method)
 
     # Convert distance moments to parameters
-    distmean = skymap.columns.pop('DISTMEAN')
-    diststd = skymap.columns.pop('DISTSTD')
-    skymap['DISTMU'], skymap['DISTSIGMA'], skymap['DISTNORM'] = \
-        distance.moments_to_parameters(distmean, diststd)
+    try:
+        distmean = skymap.columns.pop('DISTMEAN')
+        diststd = skymap.columns.pop('DISTSTD')
+    except:
+        distmean, diststd, _ = distance.parameters_to_moments(
+            skymap['DISTMU'], skymap['DISTSIGMA'])
+    else:
+        skymap['DISTMU'], skymap['DISTSIGMA'], skymap['DISTNORM'] = \
+            distance.moments_to_parameters(distmean, diststd)
 
     # Add marginal distance moments
     good = np.isfinite(distmean) & np.isfinite(diststd)

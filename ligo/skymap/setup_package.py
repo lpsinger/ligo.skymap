@@ -5,12 +5,19 @@ def get_extensions():
     pkg_config_packages = ['gsl']
 
     sources = [
-        'src/cubic_interp.c',
-        'src/cubic_interp_test.c',
-        'src/bayestar_moc.c',
-        'src/core.c',
+        'src/bayestar_cosmology.h',
         'src/bayestar_distance.c',
-        'src/bayestar_sky_map.c']
+        'src/bayestar_distance.h',
+        'src/bayestar_moc.c',
+        'src/bayestar_moc.h',
+        'src/bayestar_sky_map.c',
+        'src/bayestar_sky_map.h',
+        'src/core.c',
+        'src/cubic_interp.c',
+        'src/cubic_interp.h',
+        'src/cubic_interp_test.c',
+        'src/omp_interruptible.h',
+    ]
 
     include_dirs = ['cextern/lalsuite', 'cextern/numpy', 'numpy']
 

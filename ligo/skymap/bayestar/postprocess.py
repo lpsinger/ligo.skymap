@@ -354,14 +354,12 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
     A very simply example sky map...
 
-    >>> nside = 1
+    >>> nside = 32
     >>> npix = hp.nside2npix(nside)
     >>> ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     >>> m = dec
-    >>> paths = contour(m, [10, 20, 30], degrees=True)
-    >>> [[[[int(np.round(a)) for a in b] for b in c] for c in d]
-    ...     for d in paths]  # round for shorter output
-    [[[[45, 0], [90, 42], [135, 0], [180, 42], [225, 0], [270, 42], [315, 0], [0, 42], [45, 0]]], [[[45, 0], [90, 42], [135, 0], [180, 42], [225, 0], [270, 42], [315, 0], [0, 42], [45, 0]]], [[[45, 0], [90, 42], [135, 0], [180, 42], [225, 0], [270, 42], [315, 0], [0, 42], [45, 0]]]]
+    >>> contour(m, [10, 20, 30], degrees=True)
+    [[[[..., ...], ...], ...], ...]
 
     Output above wa rounded for shorter output.
     """

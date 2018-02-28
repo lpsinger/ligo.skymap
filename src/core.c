@@ -762,19 +762,18 @@ static void log_likelihood_toa_phoa_snr_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        const float complex *snrs_ptr = &args[9][i * steps[9]];
-        const float (*responses_ptr)[3][3] = &args[10][i * steps[10]];
-        const double (*locations_ptr)[3] = &args[11][i * steps[11]];
-
         const float complex *snrs[nifos];
         const float (*responses[nifos])[3];
         const double *locations[nifos];
 
-        for (npy_intp i = 0; i < nifos; i ++)
+        for (npy_intp j = 0; j < nifos; j ++)
         {
-            snrs[i] = snrs_ptr + i * nsamples;
-            responses[i] = responses_ptr + i * nsamples;
-            locations[i] = locations_ptr + i * nsamples;
+            snrs[j] = (const float complex *)
+                &args[9][i * steps[9] + j * steps[15]];
+            responses[j] = (const float (*)[3])
+                &args[10][i * steps[10] + j * steps[17]];
+            locations[j] = (const double *)
+                &args[11][i * steps[11] + j * steps[20]];
         }
 
         /* FIXME: args must be void ** to avoid alignment warnings */

@@ -56,8 +56,6 @@ sdist:
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl
-    # FIXME: shell workers don't clean up after themselves!
-    - rm -rf dist
   artifacts:
     paths:
       - wheelhouse
@@ -69,10 +67,10 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
-wheel:cp35-cp35m-macosx:
-  <<: *wheel-macos
-wheel:cp36-cp36m-macosx:
-  <<: *wheel-macos
+# wheel:cp35-cp35m-macosx:
+#   <<: *wheel-macos
+# wheel:cp36-cp36m-macosx:
+#   <<: *wheel-macos
 
 test:
   stage: build

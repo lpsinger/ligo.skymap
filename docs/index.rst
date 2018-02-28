@@ -31,7 +31,10 @@ Modules
    ligo/skymap/io/hdf5
    ligo/skymap/kde
    ligo/skymap/moc
+   ligo/skymap/plot/allsky
+   ligo/skymap/plot/backdrop
    ligo/skymap/plot/marker
+   ligo/skymap/plot/pp
    ligo/skymap/util/file
    ligo/skymap/util/numpy
    ligo/skymap/util/sqlite

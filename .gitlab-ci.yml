@@ -5,7 +5,7 @@ image: containers.ligo.org/leo-singer/ligo.skymap
 
 stages:
   - sdist
-  - test
+  - build
   - deploy
 
 sdist:
@@ -17,7 +17,37 @@ sdist:
       - dist/
     expire_in: 20 minutes
 
+# Build receipe for standalone wheels on Linux
+.wheel:manylinux1: &wheel-manylinux1
+  # This container is derived from the official manylinux image provided by
+  # python.org (see PEP 513), and includes all of the LALSuite
+  # build-dependencies.
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
+  stage: build
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - tar --strip-components 1 -xf dist/*
+  script:
+    # Build and install LALSuite
+    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*:\(.*\)-manylinux1/\1/')
+    - ${PYPREFIX}/bin/python setup.py bdist_wheel
+    - auditwheel repair dist/*
+  artifacts:
+    paths:
+      - wheelhouse
+    expire_in: 5 minutes
+
+# Build wheels for all supported platforms
+nightly:wheel:cp34-cp34m-manylinux1:
+  <<: *nightly-wheel-manylinux1
+nightly:wheel:cp35-cp35m-manylinux1:
+  <<: *nightly-wheel-manylinux1
+nightly:wheel:cp36-cp36m-manylinux1:
+  <<: *nightly-wheel-manylinux1
+
 test:
+  stage: build
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
@@ -71,6 +101,8 @@ pages:
     - mkdir -p public/cov
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
+    - mv dist public/dist
+    - mv wheelhouse/* public/dist
   artifacts:
     paths:
       - public

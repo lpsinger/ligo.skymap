@@ -67,10 +67,10 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
-wheel:cp35-cp35m-macosx:
-  <<: *wheel-macos
-wheel:cp36-cp36m-macosx:
-  <<: *wheel-macos
+# wheel:cp35-cp35m-macosx:
+#   <<: *wheel-macos
+# wheel:cp36-cp36m-macosx:
+#   <<: *wheel-macos
 
 test:
   stage: build

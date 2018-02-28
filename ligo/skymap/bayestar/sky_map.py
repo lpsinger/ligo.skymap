@@ -49,52 +49,43 @@ log = logging.getLogger('BAYESTAR')
 log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
 
 
-def toa_phoa_snr_log_likelihood(params, *args, **kwargs):
-    return log_likelihood_toa_phoa_snr(*params, *args, **kwargs)
-
-
-def toa_phoa_snr_log_prior(
-        params, min_distance, max_distance, prior_distance_power, max_abs_t):
-    ra, sin_dec, distance, u, twopsi, t = params
-    return (
-        prior_distance_power * np.log(distance)
-        if 0 <= ra < 2*np.pi
-        and -1 <= sin_dec <= 1
-        and min_distance <= distance <= max_distance
-        and -1 <= u <= 1
-        and 0 <= twopsi < 2*np.pi
-        and 0 <= t <= 2*max_abs_t
-        else -np.inf)
+def log_post(params, min_distance, max_distance, prior_distance_power,
+             cosmology, gmst, sample_rate, toas, snr_series, responses,
+             locations, horizons, xmin, xmax):
+    if cosmology:
+        raise NotImplementedError('Cosmology not yet implemented for MCMC mode')
+    _, _, distance, _, _, _ = params.T
+    good = np.logical_and.reduce((xmin <= params) & (params <= xmax), axis=-1)
+    out = np.empty_like(distance)
+    out[~good] = -np.inf
+    out[good] = (prior_distance_power * np.log(distance[good]) +
+        log_likelihood_toa_phoa_snr(*params[good].T, gmst, sample_rate, toas,                                       snr_series, responses, locations, horizons))
+    return out
 
 
 @with_numpy_random_seed
 def localize_emcee(
-        logl, loglargs, logp, logpargs, xmin, xmax,
+        args, xmin, xmax,
         nside=-1, chain_dump=None):
     # Set up sampler
-    import emcee
+    from emcee import EnsembleSampler
     from ..kde import Clustered2Plus1DSkyKDE
-    ntemps = 20
-    nwalkers = 100
+    nwalkers = 20
     nburnin = 1000
     nthin = 10
     niter = 10000 + nburnin
     ndim = len(xmin)
-    sampler = emcee.PTSampler(
-        ntemps=ntemps, nwalkers=nwalkers, dim=ndim, logl=logl, logp=logp,
-        loglargs=loglargs, logpargs=logpargs)
+    sampler = EnsembleSampler(
+        nwalkers, ndim, log_post, args=args, kwargs=dict(xmin=xmin, xmax=xmax),
+        vectorize=True)
 
     # Draw initial state from multivariate uniform distribution
-    p0 = np.random.uniform(xmin, xmax, (ntemps, nwalkers, ndim))
+    p0 = np.random.uniform(xmin, xmax, (nwalkers, ndim))
 
-    # Collect samples. The .copy() is important because PTSampler.sample()
-    # reuses p on every iteration.
-    chain = np.vstack([
-        p[0, :, :].copy() for p, _, _
-        in itertools.islice(
-            sampler.sample(p0, iterations=niter, storechain=False),
-            nburnin, niter, nthin
-        )])
+    # Gather samples
+    sampler.run_mcmc(p0, niter, progress=True)
+    chain = sampler.get_chain(flat=True, thin=nthin, discard=nburnin)
+    del sampler
 
     # Transform back from sin_dec to dec
     chain[:, 1] = np.arcsin(chain[:, 1])
@@ -301,21 +292,16 @@ def localize(
 
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')
-    if method == 'toa_phoa_snr':
-        skymap, log_bci, log_bsn = core.toa_phoa_snr(
-            min_distance, max_distance, prior_distance_power, cosmology, gmst,
+    args = (min_distance, max_distance, prior_distance_power, cosmology, gmst,
             sample_rate, toas, snr_series, responses, locations, horizons)
+    if method == 'toa_phoa_snr':
+        skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
         skymap = Table(skymap)
         skymap.meta['log_bci'] = log_bci
         skymap.meta['log_bsn'] = log_bsn
     elif method == 'toa_phoa_snr_mcmc':
         skymap = localize_emcee(
-            logl=toa_phoa_snr_log_likelihood,
-            loglargs=(gmst, sample_rate, toas, snr_series, responses, locations,
-                horizons),
-            logp=toa_phoa_snr_log_prior,
-            logpargs=(min_distance, max_distance, prior_distance_power,
-                max_abs_t),
+            args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
             xmax=[2*np.pi, 1, max_distance, 1, 2*np.pi, 2*max_abs_t],
             nside=nside, chain_dump=chain_dump)

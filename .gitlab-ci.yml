@@ -39,8 +39,8 @@ sdist:
     expire_in: 5 minutes
 
 # Build wheels for all supported platforms
-# wheel:cp34-cp34m-manylinux1:
-#   <<: *wheel-manylinux1
+wheel:cp34-cp34m-manylinux1:
+  <<: *wheel-manylinux1
 # wheel:cp35-cp35m-manylinux1:
 #   <<: *wheel-manylinux1
 # wheel:cp36-cp36m-manylinux1:

@@ -15,7 +15,7 @@ sdist:
   artifacts:
     paths:
       - dist/
-  expire_in: 20 minutes
+    expire_in: 20 minutes
 
 test:
   variables:

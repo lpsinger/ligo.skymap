@@ -24,12 +24,12 @@ import numpy as np
 __all__ = ('earth', 'reticle')
 
 
-"""The Earth symbol (circle and cross)."""
 earth = Path.unit_circle()
 verts = np.concatenate([earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]]])
 codes = np.concatenate([earth.codes, [Path.MOVETO, Path.LINETO] * 2])
 earth = Path(verts, codes)
 del verts, codes
+earth.__doc__ = """The Earth symbol (circle and cross)."""
 
 
 def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):

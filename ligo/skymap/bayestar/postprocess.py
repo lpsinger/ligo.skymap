@@ -359,7 +359,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     >>> ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     >>> m = dec
     >>> paths = contour(m, [10, 20, 30], degrees=True)
-    >>> [[[[np.around(a, 1) for a in b] or b in c] for c in d] for d in paths]
+    >>> [[[[np.around(a, 1) for a in b] for b in c] for c in d] for d in paths]
     [[[[45.0, 0.0], [90.0, 41.8], [135.0, 0.0], [180.0, 41.8], [225.0, 0.0], [270.0, 41.8], [315.0, 0.0], [0.0, 41.8], [45.0, 0.0]]], [[[45.0, 0.0], [90.0, 41.8], [135.0, 0.0], [180.0, 41.8], [225.0, 0.0], [270.0, 41.8], [315.0, 0.0], [0.0, 41.8], [45.0, 0.0]]], [[[45.0, 0.0], [90.0, 41.8], [135.0, 0.0], [180.0, 41.8], [225.0, 0.0], [270.0, 41.8], [315.0, 0.0], [0.0, 41.8], [45.0, 0.0]]]]
 
     Output above wa rounded for shorter output.

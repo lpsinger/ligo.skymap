@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('agg')
+from astropy import units as u
 import numpy as np
 import healpy as hp
 import matplotlib.pyplot as plt
@@ -107,5 +108,6 @@ def test_zoom_axes(rcparams):
     fig = plt.figure(figsize=(4, 4))
     ax = fig.add_axes([0.2, 0.2, 0.6, 0.6], projection='astro zoom',
                       center='197.45d -23.38d', radius='90 arcmin')
+    ax.scalebar((0.1, 0.1), 30 * u.arcmin)
     ax.grid()
     return fig

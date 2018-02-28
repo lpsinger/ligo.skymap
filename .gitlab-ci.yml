@@ -4,12 +4,25 @@
 image: containers.ligo.org/leo-singer/ligo.skymap
 
 stages:
+  - sdist
   - test
   - deploy
+
+sdist:
+  stage: sdist
+  script:
+    - python3 setup.py sdist
+  artifacts:
+    paths:
+      - dist/
+  expire_in: 20 minutes
 
 test:
   variables:
     CFLAGS: -coverage
+    GIT_STRATEGY: none
+  before_script:
+    - tar -xf dist/*
   script:
     # Run tests
     - python3 setup.py test --coverage -vv --args='-vv'
@@ -28,15 +41,23 @@ test:
     expire_in: 5 minutes
 
 coverage:c:
+  variables:
+    GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
+  before_script:
+    - tar -xf dist/*
   script:
     # Display coverage summary
     - gcovr build/temp*/src -r .
 
 coverage:py:
+  variables:
+    GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
+  before_script:
+    - tar -xf dist/*
   script:
     # Print coverage summary
     - python3 -m coverage report

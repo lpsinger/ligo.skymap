@@ -1,3 +1,5 @@
+from itertools import chain, combinations, product
+
 import matplotlib
 matplotlib.use('agg')
 from astropy import units as u
@@ -5,6 +7,8 @@ import numpy as np
 import healpy as hp
 import matplotlib.pyplot as plt
 import pytest
+
+from ..marker import reticle
 
 
 def pp_plot():
@@ -110,4 +114,26 @@ def test_zoom_axes(rcparams):
                       center='197.45d -23.38d', radius='90 arcmin')
     ax.scalebar((0.1, 0.1), 30 * u.arcmin)
     ax.grid()
+    return fig
+
+
+@pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
+def test_reticle():
+    which_list = [''.join(d) for d in
+                  chain.from_iterable(combinations('lrtb', n)
+                  for n in range(2, 5))]
+    inners = [0.0, 0.2, 0.4]
+    outers = [0.8, 0.9, 1.0]
+    angles = [0.0, 22.5, 45.0]
+    args_list = list(product(inners, outers, angles))
+
+    fig = plt.figure(figsize=(4, 4))
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+
+    from collections import Sized
+    for args, x in zip(args_list, np.linspace(0.1, 0.9, len(args_list))):
+        for which, y in zip(which_list, np.linspace(0.1, 0.9, len(which_list))):
+            ax.plot(x, y, marker=reticle(*args, which=which))
     return fig

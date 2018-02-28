@@ -43,10 +43,6 @@ sdist:
   tags:
     - macos
   stage: build
-  variables:
-    GIT_STRATEGY: none
-  before_script:
-    - tar --strip-components 1 -xf dist/*
   script:
     - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*:cp\(.\)\(.\).*/\1.\2/')
     # Enter virtualenv so that we have a controlled version of Numpy
@@ -67,10 +63,10 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
-# wheel:cp35-cp35m-macosx:
-#   <<: *wheel-macos
-# wheel:cp36-cp36m-macosx:
-#   <<: *wheel-macos
+wheel:cp35-cp35m-macosx:
+  <<: *wheel-macos
+wheel:cp36-cp36m-macosx:
+  <<: *wheel-macos
 
 test:
   stage: build

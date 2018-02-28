@@ -19,7 +19,6 @@
 Convenience function to produce a sky map from LIGO-LW rows.
 """
 
-from collections.abc import Iterable, Sized
 import inspect
 import itertools
 import logging
@@ -48,20 +47,6 @@ import lalsimulation
 log = logging.getLogger('BAYESTAR')
 
 log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
-
-
-class SizedIterable(Iterable, Sized):
-    """Wrapper class to give an explicit length to an iterable."""
-
-    def __init__(self, iterable, length):
-        self.__iterable = iterable
-        self.__length = length
-
-    def __iter__(self):
-        return self.__iterable
-
-    def __len__(self):
-        return self.__length
 
 
 def toa_phoa_snr_log_likelihood(params, *args, **kwargs):
@@ -107,12 +92,7 @@ def localize_emcee(
     chain = np.vstack([
         p[0, :, :].copy() for p, _, _
         in itertools.islice(
-            ProgressBar(
-                SizedIterable(
-                    sampler.sample(p0, iterations=niter, storechain=False),
-                    niter
-                )
-            ),
+            sampler.sample(p0, iterations=niter, storechain=False),
             nburnin, niter, nthin
         )])
 

@@ -22,7 +22,7 @@ test:
     CFLAGS: -coverage
     GIT_STRATEGY: none
   before_script:
-    - tar -xf dist/*
+    - tar --strip-components 1 -xf dist/*
   script:
     # Run tests
     - python3 setup.py test --coverage -vv --args='-vv'
@@ -46,7 +46,7 @@ coverage:c:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   before_script:
-    - tar -xf dist/*
+    - tar --strip-components 1 -xf dist/*
   script:
     # Display coverage summary
     - gcovr build/temp*/src -r .
@@ -57,7 +57,7 @@ coverage:py:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   before_script:
-    - tar -xf dist/*
+    - tar --strip-components 1 -xf dist/*
   script:
     # Print coverage summary
     - python3 -m coverage report

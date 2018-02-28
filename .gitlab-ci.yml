@@ -38,6 +38,28 @@ sdist:
       - wheelhouse
     expire_in: 5 minutes
 
+# Build receipe for standalone wheels on macOS
+.wheel:macos: &wheel-macos
+  tags:
+    - macos
+  stage: build
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - tar --strip-components 1 -xf dist/*
+  script:
+    - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*:cp\(.\)\(.\).*/\1.\2/')
+    # Enter virtualenv so that we have a controlled version of Numpy
+    - virtualenv-${PYVERS} env
+    - source env/bin/activate
+    - pip install -q git+https://github.com/lpsinger/delocate@fix-duplicate-libs numpy==1.7.0
+    # Build and audit wheel
+    - python setup.py bdist_wheel
+    - delocate-wheel -v -w wheelhouse dist/*.whl
+  artifacts:
+    paths:
+      - wheelhouse
+
 # Build wheels for all supported platforms
 wheel:cp34-cp34m-manylinux1:
   <<: *wheel-manylinux1
@@ -45,6 +67,10 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
+wheel:cp35-cp35m-macosx:
+  <<: *wheel-macos
+wheel:cp36-cp36m-macosx:
+  <<: *wheel-macos
 
 test:
   stage: build

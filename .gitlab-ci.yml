@@ -32,7 +32,7 @@ sdist:
     # Build and install LALSuite
     - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*:\(.*\)-manylinux1/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
-    - auditwheel repair dist/*
+    - auditwheel repair dist/*.whl
   artifacts:
     paths:
       - wheelhouse

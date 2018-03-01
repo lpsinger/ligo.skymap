@@ -23,7 +23,7 @@ def get_extensions():
 
     kwargs = setup_helpers.pkg_config(pkg_config_packages, [])
     kwargs['include_dirs'].extend(include_dirs)
-    kwargs['extra_compile_args'].extend(['-std=gnu99' '-DGSL_RANGE_CHECK_OFF'])
+    kwargs['extra_compile_args'].extend(['-std=gnu99', '-DGSL_RANGE_CHECK_OFF'])
 
     extension = Extension(
         name='ligo.skymap.core', language='c', sources=sources, **kwargs)

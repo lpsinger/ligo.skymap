@@ -28,6 +28,7 @@ from astropy.coordinates import (CartesianRepresentation, SkyCoord,
 from astropy import units as u
 from astropy.wcs import WCS
 import healpy as hp
+import networkx as nx
 import numpy as np
 from scipy.interpolate import interp1d
 import six
@@ -363,11 +364,6 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
     Output above wa rounded for shorter output.
     """
-    try:
-        import networkx as nx
-    except:
-        raise RuntimeError('This function requires the networkx package.')
-
     # Determine HEALPix resolution
     npix = len(m)
     nside = hp.npix2nside(npix)

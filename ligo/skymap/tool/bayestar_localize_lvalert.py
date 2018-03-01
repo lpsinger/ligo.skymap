@@ -70,6 +70,7 @@ def main(args=None):
 
     import logging
     import os
+    import re
     import sys
     from ..bayestar.sky_map import localize, rasterize
     from ..io import fits
@@ -98,7 +99,7 @@ def main(args=None):
             'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))
 
     if opts.chain_dump:
-        chain_dump = opts.output.replace('.fits.gz', '.hdf5').replace('.fits', '.hdf5')
+        chain_dump = re.sub(r'.fits(.gz)?$', r'.hdf5', opts.output)
     else:
         chain_dump = None
 

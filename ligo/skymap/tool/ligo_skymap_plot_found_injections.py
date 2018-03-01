@@ -69,13 +69,17 @@ def main(args=None):
 
     # For each of the quantities that we are going to plot, find their range
     # over all of the datasets.
-    combined = np.concatenate([dataset['searched_area'] for dataset in datasets_])
+    combined = np.concatenate(
+        [dataset['searched_area'] for dataset in datasets_])
     min_searched_area = np.min(combined)
     max_searched_area = np.max(combined)
     have_offset = all('offset' in dataset.dtype.names for dataset in datasets_)
-    have_runtime = all('runtime' in dataset.dtype.names for dataset in datasets_)
-    have_searched_prob_dist = all('searched_prob_dist' in dataset.dtype.names for dataset in datasets_)
-    have_searched_prob_vol = all('searched_prob_vol' in dataset.dtype.names for dataset in datasets_)
+    have_runtime = all(
+        'runtime' in dataset.dtype.names for dataset in datasets_)
+    have_searched_prob_dist = all(
+        'searched_prob_dist' in dataset.dtype.names for dataset in datasets_)
+    have_searched_prob_vol = all(
+        'searched_prob_vol' in dataset.dtype.names for dataset in datasets_)
     if have_offset:
         have_offset = True
         combined = np.concatenate([dataset['offset'] for dataset in datasets_])
@@ -87,7 +91,8 @@ def main(args=None):
             min_runtime = np.nanmin(combined)
             max_runtime = np.nanmax(combined)
     if have_searched_prob_vol:
-        combined = np.concatenate([dataset['searched_vol'] for dataset in datasets_])
+        combined = np.concatenate(
+            [dataset['searched_vol'] for dataset in datasets_])
         if np.any(np.isfinite(combined)):
             min_searched_vol = np.min(combined[np.isfinite(combined)])
             max_searched_vol = np.max(combined[np.isfinite(combined)])
@@ -98,7 +103,8 @@ def main(args=None):
         log10_far = np.arange(log10_min_far, log10_max_far + 1)
         bin_edges = 10.**log10_far
         bin_names = ['far_1e{0}'.format(e) for e in log10_far]
-        bin_titles = [r'$\mathrm{{FAR}} \leq 10^{{{0}}}$ Hz'.format(e) for e in log10_far]
+        bin_titles = [
+            r'$\mathrm{{FAR}} \leq 10^{{{0}}}$ Hz'.format(e) for e in log10_far]
     elif opts.group_by == 'snr':
         combined = np.concatenate([dataset['snr'] for dataset in datasets_])
         min_snr = int(np.floor(np.min(combined)))
@@ -128,15 +134,18 @@ def main(args=None):
     cwd = os.getcwd()
 
     # Loop over false alarm rate bins.
-    for i, (bin_edge, subdir, title) in enumerate(zip(bin_edges, bin_names, bin_titles)):
+    for i, (bin_edge, subdir, title) in enumerate(
+            zip(bin_edges, bin_names, bin_titles)):
         pb.update(text=subdir)
 
-        # Retrieve records for just those events whose false alarm rate was at most
-        # the upper edge of this FAR bin.
+        # Retrieve records for just those events whose false alarm rate was at
+        # most the upper edge of this FAR bin.
         if opts.group_by == 'far':
-            datasets = [dataset[dataset['far'] <= bin_edge] for dataset in datasets_]
+            datasets = [
+                dataset[dataset['far'] <= bin_edge] for dataset in datasets_]
         elif opts.group_by == 'snr':
-            datasets = [dataset[dataset['snr'] >= bin_edge] for dataset in datasets_]
+            datasets = [
+                dataset[dataset['snr'] >= bin_edge] for dataset in datasets_]
         else:
             datasets = datasets_
         nsamples = list({len(dataset) for dataset in datasets})
@@ -243,7 +252,8 @@ def main(args=None):
         # Finish and save plot 1.
         pb.update(i * 7)
         # Only plot target confidence band if all datasets have the same number
-        # of samples, because the confidence band depends on the number of samples.
+        # of samples, because the confidence band depends on the number of
+        # samples.
         ax1.add_diagonal()
         if len(nsamples) == 1:
             n, = nsamples
@@ -274,9 +284,9 @@ def main(args=None):
         # Finish and save plot 5.
         pb.update(i * 7 + 4)
         if have_searched_prob_dist:
-            # Only plot target confidence band if all datasets have the same number
-            # of samples, because the confidence band depends on the number of
-            # samples.
+            # Only plot target confidence band if all datasets have the same
+            # number of samples, because the confidence band depends on the
+            # number of samples.
             ax5.add_diagonal()
             if len(nsamples) == 1:
                 n, = nsamples
@@ -290,9 +300,9 @@ def main(args=None):
         # Finish and save plot 6.
         pb.update(i * 7 + 5)
         if have_searched_prob_vol:
-            # Only plot target confidence band if all datasets have the same number
-            # of samples, because the confidence band depends on the number of
-            # samples.
+            # Only plot target confidence band if all datasets have the same
+            # number of samples, because the confidence band depends on the
+            # number of samples.
             ax6.add_diagonal()
             if len(nsamples) == 1:
                 n, = nsamples

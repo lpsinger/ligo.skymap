@@ -71,8 +71,8 @@ def main(args=None):
     from matplotlib import transforms
     from .. import io
     from ..plot import marker
-    from ..distance import (
-        parameters_to_marginal_moments, principal_axes, volume_render, marginal_pdf)
+    from ..distance import (parameters_to_marginal_moments, principal_axes,
+                            volume_render, marginal_pdf)
     import healpy as hp
     import numpy as np
     import scipy.stats
@@ -163,8 +163,9 @@ def main(args=None):
             phi = np.deg2rad(ra)
             xyz = np.dot(R.T, hp.ang2vec(theta, phi) * dist)
             ax.plot(
-                xyz[axis0], xyz[axis1], marker=truth_marker, markeredgecolor=color,
-                markerfacecolor='none', markeredgewidth=1)
+                xyz[axis0], xyz[axis1], marker=truth_marker,
+                markeredgecolor=color, markerfacecolor='none',
+                markeredgewidth=1)
 
         # Plot chain
         if opts.chain:
@@ -208,8 +209,8 @@ def main(args=None):
 
         # Plot marginal distance distribution, integrated over the whole sky.
         d = np.linspace(0, max_distance)
-        ax.fill_between(
-            d, marginal_pdf(d, prob, mu, sigma, norm), alpha=0.5, color=colors[0])
+        ax.fill_between(d, marginal_pdf(d, prob, mu, sigma, norm),
+                        alpha=0.5, color=colors[0])
 
         # Plot conditional distance distribution at true position
         # and mark true distance.

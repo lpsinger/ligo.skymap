@@ -53,18 +53,18 @@ def parser():
         toa_phoa_snr_mcmc
         '''.split()
     default_method = 'toa_phoa_snr'
-    parser = command.ArgumentParser(
-        parents=[
-            command.waveform_parser, command.prior_parser, command.skymap_parser])
+    parser = command.ArgumentParser(parents=[
+        command.waveform_parser, command.prior_parser, command.skymap_parser])
     parser.add_argument(
         '--method', choices=methods, default=[default_method], nargs='*',
         help='Sky localization methods [default: %(default)s]')
     parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
-        help='Keep processing events if a sky map fails to converge [default: no]')
+        help='Keep processing events if a sky map fails to converge '
+             '[default: no]')
     parser.add_argument(
-        'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-', nargs='+',
-        type=argparse.FileType('rb'),
+        'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',
+        nargs='+', type=argparse.FileType('rb'),
         help='Input LIGO-LW XML file, SQLite file, or PyCBC HDF5 files. '
              'For PyCBC, you must supply the coincidence file '
              '(e.g. "H1L1-HDFINJFIND.hdf" or "H1L1-STATMAP.hdf"), '
@@ -72,7 +72,8 @@ def parser():
              'the single-detector merged PSD files '
              '(e.g. "H1-MERGE_PSDS.hdf" and "L1-MERGE_PSDS.hdf"), '
              'and the single-detector merged trigger files '
-             '(e.g. "H1-HDF_TRIGGER_MERGE.hdf" and "L1-HDF_TRIGGER_MERGE.hdf"), '
+             '(e.g. "H1-HDF_TRIGGER_MERGE.hdf" and '
+             '"L1-HDF_TRIGGER_MERGE.hdf"), '
              'in any order.')
     parser.add_argument(
         '--pycbc-sample', default='foreground',
@@ -116,18 +117,23 @@ def main(args=None):
 
     if opts.condor_submit:
         if opts.coinc_event_id:
-            raise ValueError('must not set --coinc-event-id with --condor-submit')
+            raise ValueError(
+                'must not set --coinc-event-id with --condor-submit')
         cmd = ['condor_submit', 'accounting_group=ligo.dev.o3.cbc.pe.bayestar',
                'on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)',
                'on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)',
-               'on_exit_hold_reason = (ExitBySignal == True ? strcat("The job exited with signal ", ExitSignal) : strcat("The job exited with signal ", ExitCode))',
+               'on_exit_hold_reason = (ExitBySignal == True ? strcat('
+               '"The job exited with signal ", ExitSignal) : strcat('
+               '"The job exited with signal ", ExitCode))',
                'request_memory = 1000 MB',
-               'universe=vanilla', 'getenv=true', 'executable=' + sys.executable,
+               'universe=vanilla', 'getenv=true',
+               'executable=' + sys.executable,
                'JobBatchName=BAYESTAR', 'environment="OMP_NUM_THREADS=1"',
                'error=' + os.path.join(opts.output, '$(CoincEventId).err'),
                'log=' + os.path.join(opts.output, '$(CoincEventId).log'),
                'arguments="-B ' + ' '.join(arg for arg in sys.argv
-                   if arg != '--condor-submit') + ' --coinc-event-id $(CoincEventId)"',
+                   if arg != '--condor-submit') +
+               ' --coinc-event-id $(CoincEventId)"',
                '-append', 'queue CoincEventId in ' + ' '.join(
                    str(coinc_event_id) for coinc_event_id in event_source),
                '/dev/null']
@@ -141,7 +147,8 @@ def main(args=None):
     count_sky_maps_failed = 0
 
     for int_coinc_event_id, event in event_source.items():
-        coinc_event_id = 'coinc_event:coinc_event_id:{}'.format(int_coinc_event_id)
+        coinc_event_id = 'coinc_event:coinc_event_id:{}'.format(
+            int_coinc_event_id)
 
         # Loop over sky localization methods
         for method in opts.method:
@@ -153,8 +160,9 @@ def main(args=None):
             try:
                 sky_map = localize(
                     event, opts.waveform, opts.f_low, opts.min_distance,
-                    opts.max_distance, opts.prior_distance_power, opts.cosmology,
-                    method=method, nside=opts.nside, chain_dump=chain_dump,
+                    opts.max_distance, opts.prior_distance_power,
+                    opts.cosmology, method=method, nside=opts.nside,
+                    chain_dump=chain_dump,
                     enable_snr_series=opts.enable_snr_series,
                     f_high_truncate=opts.f_high_truncate)
                 sky_map.meta['objid'] = coinc_event_id

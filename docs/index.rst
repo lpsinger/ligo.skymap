@@ -10,6 +10,7 @@ Scripts
    ligo/skymap/tool/bayestar_localize_coincs
    ligo/skymap/tool/bayestar_localize_lvalert
    ligo/skymap/tool/ligo_skymap_aggregate_found_injections
+   ligo/skymap/tool/ligo_skymap_contour
    ligo/skymap/tool/ligo_skymap_from_samples
    ligo/skymap/tool/ligo_skymap_plot
    ligo/skymap/tool/ligo_skymap_plot_found_injections

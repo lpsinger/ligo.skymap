@@ -21,7 +21,7 @@ Plot a volumetric posterior in three-projection view.
 
 
 import argparse
-from ligo.skymap import command
+from .. import command
 
 
 def parser():
@@ -69,9 +69,9 @@ def main(args=None):
     from matplotlib import pyplot as plt
     from matplotlib import gridspec
     from matplotlib import transforms
-    from ligo.skymap import io
-    from ligo.skymap.plot import marker
-    from ligo.skymap.distance import (
+    from .. import io
+    from ..plot import marker
+    from ..distance import (
         parameters_to_marginal_moments, principal_axes, volume_render, marginal_pdf)
     import healpy as hp
     import numpy as np

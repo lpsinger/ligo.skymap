@@ -21,7 +21,7 @@ false alarm rate.
 """
 
 import argparse
-from ligo.skymap import command
+from .. import command
 
 
 def parser():
@@ -57,7 +57,7 @@ def main(args=None):
     from distutils.dir_util import mkpath
     import numpy as np
     from glue.text_progress_bar import ProgressBar
-    from ligo.skymap import plot
+    from .. import plot
 
     # Create progress bar.
     pb = ProgressBar()

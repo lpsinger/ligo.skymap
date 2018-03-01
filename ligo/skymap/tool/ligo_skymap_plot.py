@@ -28,7 +28,7 @@ Public-domain cartographic data is courtesy of Natural Earth
 """
 
 import argparse
-from ligo.skymap import command
+from .. import command
 
 
 def parser():
@@ -71,9 +71,9 @@ def main(args=None):
     import matplotlib.pyplot as plt
     from matplotlib import rcParams
     import healpy as hp
-    from ligo.skymap.io import fits
-    from ligo.skymap import plot
-    from ligo.skymap import postprocess
+    from ..io import fits
+    from .. import plot
+    from .. import postprocess
     from astropy.coordinates import SkyCoord
     from astropy.time import Time
 

@@ -24,7 +24,7 @@ kernel density estimation.
 def parser():
     # Command line interface.
     from argparse import FileType, SUPPRESS
-    from ligo.skymap.command import ArgumentParser, DirType
+    from ..command import ArgumentParser, DirType
     parser = ArgumentParser()
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')
@@ -61,16 +61,16 @@ def main(args=None):
     args = _parser.parse_args(args)
 
     # Late imports
-    from ligo.skymap import io
-    from ligo.skymap.bayestar.sky_map import rasterize
-    from ligo.skymap import version
+    from .. import io
+    from ..bayestar.sky_map import rasterize
+    from .. import version
     from astropy.table import Table
     from astropy.time import Time
     import numpy as np
     import os
     import sys
     import pickle
-    from ligo.skymap.kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
+    from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
     import logging
 
     log = logging.getLogger()

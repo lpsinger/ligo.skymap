@@ -23,6 +23,34 @@ import numpy as np
 __all__ = ('contour',)
 
 
+def _norm(vertices):
+    return np.sqrt(np.sum(np.square(vertices), -1))
+
+
+def _adjacent_triangle_areas(vertices):
+    return 0.5 * _norm(np.cross(
+        np.roll(vertices, -1, axis=0) - vertices,
+        np.roll(vertices, +1, axis=0) - vertices))
+
+
+def _simplify(vertices, min_area):
+    """Visvalingam's algorithm (see http://bost.ocks.org/mike/simplify/)
+    for linear rings on a sphere. This is a naive, slow implementation."""
+    area = _adjacent_triangle_areas(vertices)
+
+    while True:
+        i_min_area = np.argmin(area)
+        if area[i_min_area] > min_area:
+            break
+
+        vertices = np.delete(vertices, i_min_area, axis=0)
+        area = np.delete(area, i_min_area)
+        new_area = _adjacent_triangle_areas(vertices)
+        area = np.maximum(area, new_area)
+
+    return vertices
+
+
 def _vec2radec(vertices, degrees=False):
     theta, phi = hp.vec2ang(np.asarray(vertices))
     ret = np.column_stack((phi % (2 * np.pi), 0.5 * np.pi - theta))

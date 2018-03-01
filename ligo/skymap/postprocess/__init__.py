@@ -33,9 +33,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 import six
 
-from .. import distance
-from .. import moc
-from ..healpix_tree import *
+from . import distance
+from . import moc
+from .healpix_tree import *
 
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.

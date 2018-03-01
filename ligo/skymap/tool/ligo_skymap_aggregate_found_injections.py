@@ -38,7 +38,7 @@ import numpy as np
 
 from .. import command
 from ..io import fits
-from ..bayestar.postprocess import find_injection_moc
+from ..postprocess import find_injection_moc
 from ..util import sqlite
 
 

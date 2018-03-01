@@ -21,7 +21,6 @@ Modules
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/bayestar/postprocess
    ligo/skymap/command
    ligo/skymap/distance
    ligo/skymap/eigenframe
@@ -35,6 +34,7 @@ Modules
    ligo/skymap/plot/backdrop
    ligo/skymap/plot/marker
    ligo/skymap/plot/pp
+   ligo/skymap/postprocess
    ligo/skymap/util/file
    ligo/skymap/util/numpy
    ligo/skymap/util/sqlite

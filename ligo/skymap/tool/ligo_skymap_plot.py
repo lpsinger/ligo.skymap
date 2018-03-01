@@ -73,7 +73,7 @@ def main(args=None):
     import healpy as hp
     from ligo.skymap.io import fits
     from ligo.skymap import plot
-    from ligo.skymap.bayestar import postprocess
+    from ligo.skymap import postprocess
     from astropy.coordinates import SkyCoord
     from astropy.time import Time
 

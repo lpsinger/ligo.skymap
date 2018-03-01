@@ -27,7 +27,6 @@ from astropy.coordinates import (CartesianRepresentation, SkyCoord,
                                  UnitSphericalRepresentation)
 from astropy import units as u
 import healpy as hp
-import networkx as nx
 import numpy as np
 from scipy.interpolate import interp1d
 import six
@@ -35,7 +34,9 @@ import six
 from .. import distance
 from .. import moc
 from ..healpix_tree import *
+from .contour import contour
 from .ellipse import find_ellipse
+
 
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.

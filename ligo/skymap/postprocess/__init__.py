@@ -20,7 +20,6 @@
 Postprocessing tools for HEALPix sky maps
 """
 import collections
-import pkg_resources
 
 import healpy as hp
 import numpy as np

@@ -4,4 +4,4 @@ paths = ['data/*.hdf5',
 
 def get_package_data():
     return {
-        _ASTROPY_PACKAGE_NAME_ + '.io.events.tests': paths}
+        _ASTROPY_PACKAGE_NAME_ + '.io.tests': paths}

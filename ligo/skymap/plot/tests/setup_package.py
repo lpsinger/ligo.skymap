@@ -1,5 +1,3 @@
-import os
-
 paths = ['baseline/*.png']
 
 def get_package_data():

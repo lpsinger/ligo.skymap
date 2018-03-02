@@ -85,14 +85,6 @@ def count_modes_moc(uniq, i):
     return count_modes(sky_map, nest=True)
 
 
-def indicator(n, i):
-    """Create a binary array of length n that is True for every index that is in
-    i and False for every other index. Named after the indicator function."""
-    m = np.zeros(n, dtype=np.bool)
-    np.put(m, i, True)
-    return m
-
-
 def cos_angle_distance(theta0, phi0, theta1, phi1):
     """Cosine of angular separation in radians between two points on the
     unit sphere."""

@@ -22,20 +22,19 @@ Postprocessing utilities for HEALPix sky maps
 import collections
 import pkg_resources
 
-from astropy import constants
 from astropy.coordinates import (CartesianRepresentation, SkyCoord,
                                  UnitSphericalRepresentation)
 from astropy import units as u
 import healpy as hp
 import numpy as np
 from scipy.interpolate import interp1d
-import six
 
 from .. import distance
 from .. import moc
 from ..healpix_tree import *
-from .contour import contour
-from .ellipse import find_ellipse
+from .contour import *
+from .ellipse import *
+from .detector_frame import *
 
 
 def flood_fill(nside, ipix, m, nest=False):
@@ -322,172 +321,6 @@ def find_greedy_credible_levels(p, ranking=None):
     cls = np.empty_like(pflat)
     cls[i] = cs
     return cls.reshape(p.shape)
-
-
-def _get_detector_location(ifo):
-    if isinstance(ifo, six.string_types):
-        try:
-            import lalsimulation
-        except ImportError:
-            raise RuntimeError('Looking up detectors by name '
-                               'requires the lalsimulation package.')
-        ifo = lalsimulation.DetectorPrefixToLALDetector(ifo)
-    try:
-        ifo = ifo.location
-    except AttributeError:
-        pass
-    return ifo
-
-
-def get_detector_pair_axis(ifo1, ifo2, gmst):
-    """Find the sky position where the line between two detectors pierces the
-    celestial sphere.
-
-    Parameters
-    ----------
-    ifo1, ifo2 : str or `~lal.Detector` or `numpy.ndarray`
-        The detector positions. Can be specifed by name (e.g. `'H1'`), or by
-        `lal.Detector` object (e.g., as returned by
-        `lalsimulation.DetectorPrefixToLALDetector('H1')` or by the geocentric
-        Cartesian position in meters.
-
-    gmst : float
-        The Greenwich mean sidereal time in radians, as returned by
-        `lal.GreenwichMeanSiderealTime`.
-
-    Returns
-    -------
-
-    pole_ra : float
-        The right ascension in radians at which a ray from `ifo1` to `ifo2`
-        would pierce the celestial sphere.
-
-    pole_dec : float
-        The declination in radians at which a ray from `ifo1` to `ifo2` would
-        pierce the celestial sphere.
-
-    light_travel_time : float
-        The light travel time from `ifo1` to `ifo2` in seconds.
-
-    Examples
-    --------
-
-    >>> ret = get_detector_pair_axis('H1', 'L1', 41758.384193753656)
-    >>> print(*np.around(ret, 5))
-    5.94546 -0.47622 0.01001
-    """
-    ifo1 = _get_detector_location(ifo1)
-    ifo2 = _get_detector_location(ifo2)
-
-    n = ifo2 - ifo1
-    light_travel_time = np.sqrt(np.sum(np.square(n))) / constants.c.value
-    (theta,), (phi,) = hp.vec2ang(n)
-    pole_ra = (gmst + phi) % (2 * np.pi)
-    pole_dec = 0.5 * np.pi - theta
-    return pole_ra, pole_dec, light_travel_time
-
-
-def rotate_map_to_axis(m, ra, dec, nest=False, method='direct'):
-    """Rotate a sky map to place a given line of sight on the +z axis.
-
-    Parameters
-    ----------
-
-    m : np.ndarray
-        The input HEALPix array.
-
-    ra : float
-        Right ascension of axis in radians.
-
-        To specify the axis in geocentric coordinates, supply ra=(lon + gmst),
-        where lon is the geocentric longitude and gmst is the Greenwich mean
-        sidereal time in radians.
-
-    dec : float
-        Declination of axis in radians.
-
-        To specify the axis in geocentric coordinates, supply dec=lat,
-        where lat is the geocentric latitude in radians.
-
-    nest : bool, default=False
-        Indicates whether the input sky map is in nested rather than
-        ring-indexed HEALPix coordinates (default: ring).
-
-    method : 'direct' or 'fft'
-        Select whether to use spherical harmonic transformation ('fft') or
-        direct coordinate transformation ('direct')
-
-    Returns
-    -------
-
-    m_rotated : np.ndarray
-        The rotated HEALPix array.
-    """
-    npix = len(m)
-    nside = hp.npix2nside(npix)
-
-    theta = 0.5 * np.pi - dec
-    phi = ra
-
-    if method == 'fft':
-        if nest:
-            m = hp.reorder(m, n2r=True)
-        alm = hp.map2alm(m)
-        hp.rotate_alm(alm, -phi, -theta, 0.0)
-        ret = hp.alm2map(alm, nside, verbose=False)
-        if nest:
-            ret = hp.reorder(ret, r2n=True)
-    elif method == 'direct':
-        R = hp.Rotator(
-            rot=np.asarray([0, theta, -phi]),
-            deg=False, inv=False, eulertype='Y')
-        theta, phi = hp.pix2ang(nside, np.arange(npix), nest=nest)
-        ipix = hp.ang2pix(nside, *R(theta, phi), nest=nest)
-        ret = m[ipix]
-    else:
-        raise ValueError('Unrecognized method: {0}'.format(method))
-
-    return ret
-
-
-def polar_profile(m, nest=False):
-    """Obtain the marginalized polar profile of sky map.
-
-    Parameters
-    ----------
-
-    m : np.ndarray
-        The input HEALPix array.
-
-    nest : bool, default=False
-        Indicates whether the input sky map is in nested rather than
-        ring-indexed HEALPix coordinates (default: ring).
-
-    Returns
-    -------
-
-    theta : np.ndarray
-        The polar angles (i.e., the colatitudes) of the isolatitude rings.
-
-    m_int : np.ndarray
-        The normalized probability density, such that `np.trapz(m_int, theta)`
-        is approximately `np.sum(m)`.
-    """
-    npix = len(m)
-    nside = hp.npix2nside(npix)
-    nrings, = hp.pix2ring(nside, np.asarray([npix]))
-    startpix, ringpix, costheta, sintheta, _ = hp.ringinfo(
-        nside, np.arange(1, nrings))
-
-    if nest:
-        m = hp.reorder(m, n2r=True)
-
-    theta = np.arccos(costheta)
-    m_int = np.asarray(
-        [m[i:i+j].sum() * stheta * 0.5 * npix / j
-         for i, j, stheta in zip(startpix, ringpix, sintheta)])
-
-    return theta, m_int
 
 
 def smooth_ud_grade(m, nside, nest=False):

@@ -140,9 +140,6 @@ skymap_parser = argparse.ArgumentParser(add_help=False)
 group = skymap_parser.add_argument_group(
     'sky map output options', 'Options that affect sky map output')
 group.add_argument(
-    '--nside', '-n', type=int, default=-1,
-    help='HEALPix resolution [default: auto]')
-group.add_argument(
     '--chain-dump', default=False, action='store_true',
     help='For MCMC methods, dump the sample chain to disk [default: no]')
 del group

@@ -1,5 +1,4 @@
-paths = ['coveragerc',
-         'data/*.hdf5',
+paths = ['data/*.hdf5',
          'data/*.xml.gz',
          'data/gstlal_reference_psd/*.xml.gz']
 

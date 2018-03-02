@@ -1,7 +1,7 @@
-Module `ligo.skymap.bayestar.postprocess`
+Module `ligo.skymap.postprocess`
 =========================================
 
-.. automodule:: ligo.skymap.bayestar.postprocess
+.. automodule:: ligo.skymap.postprocess
     :members:
     :show-inheritance:
 

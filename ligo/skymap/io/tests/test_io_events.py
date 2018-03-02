@@ -10,8 +10,8 @@ import h5py
 import numpy as np
 import pytest
 
-from ... import events
-from ..ligolw import _ContentHandler
+from .. import events
+from ..events.ligolw import _ContentHandler
 from ...util import sqlite
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')

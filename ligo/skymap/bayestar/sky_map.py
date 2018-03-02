@@ -87,12 +87,13 @@ def localize_emcee(
     chain = sampler.get_chain(flat=True, thin=nthin, discard=nburnin)
     del sampler
 
-    # Transform back from sin_dec to dec
+    # Transform back from sin_dec to dec and cos_inclination to inclination
     chain[:, 1] = np.arcsin(chain[:, 1])
+    chain[:, 3] = np.arccos(chain[:, 3])
 
     # Optionally save posterior sample chain to file.
     if chain_dump:
-        names = 'ra dec distance cos_inclination twopsi time'.split()[:ndim]
+        names = 'ra dec distance inclination twopsi time'.split()[:ndim]
         write_samples(Table(rows=chain, names=names), chain_dump,
                       path='/bayestar/posterior_samples', overwrite=True)
 

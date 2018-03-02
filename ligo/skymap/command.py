@@ -136,9 +136,12 @@ group.add_argument(
 del group
 
 
-skymap_parser = argparse.ArgumentParser(add_help=False)
-group = skymap_parser.add_argument_group(
-    'sky map output options', 'Options that affect sky map output')
+mcmc_parser = argparse.ArgumentParser(add_help=False)
+group = mcmc_parser.add_argument_group(
+    'BAYESTAR MCMC options', 'BAYESTAR options for MCMC sampling')
+group.add_argument(
+    '--mcmc', action='store_true', default=False,
+    help='Use MCMC sampling instead of Gaussian quadrature')
 group.add_argument(
     '--chain-dump', default=False, action='store_true',
     help='For MCMC methods, dump the sample chain to disk [default: no]')

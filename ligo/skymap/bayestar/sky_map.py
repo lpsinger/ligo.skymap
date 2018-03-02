@@ -104,7 +104,7 @@ def localize_emcee(args, xmin, xmax, chain_dump=None):
 def localize(
         event, waveform='o2-uberbank', f_low=30.0,
         min_distance=None, max_distance=None, prior_distance_power=None,
-        cosmology=False, method='toa_phoa_snr', chain_dump=None,
+        cosmology=False, mcmc=False, chain_dump=None,
         enable_snr_series=True, f_high_truncate=0.95):
     """Convenience function to produce a sky map from LIGO-LW rows. Note that
     min_distance and max_distance should be in Mpc.
@@ -293,19 +293,17 @@ def localize(
     log.debug('starting computationally-intensive section')
     args = (min_distance, max_distance, prior_distance_power, cosmology, gmst,
             sample_rate, toas, snr_series, responses, locations, horizons)
-    if method == 'toa_phoa_snr':
-        skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
-        skymap = Table(skymap)
-        skymap.meta['log_bci'] = log_bci
-        skymap.meta['log_bsn'] = log_bsn
-    elif method == 'toa_phoa_snr_mcmc':
+    if mcmc:
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
             xmax=[2*np.pi, 1, max_distance, 1, 2*np.pi, 2*max_abs_t],
             chain_dump=chain_dump)
     else:
-        raise ValueError('Unrecognized method: %s' % method)
+        skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
+        skymap = Table(skymap)
+        skymap.meta['log_bci'] = log_bci
+        skymap.meta['log_bsn'] = log_bsn
 
     # Convert distance moments to parameters
     try:

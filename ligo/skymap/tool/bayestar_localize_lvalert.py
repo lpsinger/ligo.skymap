@@ -35,17 +35,9 @@ from .. import command
 
 
 def parser():
-    methods = '''
-        toa_phoa_snr
-        toa_phoa_snr_mcmc
-        '''.split()
-    default_method = 'toa_phoa_snr'
     parser = command.ArgumentParser(
         parents=[
-            command.waveform_parser, command.prior_parser, command.skymap_parser])
-    parser.add_argument(
-        '--method', choices=methods, default=default_method,
-        help='Sky localization method [default: %(default)s]')
+            command.waveform_parser, command.prior_parser, command.mcmc_parser])
     parser.add_argument(
         '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
         help='disable certain detectors [default: enable all]')
@@ -136,7 +128,7 @@ def main(args=None):
             sky_map = rasterize(localize(
                 event, opts.waveform, opts.f_low, opts.min_distance,
                 opts.max_distance, opts.prior_distance_power, opts.cosmology,
-                method=opts.method, chain_dump=chain_dump,
+                mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
                 f_high_truncate=opts.f_high_truncate))
             sky_map.meta['objid'] = str(graceid)

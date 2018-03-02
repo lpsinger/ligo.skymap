@@ -29,18 +29,6 @@ distance of the most sensitive detector.
 
 A FITS file is created for each sky map, having a filename of the form
 "X.fits" where X is the LIGO-LW row id of the coinc.
-
-If the user requests multiple sky localization methods with the --method
-option, then the filenames will instead have the form
-
-  "X.toa_phoa_snr.fits"
-  "X.toa_snr_mcmc.fits"
-  "X.toa_phoa_snr_mcmc.fits"
-
-where the suffixes indicate the localization method: whether it uses
-times of arrival (TOA), PHases on arrival (PHOA), and/or amplitudes on
-arrival (SNR), and whether it uses the default integrator or the MCMC
-integrator.
 """
 
 import argparse
@@ -48,16 +36,8 @@ from .. import command
 
 
 def parser():
-    methods = '''
-        toa_phoa_snr
-        toa_phoa_snr_mcmc
-        '''.split()
-    default_method = 'toa_phoa_snr'
     parser = command.ArgumentParser(parents=[
-        command.waveform_parser, command.prior_parser, command.skymap_parser])
-    parser.add_argument(
-        '--method', choices=methods, default=[default_method], nargs='*',
-        help='Sky localization methods [default: %(default)s]')
+        command.waveform_parser, command.prior_parser, command.mcmc_parser])
     parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
         help='Keep processing events if a sky map fails to converge '
@@ -151,37 +131,29 @@ def main(args=None):
             int_coinc_event_id)
 
         # Loop over sky localization methods
-        for method in opts.method:
-            log.info("%s:method '%s':computing sky map", coinc_event_id, method)
-            if opts.chain_dump:
-                chain_dump = '%s.hdf5' % int_coinc_event_id
-            else:
-                chain_dump = None
-            try:
-                sky_map = localize(
-                    event, opts.waveform, opts.f_low, opts.min_distance,
-                    opts.max_distance, opts.prior_distance_power,
-                    opts.cosmology, method=method, chain_dump=chain_dump,
-                    enable_snr_series=opts.enable_snr_series,
-                    f_high_truncate=opts.f_high_truncate)
-                sky_map.meta['objid'] = coinc_event_id
-            except (ArithmeticError, ValueError):
-                log.exception(
-                    "%s:method '%s':sky localization failed",
-                    coinc_event_id, method)
-                count_sky_maps_failed += 1
-                if not opts.keep_going:
-                    raise
-            else:
-                log.info(
-                    "%s:method '%s':saving sky map",
-                    coinc_event_id, method)
-                if len(opts.method) > 1:
-                    filename = '%d.%s.fits' % (int_coinc_event_id, method)
-                else:
-                    filename = '%d.fits' % int_coinc_event_id
-                fits.write_sky_map(
-                    os.path.join(opts.output, filename), sky_map, nest=True)
+        log.info('%s:computing sky map', coinc_event_id)
+        if opts.chain_dump:
+            chain_dump = '%s.hdf5' % int_coinc_event_id
+        else:
+            chain_dump = None
+        try:
+            sky_map = localize(
+                event, opts.waveform, opts.f_low, opts.min_distance,
+                opts.max_distance, opts.prior_distance_power,
+                opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
+                enable_snr_series=opts.enable_snr_series,
+                f_high_truncate=opts.f_high_truncate)
+            sky_map.meta['objid'] = coinc_event_id
+        except (ArithmeticError, ValueError):
+            log.exception('%s:sky localization failed', coinc_event_id)
+            count_sky_maps_failed += 1
+            if not opts.keep_going:
+                raise
+        else:
+            log.info('%s:saving sky map', coinc_event_id)
+            filename = '%d.fits' % int_coinc_event_id
+            fits.write_sky_map(
+                os.path.join(opts.output, filename), sky_map, nest=True)
 
     if count_sky_maps_failed > 0:
         raise RuntimeError("{0} sky map{1} did not converge".format(

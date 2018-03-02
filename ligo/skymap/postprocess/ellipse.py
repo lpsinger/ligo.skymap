@@ -26,16 +26,53 @@ from .. import moc
 __all__ = ('find_ellipse',)
 
 
+# FIXME: use weighted percentile function.
+# See https://github.com/numpy/numpy/pull/9211
+def wmedian(x, weights):
+    i = np.argsort(x)
+    c = np.cumsum(weights[i])
+    return np.interp(0.5, c / c[-1], x[i])
+
+
 def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     """For a HEALPix map, find an ellipse that contains a given probability.
 
+    The center of the ellipse is the median a posteriori sky position. The
+    length and orientation of the semi-major and semi-minor axes are measured
+    as follows:
+
+    1. The sky map is transformed to a WCS projection that may be specified by
+       the caller. The default projection is ``ARC`` (zenithal equidistant), in
+       which radial distances are proportional to the physical angular
+       separation from the center point.
+    2. A 1-sigma ellipse is estimated by calculating the covariance matrix in
+       the projected image plane using three rounds of sigma clipping to reject
+       distant outlier points.
+    3. The 1-sigma ellipse is inflated until it encloses an integrated
+       probability of ``cl`` (default: 90%).
+
+    The function returns a tuple of the right ascension, declination,
+    semi-major distance, semi-minor distance, and orientation angle, all in
+    degrees.
+
+    The orientation is defined as the angle of the semimajor axis
+    counterclockwise from west on the plane of the sky. If you think of the
+    semimajor distance as the width of the ellipse, then the orientation is the
+    clockwise rotation relative to the image x-axis. Equivalently, the
+    orientation is the position angle of the semi-minor axis.
+
+    These conventions match the definitions used in DS9 region files
+    (http://ds9.si.edu/doc/ref/region.html) and Aladin drawing scripts
+    (http://aladin.u-strasbg.fr/java/AladinScriptManual.gml#draw).
+
     Parameters
     ----------
-    prob : np.ndarray
-        The HEALPix probability map.
+    prob : np.ndarray, astropy.table.Table
+        The HEALPix probability map, either as a full rank explicit array
+        or as a multi-order map.
     cl : float
         The desired credible level (default: 90).
-    projection : str
+    projection : str, optional
         The WCS projection (default: 'ARC', or zenithal equidistant).
         For a list of possible values, see:
         http://docs.astropy.org/en/stable/wcs/index.html#supported-projections
@@ -48,15 +85,103 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         The ellipse center right ascension in degrees.
     dec : float
         The ellipse center right ascension in degrees.
-    pa : float
-        The position angle of the semimajor axis in degrees.
     a : float
         The lenth of the semimajor axis in degrees.
     b : float
-        The length o the semiminor axis in degrees.
+        The length of the semiminor axis in degrees.
+    pa : float
+        The orientation of the ellipse axis on the plane of the sky in degrees.
+    area : float
+        The area of the ellipse in square degrees.
 
     Examples
     --------
+
+    Example 1
+    ~~~~~~~~~
+
+    First, we need some imports.
+
+    >>> from astropy.io import fits
+    >>> from astropy.utils.data import download_file
+    >>> from astropy.wcs import WCS
+    >>> import healpy as hp
+    >>> from reproject import reproject_from_healpix
+    >>> import subprocess
+
+    Next, we download the BAYESTAR sky map for GW170817 from the
+    LIGO Document Control Center.
+
+    >>> url = 'https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz'
+    >>> filename = download_file(url, cache=True, show_progress=False)
+    >>> _, healpix_hdu = fits.open(filename)
+    >>> prob = hp.read_map(healpix_hdu, verbose=False)
+
+    Then, we calculate ellipse and write it to a DS9 region file.
+
+    >>> ra, dec, a, b, pa, area = find_ellipse(prob)
+    >>> print(*np.around([ra, dec, a, b, pa, area], 5))
+    195.03733 -19.29358 8.66547 1.1793 63.61698 32.07665
+    >>> s = 'fk5;ellipse({},{},{},{},{})'.format(ra, dec, a, b, pa)
+    >>> open('ds9.reg', 'w').write(s)  # doctest: +SKIP
+
+    Then, we reproject a small patch of the HEALPix map, and save it to a file.
+
+    >>> wcs = WCS()
+    >>> wcs.wcs.ctype = ['RA---ARC', 'DEC--ARC']
+    >>> wcs.wcs.crval = [ra, dec]
+    >>> wcs.wcs.crpix = [128, 128]
+    >>> wcs.wcs.cdelt = [-0.1, 0.1]
+    >>> img, _ = reproject_from_healpix(healpix_hdu, wcs, [256, 256])
+    >>> img_hdu = fits.ImageHDU(img, wcs.to_header())
+    >>> img_hdu.writeto('skymap.fits')  # doctest: +SKIP
+
+    Now open the image and region file in DS9. You should find that the ellipse
+    encloses the probability hot spot. You can load the sky map and region file
+    from the command line:
+
+        $ ds9 skymap.fits -region ds9.reg
+
+    Or you can do this manually:
+
+        1. Open DS9.
+        2. Open the sky map: select "File->Open..." and choose ``skymap.fits``
+           from the dialog box.
+        3. Open the region file: select "Regions->Load Regions..." and choose
+           ``ds9.reg`` from the dialog box.
+
+    Now open the image and region file in Aladin.
+
+        1. Open Aladin.
+        2. Open the sky map: select "File->Load Local File..." and choose
+           ``skymap.fits`` from the dialog box.
+        3. Open the sky map: select "File->Load Local File..." and choose
+           ``ds9.reg`` from the dialog box.
+
+    You can also compare the original HEALPix file with the ellipse in Aladin:
+
+        1. Open Aladin.
+        2. Open the HEALPix file by pasting the URL from the top of this
+           example in the Command field at the top of the window and hitting
+           return, or by selecting "File->Load Direct URL...", pasting the URL,
+           and clicking "Submit."
+        3. Open the sky map: select "File->Load Local File..." and choose
+           ``ds9.reg`` from the dialog box.
+
+    Example 2
+    ~~~~~~~~~
+
+    This example shows that we get approximately the same answer for GW171087
+    if we read it in as a multi-order map.
+
+    >>> from ..io import read_sky_map
+    >>> skymap_moc = read_sky_map(healpix_hdu, moc=True)
+    >>> ellipse = find_ellipse(skymap_moc)
+    >>> print(*np.around(ellipse, 5))
+    195.03715 -19.27587 8.67609 1.18167 63.60452 32.08015
+
+    Example 3
+    ~~~~~~~~~
 
     I'm not showing the `ra` or `pa` output from the examples below because
     the right ascension is arbitary when dec=90° and the position angle is
@@ -65,9 +190,6 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     to get values of dec or pa that get rounded to -0.0, which is within
     numerical precision but would break the doctests (see
     https://stackoverflow.com/questions/11010683).
-
-    Example 1
-    ~~~~~~~~~
 
     This is an example sky map that is uniform in sin(theta) out to a given
     radius in degrees. The 90% credible radius should be 0.9 * radius. (There
@@ -82,21 +204,21 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
 
     >>> prob = make_uniform_in_sin_theta(1)
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, a, b)
-    90.0 0.82241 0.82241
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, area)
+    89.90863 0.87034 0.87034 2.37888
 
     >>> prob = make_uniform_in_sin_theta(10)
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, a, b)
-    90.0 9.05512 9.05512
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, area)
+    89.90828 9.02485 9.02484 255.11972
 
     >>> prob = make_uniform_in_sin_theta(120)
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, a, b)
-    90.0 107.9745 107.9745
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, area)
+    90.0 107.9745 107.9745 26988.70468
 
-    Example 2
+    Example 4
     ~~~~~~~~~
 
     These are approximately Gaussian distributions.
@@ -126,9 +248,9 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.square(np.deg2rad(1)))
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(ra, dec, a, b)
-    45.0 0.0 2.14209 2.14209
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(ra, dec, a, b, area)
+    44.99999 0.0 2.14242 2.14209 14.4677
 
     This one is centered at RA=45°, Dec=0°, and is elongated in the north-south
     direction.
@@ -137,9 +259,9 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.diag(np.square(np.deg2rad([1, 1, 10]))))
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(ra, dec, pa, a, b)
-    45.0 0.0 0.0 13.44746 2.1082
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(ra, dec, a, b, pa, area)
+    44.99998 0.0 13.58769 2.08298 90.0 88.57797
 
     This one is centered at RA=0°, Dec=0°, and is elongated in the east-west
     direction.
@@ -148,12 +270,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1, 0, 0],
     ...     np.diag(np.square(np.deg2rad([1, 10, 1]))))
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, pa, a, b)
-    0.0 90.0 13.4194 2.1038
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, pa, area)
+    0.0 13.58392 2.08238 0.0 88.54623
 
-    This one is centered at RA=0°, Dec=0°, and is tilted about 10° to the west
-    of north.
+    This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
+    10° to the west of north.
 
     >>> prob = make_gaussian(
     ...     [1, 0, 0],
@@ -161,12 +283,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, -0.15],
     ...      [0, -0.15, 1]])
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, pa, a, b)
-    0.0 170.78253 63.82809 34.00824
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, pa, area)
+    0.0 64.77133 33.50754 80.78231 6372.34466
 
-    This one is centered at RA=0°, Dec=0°, and is tilted about 10° to the east
-    of north.
+    This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
+    10° to the east of north.
 
     >>> prob = make_gaussian(
     ...     [1, 0, 0],
@@ -174,12 +296,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, 0.15],
     ...      [0, 0.15, 1]])
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, pa, a, b)
-    0.0 9.21747 63.82809 34.00824
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, pa, area)
+    0.0 64.77133 33.50754 99.21769 6372.34466
 
-    This one is centered at RA=0°, Dec=0°, and is tilted about 80° to the east
-    of north.
+    This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
+    80° to the east of north.
 
     >>> prob = make_gaussian(
     ...     [1, 0, 0],
@@ -187,12 +309,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, 0.15],
     ...      [0, 0.15, 0.1]])
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, pa, a, b)
-    0.0 80.78252 63.82533 34.00677
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, pa, area)
+    0.0 64.77564 33.50986 170.78252 6372.42573
 
-    This one is centered at RA=0°, Dec=0°, and is tilted about 80° to the west
-    of north.
+    This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
+    80° to the west of north.
 
     >>> prob = make_gaussian(
     ...     [1, 0, 0],
@@ -200,16 +322,29 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, -0.15],
     ...      [0, -0.15, 0.1]])
     ...
-    >>> ra, dec, pa, a, b = np.around(find_ellipse(prob), 5) + 0
-    >>> print(dec, pa, a, b)
-    0.0 99.21748 63.82533 34.00677
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> print(dec, a, b, pa, area)
+    0.0 64.77564 33.50986 9.21748 6372.42573
     """
-    npix = len(prob)
-    nside = hp.npix2nside(npix)
+    try:
+        prob['UNIQ']
+    except (IndexError, KeyError, ValueError):
+        npix = len(prob)
+        nside = hp.npix2nside(npix)
+        ipix = np.arange(npix)
+        area = np.repeat(hp.nside2pixarea(nside, degrees=True), npix)
+    else:
+        order, ipix = moc.uniq2nest(prob['UNIQ'])
+        nside = 1 << order.astype(int)
+        ipix = ipix.astype(int)
+        area = hp.nside2pixarea(nside)
+        prob = prob['PROBDENSITY'] * area
+        area *= np.square(180 / np.pi)
+        nest = True
 
-    # Find mean right ascension and declination.
-    xyz0 = (hp.pix2vec(nside, np.arange(npix), nest=nest) * prob).sum(axis=1)
-    (ra,), (dec,) = hp.vec2ang(xyz0, lonlat=True)
+    # Find median a posteriori sky position.
+    xyz0 = [wmedian(x, prob) for x in hp.pix2vec(nside, ipix, nest=nest)]
+    (ra,), (dec,) = hp.vec2ang(np.asarray(xyz0), lonlat=True)
 
     # Construct WCS with the specified projection
     # and centered on mean direction.
@@ -221,15 +356,21 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     xy = w.wcs_world2pix(
         np.transpose(
             hp.pix2ang(
-                nside, np.arange(npix), nest=nest, lonlat=True)), 1)
+                nside, ipix, nest=nest, lonlat=True)), 1)
 
     # Keep only values that were inside the projection.
     keep = np.logical_and.reduce(np.isfinite(xy), axis=1)
     xy = xy[keep]
     prob = prob[keep]
+    area = area[keep]
 
-    # Find covariance matrix.
-    c = np.cov(xy, aweights=prob, rowvar=False)
+    # Find covariance matrix, performing three rounds of sigma-clipping
+    # to reject outliers.
+    keep = np.ones(len(xy), dtype=bool)
+    for _ in range(3):
+        c = np.cov(xy[keep], aweights=prob[keep], rowvar=False)
+        nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))
+        keep &= (nsigmas < 3)
 
     # If each point is n-sigma from the center, find n.
     nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))
@@ -238,7 +379,9 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     i = np.argsort(nsigmas)
     nsigmas = nsigmas[i]
     cls = np.cumsum(prob[i])
+    careas = np.cumsum(area[i])
     nsigma = np.interp(1e-2 * cl, cls, nsigmas)
+    area = np.interp(1e-2 * cl, cls, careas)
 
     # If the credible level is not within the projection,
     # then stop here and return all nans.
@@ -252,11 +395,11 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     b, a = nsigma * np.sqrt(w)
 
     # Find the position angle.
-    pa = np.rad2deg(np.arctan2(*v[:, 1]))
+    pa = np.rad2deg(np.arctan2(*v[0]))
 
     # An ellipse is symmetric under rotations of 180°.
     # Return the smallest possible positive position angle.
     pa %= 180
 
     # Done!
-    return ra, dec, pa, a, b
+    return ra, dec, a, b, pa, area

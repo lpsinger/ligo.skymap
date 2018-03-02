@@ -1,20 +1,18 @@
-import subprocess
-import sys
-from astropy.tests.helper import pytest
-import os
-import os.path
-import h5py
-import numpy as np
 import errno
 import gzip
+import os
 import re
+import subprocess
+import sys
 
 from glue.ligolw.utils import load_filename
+import h5py
+import numpy as np
+import pytest
 
 from ... import events
 from ..ligolw import _ContentHandler
 from ...util import sqlite
-
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 

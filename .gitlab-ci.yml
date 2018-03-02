@@ -122,6 +122,25 @@ coverage:py:
     # Print coverage summary
     - python3 -m coverage report
 
+deploy:wheel:
+  stage: deploy
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
+  variables:
+    GIT_STRATEGY: none
+  script:
+    # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
+    - /opt/python/cp36-cp36m/bin/pip install twine
+    - /opt/python/cp36-cp36m/bin/twine upload dist/*
+  dependencies:
+    - wheel:cp34-cp34m-manylinux1
+    - wheel:cp35-cp35m-manylinux1
+    - wheel:cp36-cp36m-manylinux1
+    - wheel:cp35-cp35m-macosx
+    - wheel:cp36-cp36m-macosx
+  artifacts:
+    paths:
+      - dist
+
 pages:
   variables:
     GIT_STRATEGY: none

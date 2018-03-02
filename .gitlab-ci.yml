@@ -15,7 +15,7 @@ sdist:
   artifacts:
     paths:
       - dist/
-    expire_in: 20 minutes
+    expire_in: 30 minutes
 
 # Build receipe for standalone wheels on Linux
 .wheel:manylinux1: &wheel-manylinux1
@@ -36,7 +36,7 @@ sdist:
   artifacts:
     paths:
       - wheelhouse
-    expire_in: 5 minutes
+    expire_in: 30 minutes
 
 # Build receipe for standalone wheels on macOS
 .wheel:macos: &wheel-macos
@@ -55,6 +55,7 @@ sdist:
   artifacts:
     paths:
       - wheelhouse
+    expire_in: 30 minutes
 
 # Build wheels for all supported platforms
 wheel:cp35-cp35m-manylinux1:
@@ -98,7 +99,7 @@ docs:
   artifacts:
     paths:
       - docs/_build/html
-    expire_in: 5 minutes
+    expire_in: 30 minutes
 
 coverage:c:
   variables:

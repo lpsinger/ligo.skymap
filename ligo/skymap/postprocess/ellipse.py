@@ -37,33 +37,14 @@ def wmedian(x, weights):
 def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     """For a HEALPix map, find an ellipse that contains a given probability.
 
-    The center of the ellipse is the median a posteriori sky position. The
-    length and orientation of the semi-major and semi-minor axes are measured
-    as follows:
-
-    1. The sky map is transformed to a WCS projection that may be specified by
-       the caller. The default projection is ``ARC`` (zenithal equidistant), in
-       which radial distances are proportional to the physical angular
-       separation from the center point.
-    2. A 1-sigma ellipse is estimated by calculating the covariance matrix in
-       the projected image plane using three rounds of sigma clipping to reject
-       distant outlier points.
-    3. The 1-sigma ellipse is inflated until it encloses an integrated
-       probability of ``cl`` (default: 90%).
-
-    The function returns a tuple of the right ascension, declination,
-    semi-major distance, semi-minor distance, and orientation angle, all in
-    degrees.
-
     The orientation is defined as the angle of the semimajor axis
     counterclockwise from west on the plane of the sky. If you think of the
     semimajor distance as the width of the ellipse, then the orientation is the
     clockwise rotation relative to the image x-axis. Equivalently, the
     orientation is the position angle of the semi-minor axis.
 
-    These conventions match the definitions used in DS9 region files
-    (http://ds9.si.edu/doc/ref/region.html) and Aladin drawing scripts
-    (http://aladin.u-strasbg.fr/java/AladinScriptManual.gml#draw).
+    These conventions match the definitions used in DS9 region files [1]_ and
+    Aladin drawing commands [2]_.
 
     Parameters
     ----------
@@ -74,8 +55,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         The desired credible level (default: 90).
     projection : str, optional
         The WCS projection (default: 'ARC', or zenithal equidistant).
-        For a list of possible values, see:
-        http://docs.astropy.org/en/stable/wcs/index.html#supported-projections
+        For a list of possible values, see the Astropy documentation [3]_.
     nest : bool
         HEALPix pixel ordering (default: False, or ring ordering).
 
@@ -94,11 +74,38 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     area : float
         The area of the ellipse in square degrees.
 
+    Notes
+    -----
+
+    The center of the ellipse is the median a posteriori sky position. The
+    length and orientation of the semi-major and semi-minor axes are measured
+    as follows:
+
+    1. The sky map is transformed to a WCS projection that may be specified by
+       the caller. The default projection is ``ARC`` (zenithal equidistant), in
+       which radial distances are proportional to the physical angular
+       separation from the center point.
+    2. A 1-sigma ellipse is estimated by calculating the covariance matrix in
+       the projected image plane using three rounds of sigma clipping to reject
+       distant outlier points.
+    3. The 1-sigma ellipse is inflated until it encloses an integrated
+       probability of ``cl`` (default: 90%).
+
+    The function returns a tuple of the right ascension, declination,
+    semi-major distance, semi-minor distance, and orientation angle, all in
+    degrees.
+
+    References
+    ----------
+
+    .. [1] http://ds9.si.edu/doc/ref/region.html
+    .. [2] http://aladin.u-strasbg.fr/java/AladinScriptManual.gml#draw
+    .. [3] http://docs.astropy.org/en/stable/wcs/index.html#supported-projections
+
     Examples
     --------
 
-    Example 1
-    ~~~~~~~~~
+    **Example 1**
 
     First, we need some imports.
 
@@ -168,8 +175,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         3. Open the sky map: select "File->Load Local File..." and choose
            ``ds9.reg`` from the dialog box.
 
-    Example 2
-    ~~~~~~~~~
+    **Example 2**
 
     This example shows that we get approximately the same answer for GW171087
     if we read it in as a multi-order map.
@@ -180,8 +186,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> print(*np.around(ellipse, 5))
     195.03715 -19.27587 8.67609 1.18167 63.60452 32.08015
 
-    Example 3
-    ~~~~~~~~~
+    **Example 3**
 
     I'm not showing the `ra` or `pa` output from the examples below because
     the right ascension is arbitary when dec=90° and the position angle is
@@ -218,8 +223,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> print(dec, a, b, area)
     90.0 107.9745 107.9745 26988.70468
 
-    Example 4
-    ~~~~~~~~~
+    **Example 4**
 
     These are approximately Gaussian distributions.
 

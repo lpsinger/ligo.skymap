@@ -140,6 +140,8 @@ deploy:wheel:
   artifacts:
     paths:
       - dist
+  only:
+    - tags
 
 pages:
   variables:

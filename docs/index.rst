@@ -35,7 +35,11 @@ Modules
    ligo/skymap/plot/backdrop
    ligo/skymap/plot/marker
    ligo/skymap/plot/pp
-   ligo/skymap/postprocess
+   ligo/skymap/postprocess/contour
+   ligo/skymap/postprocess/detector_frame
+   ligo/skymap/postprocess/ellipse
+   ligo/skymap/postprocess/find_injection
+   ligo/skymap/postprocess/util
    ligo/skymap/util/file
    ligo/skymap/util/numpy
    ligo/skymap/util/sqlite

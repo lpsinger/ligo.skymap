@@ -176,7 +176,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     Test reading a file that was written using the LAL HDF5 C API:
 
     >>> from pkg_resources import resource_filename
-    >>> filename = resource_filename(__name__, '../tests/data/test.hdf5')
+    >>> filename = resource_filename(__name__, 'tests/data/test.hdf5')
     >>> table = read_samples(filename)
     >>> table.colnames
     ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'rst', 'ghi']

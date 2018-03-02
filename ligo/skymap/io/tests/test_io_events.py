@@ -13,7 +13,7 @@ from glue.ligolw.utils import load_filename
 
 from ... import events
 from ..ligolw import _ContentHandler
-from ....util import sqlite
+from ...util import sqlite
 
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')

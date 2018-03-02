@@ -24,6 +24,10 @@ sdist:
   # build-dependencies.
   image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
   stage: build
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - tar --strip-components 1 -xf dist/*
   script:
     # Build and install LALSuite
     - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*:\(.*\)-manylinux1/\1/')

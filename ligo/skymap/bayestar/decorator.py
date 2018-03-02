@@ -39,13 +39,3 @@ def with_numpy_random_seed(func, seed=0):
         return ret
 
     return wrapped_func
-
-
-def as_dict(func):
-    """Decorate a generator function to turn its output into a dict."""
-
-    @wraps(func)
-    def wrapped_func(*args, **kwargs):
-        return dict(func(*args, **kwargs))
-
-    return wrapped_func

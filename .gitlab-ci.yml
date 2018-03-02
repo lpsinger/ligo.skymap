@@ -61,31 +61,31 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
-# wheel:cp35-cp35m-macosx:
-#   <<: *wheel-macos
-# wheel:cp36-cp36m-macosx:
-#   <<: *wheel-macos
+wheel:cp35-cp35m-macosx:
+  <<: *wheel-macos
+wheel:cp36-cp36m-macosx:
+  <<: *wheel-macos
 
-# test:
-#   stage: build
-#   variables:
-#     CFLAGS: -coverage
-#     GIT_STRATEGY: none
-#   before_script:
-#     - tar --strip-components 1 -xf dist/*
-#   script:
-#     # Run tests
-#     - python3 setup.py test --coverage -vv --args='-vv'
-#     # Write gcovr test coverage
-#     - mkdir gcovr
-#     - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
-#   artifacts:
-#     paths:
-#       - .coverage
-#       - build/temp.*/src/*.gc*
-#       - gcovr/
-#       - htmlcov/
-#     expire_in: 5 minutes
+test:
+  stage: build
+  variables:
+    CFLAGS: -coverage
+    GIT_STRATEGY: none
+  before_script:
+    - tar --strip-components 1 -xf dist/*
+  script:
+    # Run tests
+    - python3 setup.py test --coverage -vv --args='-vv'
+    # Write gcovr test coverage
+    - mkdir gcovr
+    - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
+  artifacts:
+    paths:
+      - .coverage
+      - build/temp.*/src/*.gc*
+      - gcovr/
+      - htmlcov/
+    expire_in: 5 minutes
 
 docs:
   stage: build
@@ -135,8 +135,8 @@ deploy:wheel:
     - sdist
     - wheel:cp35-cp35m-manylinux1
     - wheel:cp36-cp36m-manylinux1
-    # - wheel:cp35-cp35m-macosx
-    # - wheel:cp36-cp36m-macosx
+    - wheel:cp35-cp35m-macosx
+    - wheel:cp36-cp36m-macosx
   artifacts:
     paths:
       - dist

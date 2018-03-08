@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# Licensed under a 3-clause BSD style license - see LICENSE.rst
+# This file is adapted from the Astropy affiliated package template, which is
+# licensed under a 3-clause BSD style license - see astropy_helpers/LICENSE.rst
 
 import glob
 import os

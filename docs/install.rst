@@ -37,7 +37,7 @@ The following packages are optional for specific features:
 *  `pytest <https://docs.pytest.org>`_ for running the tests suite
 
 Quick start
--------------------------
+-----------
 
 The recommended way to install `ligo.skymap` is with
 `pip <https://pip.pypa.io>`_::

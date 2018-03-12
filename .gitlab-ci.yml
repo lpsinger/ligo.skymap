@@ -117,6 +117,7 @@ coverage:c:
   before_script:
     - tar --strip-components 1 -xf dist/*
   dependencies:
+    - sdist
     - test
   script:
     # Display coverage summary
@@ -130,6 +131,7 @@ coverage:py:
   before_script:
     - tar --strip-components 1 -xf dist/*
   dependencies:
+    - sdist
     - test
   script:
     # Print coverage summary

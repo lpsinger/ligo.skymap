@@ -9,11 +9,11 @@ ligo.skymap
 
 *LIGO's stellar cartography department.*
 
-=========  ===============  ==========  ========
-**Build**  **Python code**  **C code**  **Docs**
-=========  ===============  ==========  ========
-|_build_|  |_python_code_|  |_c_code_|  |docs|__
-=========  ===============  ==========  ========
++-----------+-----------------+------------+----------+
+| **Build** | **Python code** | **C code** | **Docs** |
++===========+=================+============+==========+
+| |_build_| | |_python_code_| | |_c_code_| | |docs|__ |
++-----------+-----------------+------------+----------+
 
 .. |_build_| image:: https://git.ligo.org/leo-singer/ligo.skymap/badges/master/pipeline.svg
    :alt: pipeline status

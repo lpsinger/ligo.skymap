@@ -50,7 +50,7 @@ package are:
 *  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
-See the `installation insructions`_ or the `full documentation`_.
+See the `installation instructions`_ or the `full documentation`_.
 
 **Note**: Since the migration of these tools from LALSuite is very recent, the
 modules, scripts, and documentation in this package are subject to change.

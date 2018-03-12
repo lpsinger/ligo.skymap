@@ -33,9 +33,13 @@ sdist:
     - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*:\(.*\)-manylinux1/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
     - auditwheel repair dist/*.whl
+    - rm dist/*
+    - mv wheelhouse/* dist/
+  dependencies:
+    - sdist
   artifacts:
     paths:
-      - wheelhouse
+      - dist/
     expire_in: 30 minutes
 
 # Build receipe for standalone wheels on macOS
@@ -52,9 +56,13 @@ sdist:
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl
+    - rm dist/*
+    - mv wheelhouse/* dist/
+  dependencies:
+    - sdist
   artifacts:
     paths:
-      - wheelhouse
+      - dist/
     expire_in: 30 minutes
 
 # Build wheels for all supported platforms
@@ -108,6 +116,8 @@ coverage:c:
   stage: deploy
   before_script:
     - tar --strip-components 1 -xf dist/*
+  dependencies:
+    - test
   script:
     # Display coverage summary
     - gcovr build/temp*/src -r .
@@ -119,6 +129,8 @@ coverage:py:
   stage: deploy
   before_script:
     - tar --strip-components 1 -xf dist/*
+  dependencies:
+    - test
   script:
     # Print coverage summary
     - python3 -m coverage report

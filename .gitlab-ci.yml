@@ -167,8 +167,6 @@ pages:
     - mkdir -p public/cov
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
-    # - mv dist public/dist
-    # - mv wheelhouse/* public/dist
   artifacts:
     paths:
       - public

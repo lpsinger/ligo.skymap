@@ -1,7 +1,7 @@
-0.0.2 (unreleased)
+0.0.2 (2017-03-12)
 ==================
 
-- No changes yet.
+- Adjust CI configuration for uploading to PyPI.
 
 0.0.1 (2017-03-12)
 ==================

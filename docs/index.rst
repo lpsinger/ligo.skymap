@@ -32,6 +32,15 @@ package are:
 .. note:: Since the migration of these tools from LALSuite is very recent, the
    modules, scripts, and documentation in this package are subject to change.
 
+***********
+Quick Start
+***********
+
+.. toctree::
+   :maxdepth: 1
+
+   install
+
 *********
 Reference
 *********

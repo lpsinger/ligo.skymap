@@ -59,5 +59,5 @@ modules, scripts, and documentation in this package are subject to change.
 .. _`Script ligo-skymap-from-samples`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
 .. _`Script ligo-skymap-plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
 .. _`Module ligo.skymap.plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/plot
-.. _`installation insructions`: https://leo-singer.docs.ligo.org/ligo.skymap/install.html
+.. _`installation instructions`: https://leo-singer.docs.ligo.org/ligo.skymap/install.html
 .. _`full documentation`: https://leo-singer.docs.ligo.org/ligo.skymap

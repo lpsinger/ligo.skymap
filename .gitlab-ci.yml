@@ -167,6 +167,8 @@ pages:
     - mkdir -p public/cov
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
+  dependencies:
+    - test
   artifacts:
     paths:
       - public

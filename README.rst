@@ -50,10 +50,14 @@ package are:
 *  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
-.. note:: Since the migration of these tools from LALSuite is very recent, the
-   modules, scripts, and documentation in this package are subject to change.
+See the `installation insructions`_ or the `full documentation`_.
+
+**Note**: Since the migration of these tools from LALSuite is very recent, the
+modules, scripts, and documentation in this package are subject to change.
 
 .. _`Script bayestar-localize-coincs`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
 .. _`Script ligo-skymap-from-samples`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
 .. _`Script ligo-skymap-plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
-.. _`Module ligo.skymap.plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/plot/index.html
+.. _`Module ligo.skymap.plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/plot
+.. _`installation insructions`: https://leo-singer.docs.ligo.org/ligo.skymap/install.html
+.. _`full documentation`: https://leo-singer.docs.ligo.org/ligo.skymap

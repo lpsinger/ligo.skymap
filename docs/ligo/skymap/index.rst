@@ -13,7 +13,7 @@ API Reference
    io/hdf5
    kde
    moc
-   plot
+   plot/index
    postprocess/contour
    postprocess/detector_frame
    postprocess/ellipse

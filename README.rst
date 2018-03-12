@@ -37,18 +37,23 @@ provides several tools that used to live in `LALSuite
 tiny Python package that is easier to install. Some of the key features of this
 package are:
 
-*  :doc:`ligo/skymap/tool/bayestar_localize_coincs`: BAYESTAR, providing rapid,
+*  `Script bayestar-localize-coincs`_: BAYESTAR, providing rapid,
    coherent, Bayesian, 3D position reconstruction for compact binary
    coalescence events
 
-*  :doc:`ligo/skymap/tool/ligo_skymap_from_samples`: Create 3D sky maps from
+*  `Script ligo-skymap-from-samples`_: Create 3D sky maps from
    posterior sample chains using kernel density estimation
 
-*  :doc:`ligo/skymap/tool/ligo_skymap_plot`: An everyday tool for plotting
+*  `Script ligo-skymap-plot`_: An everyday tool for plotting
    HEALPix maps
 
-*  Module :mod:`ligo.skymap.plot`: Astronomical mapmaking tools for
+*  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
 .. note:: Since the migration of these tools from LALSuite is very recent, the
    modules, scripts, and documentation in this package are subject to change.
+
+.. _`Script bayestar-localize-coincs`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
+.. _`Script ligo-skymap-from-samples`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
+.. _`Script ligo-skymap-plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
+.. _`Module ligo.skymap.plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/plot/index.html

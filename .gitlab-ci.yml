@@ -168,6 +168,7 @@ pages:
     - mv gcovr public/cov/c
     - mv htmlcov public/cov/py
   dependencies:
+    - docs
     - test
   artifacts:
     paths:

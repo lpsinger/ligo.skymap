@@ -81,7 +81,8 @@ custom_frame_mappings([wcs_to_celestial_frame_itrs])
 
 
 class WCSInsetPatch(PathPatch):
-    """Class to mark the outline of one WCSAxes inside another."""
+    """Subclass of `matplotlib.patches.PathPatch` for marking the outline of
+    one `astropy.visualization.wcsaxes.WCSAxes` inside another."""
 
     def __init__(self, ax, *args, **kwargs):
         self._ax = ax
@@ -146,18 +147,63 @@ class AutoScaledWCSAxes(WCSAxes):
         return self._header
 
     def mark_inset_axes(self, ax, *args, **kwargs):
-        """Convenience function to mark the outline of another WCSAxes inside
-        this one."""
+        """Outline the footprint of another WCSAxes inside this one.
+
+        Parameters
+        ----------
+        ax : `astropy.visualization.wcsaxes.WCSAxes`
+            The other axes.
+
+        Other parameters
+        ----------------
+        args :
+            Extra arguments for `matplotlib.patches.PathPatch`
+        kwargs :
+            Extra keyword arguments for `matplotlib.patches.PathPatch`
+
+        Returns
+        -------
+        `matplotlib.patches.PathPatch`
+        """
         return self.add_patch(WCSInsetPatch(
             ax, *args, transform=self.get_transform('world'), **kwargs))
 
     def connect_inset_axes(self, ax, loc, *args, **kwargs):
         """Convenience function to connect a corner of another WCSAxes to the
-        matching point inside this one."""
+        matching point inside this one.
+
+        Parameters
+        ----------
+        ax : `astropy.visualization.wcsaxes.WCSAxes`
+            The other axes.
+        loc : int, str
+            Which corner to connect. For valid values, see
+            `matplotlib.offsetbox.AnchoredOffsetbox`.
+
+        Other parameters
+        ----------------
+        args :
+            Extra arguments for `matplotlib.patches.ConnectionPatch`
+        kwargs :
+            Extra keyword arguments for `matplotlib.patches.ConnectionPatch`
+
+        Returns
+        -------
+        `matplotlib.patches.ConnectionPatch`
+        """
         return self.add_patch(WCSInsetConnectionPatch(
             self, ax, loc, *args, **kwargs))
 
     def compass(self, x, y, size):
+        """Add a compass to indicate the north and east directions.
+
+        Parameters
+        ----------
+        x, y : float
+            Position of compass vertex in axes coordinates.
+        size : float
+            Size of compass in axes coordinates.
+        """
         xy = x, y
         scale = self.wcs.pixel_scale_matrix
         scale /= np.sqrt(np.abs(np.linalg.det(scale)))
@@ -171,6 +217,26 @@ class AutoScaledWCSAxes(WCSAxes):
                                         ['center', 'bottom'])]
 
     def scalebar(self, *args, **kwargs):
+        """Add scale bar.
+
+        Parameters
+        ----------
+        xy : tuple
+            The axes coordinates of the scale bar.
+        length : `astropy.units.Quantity`
+            The length of the scale bar in angle-compatible units.
+
+        Other parameters
+        ----------------
+        args :
+            Extra arguments for `matplotlib.patches.FancyArrowPatch`
+        kwargs :
+            Extra keyword arguments for `matplotlib.patches.FancyArrowPatch`
+
+        Returns
+        -------
+        `matplotlib.patches.FancyArrowPatch`
+        """
         return self.add_patch(ScaleBar(self, *args, **kwargs))
 
     def _reproject_hpx(self, data, hdu_in=None, order='bilinear',

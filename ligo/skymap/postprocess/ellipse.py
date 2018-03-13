@@ -231,18 +231,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> def make_gaussian(mean, cov, nside=512):
     ...     npix = hp.nside2npix(nside)
     ...     xyz = np.transpose(hp.pix2vec(nside, np.arange(npix)))
-    ...     # FIXME: stats.multivariate_normal was added in scipy 0.14,
-    ...     # but we still need to support an older version on our
-    ...     # Scientific Linux 7 clusters.
-    ...     #
-    ...     # dist = stats.multivariate_normal(mean, cov)
-    ...     # prob = dist.pdf(xyz)
-    ...     if np.ndim(cov) == 0:
-    ...         cov = [cov] * 3
-    ...     if np.ndim(cov) == 1:
-    ...         cov = np.diag(cov)
-    ...     d = xyz - mean
-    ...     prob = np.exp(-0.5 * (np.linalg.solve(cov, d.T) * d.T).sum(0))
+    ...     dist = stats.multivariate_normal(mean, cov)
+    ...     prob = dist.pdf(xyz)
     ...     return prob / prob.sum()
     ...
 

@@ -15,10 +15,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Axes subclasses for all-sky maps.
+Axes subclasses for all-sky maps. This adds several
+`astropy.visualization.wcsaxes.WCSAxes` subclasses to the
+Matplotlib projection registry. The projections are:
+
+*  ``astro degrees aitoff``
+*  ``astro degrees mollweide``
+*  ``astro hours aitoff``
+*  ``astro hours mollweide``
+*  ``geo degrees aitoff``
+*  ``geo hours aitoff``
+*  ``geo degrees mollweide``
+*  ``geo hours mollweide``
+*  ``astro globe`` with option `center`
+*  ``astro zoom`` with options `center` and `radius`
 
 Example
 -------
+
+The following example demonstrates most of the features of this module.
 
 .. plot::
    :context: reset

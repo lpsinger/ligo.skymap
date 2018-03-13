@@ -406,7 +406,6 @@ class AutoScaledWCSAxes(WCSAxes):
 
 
 class GlobeAxes(AutoScaledWCSAxes):
-    """A good multi-purpose all-sky projection"""
 
     name = 'astro globe'
 
@@ -431,7 +430,6 @@ class GlobeAxes(AutoScaledWCSAxes):
 
 
 class ZoomSkyAxes(AutoScaledWCSAxes):
-    """A good multi-purpose all-sky projection"""
 
     name = 'astro zoom'
 

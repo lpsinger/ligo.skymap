@@ -85,13 +85,17 @@ void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t
      * of ascending MOC index, so the last pixel should have the highest order.
      * However, our rasterization algorithm doesn't depend on this sorting,
      * so let's just do a linear search for the maximum order. */
-    int8_t max_order = -1;
-    for (size_t i = 0; i < len; i ++)
+    int8_t max_order;
     {
-        const void *pixel = (const char *) pixels + i * pixelsize;
-        int8_t order = uniq2order64(*(const uint64_t *) pixel);
-        if (order > max_order)
-            max_order = order;
+        uint64_t max_uniq = 0;
+        for (size_t i = 0; i < len; i ++)
+        {
+            const void *pixel = (const char *) pixels + i * pixelsize;
+            const uint64_t uniq = *(const uint64_t *) pixel;
+            if (uniq > max_uniq)
+                max_uniq = uniq;
+        }
+        max_order = uniq2order64(max_uniq);
     }
 
     /* Allocate output. */

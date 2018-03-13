@@ -14,7 +14,7 @@ Required dependencies
    `astropy-healpix <http://astropy-healpix.readthedocs.io>`_,
    which is easier to install)
 *  `h5py <https://www.h5py.org>`_
-*  `Matplotlib <https://matplotlib.org>`_ ≥ 1.3.0
+*  `Matplotlib <https://matplotlib.org>`_ ≥ 2.1.0
 *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
 *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14

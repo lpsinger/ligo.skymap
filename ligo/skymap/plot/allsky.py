@@ -15,7 +15,56 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Axes subclasses for all-sky maps
+Axes subclasses for all-sky maps.
+
+Example
+-------
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    from astropy.coordinates import SkyCoord
+    from astropy.io import fits
+    from astropy import units as u
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+
+    url = 'https://dcc.ligo.org/public/0146/G1701985/001/bayestar_no_virgo.fits.gz'
+    center = SkyCoord.from_name('NGC 4993')
+
+    fig = plt.figure(figsize=(4, 4), dpi=100)
+
+    ax = plt.axes(
+        [0.05, 0.05, 0.9, 0.9],
+        projection='astro globe',
+        center=center)
+
+    ax_inset = plt.axes(
+        [0.59, 0.3, 0.4, 0.4],
+        projection='astro zoom',
+        center=center,
+        radius=10*u.deg)
+
+    for key in ['ra', 'dec']:
+        ax_inset.coords[key].set_ticklabel_visible(False)
+        ax_inset.coords[key].set_ticks_visible(False)
+    ax.grid()
+    ax.mark_inset_axes(ax_inset)
+    ax.connect_inset_axes(ax_inset, 'upper left')
+    ax.connect_inset_axes(ax_inset, 'lower left')
+    ax_inset.scalebar((0.1, 0.1), 5 * u.deg).label()
+    ax_inset.compass(0.9, 0.1, 0.2)
+
+    ax.imshow_hpx(url, cmap='cylon')
+    ax_inset.imshow_hpx(url, cmap='cylon')
+    ax_inset.plot(
+        center.ra.deg, center.dec.deg,
+        transform=ax_inset.get_transform('world'),
+        marker=ligo.skymap.plot.reticle(),
+        markersize=30,
+        markeredgewidth=3)
 """
 from astropy.coordinates import ITRS, SkyCoord
 from astropy.io.fits import Header

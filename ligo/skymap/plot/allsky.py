@@ -185,7 +185,8 @@ class WCSInsetConnectionPatch(ConnectionPatch):
 
 
 class AutoScaledWCSAxes(WCSAxes):
-    """WCSAxes where the pixel scale is adjusted to the DPI of the image"""
+    """Axes base class. The pixel scale is adjusted to the DPI of the image,
+    and there are a variety of convenience methods."""
 
     def __init__(self, header, *args, **kwargs):
         super(AutoScaledWCSAxes, self).__init__(*args, aspect=1, **kwargs)

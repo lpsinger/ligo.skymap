@@ -22,11 +22,6 @@ from shapely import geometry
 import numpy as np
 import healpy as hp
 
-# FIXME: Remove this after all Matplotlib monkeypatches are obsolete.
-import matplotlib
-import distutils.version
-mpl_version = distutils.version.LooseVersion(matplotlib.__version__)
-
 from .angle import *
 
 __all__ = ('subdivide_vertices', 'cut_dateline',
@@ -183,10 +178,5 @@ def make_rect_poly(width, height, theta, phi, subdivisions=10):
     # Convert to spherical polar coordinates.
     thetas, phis = hp.vec2ang(v)
 
-    # FIXME: Remove this after all Matplotlib monkeypatches are obsolete.
-    if mpl_version < '1.2.0':
-        # Return list of vertices as longitude, latitude pairs.
-        return np.column_stack((reference_angle(phis), 0.5 * np.pi - thetas))
-    else:
-        # Return list of vertices as longitude, latitude pairs.
-        return np.column_stack((wrapped_angle(phis), 0.5 * np.pi - thetas))
+    # Return list of vertices as longitude, latitude pairs.
+    return np.column_stack((wrapped_angle(phis), 0.5 * np.pi - thetas))

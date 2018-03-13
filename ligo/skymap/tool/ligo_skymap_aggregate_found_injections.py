@@ -47,10 +47,10 @@ def parser():
     parser.add_argument(
         '-o', '--output', metavar='OUT.dat',
         type=argparse.FileType('w'), default='-',
-        help='Name of output file [default: stdout]')
+        help='Name of output file')
     parser.add_argument(
         '-j', '--jobs', type=int, default=1, const=None, nargs='?',
-        help='Number of threads [default: %(default)s]')
+        help='Number of threads')
     parser.add_argument(
         '-p', '--contour', default=[], nargs='+', type=float,
         metavar='PERCENT',
@@ -61,8 +61,8 @@ def parser():
         help='Report the largest probability contained within any region '
         'of this area in square degrees. Can be repeated multiple times.')
     parser.add_argument(
-        '--modes', default=False, action='store_true',
-        help='Compute number of disjoint modes [default: %(default)s]')
+        '--modes', action='store_true',
+        help='Compute number of disjoint modes')
     parser.add_argument(
         'db', type=command.SQLiteType('r'), metavar='DB.sqlite',
         help='Input SQLite database from search pipeline')

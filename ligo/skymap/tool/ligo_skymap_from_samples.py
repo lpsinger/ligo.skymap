@@ -25,7 +25,7 @@ kernel density estimation.
 def parser():
     # Command line interface.
     from argparse import FileType, SUPPRESS
-    from ..command import ArgumentParser, DirType
+    from ..command import ArgumentParser, DirType, EnableAction
     parser = ArgumentParser()
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')
@@ -43,16 +43,12 @@ def parser():
     parser.add_argument('--maxpts', type=int,
                         help='maximum number of posterior points to use')
     parser.add_argument('--trials', type=int, default=5,
-                        help='number of trials at each clustering number '
-                        '[default: %(default)s]')
-    parser.add_argument('--disable-distance-map', dest='enable_distance_map',
-                        action='store_false', default=True,
-                        help='disable output of HEALPix map of distance'
-                        ' estimates')
+                        help='number of trials at each clustering number')
+    parser.add_argument('--enable-distance-map', action=EnableAction,
+                        help='generate HEALPix map of distance estimates')
     parser.add_argument('-j', '--jobs', action='store_true',
                         help='Use multiple threads')
-    parser.add_argument('--seed', type=int, help='use specified random seed '
-                        '[default: use system entropy]')
+    parser.add_argument('--seed', type=int, help='use specified random seed')
     parser.add_argument('--objid', help='event ID to store in FITS header')
     return parser
 

@@ -55,6 +55,35 @@ def get_version():
     return version.__name__.replace('.version', '') + ' ' + version.version
 
 
+class EnableAction(argparse.Action):
+
+    def __init__(self,
+                 option_strings,
+                 dest,
+                 default=True,
+                 required=False,
+                 help=None):
+        opt, = option_strings
+        if not opt.startswith('--enable-'):
+            raise ValueError('Option string must start with --enable-')
+        option_strings = [opt, opt.replace('--enable-', '--disable-')]
+        super(EnableAction, self).__init__(
+                 option_strings,
+                 dest=dest,
+                 nargs=0,
+                 default=default,
+                 required=required,
+                 help=help)
+
+    def __call__(self, parser, namespace, values, option_string):
+        if option_string.startswith('--enable-'):
+            setattr(namespace, self.dest, True)
+        elif option_string.startswith('--disable-'):
+            setattr(namespace, self.dest, False)
+        else:
+            raise RuntimeError('This code cannot be reached')
+
+
 class GlobAction(argparse._StoreAction):
     """Generate a list of filenames from a list of filenames and globs."""
 
@@ -99,15 +128,14 @@ group = waveform_parser.add_argument_group(
 # not support frequencies less than 30 Hz.
 group.add_argument(
     '--f-low', type=float, metavar='Hz', default=30,
-    help='Low frequency cutoff [default: %(default)s]')
+    help='Low frequency cutoff')
 group.add_argument(
     '--f-high-truncate', type=float, default=0.95,
     help='Truncate waveform at this fraction of the maximum frequency of the '
-    'PSD [default: %(default)s]')
+    'PSD')
 group.add_argument(
     '--waveform', default='o2-uberbank',
-    help='Template waveform approximant (e.g., TaylorF2threePointFivePN) '
-    '[default: O2 uberbank mass-dependent waveform]')
+    help='Template waveform approximant: e.g., TaylorF2threePointFivePN')
 del group
 
 
@@ -116,23 +144,19 @@ group = prior_parser.add_argument_group(
     'prior options', 'Options that affect the BAYESTAR likelihood')
 group.add_argument(
     '--min-distance', type=float, metavar='Mpc',
-    help='Minimum distance of prior in megaparsecs '
-    '[default: infer from effective distance]')
+    help='Minimum distance of prior in megaparsecs')
 group.add_argument(
     '--max-distance', type=float, metavar='Mpc',
-    help='Maximum distance of prior in megaparsecs '
-    '[default: infer from effective distance]')
+    help='Maximum distance of prior in megaparsecs')
 group.add_argument(
     '--prior-distance-power', type=int, metavar='-1|2', default=2,
-    help='Distance prior '
-    '[-1 for uniform in log, 2 for uniform in volume, default: %(default)s]')
+    help='Distance prior: -1 for uniform in log, 2 for uniform in volume')
 group.add_argument(
-    '--cosmology', default=False, action='store_true',
-    help='Use cosmological comoving volume prior [default: %(default)s]')
+    '--cosmology', action='store_true',
+    help='Use cosmological comoving volume prior')
 group.add_argument(
-    '--disable-snr-series', dest='enable_snr_series', action='store_false',
-    help='Disable input of SNR time series (WARNING: UNREVIEWED!) '
-    '[default: enabled]')
+    '--enable-snr-series', action=EnableAction,
+    help='Enable input of SNR time series')
 del group
 
 
@@ -140,11 +164,11 @@ mcmc_parser = argparse.ArgumentParser(add_help=False)
 group = mcmc_parser.add_argument_group(
     'BAYESTAR MCMC options', 'BAYESTAR options for MCMC sampling')
 group.add_argument(
-    '--mcmc', action='store_true', default=False,
+    '--mcmc', action='store_true',
     help='Use MCMC sampling instead of Gaussian quadrature')
 group.add_argument(
-    '--chain-dump', default=False, action='store_true',
-    help='For MCMC methods, dump the sample chain to disk [default: no]')
+    '--chain-dump', action='store_true',
+    help='For MCMC methods, dump the sample chain to disk')
 del group
 
 
@@ -255,28 +279,28 @@ group = figure_parser.add_argument_group(
 group.add_argument(
     '-o', '--output', metavar='FILE.{pdf,png}',
     default='-', type=MatplotlibFigureType(),
-    help='name of output file [default: plot to screen]')
+    help='output file, or - to plot to screen')
 group.add_argument(
     '--colormap', default='cylon', choices=colormap_choices,
     type=colormap, metavar='CMAP',
-    help='name of matplotlib colormap [default: %(default)s]')
+    help='matplotlib colormap')
 group.add_argument(
     '--help-colormap', action=HelpChoicesAction, choices=colormap_choices)
 group.add_argument(
     '--figure-width', metavar='INCHES', type=figwidth, default='8',
-    help='width of figure in inches [default: %(default)s]')
+    help='width of figure in inches')
 group.add_argument(
     '--figure-height', metavar='INCHES', type=figheight, default='6',
-    help='height of figure in inches [default: %(default)s]')
+    help='height of figure in inches')
 group.add_argument(
     '--dpi', metavar='PIXELS', type=dpi, default=300,
-    help='resolution of figure in dots per inch [default: %(default)s]')
+    help='resolution of figure in dots per inch')
 # FIXME: the savefig.transparent rcparam was added in Matplotlib 1.4,
 # but we have to support Matplotlib 1.2 for Scientific Linux 7.
 if mpl_version >= '1.4':
     group.add_argument(
         '--transparent', const='1', default='0', nargs='?', type=transparent,
-        help='Save image with transparent background [default: false]')
+        help='Save image with transparent background')
 del colormap_choices
 del group
 
@@ -320,6 +344,11 @@ class LogLevelAction(argparse._StoreAction):
             metavar=metavar)
 
 
+class HelpFormatter(argparse.RawDescriptionHelpFormatter,
+                    argparse.ArgumentDefaultsHelpFormatter):
+    pass
+
+
 class ArgumentParser(argparse.ArgumentParser):
     """
     An ArgumentParser subclass with some sensible defaults.
@@ -341,7 +370,6 @@ class ArgumentParser(argparse.ArgumentParser):
                  description=None,
                  epilog=None,
                  parents=[],
-                 formatter_class=None,
                  prefix_chars='-',
                  fromfile_prefix_chars=None,
                  argument_default=None,
@@ -354,17 +382,13 @@ class ArgumentParser(argparse.ArgumentParser):
             prog = prog.replace('_', '-').replace('.py', '')
         if description is None:
             description = parent_frame.f_globals.get('__doc__', None)
-            if formatter_class is None:
-                formatter_class = argparse.RawDescriptionHelpFormatter
-        if formatter_class is None:
-            formatter_class = argparse.HelpFormatter
         super(ArgumentParser, self).__init__(
                  prog=prog,
                  usage=usage,
                  description=description,
                  epilog=epilog,
                  parents=parents,
-                 formatter_class=argparse.RawDescriptionHelpFormatter,
+                 formatter_class=HelpFormatter,
                  prefix_chars=prefix_chars,
                  fromfile_prefix_chars=fromfile_prefix_chars,
                  argument_default=argument_default,

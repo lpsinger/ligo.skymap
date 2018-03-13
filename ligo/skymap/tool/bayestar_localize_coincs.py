@@ -40,8 +40,7 @@ def parser():
         command.waveform_parser, command.prior_parser, command.mcmc_parser])
     parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
-        help='Keep processing events if a sky map fails to converge '
-             '[default: no]')
+        help='Keep processing events if a sky map fails to converge')
     parser.add_argument(
         'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',
         nargs='+', type=argparse.FileType('rb'),
@@ -57,13 +56,13 @@ def parser():
              'in any order.')
     parser.add_argument(
         '--pycbc-sample', default='foreground',
-        help='sample population [PyCBC only; default: %(default)s]')
+        help='(PyCBC only) sample population')
     parser.add_argument(
         '--coinc-event-id', type=int, nargs='*',
         help='run on only these specified events')
     parser.add_argument(
         '--output', '-o', default='.',
-        help='output directory [default: current directory]')
+        help='output directory')
     parser.add_argument(
         '--condor-submit', action='store_true',
         help='submit to Condor instead of running locally')

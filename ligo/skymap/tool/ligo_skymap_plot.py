@@ -42,21 +42,19 @@ def parser():
         ' probability mass [may be specified multiple times, default: none]')
     parser.add_argument(
         '--colorbar', default=False, action='store_true',
-        help='Show colorbar [default: %(default)s]')
+        help='Show colorbar')
     parser.add_argument(
         '--radec', nargs=2, metavar='deg', type=float, action='append',
-        default=[], help='right ascension (deg) and declination (deg) to mark'
-        ' [may be specified multiple times, default: none]')
+        default=[], help='right ascension (deg) and declination (deg) to mark')
     parser.add_argument(
         '--inj-database', metavar='FILE.sqlite', type=command.SQLiteType('r'),
-        help='read injection positions from database [default: none]')
+        help='read injection positions from database')
     parser.add_argument(
-        '--geo', action='store_true', default=False,
-        help='Plot in geographic coordinates, (lat, lon) instead of (RA, Dec)'
-        ' [default: %(default)s]')
+        '--geo', action='store_true',
+        help='Plot in geographic coordinates, (lat, lon) instead of (RA, Dec)')
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
-        default='-', nargs='?', help='Input FITS file [default: stdin]')
+        default='-', nargs='?', help='Input FITS file')
     return parser
 
 

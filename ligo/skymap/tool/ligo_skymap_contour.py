@@ -29,24 +29,24 @@ def parser():
     parser.add_argument(
         '-o', '--output', metavar='FILE.geojson',
         default='-', type=argparse.FileType('w'),
-        help='name of output file [default: stdout]')
+        help='output file [default: stdout]')
     parser.add_argument(
         '--contour', metavar='PERCENT', type=float, nargs='+', required=True,
         help='plot contour enclosing this percentage of probability mass')
     parser.add_argument(
         '-i', '--interpolate',
         choices='nearest nested bilinear'.split(), default='nearest',
-        help='resampling interpolation method [default: %(default)s]')
+        help='resampling interpolation method')
     parser.add_argument(
-        '-s', '--simplify', default=False, action='store_true',
-        help='simplify contour paths [default: %(default)s]')
+        '-s', '--simplify', action='store_true',
+        help='simplify contour paths')
     parser.add_argument(
         '-n', '--nside', metavar='NSIDE', type=int,
         help='optionally resample to the specified resolution '
-        ' before generating contours [default: no downsampling]')
+        ' before generating contours')
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
-        default='-', nargs='?', help='Input FITS file [default: stdin]')
+        default='-', nargs='?', help='Input FITS file')
     return parser
 
 

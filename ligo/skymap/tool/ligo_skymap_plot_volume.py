@@ -31,28 +31,26 @@ def parser():
         help='annotate plot with information about the event')
     parser.add_argument(
         '--max-distance', metavar='Mpc', type=float,
-        help='maximum distance of plot in Mpc [default: auto]')
+        help='maximum distance of plot in Mpc')
     parser.add_argument(
         '--contour', metavar='PERCENT', type=float, nargs='+',
         help='plot contour enclosing this percentage of'
-        ' probability mass [default: none]')
+        ' probability mass')
     parser.add_argument(
         '--radecdist', nargs=3, type=float, action='append', default=[],
-        help='right ascension (deg), declination (deg), and distance to mark'
-        ' [may be specified multiple times, default: none]')
+        help='right ascension (deg), declination (deg), and distance to mark')
     parser.add_argument(
         '--chain', metavar='CHAIN.hdf5', type=argparse.FileType('rb'),
-        help='optionally plot a posterior sample chain [default: none]')
+        help='optionally plot a posterior sample chain')
     parser.add_argument(
         '--projection', type=int, choices=list(range(4)), default=0,
-        help='Plot one specific projection [default: plot all projections]')
+        help='Plot one specific projection, or 0 for all projections')
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
-        default='-', nargs='?', help='Input FITS file [default: stdin]')
+        default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
         '--align-to', metavar='SKYMAP.fits[.gz]', type=argparse.FileType('rb'),
-        help='Align to the principal axes of this sky map '
-        '[default: input sky map]')
+        help='Align to the principal axes of this sky map')
     parser.set_defaults(figure_width='3.5', figure_height='3.5')
     return parser
 

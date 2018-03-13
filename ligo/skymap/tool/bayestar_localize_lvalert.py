@@ -40,16 +40,16 @@ def parser():
             command.waveform_parser, command.prior_parser, command.mcmc_parser])
     parser.add_argument(
         '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
-        help='disable certain detectors [default: enable all]')
+        help='disable certain detectors')
     parser.add_argument(
-        '-N', '--dry-run', default=False, action='store_true',
-        help='Dry run; do not update GraceDB entry [default: %(default)s]')
+        '-N', '--dry-run', action='store_true',
+        help='Dry run; do not update GraceDB entry')
     parser.add_argument(
-        '--no-tag', default=False, action='store_true',
-        help='Do not set lvem tag for GraceDB entry [default: %(default)s]')
+        '--no-tag', action='store_true',
+        help='Do not set lvem tag for GraceDB entry')
     parser.add_argument(
         '-o', '--output', metavar='FILE.fits[.gz]', default='bayestar.fits.gz',
-        help='Name for uploaded file [default: %(default)s]')
+        help='Name for uploaded file')
     parser.add_argument(
         'graceid', metavar='G123456', nargs='*',
         help='Run on these GraceDB IDs. If no GraceDB IDs are listed on the '

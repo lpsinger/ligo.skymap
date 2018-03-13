@@ -116,8 +116,8 @@ __all__ = (
     'ZoomSkyAxes')
 
 
-# FIXME: remove this once this pull request is accepted:
-# https://github.com/astropy/astropy/pull/6990
+# FIXME: Remove this once astropy v3.1 is released.
+# See https://github.com/astropy/astropy/pull/6990
 def wcs_to_celestial_frame_itrs(wcs):
     # Keep only the celestial part of the axes
     wcs = wcs.sub([WCSSUB_CELESTIAL])

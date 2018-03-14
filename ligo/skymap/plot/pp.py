@@ -15,7 +15,56 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Axes subclass for making P--P plots
+Axes subclass for making probability--probability (P--P) plots.
+
+Example
+-------
+
+You can create new P--P plot axes by passing the keyword argument
+``projection='pp_plot'`` when creating new Matplotlib axes.
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    import numpy as np
+
+    n = 100
+    p_values_1 = np.random.uniform(size=n) # One experiment
+    p_values_2 = np.random.uniform(size=n) # Another experiment
+    p_values_3 = np.random.uniform(size=n) # Yet another experiment
+
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111, projection='pp_plot')
+    ax.add_confidence_band(n, alpha=0.95) # Add 95% confidence band
+    ax.add_diagonal() # Add diagonal line
+    ax.add_lightning(n, 20) # Add some random realizations of n samples
+    ax.add_series(p_values_1, p_values_2, p_values_3) # Add our data
+
+Or, you can call the constructor of `PPPlot` directly.
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    from ligo.skymap.plot import PPPlot
+    from matplotlib import pyplot as plt
+    import numpy as np
+
+    n = 100
+
+    rect = [0.1, 0.1, 0.8, 0.8] # Where to place axes in figure
+    fig = plt.figure(figsize=(5, 5))
+    ax = PPPlot(fig, rect)
+    fig.add_axes(ax)
+    ax.add_confidence_band(n, alpha=0.95)
+    ax.add_lightning(n, 20)
+    ax.add_diagonal()
+    fig.savefig('example.png')
 """
 import matplotlib
 from matplotlib import axes
@@ -27,44 +76,7 @@ __all__ = ('PPPlot',)
 
 
 class PPPlot(axes.Axes):
-    """Construct a probability--probability (P--P) plot.
-
-    Examples
-    --------
-
-    Example usage::
-
-        import ligo.skymap.plot
-        from matplotlib import pyplot as plt
-        import numpy as np
-
-        n = 100
-        p_values_1 = np.random.uniform(size=n) # One experiment
-        p_values_2 = np.random.uniform(size=n) # Another experiment
-        p_values_3 = np.random.uniform(size=n) # Yet another experiment
-
-        fig = plt.figure(figsize=(3, 3))
-        ax = fig.add_subplot(111, projection='pp_plot')
-        ax.add_confidence_band(n, alpha=0.95) # Add 95% confidence band
-        ax.add_diagonal() # Add diagonal line
-        ax.add_lightning(n, 20) # Add some random realizations of n samples
-        ax.add_series(p_values_1, p_values_2, p_values_3) # Add our data
-        fig.savefig('example.png')
-
-    Or, you can also create an instance of ``PPPlot`` by calling its
-    constructor directly::
-
-        from ligo.skymap.plot import PPPlot
-        from matplotlib import pyplot as plt
-        import numpy as np
-
-        rect = [0.1, 0.1, 0.8, 0.8] # Where to place axes in figure
-        fig = plt.figure(figsize=(3, 3))
-        ax = PPPlot(fig, rect)
-        fig.add_axes(ax)
-        # ...
-        fig.savefig('example.png')
-    """
+    """Construct a probability--probability (P--P) plot."""
 
     name = 'pp_plot'
 

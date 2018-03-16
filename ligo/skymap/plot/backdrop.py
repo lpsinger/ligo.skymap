@@ -15,7 +15,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Backdrops for astronomical plots
+Backdrops for astronomical plots.
+
+Example
+-------
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    from ligo.skymap.plot import blackmarble, reproject_interp_rgb
+    from matplotlib import pyplot as plt
+    import numpy as np
+
+    ax = plt.axes(projection='geo degrees aitoff',
+                  obstime='2017-08-17 12:41:04')
+    ax.imshow(reproject_interp_rgb(blackmarble(ax.wcs.wcs.dateobs), ax.header))
 """
 
 import warnings

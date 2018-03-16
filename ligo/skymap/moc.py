@@ -21,11 +21,12 @@ Multi-order coverage (MOC) HEALPix indexing.
 
 
 import numpy as np
-from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea
+from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
 from .core import rasterize as _rasterize
 from .util.numpy import add_newdoc_ufunc
 
-__all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea', 'rasterize')
+__all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea',
+           'uniq2ang', 'rasterize')
 
 
 add_newdoc_ufunc(nest2uniq, """\

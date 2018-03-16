@@ -502,6 +502,25 @@ static void uniq2pixarea_loop(
 }
 
 
+static void uniq2ang_loop(
+    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+{
+    const npy_intp n = dimensions[0];
+
+    for (npy_intp i = 0; i < n; i ++)
+    {
+        /* FIXME: args must be void ** to avoid alignment warnings */
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wcast-align"
+        uniq2ang64(
+            *(uint64_t *) &args[0][i * steps[0]],
+             (double *)   &args[1][i * steps[1]],
+             (double *)   &args[2][i * steps[2]]);
+        #pragma GCC diagnostic pop
+    }
+}
+
+
 /*****************************************************************************/
 
 
@@ -850,6 +869,7 @@ static const PyUFuncGenericFunction
     uniq2nest_loops[] = {uniq2nest_loop},
     uniq2order_loops[] = {uniq2order_loop},
     uniq2pixarea_loops[] = {uniq2pixarea_loop},
+    uniq2ang_loops[] = {uniq2ang_loop},
     log_likelihood_toa_phoa_snr_loops[] = {log_likelihood_toa_phoa_snr_loop},
     signal_amplitude_model_loops[] = {signal_amplitude_model_loop};
 
@@ -869,6 +889,7 @@ static const char double_ufunc_types[] = {
                   uniq2nest_types[] = {NPY_UINT64, NPY_INT8, NPY_UINT64},
                   uniq2order_types[] = {NPY_UINT64, NPY_INT8},
                   uniq2pixarea_types[] = {NPY_UINT64, NPY_DOUBLE},
+                  uniq2ang_types[] = {NPY_UINT64, NPY_DOUBLE, NPY_DOUBLE},
                   signal_amplitude_model_ufunc_types[] = {
                       NPY_CDOUBLE, NPY_CDOUBLE, NPY_DOUBLE,
                       NPY_DOUBLE, NPY_CDOUBLE};
@@ -1006,6 +1027,12 @@ PyMODINIT_FUNC PyInit_core(void)
             uniq2pixarea_loops, no_ufunc_data,
             uniq2pixarea_types, 1, 1, 1, PyUFunc_None,
             "uniq2pixarea", NULL, 0));
+
+    PyModule_AddObject(
+        module, "uniq2ang", PyUFunc_FromFuncAndData(
+            uniq2ang_loops, no_ufunc_data,
+            uniq2ang_types, 1, 1, 2, PyUFunc_None,
+            "uniq2ang", NULL, 0));
 
     PyModule_AddObject(
         module, "signal_amplitude_model", PyUFunc_FromFuncAndData(

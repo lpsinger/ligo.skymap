@@ -67,7 +67,7 @@ int8_t uniq2nest64(uint64_t uniq, uint64_t *nest)
 }
 
 
-void pix2ang_uniq64(uint64_t uniq, double *theta, double *phi)
+void uniq2ang64(uint64_t uniq, double *theta, double *phi)
 {
     uint64_t nest;
     int8_t order = uniq2nest64(uniq, &nest);

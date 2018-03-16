@@ -727,7 +727,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
 
     {
         double theta, phi;
-        pix2ang_uniq64(uniq, &theta, &phi);
+        uniq2ang64(uniq, &theta, &phi);
 
         /* Look up antenna factors */
         for (unsigned int iifo = 0; iifo < nifos; iifo++)

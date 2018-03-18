@@ -6,6 +6,7 @@ Command Line Tools
 
    bayestar_localize_coincs
    bayestar_localize_lvalert
+   bayestar_sample_model_psd
    ligo_skymap_aggregate_found_injections
    ligo_skymap_contour
    ligo_skymap_from_samples

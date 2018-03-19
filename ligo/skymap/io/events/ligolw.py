@@ -102,6 +102,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
         'pycbc': False,
         'gstlal_inspiral': True,
         'bayestar_realize_coincs': True,
+        'bayestar-realize-coincs': True,
         'MBTAOnline': True
     }
 

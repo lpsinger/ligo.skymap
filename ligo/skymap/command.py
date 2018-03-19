@@ -368,7 +368,7 @@ class ArgumentParser(argparse.ArgumentParser):
                  add_help=True):
         parent_frame = inspect.currentframe().f_back
         if prog is None:
-            prog = parent_frame.f_locals.get('__file__', sys.argv[0])
+            prog = parent_frame.f_code.co_filename
             prog = os.path.basename(prog)
             prog = prog.replace('_', '-').replace('.py', '')
         if description is None:

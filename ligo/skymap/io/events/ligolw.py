@@ -48,7 +48,7 @@ log = logging.getLogger('BAYESTAR')
 @array.use_in
 @param.use_in
 @lsctables.use_in
-class _ContentHandler(LIGOLWContentHandler):
+class ContentHandler(LIGOLWContentHandler):
     pass
 
 
@@ -60,16 +60,16 @@ def _read_xml(f, fallbackpath=None):
         filename = ''
     elif isinstance(f, str):
         try:
-            doc = load_filename(f, contenthandler=_ContentHandler)
+            doc = load_filename(f, contenthandler=ContentHandler)
         except IOError as e:
             if e.errno == errno.ENOENT and fallbackpath and not os.path.isabs(f):
                 f = os.path.join(fallbackpath, f)
-                doc = load_filename(f, contenthandler=_ContentHandler)
+                doc = load_filename(f, contenthandler=ContentHandler)
             else:
                 raise
         filename = f
     else:
-        doc, _ = load_fileobj(f, contenthandler=_ContentHandler)
+        doc, _ = load_fileobj(f, contenthandler=ContentHandler)
         try:
             filename = f.name
         except AttributeError:

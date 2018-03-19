@@ -149,10 +149,12 @@ def main(args=None):
             from emcee.interruptible_pool import InterruptiblePool as Pool
         except ImportError:
             from multiprocessing import Pool
-        map = Pool(
+        pool_map = Pool(
             opts.jobs, startup,
             (sqlite.get_filename(db), contours, modes, areas)
             ).imap
+    else:
+        pool_map = map
 
     colnames = (
         ['coinc_event_id', 'simulation_id', 'far', 'snr', 'searched_area',
@@ -170,7 +172,7 @@ def main(args=None):
 
     count_records = 0
     progress.max = len(opts.fitsfilenames)
-    for record in map(process, opts.fitsfilenames):
+    for record in pool_map(process, opts.fitsfilenames):
         count_records += 1
         progress.update(count_records, record[0])
         print(*record, sep="\t", file=opts.output)

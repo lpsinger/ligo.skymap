@@ -12,5 +12,6 @@ Command Line Tools
    ligo_skymap_contour
    ligo_skymap_from_samples
    ligo_skymap_plot
+   ligo_skymap_plot_airmass
    ligo_skymap_plot_found_injections
    ligo_skymap_plot_volume

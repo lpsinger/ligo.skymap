@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 
 from .. import events
-from ..events.ligolw import _ContentHandler
+from ..events.ligolw import ContentHandler
 from ...util import sqlite
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
@@ -93,7 +93,7 @@ def test_ligolw_document():
     """Test reading events from LIGO-LW XML document."""
     xmldoc = load_filename(
         os.path.join(DATA_PATH, '2016_subset.xml.gz'),
-        contenthandler=_ContentHandler)
+        contenthandler=ContentHandler)
     source = events.open(xmldoc, fallbackpath=DATA_PATH)
     ligolw_assertions(source)
 

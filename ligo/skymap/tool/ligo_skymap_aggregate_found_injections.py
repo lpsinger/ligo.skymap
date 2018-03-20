@@ -138,23 +138,17 @@ def main(args=None):
     from glue.text_progress_bar import ProgressBar
     progress = ProgressBar()
 
-    db = opts.db
-    contours = opts.contour
-    modes = opts.modes
-    areas = opts.area
-
     progress.update(-1, 'spawning workers')
-    if opts.jobs != 1:
+    args = (sqlite.get_filename(opts.db), opts.contour, opts.modes, opts.area)
+    if opts.jobs == 1:
+        startup(*args)
+        pool_map = map
+    else:
         try:
             from emcee.interruptible_pool import InterruptiblePool as Pool
         except ImportError:
             from multiprocessing import Pool
-        pool_map = Pool(
-            opts.jobs, startup,
-            (sqlite.get_filename(db), contours, modes, areas)
-            ).imap
-    else:
-        pool_map = map
+        pool_map = Pool(opts.jobs, startup, args).imap
 
     colnames = (
         ['coinc_event_id', 'simulation_id', 'far', 'snr', 'searched_area',

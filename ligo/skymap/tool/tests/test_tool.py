@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 import pytest
@@ -47,5 +48,30 @@ def coinc(inj, psd, tmpdir):
     return filename
 
 
-def test_bayestar_localize_coincs(coinc, psd, tmpdir):
+@pytest.fixture
+def inj_coinc(inj, coinc, tmpdir):
+    filename = str(tmpdir / 'inj_coinc.xml')
+    subprocess.check_call(['ligolw_add', inj, coinc, '-o', filename])
+    subprocess.check_call(['lalapps_inspinjfind', filename])
+    return filename
+
+
+@pytest.fixture
+def inj_coinc_sqlite(inj_coinc, tmpdir):
+    filename = str(tmpdir / 'inj_coinc.sqlite')
+    subprocess.check_call(['ligolw_sqlite', inj_coinc, '-p', '-d', filename])
+    return filename
+
+
+@pytest.fixture
+def localize_coincs(coinc, psd, tmpdir):
     run_entry_point('bayestar-localize-coincs', coinc, '-o', str(tmpdir))
+    return tmpdir
+
+
+def test_aggregate_found_injections(inj_coinc_sqlite, localize_coincs, tmpdir):
+    filename = str(tmpdir / 'bayestar.out')
+    run_entry_point('ligo-skymap-aggregate-found-injections',
+                    inj_coinc_sqlite,
+                    os.path.join(localize_coincs, '*.fits'),
+                    '-o', filename)

@@ -84,6 +84,9 @@ def parser():
     parser.add_argument(
         '--f-low', type=float,
         help='Override low frequency cutoff found in sim_inspiral table')
+    parser.add_argument(
+        '--duty-cycle', type=float, default=1.0,
+        help='Single-detector duty cycle')
     return parser
 
 
@@ -300,6 +303,9 @@ def main(args=None):
         for ifo, abs_snr, arg_snr, toa, horizon, location, signal_model, W_ in zip(
                 opts.detector, abs_snrs, arg_snrs, toas, horizons,
                 locations, signal_models, W):
+
+            if np.random.uniform() < opts.duty_cycle:
+                continue
 
             # If SNR < threshold, then the injection is not found. Skip it.
             if abs_snr >= opts.snr_threshold:

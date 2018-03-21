@@ -1,7 +1,7 @@
 0.0.4 (unreleased)
 ==================
 
-- No changes yet.
+- Add --duty-cycle option to bayestar-realize-coincs.
 
 0.0.3 (2017-03-21)
 ==================

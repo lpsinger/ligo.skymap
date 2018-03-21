@@ -141,7 +141,6 @@ def main(args=None):
     progress.update(-1, 'spawning workers')
     args = (sqlite.get_filename(opts.db), opts.contour, opts.modes, opts.area)
     if opts.jobs == 1:
-        startup(*args)
         pool_map = map
     else:
         try:
@@ -149,6 +148,7 @@ def main(args=None):
         except ImportError:
             from multiprocessing import Pool
         pool_map = Pool(opts.jobs, startup, args).imap
+    startup(*args)
 
     colnames = (
         ['coinc_event_id', 'simulation_id', 'far', 'snr', 'searched_area',

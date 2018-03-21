@@ -69,6 +69,17 @@ def localize_coincs(coinc, psd, tmpdir):
     return tmpdir
 
 
+# FIXME: remove this once
+# https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
+# is in a release
+def test_bayestar_realize_coincs(coinc):
+    pass
+
+
+# FIXME: Skip until
+# https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
+# is fixed in a release
+@pytest.mark.skip
 def test_aggregate_found_injections(inj_coinc_sqlite, localize_coincs, tmpdir):
     filename = str(tmpdir / 'bayestar.out')
     run_entry_point('ligo-skymap-aggregate-found-injections',

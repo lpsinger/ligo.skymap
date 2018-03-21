@@ -33,35 +33,9 @@
 
 import numpy as np
 import numpy.core.numeric as _nx
-from numpy import add, asanyarray, asarray, intp, take
 
 
 def _ureduce(a, func, **kwargs):
-    """
-    Internal Function.
-    Call `func` with `a` as first argument swapping the axes to use extended
-    axis on functions that don't support it natively.
-
-    Returns result and a.shape with axis dims set to 1.
-
-    Parameters
-    ----------
-    a : array_like
-        Input array or object that can be converted to an array.
-    func : callable
-        Reduction function capable of receiving a single axis argument.
-        It is called with `a` as first argument followed by `kwargs`.
-    kwargs : keyword arguments
-        additional keyword arguments to pass to `func`.
-
-    Returns
-    -------
-    result : tuple
-        Result of func(a, **kwargs) and a.shape with axis dims set to 1
-        which can be used to reshape the result to the same shape a ufunc with
-        keepdims=True would produce.
-
-    """
     a = np.asanyarray(a)
     axis = kwargs.get('axis', None)
     if axis is not None:
@@ -93,196 +67,6 @@ def _ureduce(a, func, **kwargs):
 
 def percentile(a, q, axis=None, weights=None, out=None,
                overwrite_input=False, interpolation='linear', keepdims=False):
-    """
-    Compute the qth percentile of the data along the specified axis.
-
-    Returns the qth percentile(s) of the array elements.
-
-    Parameters
-    ----------
-    a : array_like
-        Input array or object that can be converted to an array.
-    q : array_like of float
-        Percentile or sequence of percentiles to compute, which must be between
-        0 and 100 inclusive.
-    axis : {int, tuple of int, None}, optional
-        Axis or axes along which the percentiles are computed. The
-        default is to compute the percentile(s) along a flattened
-        version of the array.
-
-        .. versionchanged:: 1.9.0
-            A tuple of axes is supported
-    weights : array_like, optional
-        An array of weights associated with the values in `a`. Each value in
-        `a` contributes to the average according to its associated weight.
-        The weights array can either be 1-D (in which case its length must be
-        the size of `a` along the given axis), or such that
-        weights.ndim == a.ndim and that `weights` and `a` are broadcastable.
-        If `weights=None`, then all data in `a` are assumed to have a weight
-        equal to one.
-
-        Weights cannot be:
-            * negative
-            * sum to 0
-        However, they can be
-            * 0, as long as they do not sum to 0
-            * less than 1.  In this case, all weights are re-normalized by
-              the lowest non-zero weight prior to computation.
-
-        .. versionadded:: 1.15.0
-    out : ndarray, optional
-        Alternative output array in which to place the result. It must
-        have the same shape and buffer length as the expected output,
-        but the type (of the output) will be cast if necessary.
-    overwrite_input : bool, optional
-        If True, then allow the input array `a` to be modified by intermediate
-        calculations, to save memory. In this case, the contents of the input
-        `a` after this function completes is undefined.
-    interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
-        This optional parameter specifies the interpolation method to
-        use when the desired percentile lies between two data points
-        ``i < j``:
-            * linear: ``i + (j - i) * fraction``, where ``fraction``
-              is the fractional part of the index surrounded by ``i``
-              and ``j``.
-            * lower: ``i``.
-            * higher: ``j``.
-            * nearest: ``i`` or ``j``, whichever is nearest.
-            * midpoint: ``(i + j) / 2``.
-
-        .. versionadded:: 1.9.0
-    keepdims : bool, optional
-        If this is set to True, the axes which are reduced are left in
-        the result as dimensions with size one. With this option, the
-        result will broadcast correctly against the original array `a`.
-
-        .. versionadded:: 1.9.0
-
-    Returns
-    -------
-    percentile : scalar or ndarray
-        If `q` is a single percentile and `axis=None`, then the result
-        is a scalar. If multiple percentiles are given, first axis of
-        the result corresponds to the percentiles. The other axes are
-        the axes that remain after the reduction of `a`. If the input
-        contains integers or floats smaller than ``float64``, the output
-        data-type is ``float64``. Otherwise, the output data-type is the
-        same as that of the input. If `out` is specified, that array is
-        returned instead.
-
-    See Also
-    --------
-    mean
-    median : equivalent to ``percentile(..., 50)``
-    nanpercentile
-    quantile : equivalent to percentile, except with q in the range [0, 1].
-
-    Notes
-    -----
-    Given a vector ``V`` of length ``N``, the ``q``-th percentile of
-    ``V`` is the value ``q/100`` of the way from the minimum to the
-    maximum in a sorted copy of ``V``. The values and distances of
-    the two nearest neighbors as well as the `interpolation` parameter
-    will determine the percentile if the normalized ranking does not
-    match the location of ``q`` exactly. This function is the same as
-    the median if ``q=50``, the same as the minimum if ``q=0`` and the
-    same as the maximum if ``q=100``.
-
-    In the simplest case, where all weights are integers,
-    the `weights` argument can be seen as repeating the data in the sample.
-    For example, if a = [1,2,3] and weights = [1,2,3], this will be identical
-    to the case where there are no weights and a = [1,2,2,3,3,3], with the
-    percentiles interpolated in the cumulative probability space of the
-    expanded array.
-
-    The algorithm is illustrated here:
-
-    a = np.array([3, 5, 4])
-    q = [25, 50, 75]
-    axis = 0
-    weights = [1, 2, 3]
-
-    Upon expansion, and converting q to quantile space ([0, 1]):
-
-    value       3   4   4   4   5   5
-    cum_prob    0  .2  .4  .6  .8   1
-    q=0.25            4
-    q=0.5                 4
-    q=0.75                    4.75
-
-    returns [4, 4, 4.75]
-
-    In this method, the computation of weighted percentile uses
-    normalized cumulative weights, with some renormalization and edge-setting
-    to maintain consistency with the case where all weights are integers.
-
-    The cumulative probability bands associated with each value,
-    based on the weights:
-
-    value               3           4           5
-    weight              1           3           2  (total = 6)
-    cum. weight         .17         .67         1
-    prob_band         0 - .17   .33 - .67   .83 - 1  (.17-.33 and .67-.83 are
-                                                      transitions)
-    w slice             .17         .17         .17  (diff in upper bound,
-                                                      divided by weight)
-    lower_bound         0           .33         .83
-    upper_bound         .17         .67         1
-
-    Now subtract the bound values by the left-most w-slice value
-    new_lower_bd        0           .17         .67
-    new_upper_bd        0           .5          .83  --> used to renormalize
-    renormalized_lower  0           .2          .8
-    renormalized_upper  0           .6          1
-    new line up         3       3       4       4       5       5
-    quantile bounds     0       0       .2      .6      .8      1
-    q=0.25                                 4
-    q=0.5                                     4
-    q=0.75                                          4.75
-
-    returns [4, 4, 4.75]
-
-    Examples
-    --------
-    >>> a = np.array([[10, 7, 4], [3, 2, 1]])
-    >>> a
-    array([[10,  7,  4],
-           [ 3,  2,  1]])
-    >>> np.percentile(a, 50)
-    3.5
-    >>> np.percentile(a, 50, axis=0)
-    array([[ 6.5,  4.5,  2.5]])
-    >>> np.percentile(a, 50, axis=1)
-    array([ 7.,  2.])
-    >>> np.percentile(a, 50, axis=1, keepdims=True)
-    array([[ 7.],
-           [ 2.]])
-
-    >>> m = np.percentile(a, 50, axis=0)
-    >>> out = np.zeros_like(m)
-    >>> np.percentile(a, 50, axis=0, out=out)
-    array([[ 6.5,  4.5,  2.5]])
-    >>> m
-    array([[ 6.5,  4.5,  2.5]])
-
-    >>> b = a.copy()
-    >>> np.percentile(b, 50, axis=1, overwrite_input=True)
-    array([ 7.,  2.])
-    >>> assert not np.all(a == b)
-
-    >>> np.percentile(a, q=50, weights=np.ones(6).reshape(2,3))
-    3.5
-    >>> np.percentile(a, q=50, axis=0, weights=[1, 1])
-    array([6.5, 4.5, 2.5])
-    >>> np.percentile(a, q=50, axis=1, weights=[1, 1, 1])
-    array([ 7.,  2.])
-    >>> np.percentile(a, q=50, axis=1, weights=[0, 1, 2])
-    array([ 4.,  1.])
-    >>> np.percentile(a, q=[25, 50, 75], axis=1, weights=[0, 1, 2])
-    array([[4. , 1. ],
-           [4. , 1. ],
-           [5.5, 1.5]])
-    """
     q = np.true_divide(q, 100.0)  # handles the asarray for us too
     if not _quantile_is_valid(q):
         raise ValueError("Percentiles must be in the range [0, 100]")
@@ -292,187 +76,6 @@ def percentile(a, q, axis=None, weights=None, out=None,
 
 def quantile(a, q, axis=None, weights=None, out=None,
              overwrite_input=False, interpolation='linear', keepdims=False):
-    """
-    Compute the `q`th quantile of the data along the specified axis.
-    ..versionadded:: 1.15.0
-
-    Parameters
-    ----------
-    a : array_like
-        Input array or object that can be converted to an array.
-    q : array_like of float
-        Quantile or sequence of quantiles to compute, which must be between
-        0 and 1 inclusive.
-    axis : {int, tuple of int, None}, optional
-        Axis or axes along which the quantiles are computed. The
-        default is to compute the quantile(s) along a flattened
-        version of the array.
-    weights : array_like, optional
-        An array of weights associated with the values in `a`. Each value in
-        `a` contributes to the average according to its associated weight.
-        The weights array can either be 1-D (in which case its length must be
-        the size of `a` along the given axis), or such that
-        weights.ndim == a.ndim and that `weights` and `a` are broadcastable.
-        If `weights=None`, then all data in `a` are assumed to have a weight
-        equal to one.
-
-        Weights cannot be:
-            * negative
-            * sum to 0
-        However, they can be
-            * 0, as long as they do not sum to 0
-            * less than 1.  In this case, all weights are re-normalized by
-              the lowest non-zero weight prior to computation.
-
-        .. versionadded:: 1.15.0
-    out : ndarray, optional
-        Alternative output array in which to place the result. It must
-        have the same shape and buffer length as the expected output,
-        but the type (of the output) will be cast if necessary.
-    overwrite_input : bool, optional
-        If True, then allow the input array `a` to be modified by intermediate
-        calculations, to save memory. In this case, the contents of the input
-        `a` after this function completes is undefined.
-    interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
-        This optional parameter specifies the interpolation method to
-        use when the desired quantile lies between two data points
-        ``i < j``:
-            * linear: ``i + (j - i) * fraction``, where ``fraction``
-              is the fractional part of the index surrounded by ``i``
-              and ``j``.
-            * lower: ``i``.
-            * higher: ``j``.
-            * nearest: ``i`` or ``j``, whichever is nearest.
-            * midpoint: ``(i + j) / 2``.
-    keepdims : bool, optional
-        If this is set to True, the axes which are reduced are left in
-        the result as dimensions with size one. With this option, the
-        result will broadcast correctly against the original array `a`.
-
-    Returns
-    -------
-    quantile : scalar or ndarray
-        If `q` is a single quantile and `axis=None`, then the result
-        is a scalar. If multiple quantiles are given, first axis of
-        the result corresponds to the quantiles. The other axes are
-        the axes that remain after the reduction of `a`. If the input
-        contains integers or floats smaller than ``float64``, the output
-        data-type is ``float64``. Otherwise, the output data-type is the
-        same as that of the input. If `out` is specified, that array is
-        returned instead.
-
-    See Also
-    --------
-    mean
-    percentile : equivalent to quantile, but with q in the range [0, 100].
-    median : equivalent to ``quantile(..., 0.5)``
-    nanquantile
-
-    Notes
-    -----
-    Given a vector ``V`` of length ``N``, the ``q``-th quantile of
-    ``V`` is the value ``q`` of the way from the minimum to the
-    maximum in a sorted copy of ``V``. The values and distances of
-    the two nearest neighbors as well as the `interpolation` parameter
-    will determine the quantile if the normalized ranking does not
-    match the location of ``q`` exactly. This function is the same as
-    the median if ``q=0.5``, the same as the minimum if ``q=0.0`` and the
-    same as the maximum if ``q=1.0``.
-
-    In the simplest case, where all weights are integers,
-    the `weights` argument can be seen as repeating the data in the sample.
-    For example, if a = [1,2,3] and weights = [1,2,3], this will be identical
-    to the case where there are no weights and a = [1,2,2,3,3,3], with the
-    quantiles interpolated in the cumulative probability space of the
-    expanded array.
-
-    The algorithm is illustrated here:
-
-    a = np.array([3, 5, 4])
-    q = [0.25, 0.5, 0.75]
-    axis = 0
-    weights = [1, 2, 3]
-
-    Upon expansion:
-
-    value       3   4   4   4   5   5
-    cum_prob    0  .2  .4  .6  .8   1
-    q=0.25            4
-    q=0.5                 4
-    q=0.75                    4.75
-
-    returns [4, 4, 4.75]
-
-    In this method, the computation of weighted percentile uses
-    normalized cumulative weights, with some renormalization and edge-setting
-    to maintain consistency with the case where all weights are integers.
-
-    The cumulative probability bands associated with each value,
-    based on the weights:
-
-    value               3           4           5
-    weight              1           3           2  (total = 6)
-    cum. weight         .17         .67         1
-    prob_band         0 - .17   .33 - .67   .83 - 1  (.17-.33 and .67-.83 are
-                                                      transitions)
-    w slice             .17         .17         .17  (diff in upper bound,
-                                                      divided by weight)
-    lower_bound         0           .33         .83
-    upper_bound         .17         .67         1
-
-    Now subtract the bound values by the left-most w-slice value
-    new_lower_bd        0           .17         .67
-    new_upper_bd        0           .5          .83  --> used to renormalize
-    renormalized_lower  0           .2          .8
-    renormalized_upper  0           .6          1
-    new line up         3       3       4       4       5       5
-    quantile bounds     0       0       .2      .6      .8      1
-    q=0.25                                 4
-    q=0.5                                     4
-    q=0.75                                          4.75
-
-    returns [4, 4, 4.75]
-
-    Examples
-    --------
-    >>> a = np.array([[10, 7, 4], [3, 2, 1]])
-    >>> a
-    array([[10,  7,  4],
-           [ 3,  2,  1]])
-    >>> np.quantile(a, 0.5)
-    3.5
-    >>> np.quantile(a, 0.5, axis=0)
-    array([[ 6.5,  4.5,  2.5]])
-    >>> np.quantile(a, 0.5, axis=1)
-    array([ 7.,  2.])
-    >>> np.quantile(a, 0.5, axis=1, keepdims=True)
-    array([[ 7.],
-           [ 2.]])
-
-    >>> m = np.quantile(a, 0.5, axis=0)
-    >>> out = np.zeros_like(m)
-    >>> np.quantile(a, 0.5, axis=0, out=out)
-    array([[ 6.5,  4.5,  2.5]])
-    >>> m
-    array([[ 6.5,  4.5,  2.5]])
-    >>> b = a.copy()
-    >>> np.quantile(b, 0.5, axis=1, overwrite_input=True)
-    array([ 7.,  2.])
-    >>> assert not np.all(a == b)
-
-    >>> np.quantile(a, q=0.5, weights=np.ones(6).reshape(2,3))
-    3.5
-    >>> np.quantile(a, q=0.5, axis=0, weights=[1, 1])
-    array([6.5, 4.5, 2.5])
-    >>> np.quantile(a, q=0.5, axis=1, weights=[1, 1, 1])
-    array([ 7.,  2.])
-    >>> np.quantile(a, q=0.5, axis=1, weights=[0, 1, 2])
-    array([ 4.,  1.])
-    >>> np.quantile(a, q=[0.25, 0.5, 0.75], axis=1, weights=[0, 1, 2])
-    array([[4. , 1. ],
-           [4. , 1. ],
-           [5.5, 1.5]])
-    """
     q = np.asanyarray(q)
     if not _quantile_is_valid(q):
         raise ValueError("Quantiles must be in the range [0, 1]")
@@ -513,7 +116,7 @@ def _validate_weights(a, q, axis, weights):
     if weights is None:
         wgt = None
     else:
-        a = asanyarray(a)
+        a = np.asanyarray(a)
         wgt = np.asanyarray(weights)
 
         if issubclass(a.dtype.type, (np.integer, np.bool_)):
@@ -571,7 +174,7 @@ def _validate_weights(a, q, axis, weights):
 def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
                            overwrite_input=False, interpolation='linear',
                            keepdims=False):
-    a = asarray(a)
+    a = np.asarray(a)
 
     if q.ndim == 0:
         # Do not allow 0-d arrays because following code fails for scalar
@@ -678,13 +281,13 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
         indices = vec_interp_func(q, cum_w_bands, indices_hard)
 
     if interpolation == 'lower':
-        indices = np.floor(indices).astype(intp)
+        indices = np.floor(indices).astype(np.intp)
     elif interpolation == 'higher':
-        indices = np.ceil(indices).astype(intp)
+        indices = np.ceil(indices).astype(np.intp)
     elif interpolation == 'midpoint':
         indices = 0.5 * (np.floor(indices) + np.ceil(indices))
     elif interpolation == 'nearest':
-        indices = np.around(indices).astype(intp)
+        indices = np.around(indices).astype(np.intp)
     elif interpolation == 'linear':
         pass  # keep index as fraction and interpolate
     else:
@@ -694,11 +297,11 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
 
     inexact = np.issubdtype(a.dtype, np.inexact)
 
-    if indices.dtype == intp:
+    if indices.dtype == np.intp:
 
         if weights is None:
             if inexact:
-                indices = concatenate((indices, [-1]))  # to move nan's to end
+                indices = np.concatenate((indices, [-1]))  # to move nan's to end
             ap.partition(indices, axis=-1)
             n = np.isnan(ap[..., -1:])
             if inexact:
@@ -706,7 +309,7 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
             if n.ndim > 1:
                 n = np.swapaxes(n, axis, -1)
 
-        r = take(ap, indices, axis=-1)
+        r = np.take(ap, indices, axis=-1)
 
         if r.ndim > 1:
             r = np.swapaxes(r, axis, -1)  # move the axis back
@@ -717,17 +320,17 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
             r = r.squeeze(0)
 
         if out is not None:
-            r = add(r, 0, out=out)
+            r = np.add(r, 0, out=out)
 
     else:  # weight the points above and below the indices
-        indices_below = np.floor(indices).astype(intp)
+        indices_below = np.floor(indices).astype(np.intp)
         indices_above = indices_below + 1
         indices_above[indices_above > Nx - 1] = Nx - 1
 
         if weights is None:
             if inexact:
-                indices_above = concatenate((indices_above, [-1]))
-            ap.partition(concatenate((indices_below, indices_above)), axis=-1)
+                indices_above = np.concatenate((indices_above, [-1]))
+            ap.partition(np.concatenate((indices_below, indices_above)), axis=-1)
             n = np.isnan(ap[..., -1:])
             if inexact:
                 indices_above = indices_above[:-1]
@@ -738,7 +341,7 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
         weights_below = 1.0 - weights_above
 
         def _take1d(vec, inds, wts):
-            return take(vec, inds) * wts
+            return np.take(vec, inds) * wts
 
         vec_take = np.vectorize(_take1d, signature='(n),(m),(m)->(m)')
 
@@ -757,9 +360,9 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
             x2 = x2.squeeze(0)
 
         if out is not None:
-            r = add(x1, x2, out=out)
+            r = np.add(x1, x2, out=out)
         else:
-            r = add(x1, x2)
+            r = np.add(x1, x2)
 
     if np.any(n):
         warnings.warn("Invalid value encountered in percentile",

@@ -69,13 +69,6 @@ def localize_coincs(coinc, psd, tmpdir):
     return tmpdir
 
 
-# FIXME: remove this once
-# https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
-# is in a release
-def test_bayestar_realize_coincs(coinc):
-    pass
-
-
 # FIXME: Skip until
 # https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
 # is fixed in a release

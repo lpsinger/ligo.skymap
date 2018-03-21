@@ -1,6 +1,7 @@
 0.0.4 (unreleased)
 ==================
 
+- Fix --condor-submit option for bayestar-localize-coincs.
 - Add --duty-cycle option to bayestar-realize-coincs.
 
 0.0.3 (2017-03-21)

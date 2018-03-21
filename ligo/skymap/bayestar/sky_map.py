@@ -165,8 +165,7 @@ def localize(
     locations -= np.sum(locations * weights.reshape(-1, 1), axis=0) / np.sum(weights)
 
     if cosmology:
-        log.warn('Enabling cosmological prior. '
-                 'This feature is UNREVIEWED.')
+        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
 
     if enable_snr_series:
         log.warn('Enabling input of SNR time series. '

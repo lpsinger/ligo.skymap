@@ -24,11 +24,15 @@ import itertools
 import logging
 import os
 import sys
-import numpy as np
-import healpy as hp
-from astropy.utils.console import ProgressBar
+
 from astropy.table import Column, Table
+from astropy.utils.console import ProgressBar
 from astropy import units as u
+import healpy as hp
+import lal
+import lalsimulation
+import numpy as np
+
 from .decorator import with_numpy_random_seed
 from .. import distance
 from . import filter
@@ -41,8 +45,6 @@ from .. import version
 from .. import core
 from ..core import log_likelihood_toa_phoa_snr
 from ..util.numpy import require_contiguous
-import lal
-import lalsimulation
 
 log = logging.getLogger('BAYESTAR')
 

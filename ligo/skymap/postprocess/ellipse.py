@@ -145,7 +145,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     Now open the image and region file in DS9. You should find that the ellipse
     encloses the probability hot spot. You can load the sky map and region file
-    from the command line:
+    from the command line::
 
         $ ds9 skymap.fits -region ds9.reg
 

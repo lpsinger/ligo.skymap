@@ -106,11 +106,11 @@ def main(args=None):
                '"The job exited with signal ", ExitCode))',
                'request_memory = 1000 MB',
                'universe=vanilla', 'getenv=true',
-               'executable=' + sys.executable,
+               'executable=/usr/bin/env',
                'JobBatchName=BAYESTAR', 'environment="OMP_NUM_THREADS=1"',
                'error=' + os.path.join(opts.output, '$(CoincEventId).err'),
                'log=' + os.path.join(opts.output, '$(CoincEventId).log'),
-               'arguments="-B ' + ' '.join(arg for arg in sys.argv
+               'arguments="' + ' '.join(arg for arg in sys.argv
                    if arg != '--condor-submit') +
                ' --coinc-event-id $(CoincEventId)"',
                '-append', 'queue CoincEventId in ' + ' '.join(

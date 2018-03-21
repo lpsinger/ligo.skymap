@@ -304,11 +304,10 @@ def main(args=None):
                 opts.detector, abs_snrs, arg_snrs, toas, horizons,
                 locations, signal_models, W):
 
-            if np.random.uniform() < opts.duty_cycle:
+            if np.random.uniform() > opts.duty_cycle:
                 continue
-
-            # If SNR < threshold, then the injection is not found. Skip it.
-            if abs_snr >= opts.snr_threshold:
+            elif abs_snr >= opts.snr_threshold:
+                # If SNR < threshold, then the injection is not found. Skip it.
                 count_triggers += 1
                 net_snr += np.square(abs_snr)
             elif not opts.keep_subthreshold:

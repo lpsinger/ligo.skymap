@@ -1,7 +1,8 @@
-0.0.3 (unreleased)
+0.0.3 (2017-03-21)
 ==================
 
-- No changes yet.
+- Bring back simulation tools from LALSuite.
+- Add ligo-skymap-plot-airmass, a tool for probabilistic airmass charts.
 
 0.0.2 (2017-03-12)
 ==================

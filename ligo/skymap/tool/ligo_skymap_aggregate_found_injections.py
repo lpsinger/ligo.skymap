@@ -64,7 +64,7 @@ def parser():
         '--modes', action='store_true',
         help='Compute number of disjoint modes')
     parser.add_argument(
-        'db', type=command.SQLiteType('r'), metavar='DB.sqlite',
+        '-d', '--database', type=command.SQLiteType('r'), metavar='DB.sqlite',
         help='Input SQLite database from search pipeline')
     parser.add_argument(
         'fitsfilenames', metavar='GLOB.fits[.gz]', nargs='+', action='glob',
@@ -74,7 +74,10 @@ def parser():
 
 def startup(dbfilename, opts_contour, opts_modes, opts_area):
     global db, contours, modes, areas
-    db = sqlite3.connect(dbfilename)
+    if dbfilename is None:
+        db = None
+    else:
+        db = sqlite3.connect(dbfilename)
     contours = opts_contour
     modes = opts_modes
     areas = opts_area
@@ -91,28 +94,34 @@ def process(fitsfilename):
 
     contour_pvalues = 0.01 * np.asarray(contours)
 
-    row = db.execute(
-        """
-        SELECT DISTINCT sim.simulation_id AS simulation_id,
-        sim.longitude AS ra, sim.latitude AS dec, sim.distance AS distance,
-        ci.combined_far AS far, ci.snr AS snr
-        FROM coinc_event_map AS cem1 INNER JOIN coinc_event_map AS cem2
-        ON (cem1.coinc_event_id = cem2.coinc_event_id)
-        INNER JOIN sim_inspiral AS sim ON (cem1.event_id = sim.simulation_id)
-        INNER JOIN coinc_inspiral AS ci ON (cem2.event_id = ci.coinc_event_id)
-        WHERE cem1.table_name = 'sim_inspiral'
-        AND cem2.table_name = 'coinc_event' AND cem2.event_id = ?
-        """, (coinc_event_id,)).fetchone()
-    if row is None:
-        raise ValueError(
-            "No database record found for event '{0}' in '{1}'".format(
-                coinc_event_id, sqlite.get_filename(db)))
-    simulation_id, true_ra, true_dec, true_dist, far, snr = row
-    searched_area, searched_prob, offset, searched_modes, contour_areas, \
-        area_probs, contour_modes, searched_prob_dist, contour_dists, \
-        searched_vol, searched_prob_vol, contour_vols = find_injection_moc(
-            sky_map, true_ra, true_dec, true_dist, contours=contour_pvalues,
-            areas=areas, modes=modes)
+    if db is None:
+        simulation_id = true_ra = true_dec = true_dist = far = snr = None
+    else:
+        row = db.execute(
+            """
+            SELECT DISTINCT sim.simulation_id AS simulation_id,
+            sim.longitude AS ra, sim.latitude AS dec, sim.distance AS distance,
+            ci.combined_far AS far, ci.snr AS snr
+            FROM coinc_event_map AS cem1 INNER JOIN coinc_event_map AS cem2
+            ON (cem1.coinc_event_id = cem2.coinc_event_id)
+            INNER JOIN sim_inspiral AS sim
+            ON (cem1.event_id = sim.simulation_id)
+            INNER JOIN coinc_inspiral AS ci
+            ON (cem2.event_id = ci.coinc_event_id)
+            WHERE cem1.table_name = 'sim_inspiral'
+            AND cem2.table_name = 'coinc_event' AND cem2.event_id = ?
+            """, (coinc_event_id,)).fetchone()
+        if row is None:
+            raise ValueError(
+                "No database record found for event '{0}' in '{1}'".format(
+                    coinc_event_id, sqlite.get_filename(db)))
+        simulation_id, true_ra, true_dec, true_dist, far, snr = row
+
+    (searched_area, searched_prob, offset, searched_modes, contour_areas,
+     area_probs, contour_modes, searched_prob_dist, contour_dists,
+     searched_vol, searched_prob_vol, contour_vols
+    ) = find_injection_moc(sky_map, true_ra, true_dec, true_dist,
+                           contours=contour_pvalues, areas=areas, modes=modes)
 
     if snr is None:
         snr = np.nan
@@ -123,10 +132,10 @@ def process(fitsfilename):
     log_bci = sky_map.meta.get('log_bci', np.nan)
     log_bsn = sky_map.meta.get('log_bsn', np.nan)
 
-    ret = [coinc_event_id, simulation_id, far, snr, searched_area,
-           searched_prob, searched_prob_dist, searched_vol, searched_prob_vol,
-           offset, runtime, distmean, diststd, log_bci, log_bsn] \
-          + contour_areas + area_probs + contour_dists + contour_vols
+    ret = ([coinc_event_id, simulation_id, far, snr, searched_area,
+            searched_prob, searched_prob_dist, searched_vol, searched_prob_vol,
+            offset, runtime, distmean, diststd, log_bci, log_bsn]
+           + contour_areas + area_probs + contour_dists + contour_vols)
     if modes:
         ret += [searched_modes] + contour_modes
     return ret
@@ -139,7 +148,11 @@ def main(args=None):
     progress = ProgressBar()
 
     progress.update(-1, 'spawning workers')
-    args = (sqlite.get_filename(opts.db), opts.contour, opts.modes, opts.area)
+    if opts.database is None:
+        dbfilename = None
+    else:
+        dbfilename = sqlite.get_filename(opts.database)
+    args = (dbfilename, opts.contour, opts.modes, opts.area)
     if opts.jobs == 1:
         pool_map = map
     else:

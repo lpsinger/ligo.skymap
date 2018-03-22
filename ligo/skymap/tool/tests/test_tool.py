@@ -73,9 +73,7 @@ def localize_coincs(coinc, psd, tmpdir):
 # https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
 # is fixed in a release
 @pytest.mark.skip
-def test_aggregate_found_injections(inj_coinc_sqlite, localize_coincs, tmpdir):
+def test_stats(inj_coinc_sqlite, localize_coincs, tmpdir):
     filename = str(tmpdir / 'bayestar.out')
-    run_entry_point('ligo-skymap-aggregate-found-injections',
-                    inj_coinc_sqlite,
-                    os.path.join(localize_coincs, '*.fits'),
-                    '-o', filename)
+    run_entry_point('ligo-skymap-stats', '-o', filename,
+                    inj_coinc_sqlite, os.path.join(localize_coincs, '*.fits'))

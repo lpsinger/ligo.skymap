@@ -16,19 +16,78 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Match sky maps with injections in an inspinjfind-style sqlite database and
-print summary values for each sky map:
-
- * event ID
- * false alarm rate
- * searched area
- * searched posterior probability
- * angle between true sky location and maximum a posteriori estimate
- * runtime in seconds
- * (optional) areas and numbers of modes within specified probability contours
+Calculate summary statistics for a batch of sky maps.
 
 The filenames of the sky maps may be provided as positional command line
-arguments, and may also be provided as globs (such as '*.fits.gz').
+arguments, and may also be provided as globs (such as '*.fits.gz'). If supplied
+with the optional --database argument, then also match sky maps with injections
+from an inspinjfind-style sqlite database.
+
+All angular separations are in degrees, all areas are in square degrees, and
+all volumes are in cubic megaparsecs. The output is written as tab-separated
+values with the following columns:
+
++-----------------------------------------------------------------------------+
+| **From the search pipeline database**                                       |
++------------------------+----------------------------------------------------+
+| ``coinc_event_id``     | event identifier                                   |
++------------------------+----------------------------------------------------+
+| ``simulation_id``      | injection identifier                               |
++------------------------+----------------------------------------------------+
+| ``far``                | false alarm rate                                   |
++------------------------+----------------------------------------------------+
+| ``snr``                | signal to noise ratio                              |
++------------------------+----------------------------------------------------+
+| **Injection finding**                                                       |
++------------------------+----------------------------------------------------+
+| ``searched_area``      | area of 2D credible region containing the true sky |
+|                        | location                                           |
++------------------------+----------------------------------------------------+
+| ``searched_prob``      | probability in that 2D credible region             |
++------------------------+----------------------------------------------------+
+| ``searched_prob_dist`` | marginal distance CDF at the true distance         |
++------------------------+----------------------------------------------------+
+| ``searched_vol``       | volume of 3D credible region containing the true   |
+|                        | position                                           |
++------------------------+----------------------------------------------------+
+| ``searched_prob_vol``  | probability contained in that volume               |
++------------------------+----------------------------------------------------+
+| ``offset``             | angular separation between the maximum             |
+|                        | *a posteriori* position and the true sky position  |
++------------------------+----------------------------------------------------+
+| **Additional metadata from the sky maps**                                   |
++------------------------+----------------------------------------------------+
+| ``runtime``            | wall clock run time to generate sky map            |
++------------------------+----------------------------------------------------+
+| ``distmean``           | mean *a posteriori* distance                       |
++------------------------+----------------------------------------------------+
+| ``diststd``            | *a posteriori* standard deviation of distance      |
++------------------------+----------------------------------------------------+
+| ``log_bci``            | natural log Bayes factor, coherent vs. incoherent  |
++------------------------+----------------------------------------------------+
+| ``log_bsn``            | natural log Bayes factor, signal vs. noise         |
++------------------------+----------------------------------------------------+
+| **Credible levels** (if ``--area`` or ``--contour`` options present)        |
++------------------------+----------------------------------------------------+
+| ``area(P)``            | area of the *P* percent 2D credible region         |
++------------------------+----------------------------------------------------+
+| ``prob(A)``            | probability contained within the 2D credible level |
+|                        | of area *A*                                        |
++------------------------+----------------------------------------------------+
+| ``dist(P)``            | distance for a cumulative marginal probability of  |
+|                        | *P* percent                                        |
++------------------------+----------------------------------------------------+
+| ``vol(P)``             | volume of the *P* percent 3D credible region       |
++------------------------+----------------------------------------------------+
+| **Modes** (if ``--modes`` option is present)                                |
++------------------------+----------------------------------------------------+
+| ``searched_modes``     | number of simply connected figures in the 2D       |
+|                        | credible region containing the true sky location   |
++------------------------+----------------------------------------------------+
+| ``modes(P)``           | number of simply connected figures in the *P*      |
+|                        | percent 2D credible region                         |
++------------------------+----------------------------------------------------+
+
 """
 
 import argparse

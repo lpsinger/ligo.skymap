@@ -46,6 +46,8 @@ from .. import core
 from ..core import log_likelihood_toa_phoa_snr
 from ..util.numpy import require_contiguous
 
+__all__ = ('derasterize', 'localize', 'rasterize')
+
 log = logging.getLogger('BAYESTAR')
 
 log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)

@@ -10,6 +10,9 @@
   new ``ligo-skymap-stats`` program can generate summary statistics for
   skymaps, with or without injection-finding.
 
+- This is the first version that has been tested and shown to reproduce the
+  results in the "First Two Years" paper, which is the review benchmark.
+
 0.0.3 (2017-03-21)
 ==================
 

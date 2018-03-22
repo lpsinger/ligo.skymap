@@ -16,8 +16,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Create summary plots for sky maps of found injections, binned cumulatively by
-false alarm rate.
+Create summary plots for sky maps of found injections, optionally binned
+cumulatively by false alarm rate or SNR.
 """
 
 import argparse

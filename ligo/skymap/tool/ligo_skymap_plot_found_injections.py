@@ -64,7 +64,8 @@ def main(args=None):
     pb.update(-1, 'reading data')
 
     # Read in all of the datasets listed as positional command line arguments.
-    datasets_ = [np.recfromtxt(file, names=True, usemask=True) for file in opts.input]
+    datasets_ = [
+        np.recfromtxt(file, names=True, usemask=True) for file in opts.input]
     dataset_names = [os.path.splitext(file.name)[0] for file in opts.input]
 
     # For each of the quantities that we are going to plot, find their range
@@ -117,8 +118,8 @@ def main(args=None):
         bin_names = ['.']
         bin_titles = ['All events']
 
-    # Set maximum range of progress bar: one tick for each of 5 figures, for each
-    # false alarm rate bin.
+    # Set maximum range of progress bar: one tick for each of 5 figures,
+    # for each false alarm rate bin.
     pb.max = len(bin_edges) * 6
 
     if opts.cumulative:

@@ -1,4 +1,4 @@
-0.0.4 (unreleased)
+0.0.4 (2017-03-22)
 ==================
 
 - Fix ``--condor-submit`` option for ``bayestar-localize-coincs``.

@@ -32,9 +32,6 @@ from scipy import linalg
 log = logging.getLogger('BAYESTAR')
 
 
-_noise_psd_funcs = {}
-
-
 class vectorize_swig_psd_func(object):
     """Create a vectorized Numpy function from a SWIG-wrapped PSD function.
     SWIG does not provide enough information for Numpy to determine the number
@@ -58,21 +55,6 @@ class vectorize_swig_psd_func(object):
         if not np.isscalar(ret):
             ret = ret.astype(float)
         return ret
-
-
-for _ifos, _func in (
-    (("H1", "H2", "L1", "I1"), 'SimNoisePSDaLIGOZeroDetHighPower'),
-    (("V1",), 'SimNoisePSDAdvVirgo'),
-    (("K1"), 'SimNoisePSDKAGRA')
-):
-    _func = vectorize_swig_psd_func(_func)
-    for _ifo in _ifos:
-        _noise_psd_funcs[_ifo] = _func
-
-
-def get_noise_psd_func(ifo):
-    """Find a function that describes the given interferometer's noise PSD."""
-    return _noise_psd_funcs[ifo]
 
 
 class InterpolatedPSD(interpolate.interp1d):

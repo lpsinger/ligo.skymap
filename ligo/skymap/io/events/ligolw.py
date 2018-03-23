@@ -18,7 +18,7 @@
 Read events from pipedown/GstLal-style XML output.
 """
 from .base import *
-from ...bayestar.decorator import memoized
+from ...decorator import memoized
 from collections import OrderedDict, defaultdict
 import errno
 import logging

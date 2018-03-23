@@ -31,7 +31,7 @@ import lal
 import lalsimulation
 
 # My own imports
-from .decorator import memoized
+from ..decorator import memoized
 
 
 log = logging.getLogger('BAYESTAR')

@@ -64,7 +64,7 @@ def main(args=None):
     import os
     import re
     import sys
-    from ..bayestar.sky_map import localize, rasterize
+    from ..bayestar import localize, rasterize
     from ..io import fits
     from ..io import events
     from ..util.file import rename, TemporaryDirectory

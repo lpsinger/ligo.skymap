@@ -77,7 +77,7 @@ def main(args=None):
 
     # BAYESTAR imports.
     from ..io import fits, events
-    from ..bayestar.sky_map import localize
+    from ..bayestar import localize
 
     # Other imports.
     import os

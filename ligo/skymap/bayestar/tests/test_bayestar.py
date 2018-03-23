@@ -3,7 +3,7 @@ from collections import namedtuple
 import lal
 import pytest
 
-from ..sky_map import localize, rasterize
+from ..bayestar import localize, rasterize
 
 
 MockSingleEvent = namedtuple(

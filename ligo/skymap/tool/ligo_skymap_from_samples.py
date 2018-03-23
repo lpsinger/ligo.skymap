@@ -59,7 +59,7 @@ def main(args=None):
 
     # Late imports
     from .. import io
-    from ..bayestar.sky_map import rasterize
+    from ..bayestar import rasterize
     from .. import version
     from astropy.table import Table
     from astropy.time import Time

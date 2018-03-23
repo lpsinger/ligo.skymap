@@ -33,7 +33,7 @@ import lal
 import lalsimulation
 import numpy as np
 
-from ..decorator import with_numpy_random_seed
+from ..util.decorator import with_numpy_random_seed
 from .. import distance
 from . import filter
 from ..io.hdf5 import write_samples

@@ -30,7 +30,7 @@ from scipy import optimize
 from scipy import interpolate
 from scipy import linalg
 
-from ..decorator import memoized
+from ..util.decorator import memoized
 
 log = logging.getLogger('BAYESTAR')
 

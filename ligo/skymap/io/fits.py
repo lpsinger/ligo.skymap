@@ -488,11 +488,11 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
         m = Table([col.ravel() for col in m.columns.values()], meta=m.meta)
 
     if 'UNIQ' in m.colnames and not moc:
-        from ..bayestar.sky_map import rasterize
+        from ..bayestar import rasterize
         m = rasterize(m)
         m.meta['nest'] = True
     elif 'UNIQ' not in m.colnames and moc:
-        from ..bayestar.sky_map import derasterize
+        from ..bayestar import derasterize
         if not m.meta['nest']:
             npix = len(m)
             nside = hp.npix2nside(npix)

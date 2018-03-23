@@ -4,6 +4,7 @@ API Reference
 .. toctree::
    :maxdepth: 1
 
+   bayestar
    command
    distance
    eigenframe

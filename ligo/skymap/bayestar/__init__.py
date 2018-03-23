@@ -110,10 +110,39 @@ def localize(
         min_distance=None, max_distance=None, prior_distance_power=None,
         cosmology=False, mcmc=False, chain_dump=None,
         enable_snr_series=True, f_high_truncate=0.95):
-    """Convenience function to produce a sky map from LIGO-LW rows. Note that
-    min_distance and max_distance should be in Mpc.
+    """Localize a compact binary signal using the BAYESTAR algorithm.
 
-    Returns a 'NESTED' ordering HEALPix image as a Numpy array.
+    Parameters
+    ----------
+    event : `ligo.skymap.io.events.Event`
+        The event candidate.
+    waveform : str, optional
+        The name of the waveform approximant.
+    f_low : float, optional
+        The low frequency cutoff.
+    min_distance, max_distance : float, optional
+        The limits of integration over luminosity distance, in Mpc
+        (default: determine automatically from detector sensitivity).
+    prior_distance_power : int, optional
+        The power of distance that appears in the prior
+        (default: 2, uniform in volume).
+    cosmology: bool, optional
+        Set to enable a uniform in comoving volume prior (default: false).
+    mcmc : bool, optional
+        Set to use MCMC sampling rather than more accurate Gaussian quadrature.
+    chain_dump : str, optional
+        Save posterior samples to this filename if `mcmc` is set.
+    enable_snr_series : bool, optional
+        Set to False to disable SNR time series.
+    f_high_truncate : float, optional
+        Truncate the noise power spectral densities at this factor times the
+        highest sampled frequency to suppress artifacts caused by incorrect
+        PSD conditioning by some matched filter pipelines.
+
+    Returns
+    -------
+    skymap : `astropy.table.Table`
+        A 3D sky map in multi-order HEALPix format.
     """
     if len(event.singles) == 0:
         raise ValueError('Cannot localize an event with zero detectors.')

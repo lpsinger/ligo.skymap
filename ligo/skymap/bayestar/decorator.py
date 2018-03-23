@@ -20,7 +20,6 @@ Collection of Python decorators.
 """
 
 from functools import lru_cache, wraps
-from collections import Hashable
 from astropy.utils.misc import NumpyRNGContext
 
 __all__ = ('memoized', 'with_numpy_random_seed', 'as_dict')

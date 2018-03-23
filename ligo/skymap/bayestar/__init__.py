@@ -33,7 +33,6 @@ import os
 import sys
 
 from astropy.table import Column, Table
-from astropy.utils.console import ProgressBar
 from astropy import units as u
 import healpy as hp
 import lal

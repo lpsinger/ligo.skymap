@@ -22,7 +22,7 @@ Collection of Python decorators.
 from functools import lru_cache, wraps
 from astropy.utils.misc import NumpyRNGContext
 
-__all__ = ('memoized', 'with_numpy_random_seed', 'as_dict')
+__all__ = ('memoized', 'with_numpy_random_seed')
 
 memoized = lru_cache(maxsize=None)
 

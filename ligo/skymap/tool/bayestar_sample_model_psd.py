@@ -86,7 +86,7 @@ def main(args=None):
     import lal.series
     import lalsimulation
     import numpy as np
-    from ..bayestar.timing import vectorize_swig_psd_func
+    from ..bayestar.filter import vectorize_swig_psd_func
 
     # Add basic options.
 

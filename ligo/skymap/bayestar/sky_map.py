@@ -38,7 +38,7 @@ from .. import distance
 from . import filter
 from ..io.hdf5 import write_samples
 from ..io.fits import metadata_for_version_module
-from . import timing
+from . import filter
 from .. import moc
 from .. import healpix_tree
 from .. import version
@@ -141,7 +141,7 @@ def localize(
 
     # Power spectra for each detector.
     psds = [single.psd for single in singles]
-    psds = [timing.InterpolatedPSD(filter.abscissa(psd), psd.data.data,
+    psds = [filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data,
                                    f_high_truncate=f_high_truncate)
                                    for psd in psds]
 
@@ -153,7 +153,7 @@ def localize(
 
     # Signal models for each detector.
     log.debug('calculating Fisher matrix elements')
-    signal_models = [timing.SignalModel(_) for _ in HS]
+    signal_models = [filter.SignalModel(_) for _ in HS]
 
     # Get SNR=1 horizon distances for each detector.
     horizons = np.asarray([signal_model.get_horizon_distance()

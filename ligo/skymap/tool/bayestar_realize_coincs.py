@@ -118,7 +118,6 @@ def main(args=None):
     # BAYESTAR imports.
     from ..io.events.ligolw import ContentHandler
     from ..bayestar import filter
-    from ..bayestar import timing
 
     # Other imports.
     import numpy as np
@@ -149,7 +148,7 @@ def main(args=None):
         opts.reference_psd, contenthandler=lal.series.PSDContentHandler)
     psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
     psds = {
-        key: timing.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
+        key: filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
         for key, psd in psds.items() if psd is not None}
 
     # Read injection file.
@@ -240,7 +239,7 @@ def main(args=None):
             spin2z=sim_inspiral.spin2z,
             f_min=f_low)
         W = [filter.signal_psd_series(H, psds[ifo]) for ifo in opts.detector]
-        signal_models = [timing.SignalModel(_) for _ in W]
+        signal_models = [filter.SignalModel(_) for _ in W]
 
         # Get SNR=1 horizon distances for each detector.
         horizons = np.asarray(

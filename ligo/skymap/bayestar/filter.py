@@ -435,7 +435,7 @@ class SignalModel(object):
     >>> sngl = lambda: None
     >>> H = filter.sngl_inspiral_psd(
     ...     'TaylorF2threePointFivePN', mass1=1.4, mass2=1.4)
-    >>> S = get_noise_psd_func('H1')
+    >>> S = vectorize_swig_psd_func('SimNoisePSDaLIGOZeroDetHighPower')
     >>> W = filter.signal_psd_series(H, S)
     >>> sm = SignalModel(W)
 

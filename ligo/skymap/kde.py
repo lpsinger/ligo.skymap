@@ -221,16 +221,6 @@ def _cluster(cls, pts, trials, i, seed):
         return obj.bic, k, obj.kdes
 
 
-class _mapfunc(object):
-
-    def __init__(self, func):
-        self._func = func
-
-    def __call__(self, i_arg):
-        i, arg = i_arg
-        return i, self._func(arg)
-
-
 class ClusteredKDE(object):
 
     def __init__(self, pts, max_k=40, trials=5, assign=None,
@@ -306,16 +296,7 @@ class ClusteredKDE(object):
         return w / np.sum(w)
 
     def _map(self, func, items):
-        # FIXME: ProgressBar.map(..., multiprocess=True) uses imap_unordered,
-        # but we want the result to come back in order. This should be fixed,
-        # or at least correctly documented, in Astropy.
-        if self.multiprocess:
-            _, result = zip(*sorted(ProgressBar.map(_mapfunc(func),
-                                                    list(enumerate(items)),
-                                                    multiprocess=True)))
-            return list(result)
-        else:
-            return ProgressBar.map(func, items, multiprocess=False)
+        return ProgressBar.map(func, items, multiprocess=self.multiprocess)
 
 
 class SkyKDE(ClusteredKDE):

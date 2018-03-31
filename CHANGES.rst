@@ -1,7 +1,9 @@
 0.0.5 (unreleased)
 ==================
 
-- No changes yet.
+- When running ``ligo-skymap-stats`` without injections, instead of writing
+  ``nan`` values for irrelevant columns, don't write the columns in the first
+  place.
 
 0.0.4 (2017-03-22)
 ==================

@@ -191,12 +191,18 @@ def process(fitsfilename):
     log_bci = sky_map.meta.get('log_bci', np.nan)
     log_bsn = sky_map.meta.get('log_bsn', np.nan)
 
-    ret = ([coinc_event_id, simulation_id, far, snr, searched_area,
+    ret = [coinc_event_id]
+    if db is not None:
+        ret += [
+            simulation_id, far, snr, searched_area,
             searched_prob, searched_prob_dist, searched_vol, searched_prob_vol,
-            offset, runtime, distmean, diststd, log_bci, log_bsn]
-           + contour_areas + area_probs + contour_dists + contour_vols)
+            offset]
+    ret += [runtime, distmean, diststd, log_bci, log_bsn]
+    ret += contour_areas + area_probs + contour_dists + contour_vols
     if modes:
-        ret += [searched_modes] + contour_modes
+        if db is not None:
+            ret += [searched_modes]
+        ret += contour_modes
     return ret
 
 
@@ -222,17 +228,19 @@ def main(args=None):
         pool_map = Pool(opts.jobs, startup, args).imap
     startup(*args)
 
-    colnames = (
-        ['coinc_event_id', 'simulation_id', 'far', 'snr', 'searched_area',
-         'searched_prob', 'searched_prob_dist', 'searched_vol',
-         'searched_prob_vol', 'offset', 'runtime', 'distmean', 'diststd',
-         'log_bci', 'log_bsn'] +
-        ['area({0:g})'.format(_) for _ in contours] +
-        ['prob({0:g})'.format(_) for _ in areas] +
-        ['dist({0:g})'.format(_) for _ in contours] +
-        ['vol({0:g})'.format(_) for _ in contours])
+    colnames = ['coinc_event_id']
+    if opts.database is not None:
+        colnames += ['simulation_id', 'far', 'snr', 'searched_area',
+                     'searched_prob', 'searched_prob_dist', 'searched_vol',
+                     'searched_prob_vol', 'offset']
+    colnames += ['runtime', 'distmean', 'diststd', 'log_bci', 'log_bsn']
+    colnames += ['area({0:g})'.format(_) for _ in contours]
+    colnames += ['prob({0:g})'.format(_) for _ in areas]
+    colnames += ['dist({0:g})'.format(_) for _ in contours]
+    colnames += ['vol({0:g})'.format(_) for _ in contours]
     if modes:
-        colnames += ['searched_modes']
+        if opts.database is not None:
+            colnames += ['searched_modes']
         colnames += ["modes({0:g})".format(p) for p in contours]
     print(*colnames, sep="\t", file=opts.output)
 

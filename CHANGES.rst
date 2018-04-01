@@ -8,6 +8,10 @@
 - Start process of switching to tqdm for progress bars so that long-running
   operations show time estimates.
 
+- In ``ligo-skymap-stats``, disable OpenMP parallelism if running with ``-j``
+  to avoid creating a huge number of threads on machines with very many
+  cores.
+
 0.0.4 (2017-03-22)
 ==================
 

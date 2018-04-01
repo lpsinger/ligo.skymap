@@ -210,6 +210,7 @@ def main(args=None):
     opts = parser().parse_args(args)
 
     from tqdm import tqdm
+    from .. import omp
 
     if opts.database is None:
         dbfilename = None
@@ -219,6 +220,8 @@ def main(args=None):
     if opts.jobs == 1:
         pool_map = map
     else:
+        omp.num_threads = 1  # disable OpenMP parallelism
+
         try:
             from emcee.interruptible_pool import InterruptiblePool as Pool
         except ImportError:

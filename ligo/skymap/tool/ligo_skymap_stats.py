@@ -209,10 +209,8 @@ def process(fitsfilename):
 def main(args=None):
     opts = parser().parse_args(args)
 
-    from glue.text_progress_bar import ProgressBar
-    progress = ProgressBar()
+    from tqdm import tqdm
 
-    progress.update(-1, 'spawning workers')
     if opts.database is None:
         dbfilename = None
     else:
@@ -244,9 +242,7 @@ def main(args=None):
         colnames += ["modes({0:g})".format(p) for p in contours]
     print(*colnames, sep="\t", file=opts.output)
 
-    count_records = 0
-    progress.max = len(opts.fitsfilenames)
-    for record in pool_map(process, opts.fitsfilenames):
-        count_records += 1
-        progress.update(count_records, record[0])
-        print(*record, sep="\t", file=opts.output)
+    with tqdm(total=len(opts.fitsfilenames)) as progress:
+        for record in pool_map(process, opts.fitsfilenames):
+            print(*record, sep="\t", file=opts.output)
+            progress.update()

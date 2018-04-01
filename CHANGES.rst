@@ -5,6 +5,9 @@
   ``nan`` values for irrelevant columns, don't write the columns in the first
   place.
 
+- Start process of switching to tqdm for progress bars so that long-running
+  operations show time estimates.
+
 0.0.4 (2017-03-22)
 ==================
 

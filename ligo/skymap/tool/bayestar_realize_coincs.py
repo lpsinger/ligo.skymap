@@ -113,7 +113,7 @@ def main(args=None):
     import lal.series
     import lalsimulation
     from lalinspiral.thinca import InspiralCoincDef
-    from glue.text_progress_bar import ProgressBar
+    from tqdm import tqdm
 
     # BAYESTAR imports.
     from ..io.events.ligolw import ContentHandler
@@ -122,10 +122,7 @@ def main(args=None):
     # Other imports.
     import numpy as np
 
-    progress = ProgressBar()
-
     # Open output file.
-    progress.update(-1, 'setting up output document')
     out_xmldoc = ligolw.Document()
     out_xmldoc.appendChild(ligolw.LIGO_LW())
 
@@ -143,7 +140,6 @@ def main(args=None):
         out_xmldoc, process, inseg=all_time, outseg=all_time)
 
     # Read PSDs.
-    progress.update(-1, 'reading ' + opts.reference_psd.name)
     xmldoc, _ = ligolw_utils.load_fileobj(
         opts.reference_psd, contenthandler=lal.series.PSDContentHandler)
     psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
@@ -152,7 +148,6 @@ def main(args=None):
         for key, psd in psds.items() if psd is not None}
 
     # Read injection file.
-    progress.update(-1, 'reading ' + opts.input.name)
     xmldoc, _ = ligolw_utils.load_fileobj(
         opts.input, contenthandler=ContentHandler)
 
@@ -198,7 +193,7 @@ def main(args=None):
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 
-    for sim_inspiral in progress.iterate(sim_inspiral_table):
+    for sim_inspiral in tqdm(sim_inspiral_table):
 
         # Unpack some values from the row in the table.
         m1 = sim_inspiral.mass1
@@ -412,7 +407,6 @@ def main(args=None):
 
 
     # Record process end time.
-    progress.update(-1, 'writing ' + opts.output.name)
     ligolw_process.set_process_end_time(process)
 
     # Write output file.

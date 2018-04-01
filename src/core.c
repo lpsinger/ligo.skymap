@@ -19,6 +19,10 @@
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+#include <limits.h>
 #include <stddef.h>
 #include <chealpix.h>
 #include <gsl/gsl_errno.h>
@@ -35,6 +39,96 @@
 #include "bayestar_sky_map.h"
 #include "cubic_interp.h"
 #include "omp_interruptible.h"
+
+
+typedef struct {
+    PyObject_HEAD
+} Omp;
+
+
+static PyObject *
+Omp_get_num_threads(Omp *NPY_UNUSED(self), void *NPY_UNUSED(closure))
+{
+    int ret;
+#ifdef _OPENMP
+    /*
+     * omp_get_num_threads() always returns 1 in single-threaded code, so
+     * wrap it inside an itty bitty parallel section.
+     * See https://stackoverflow.com/questions/11071116
+     */
+    #pragma omp parallel
+    {
+        #pragma omp single
+        ret = omp_get_num_threads();
+    }
+#else
+    ret = 1;
+#endif
+    return PyLong_FromLong(ret);
+}
+
+
+static int Omp_set_num_threads(Omp *NPY_UNUSED(self), PyObject *value,
+                               void *NPY_UNUSED(closure))
+{
+    unsigned long value_ulong = PyLong_AsUnsignedLong(value);
+    if (value_ulong > INT_MAX)
+    {
+        PyErr_SetString(
+            PyExc_OverflowError,
+            "omp.num_threads must be less than or equal to INT_MAX");
+        return -1;
+    }
+#ifdef _OPENMP
+    omp_set_num_threads((int) value_ulong);
+#endif
+    return 0;
+}
+
+
+static PyGetSetDef Omp_getsetdefs[] = {
+    {"num_threads", (getter)Omp_get_num_threads, (setter)Omp_set_num_threads,
+     "Number of OpenMP threads", NULL},
+    {NULL}
+};
+
+
+static PyTypeObject OmpType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "ligo.skymap.omp",         /* tp_name */
+    sizeof(Omp),               /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    0,                         /* tp_dealloc */
+    0,                         /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    0,                         /* tp_reserved */
+    0,                         /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    0,                         /* tp_hash  */
+    0,                         /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        /* tp_flags */
+    "Global OpenMP settings",  /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    0,                         /* tp_richcompare */
+    0,                         /* tp_weaklistoffset */
+    0,                         /* tp_iter */
+    0,                         /* tp_iternext */
+    0,                         /* tp_methods */
+    0,                         /* tp_members */
+    Omp_getsetdefs,            /* tp_getset */
+};
+
+
+
+/*****************************************************************************/
 
 
 static void conditional_pdf_loop(
@@ -923,6 +1017,10 @@ PyMODINIT_FUNC PyInit_core(void)
     import_array();
     import_umath();
 
+    OmpType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&OmpType) < 0)
+        return NULL;
+
     sky_map_descr = sky_map_create_descr();
     if (!sky_map_descr)
         goto done;
@@ -930,6 +1028,9 @@ PyMODINIT_FUNC PyInit_core(void)
     module = PyModule_Create(&moduledef);
     if (!module)
         goto done;
+
+    PyModule_AddObject(module, "omp",
+        PyObject_CallFunctionObjArgs(&OmpType, NULL));
 
     /* Ignore warnings in Numpy API */
     #pragma GCC diagnostic push

@@ -145,7 +145,7 @@ def startup(dbfilename, opts_contour, opts_modes, opts_area):
 def process(fitsfilename):
     sky_map = fits.read_sky_map(fitsfilename, moc=True)
 
-    coinc_event_id = sky_map.meta['objid']
+    coinc_event_id = sky_map.meta.get('objid')
     try:
         runtime = sky_map.meta['runtime']
     except KeyError:

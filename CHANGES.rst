@@ -1,4 +1,4 @@
-0.0.5 (unreleased)
+0.0.5 (2018-04-12)
 ==================
 
 - When running ``ligo-skymap-stats`` without injections, instead of writing

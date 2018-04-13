@@ -3,6 +3,9 @@
 
 - Declare the top-level ``ligo`` module as a namespace package.
 
+- Add ``python_requires`` setting to ``setup.cfg`` to indicate Python version
+  compatibility.
+
 0.0.5 (2018-04-12)
 ==================
 

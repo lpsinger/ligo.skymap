@@ -1,7 +1,7 @@
 0.0.5 (unreleased)
 ==================
 
-- No changes yet.
+- Declare the top-level ``ligo`` module as a namespace package.
 
 0.0.5 (2018-04-12)
 ==================

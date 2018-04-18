@@ -65,13 +65,13 @@ def open(string, mode):
     Examples
     --------
 
-    >>> from ..util.file import TemporaryDirectory
-    >>> with TemporaryDirectory() as d:
+    >>> import tempfile
+    >>> with tempfile.TemporaryDirectory() as d:
     ...     open(os.path.join(d, 'test.sqlite'), 'w')
     ...
     <sqlite3.Connection object at 0x...>
 
-    >>> with TemporaryDirectory() as d:
+    >>> with tempfile.TemporaryDirectory() as d:
     ...     open(os.path.join(d, 'test.sqlite'), 'r')
     ...
     Traceback (most recent call last):
@@ -122,15 +122,14 @@ def get_filename(connection):
     Examples
     --------
 
-    >>> from ..util.file import TemporaryDirectory
-    >>> with TemporaryDirectory() as d:
+    >>> import tempfile
+    >>> with tempfile.TemporaryDirectory() as d:
     ...     with sqlite3.connect(os.path.join(d, 'test.sqlite')) as db:
     ...         print(get_filename(db))
     ...
     /.../test.sqlite
 
-    >>> from ..util.file import TemporaryDirectory
-    >>> with TemporaryDirectory() as d:
+    >>> with tempfile.TemporaryDirectory() as d:
     ...     with sqlite3.connect(os.path.join(d, 'test1.sqlite')) as db1, \\
     ...          sqlite3.connect(os.path.join(d, 'test2.sqlite')) as db2:
     ...         filename = get_filename(db1)

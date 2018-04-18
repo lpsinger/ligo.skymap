@@ -64,10 +64,11 @@ def main(args=None):
     import os
     import re
     import sys
+    import tempfile
     from ..bayestar import localize, rasterize
     from ..io import fits
     from ..io import events
-    from ..util.file import rename, TemporaryDirectory
+    from ..util.file import rename
     import ligo.gracedb.logging
     import ligo.gracedb.rest
 
@@ -137,7 +138,7 @@ def main(args=None):
             log.info("sky localization complete")
 
             # upload FITS file
-            with TemporaryDirectory() as fitsdir:
+            with tempfile.TemporaryDirectory() as fitsdir:
                 fitspath = os.path.join(fitsdir, opts.output)
                 fits.write_sky_map(fitspath, sky_map, nest=True)
                 log.debug('wrote FITS file: %s', opts.output)

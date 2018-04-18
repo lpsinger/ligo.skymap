@@ -17,7 +17,6 @@
 #
 """File tools"""
 
-import contextlib
 import errno
 import os
 import shutil
@@ -50,7 +49,7 @@ def rm_f(filename):
     Examples
     --------
 
-    >>> with TemporaryDirectory() as d:
+    >>> with tempfile.TemporaryDirectory() as d:
     ...     rm_f('test')
     ...     with open('test', 'w') as f:
     ...         print('Hello world', file=f)
@@ -60,14 +59,3 @@ def rm_f(filename):
         os.remove(filename)
     except FileNotFoundError:
         pass
-
-
-@contextlib.contextmanager
-def TemporaryDirectory(suffix='', prefix='tmp', dir=None, delete=True):
-    """Context manager for creating and cleaning up a temporary directory."""
-    try:
-        dir = tempfile.mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
-        yield dir
-    finally:
-        if delete:
-            shutil.rmtree(dir)

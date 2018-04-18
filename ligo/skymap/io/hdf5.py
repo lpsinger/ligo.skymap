@@ -79,9 +79,9 @@ def _find_table(group, tablename):
     Check that we can find a file by name:
 
     >>> import os.path
-    >>> from ..util.file import TemporaryDirectory
+    >>> import tempfile
     >>> table = Table(np.eye(3), names=['a', 'b', 'c'])
-    >>> with TemporaryDirectory() as dir:
+    >>> with tempfile.TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     table.write(filename, path='foo/bar', append=True)
     ...     table.write(filename, path='foo/bat', append=True)
@@ -92,7 +92,7 @@ def _find_table(group, tablename):
 
     Check that an exception is raised if the table is not found:
 
-    >>> with TemporaryDirectory() as dir:
+    >>> with tempfile.TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     table.write(filename, path='foo/bar', append=True)
     ...     table.write(filename, path='foo/bat', append=True)
@@ -105,7 +105,7 @@ def _find_table(group, tablename):
 
     Check that an exception is raised if multiple tables are found:
 
-    >>> with TemporaryDirectory() as dir:
+    >>> with tempfile.TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     table.write(filename, path='foo/bar', append=True)
     ...     table.write(filename, path='foo/bat', append=True)
@@ -160,14 +160,14 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     Test reading a file written using the Python API:
 
     >>> import os.path
-    >>> from ..util.file import TemporaryDirectory
+    >>> import tempfile
     >>> table = Table([
     ...     Column(np.ones(10), name='foo', meta={'vary': FIXED}),
     ...     Column(np.arange(10), name='bar', meta={'vary': LINEAR}),
     ...     Column(np.arange(10) * np.pi, name='bat', meta={'vary': CIRCULAR}),
     ...     Column(np.arange(10), name='baz', meta={'vary': OUTPUT})
     ... ])
-    >>> with TemporaryDirectory() as dir:
+    >>> with tempfile.TemporaryDirectory() as dir:
     ...     filename = os.path.join(dir, 'test.hdf5')
     ...     write_samples(table, filename, path='foo/bar/posterior_samples')
     ...     len(read_samples(filename))
@@ -245,7 +245,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     And now try writing an arbitrary example to a temporary file.
 
     >>> import os.path
-    >>> from ..util.file import TemporaryDirectory
+    >>> import tempfile
     >>> table = Table([
     ...     Column(np.ones(10), name='foo', meta={'vary': FIXED}),
     ...     Column(np.arange(10), name='bar', meta={'vary': LINEAR}),
@@ -254,7 +254,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...     Column(np.ones(10), name='plugh'),
     ...     Column(np.arange(10), name='xyzzy')
     ... ])
-    >>> with TemporaryDirectory() as dir:
+    >>> with tempfile.TemporaryDirectory() as dir:
     ...     write_samples(
     ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
     ...         metadata={'bat/baz': {'widget': 'shoephone'}})

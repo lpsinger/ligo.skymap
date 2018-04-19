@@ -27,6 +27,7 @@ References
 """
 
 from astropy import constants
+from astropy.utils import deprecated
 import healpy as hp
 import numpy as np
 
@@ -48,6 +49,7 @@ def _get_detector_location(ifo):
     return ifo
 
 
+@deprecated('0.0.6')
 def get_detector_pair_axis(ifo1, ifo2, gmst):
     """Find the sky position where the line between two detectors pierces the
     celestial sphere.
@@ -96,6 +98,7 @@ def get_detector_pair_axis(ifo1, ifo2, gmst):
     return pole_ra, pole_dec, light_travel_time
 
 
+@deprecated('0.0.6')
 def rotate_map_to_axis(m, ra, dec, nest=False, method='direct'):
     """Rotate a sky map to place a given line of sight on the +z axis.
 
@@ -159,6 +162,7 @@ def rotate_map_to_axis(m, ra, dec, nest=False, method='direct'):
     return ret
 
 
+@deprecated('0.0.6')
 def polar_profile(m, nest=False):
     """Obtain the marginalized polar profile of sky map.
 

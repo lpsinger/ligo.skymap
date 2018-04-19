@@ -28,13 +28,12 @@ References
 from astropy import constants
 import healpy as hp
 import numpy as np
-import six
 
 __all__ = ('get_detector_pair_axis', 'rotate_map_to_axis', 'polar_profile')
 
 
 def _get_detector_location(ifo):
-    if isinstance(ifo, six.string_types):
+    if isinstance(ifo, str):
         try:
             import lalsimulation
         except ImportError:

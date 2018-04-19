@@ -15,7 +15,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""Tools for transforming sky maps to detector frames. These functions were written for Fig. 2 of the GW150914 localization and follow-up paper [1]_.
+"""Tools for transforming sky maps to detector frames. These functions were
+written for Fig. 2 of the GW150914 localization and follow-up paper [1]_.
 
 References
 ----------

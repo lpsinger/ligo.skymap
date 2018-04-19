@@ -23,12 +23,7 @@ sky map.
 from astropy.coordinates import (
     BaseCoordinateFrame, CartesianRepresentation, DynamicMatrixTransform,
     frame_transform_graph, ICRS, SphericalRepresentation)
-try:
-    from astropy.coordinates import CartesianRepresentationAttribute
-except ImportError:
-    from astropy.coordinates.baseframe import \
-        CartesianRepresentationFrameAttribute \
-        as CartesianRepresentationAttribute
+from astropy.coordinates import CartesianRepresentationAttribute
 from astropy.units import dimensionless_unscaled
 import numpy as np
 

@@ -27,7 +27,7 @@ from astropy.coordinates import CartesianRepresentationAttribute
 from astropy.units import dimensionless_unscaled
 import numpy as np
 
-from .distance import principal_axes
+from ..distance import principal_axes
 
 __all__ = ('EigenFrame',)
 

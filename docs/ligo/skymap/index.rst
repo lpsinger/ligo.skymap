@@ -6,8 +6,8 @@ API Reference
 
    bayestar
    command
+   coordinates/eigenframe
    distance
-   eigenframe
    healpix_tree
    io/events
    io/fits

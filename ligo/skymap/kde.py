@@ -31,7 +31,7 @@ from scipy.stats import gaussian_kde
 
 from . import distance
 from . import moc
-from .eigenframe import EigenFrame
+from .coordinates import EigenFrame
 
 log = logging.getLogger()
 

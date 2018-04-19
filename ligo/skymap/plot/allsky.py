@@ -471,7 +471,8 @@ class AllSkyAxes(AutoScaledWCSAxes):
             'CDELT1': -2 * np.sqrt(2) / np.pi,
             'CDELT2': 2 * np.sqrt(2) / np.pi,
             'CTYPE1': self._xcoord + '-' + self._wcsprj,
-            'CTYPE2': self._ycoord + '-' + self._wcsprj}
+            'CTYPE2': self._ycoord + '-' + self._wcsprj,
+            'RADESYS': self._radesys}
         if obstime is not None:
             header['DATE-OBS'] = Time(obstime).utc.isot
         super(AllSkyAxes, self).__init__(
@@ -484,6 +485,7 @@ class Astro(object):
     _crval1 = 180
     _xcoord = 'RA--'
     _ycoord = 'DEC-'
+    _radesys = 'ICRS'
 
 
 class GeoAngleFormatterLocator(AngleFormatterLocator):
@@ -495,6 +497,7 @@ class GeoAngleFormatterLocator(AngleFormatterLocator):
 
 class Geo(WCSAxes):
     _crval1 = 0
+    _radesys = 'ITRS'
     _xcoord = 'TLON'
     _ycoord = 'TLAT'
 

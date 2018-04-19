@@ -6,6 +6,7 @@ API Reference
 
    bayestar
    command
+   coordinates/detector
    coordinates/eigenframe
    distance
    healpix_tree

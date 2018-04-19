@@ -1,7 +1,13 @@
 0.0.7 (unreleased)
 ==================
 
-- No changes yet.
+- Move ``ligo.skymap.eigenframe.EigenFrame`` to
+  ``ligo.skymap.coordinates.EigenFrame``.
+
+- Add a new Astropy coordinate frame ``ligo.skymap.coordinates.DetectorFrame``
+  to visualize triangulation rings with pairs of detectors.
+
+- Deprecate all functions in ``ligo.skymap.postprocess.detector_frame``.
 
 0.0.6 (2018-04-13)
 ==================

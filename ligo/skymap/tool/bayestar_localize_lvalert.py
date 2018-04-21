@@ -85,8 +85,9 @@ def main(args=None):
 
     # Fire up a GraceDb client
     # FIXME: Mimic the behavior of the GraceDb command line client, where the
-    # environment variable GRACEDB_SERVICE_URL overrides the default service URL.
-    # It would be nice to get this behavior into the gracedb package itself.
+    # environment variable GRACEDB_SERVICE_URL overrides the default service
+    # URL. It would be nice to get this behavior into the gracedb package
+    # itself.
     gracedb = ligo.gracedb.rest.GraceDb(
         os.environ.get(
             'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))

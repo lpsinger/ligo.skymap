@@ -41,7 +41,7 @@ def parser():
     # Determine list of known detectors for command line arguments.
     import lal
     available_ifos = sorted(det.frDetector.prefix
-        for det in lal.CachedDetectors)
+                            for det in lal.CachedDetectors)
 
     parser = ArgumentParser()
     parser.add_argument(

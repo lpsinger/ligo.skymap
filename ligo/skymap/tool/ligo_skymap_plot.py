@@ -113,7 +113,8 @@ def main(args=None):
             os.path.dirname(plot.__file__), 'ne_simplified_coastline.json')
         with open(geojson_filename, 'r') as geojson_file:
             geoms = json.load(geojson_file)['geometries']
-        verts = [coord for geom in geoms for coord in zip(*geom['coordinates'])]
+        verts = [coord for geom in geoms
+                 for coord in zip(*geom['coordinates'])]
         plt.plot(*verts, color='0.5', linewidth=0.5,
                  transform=ax.get_transform('world'))
 

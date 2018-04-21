@@ -19,15 +19,16 @@
 Make an airmass chart for a LIGO/Virgo probability sky map.
 """
 
-import argparse
-from .. import command
+from argparse import FileType
+
+from . import ArgumentParser, figure_parser
 
 
 def parser():
     from astropy.coordinates import EarthLocation
-    parser = command.ArgumentParser(parents=[command.figure_parser])
+    parser = ArgumentParser(parents=[figure_parser])
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
+        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
         '--site', choices=EarthLocation.get_site_names(), required=True)

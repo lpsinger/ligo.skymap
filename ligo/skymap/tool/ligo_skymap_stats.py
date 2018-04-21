@@ -90,22 +90,21 @@ values with the following columns:
 
 """
 
-import argparse
+from argparse import FileType
 import sqlite3
 
 import numpy as np
 
-from .. import command
+from . import ArgumentParser, SQLiteType
 from ..io import fits
 from ..postprocess import find_injection_moc
 from ..util import sqlite
 
 
 def parser():
-    parser = command.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
-        '-o', '--output', metavar='OUT.dat',
-        type=argparse.FileType('w'), default='-',
+        '-o', '--output', metavar='OUT.dat', type=FileType('w'), default='-',
         help='Name of output file')
     parser.add_argument(
         '-j', '--jobs', type=int, default=1, const=None, nargs='?',
@@ -123,7 +122,7 @@ def parser():
         '--modes', action='store_true',
         help='Compute number of disjoint modes')
     parser.add_argument(
-        '-d', '--database', type=command.SQLiteType('r'), metavar='DB.sqlite',
+        '-d', '--database', type=SQLiteType('r'), metavar='DB.sqlite',
         help='Input SQLite database from search pipeline')
     parser.add_argument(
         'fitsfilenames', metavar='GLOB.fits[.gz]', nargs='+', action='glob',

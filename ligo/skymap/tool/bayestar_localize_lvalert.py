@@ -31,13 +31,13 @@ terminal, or redirected from a fifo):
     $ echo T90713 > /var/run/bayestar
 """
 
-from .. import command
+from . import (
+    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, iterlines)
 
 
 def parser():
-    parser = command.ArgumentParser(
-        parents=[
-            command.waveform_parser, command.prior_parser, command.mcmc_parser])
+    parser = ArgumentParser(
+        parents=[waveform_parser, prior_parser, mcmc_parser])
     parser.add_argument(
         '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
         help='disable certain detectors')
@@ -81,7 +81,7 @@ def main(args=None):
 
     # If no GraceDB IDs were specified on the command line, then read them
     # from stdin line-by-line.
-    graceids = opts.graceid if opts.graceid else command.iterlines(sys.stdin)
+    graceids = opts.graceid if opts.graceid else iterlines(sys.stdin)
 
     # Fire up a GraceDb client
     # FIXME: Mimic the behavior of the GraceDb command line client, where the

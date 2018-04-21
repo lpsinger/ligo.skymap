@@ -18,11 +18,11 @@
 """Construct a LIGO-LW XML power spectral density file for a network of
 detectors by evaluating a model power noise sensitivity curve."""
 
-import argparse
+from argparse import FileType, SUPPRESS
 import inspect
 import os
 
-from .. import command
+from . import ArgumentParser, register_to_xmldoc
 
 psd_name_prefix = 'SimNoisePSD'
 
@@ -40,9 +40,9 @@ def parser():
             '(double f) -> double' in func.__doc__ or
             '(REAL8FrequencySeries psd, double flow) -> int' in func.__doc__))
 
-    parser = command.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
-        '-o', '--output', metavar='OUT.xml[.gz]', type=argparse.FileType('wb'),
+        '-o', '--output', metavar='OUT.xml[.gz]', type=FileType('wb'),
         default='-', help='Name of output file [default: stdout]')
     parser.add_argument(
         '--df', metavar='Hz', type=float, default=1.0,
@@ -69,10 +69,10 @@ def parser():
         prefix = detector.frDetector.prefix
         detector_group.add_argument(
             '--' + prefix, choices=psd_names,
-            metavar='func', default=argparse.SUPPRESS,
+            metavar='func', default=SUPPRESS,
             help='PSD function for {0} detector'.format(name))
         scale_group.add_argument(
-            '--' + prefix + '-scale', type=float, default=argparse.SUPPRESS,
+            '--' + prefix + '-scale', type=float, default=SUPPRESS,
             help='Scale range for {0} detector'.format(name))
 
     return parser
@@ -127,7 +127,7 @@ def main(args=None):
         psds[detector] = series
 
     xmldoc = lal.series.make_psd_xmldoc(psds)
-    command.register_to_xmldoc(xmldoc, p, opts)
+    register_to_xmldoc(xmldoc, p, opts)
 
     with glue.ligolw.utils.SignalsTrap():
         glue.ligolw.utils.write_fileobj(

@@ -25,7 +25,7 @@ kernel density estimation.
 def parser():
     # Command line interface.
     from argparse import FileType, SUPPRESS
-    from ..command import ArgumentParser, DirType, EnableAction
+    from . import ArgumentParser, DirType, EnableAction
     parser = ArgumentParser()
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')

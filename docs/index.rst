@@ -57,6 +57,7 @@ API Documentation
    ligo/skymap/moc
    ligo/skymap/plot/index
    ligo/skymap/postprocess/index
+   ligo/skymap/tool/index
    ligo/skymap/util/index
 
 ******************

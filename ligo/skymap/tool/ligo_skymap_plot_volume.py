@@ -20,12 +20,13 @@ Plot a volumetric posterior in three-projection view.
 """
 
 
-import argparse
-from .. import command
+from argparse import FileType
+
+from . import ArgumentParser, figure_parser
 
 
 def parser():
-    parser = command.ArgumentParser(parents=[command.figure_parser])
+    parser = ArgumentParser(parents=[figure_parser])
     parser.add_argument(
         '--annotate', default=False, action='store_true',
         help='annotate plot with information about the event')
@@ -40,16 +41,16 @@ def parser():
         '--radecdist', nargs=3, type=float, action='append', default=[],
         help='right ascension (deg), declination (deg), and distance to mark')
     parser.add_argument(
-        '--chain', metavar='CHAIN.hdf5', type=argparse.FileType('rb'),
+        '--chain', metavar='CHAIN.hdf5', type=FileType('rb'),
         help='optionally plot a posterior sample chain')
     parser.add_argument(
         '--projection', type=int, choices=list(range(4)), default=0,
         help='Plot one specific projection, or 0 for all projections')
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
+        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
-        '--align-to', metavar='SKYMAP.fits[.gz]', type=argparse.FileType('rb'),
+        '--align-to', metavar='SKYMAP.fits[.gz]', type=FileType('rb'),
         help='Align to the principal axes of this sky map')
     parser.set_defaults(figure_width='3.5', figure_height='3.5')
     return parser

@@ -20,16 +20,16 @@ The input is a HEALPix probability map.
 The output is a GeoJSON FeatureCollection (http://geojson.org/).
 """
 
-import argparse
-from .. import command
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():
-    parser = command.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         '-o', '--output', metavar='FILE.geojson',
-        default='-', type=argparse.FileType('w'),
-        help='output file [default: stdout]')
+        default='-', type=FileType('w'), help='output file [default: stdout]')
     parser.add_argument(
         '--contour', metavar='PERCENT', type=float, nargs='+', required=True,
         help='plot contour enclosing this percentage of probability mass')
@@ -38,14 +38,13 @@ def parser():
         choices='nearest nested bilinear'.split(), default='nearest',
         help='resampling interpolation method')
     parser.add_argument(
-        '-s', '--simplify', action='store_true',
-        help='simplify contour paths')
+        '-s', '--simplify', action='store_true', help='simplify contour paths')
     parser.add_argument(
         '-n', '--nside', metavar='NSIDE', type=int,
         help='optionally resample to the specified resolution '
         ' before generating contours')
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
+        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     return parser
 

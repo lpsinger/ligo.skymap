@@ -32,9 +32,9 @@ there is a choice for how to generate perturbed time and phase measurements:
    that perturbed SNR to compute covariance of time and phase errors
 """
 
-import argparse
+from argparse import FileType
 
-from .. import command
+from . import ArgumentParser, register_to_xmldoc
 
 
 def parser():
@@ -43,12 +43,12 @@ def parser():
     available_ifos = sorted(det.frDetector.prefix
         for det in lal.CachedDetectors)
 
-    parser = command.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
-        'input', metavar='IN.xml[.gz]', type=argparse.FileType('rb'),
+        'input', metavar='IN.xml[.gz]', type=FileType('rb'),
         default='-', help='Name of input file')
     parser.add_argument(
-        '-o', '--output', metavar='OUT.xml[.gz]', type=argparse.FileType('wb'),
+        '-o', '--output', metavar='OUT.xml[.gz]', type=FileType('wb'),
         default='-', help='Name of output file')
     parser.add_argument(
         '--detector', metavar='|'.join(available_ifos), nargs='+',
@@ -79,7 +79,7 @@ def parser():
         '--enable-snr-series', default=False, action='store_true',
         help='Enable output of SNR time series')
     parser.add_argument(
-        '--reference-psd', metavar='PSD.xml[.gz]', type=argparse.FileType('rb'),
+        '--reference-psd', metavar='PSD.xml[.gz]', type=FileType('rb'),
         required=True, help='Name of PSD file')
     parser.add_argument(
         '--f-low', type=float,
@@ -127,7 +127,7 @@ def main(args=None):
     out_xmldoc.appendChild(ligolw.LIGO_LW())
 
     # Write process metadata to output file.
-    process = command.register_to_xmldoc(
+    process = register_to_xmldoc(
         out_xmldoc, p, opts, ifos=opts.detector,
         comment="Simulated coincidences")
 

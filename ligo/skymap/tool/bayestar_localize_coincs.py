@@ -31,19 +31,21 @@ A FITS file is created for each sky map, having a filename of the form
 "X.fits" where X is the LIGO-LW row id of the coinc.
 """
 
-import argparse
-from .. import command
+from argparse import FileType
+
+from . import (
+    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, mkpath)
 
 
 def parser():
-    parser = command.ArgumentParser(parents=[
-        command.waveform_parser, command.prior_parser, command.mcmc_parser])
+    parser = ArgumentParser(
+        parents=[waveform_parser, prior_parser, mcmc_parser])
     parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
         help='Keep processing events if a sky map fails to converge')
     parser.add_argument(
         'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',
-        nargs='+', type=argparse.FileType('rb'),
+        nargs='+', type=FileType('rb'),
         help='Input LIGO-LW XML file, SQLite file, or PyCBC HDF5 files. '
              'For PyCBC, you must supply the coincidence file '
              '(e.g. "H1L1-HDFINJFIND.hdf" or "H1L1-STATMAP.hdf"), '
@@ -92,7 +94,7 @@ def main(args=None):
     log.info('%s:reading input files', ','.join(file.name for file in opts.input))
     event_source = events.open(*opts.input, sample=opts.pycbc_sample)
 
-    command.mkpath(opts.output)
+    mkpath(opts.output)
 
     if opts.condor_submit:
         if opts.coinc_event_id:

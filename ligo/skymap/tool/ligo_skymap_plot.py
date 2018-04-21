@@ -27,12 +27,13 @@ Public-domain cartographic data is courtesy of Natural Earth
 (http://www.mapshaper.org).
 """
 
-import argparse
-from .. import command
+from argparse import FileType
+
+from . import ArgumentParser, figure_parser, SQLiteType
 
 
 def parser():
-    parser = command.ArgumentParser(parents=[command.figure_parser])
+    parser = ArgumentParser(parents=[figure_parser])
     parser.add_argument(
         '--annotate', default=False, action='store_true',
         help='annotate plot with information about the event')
@@ -47,13 +48,13 @@ def parser():
         '--radec', nargs=2, metavar='deg', type=float, action='append',
         default=[], help='right ascension (deg) and declination (deg) to mark')
     parser.add_argument(
-        '--inj-database', metavar='FILE.sqlite', type=command.SQLiteType('r'),
+        '--inj-database', metavar='FILE.sqlite', type=SQLiteType('r'),
         help='read injection positions from database')
     parser.add_argument(
         '--geo', action='store_true',
         help='Plot in geographic coordinates, (lat, lon) instead of (RA, Dec)')
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=argparse.FileType('rb'),
+        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     return parser
 

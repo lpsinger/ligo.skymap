@@ -91,25 +91,25 @@ class BoundedKDE(gaussian_kde):
                                                     self._periodic)):
             if period:
                 P = high - low
-                
+
                 pts[i, :] += P
                 den += super(BoundedKDE, self).evaluate(pts)
 
                 pts[i, :] -= 2.0*P
                 den += super(BoundedKDE, self).evaluate(pts)
 
-                pts[i, :] = pts_orig[i,:]
+                pts[i, :] = pts_orig[i, :]
 
             else:
                 if not np.isneginf(low):
-                    pts[i, :] = 2.0*low - pts[i,:]
+                    pts[i, :] = 2.0 * low - pts[i, :]
                     den += super(BoundedKDE, self).evaluate(pts)
-                    pts[i, :] = pts_orig[i,:]
+                    pts[i, :] = pts_orig[i, :]
 
                 if not np.isposinf(high):
-                    pts[i, :] = 2.0*high - pts[i,:]
+                    pts[i, :] = 2.0 * high - pts[i, :]
                     den += super(BoundedKDE, self).evaluate(pts)
-                    pts[i, :] = pts_orig[i,:]
+                    pts[i, :] = pts_orig[i, :]
 
         return den
 
@@ -192,7 +192,6 @@ def k_means(pts, k):
     mus = np.random.permutation(pts)[:k, :]
     assign = km_assign(mus, cov, pts)
     while True:
-        old_mus = mus
         old_assign = assign
 
         mus = km_centroids(pts, assign, k)

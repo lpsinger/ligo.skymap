@@ -17,7 +17,7 @@
 """
 Modify events by artificially disabling specified detectors.
 """
-from .base import *
+from .base import Event, EventSource
 
 __all__ = ('DetectorDisabledEventSource', 'DetectorDisabledError')
 

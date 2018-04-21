@@ -7,7 +7,7 @@ Required dependencies
 `ligo.skymap` has the following Python requirements:
 
 *  `Python <https://www.python.org>`_ ≥ 3.5
-*  `Astropy <http://www.astropy.org>`_ ≥ 1.3.1
+*  `Astropy <http://www.astropy.org>`_ ≥ 3.0
 *  `Numpy <http://www.numpy.org>`_ ≥ 1.10
 *  `Healpy <http://healpy.readthedocs.io>`_ ≥ 1.9.1
    (note, considering a transition to

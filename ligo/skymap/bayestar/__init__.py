@@ -193,7 +193,7 @@ def localize(
 
     # Get SNR=1 horizon distances for each detector.
     horizons = np.asarray([signal_model.get_horizon_distance()
-        for signal_model in signal_models])
+                           for signal_model in signal_models])
 
     weights = np.ma.asarray([
         1 / np.square(signal_model.get_crb_toa_uncert(snr))

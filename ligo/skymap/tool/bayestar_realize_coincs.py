@@ -236,8 +236,8 @@ def main(args=None):
         signal_models = [filter.SignalModel(_) for _ in W]
 
         # Get SNR=1 horizon distances for each detector.
-        horizons = np.asarray(
-            [signal_model.get_horizon_distance()
+        horizons = np.asarray([
+            signal_model.get_horizon_distance()
             for signal_model in signal_models])
 
         # Get antenna factors for each detector.

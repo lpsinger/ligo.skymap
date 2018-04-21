@@ -102,7 +102,7 @@ def main(args=None):
                 parser.error("The posterior samples file '{0}' does not have "
                              "a distance column named 'dist' or 'distance'. "
                              "Cannot generate distance map.".format(
-                             args.samples.name))
+                                 args.samples.name))
             pts = np.column_stack((data['ra'], data['dec']))
         else:
             pts = np.column_stack((data['ra'], data['dec'], dist))

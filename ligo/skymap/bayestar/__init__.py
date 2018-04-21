@@ -42,7 +42,7 @@ from .. import distance
 from . import filter
 from ..io.hdf5 import write_samples
 from ..io.fits import metadata_for_version_module
-from . import filter
+from . import filter  # noqa
 from .. import moc
 from .. import healpix_tree
 from .. import version

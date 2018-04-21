@@ -73,4 +73,5 @@ class DetectorDisabledEvent(Event):
     def template_args(self):
         return self.base_event.template_args
 
+
 open = DetectorDisabledEventSource

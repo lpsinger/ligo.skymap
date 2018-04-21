@@ -9,8 +9,8 @@ try:
 except ImportError:
     def _is_setup_py(*args, **kwargs):
         return False
-from _pytest.doctest import (_is_doctest, _get_checker, get_optionflags,
-                             DoctestTextfile, DoctestItem)
+from _pytest.doctest import (
+    _get_checker, get_optionflags, DoctestTextfile, DoctestItem)
 import pytest
 
 

@@ -200,7 +200,8 @@ def localize(
         for signal_model, snr in zip(signal_models, snrs)])
 
     # Center detector array.
-    locations -= np.sum(locations * weights.reshape(-1, 1), axis=0) / np.sum(weights)
+    locations -= (np.sum(locations * weights.reshape(-1, 1), axis=0) /
+                  np.sum(weights))
 
     if cosmology:
         log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')

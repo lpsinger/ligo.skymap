@@ -18,7 +18,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Reading and writing HEALPix FITS files. An example FITS header looks like this::
+Reading and writing HEALPix FITS files. An example FITS header looks like
+this::
 
     $ funhead -a test.fits.gz
     SIMPLE  =                    T / conforms to FITS standard

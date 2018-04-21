@@ -135,7 +135,7 @@ def main(args=None):
         [glue.lal.LIGOTimeGPS(0), glue.lal.LIGOTimeGPS(2e9)])
     search_summary_table = lsctables.New(lsctables.SearchSummaryTable)
     out_xmldoc.childNodes[0].appendChild(search_summary_table)
-    summary = ligolw_search_summary.append_search_summary(
+    ligolw_search_summary.append_search_summary(
         out_xmldoc, process, inseg=all_time, outseg=all_time)
 
     # Read PSDs.

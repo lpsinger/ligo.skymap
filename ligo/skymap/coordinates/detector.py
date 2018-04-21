@@ -69,8 +69,7 @@ from astropy.coordinates import (
     CartesianRepresentation, DynamicMatrixTransform, EarthLocation,
     EarthLocationAttribute, frame_transform_graph, ITRS,
     SphericalRepresentation)
-from astropy.coordinates.matrix_utilities import (
-    matrix_transpose, rotation_matrix)
+from astropy.coordinates.matrix_utilities import matrix_transpose
 from astropy import units as u
 import numpy as np
 

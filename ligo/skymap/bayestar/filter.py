@@ -502,8 +502,8 @@ class SignalModel(object):
         describing the phase and time estimation covariance."""
         w1 = self.get_sn_moment(1)
         w2 = self.get_sn_moment(2)
-        I = np.asarray(((1, -w1), (-w1, w2)))
-        return linalg.inv(I) / np.square(snr)
+        fisher = np.asarray(((1, -w1), (-w1, w2)))
+        return linalg.inv(fisher) / np.square(snr)
 
     # FIXME: np.vectorize doesn't work on unbound instance methods. The
     # excluded keyword, added in Numpy 1.7, could be used here to exclude the

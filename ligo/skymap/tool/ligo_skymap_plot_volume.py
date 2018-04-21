@@ -113,7 +113,6 @@ def main(args=None):
     imgwidth = int(opts.dpi * opts.figure_width / n)
     s = np.linspace(-max_distance, max_distance, imgwidth)
     xx, yy = np.meshgrid(s, s)
-    dtheta = 0.5 * np.pi / nside / 4
 
     # Color palette for markers
     colors = seaborn.color_palette(n_colors=len(opts.radecdist) + 1)

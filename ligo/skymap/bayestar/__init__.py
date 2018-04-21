@@ -171,7 +171,7 @@ def localize(
 
     # Look up physical parameters for detector.
     detectors = [lalsimulation.DetectorPrefixToLALDetector(str(ifo))
-        for ifo in ifos]
+                 for ifo in ifos]
     responses = np.asarray([det.response for det in detectors])
     locations = np.asarray([det.location for det in detectors]) / lal.C_SI
 

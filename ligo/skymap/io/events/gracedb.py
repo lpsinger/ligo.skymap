@@ -14,8 +14,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-from .base import *
-from .ligolw import *
+from .base import EventSource
+from .ligolw import LigoLWEventSource
 
 __all__ = ('GraceDBEventSource',)
 

@@ -196,7 +196,8 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     for key, value in table.meta.items():
         # Skip attributes from H5TB interface
         # (https://www.hdfgroup.org/HDF5/doc/HL/H5TB_Spec.html).
-        if key == 'CLASS' or key == 'VERSION' or key == 'TITLE' or key.startswith('FIELD_'):
+        if key == 'CLASS' or key == 'VERSION' or key == 'TITLE' or \
+                key.startswith('FIELD_'):
             continue
         table.add_column(Column([value] * len(table), name=key,
                          meta={'vary': FIXED}))

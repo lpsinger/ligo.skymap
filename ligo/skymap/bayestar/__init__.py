@@ -224,9 +224,9 @@ def localize(
 
     if snr_series is None:
         log.warn("No SNR time series found, so we are creating a zero-noise "
-                 "SNR time series from the whitened template's autocorrelation "
-                 "sequence. The sky localization uncertainty may be "
-                 "underestimated.")
+                 "SNR time series from the whitened template's "
+                 "autocorrelation sequence. The sky localization uncertainty "
+                 "may be underestimated.")
 
         acors, sample_rates = zip(
             *[filter.autocorrelation(_, max_abs_t) for _ in HS])

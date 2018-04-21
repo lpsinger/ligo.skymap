@@ -170,8 +170,8 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         # the true location.
         searched_area = area[true_idx]
 
-        # Find the smallest posterior mass that would have to be searched to find
-        # the true location.
+        # Find the smallest posterior mass that would have to be searched to
+        # find the true location.
         searched_prob = prob[true_idx]
 
     # Find the contours of the given credible levels.

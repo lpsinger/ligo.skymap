@@ -19,7 +19,6 @@ Read events from GstLal-style SQLite output.
 """
 import os
 import sqlite3
-import sys
 
 from glue.ligolw import dbtables
 

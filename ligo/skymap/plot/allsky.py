@@ -126,11 +126,6 @@ def wcs_to_celestial_frame_itrs(wcs):
     if wcs.wcs.lng == -1 or wcs.wcs.lat == -1:
         return None
 
-    if np.isnan(wcs.wcs.equinox):
-        equinox = None
-    else:
-        equinox = wcs.wcs.equinox
-
     xcoord = wcs.wcs.ctype[0][:4]
     ycoord = wcs.wcs.ctype[1][:4]
 
@@ -140,6 +135,8 @@ def wcs_to_celestial_frame_itrs(wcs):
         frame = None
 
     return frame
+
+
 custom_frame_mappings([wcs_to_celestial_frame_itrs])
 
 
@@ -276,9 +273,9 @@ class AutoScaledWCSAxes(WCSAxes):
                               ha='center', va='center',
                               arrowprops=dict(arrowstyle='<-',
                                               shrinkA=0.0, shrinkB=0.0))
-            for n, label, ha, va in zip(scale, 'EN',
-                                        ['right', 'center'],
-                                        ['center', 'bottom'])]
+                for n, label, ha, va in zip(scale, 'EN',
+                                            ['right', 'center'],
+                                            ['center', 'bottom'])]
 
     def scalebar(self, *args, **kwargs):
         """Add scale bar.
@@ -587,7 +584,6 @@ class ScaleBar(FancyArrowPatch):
         p1 = SkyCoord(*p1, unit=u.deg)
         p2 = SkyCoord(*p2, unit=u.deg)
         return np.square((p1.separation(p2) - self._length).value)
-
 
     def __init__(self, ax, xy, length, *args, **kwargs):
         x, y = xy

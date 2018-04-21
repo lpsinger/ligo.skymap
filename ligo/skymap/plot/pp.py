@@ -292,4 +292,5 @@ class PPPlot(axes.Axes):
         See http://matplotlib.org/devel/add_new_projection.html"""
         return cls, {}
 
+
 projection_registry.register(PPPlot)

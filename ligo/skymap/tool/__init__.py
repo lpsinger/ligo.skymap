@@ -28,7 +28,6 @@ import itertools
 import logging
 import os
 import sys
-import tempfile
 import matplotlib
 from matplotlib import cm
 from ..plot import cmap

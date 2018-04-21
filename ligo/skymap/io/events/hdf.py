@@ -25,7 +25,7 @@ import numpy as np
 import lal
 from glue.segments import segment, segmentlist
 
-from .base import *
+from .base import Event, EventSource, SingleEvent
 
 __all__ = ('HDFEventSource',)
 

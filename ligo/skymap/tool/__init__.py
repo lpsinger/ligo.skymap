@@ -388,7 +388,8 @@ class ArgumentParser(argparse.ArgumentParser):
         self.register('action', 'loglevel', LogLevelAction)
         self.register('action', 'version', VersionAction)
         self.add_argument('--version', action='version')
-        self.add_argument('-l', '--loglevel', action='loglevel', default='INFO')
+        self.add_argument(
+            '-l', '--loglevel', action='loglevel', default='INFO')
 
 
 class DirType(object):

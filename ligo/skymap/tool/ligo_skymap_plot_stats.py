@@ -58,7 +58,7 @@ def main(args=None):
     from distutils.dir_util import mkpath
     import numpy as np
     from glue.text_progress_bar import ProgressBar
-    from .. import plot
+    from .. import plot  # noqa
 
     # Create progress bar.
     pb = ProgressBar()

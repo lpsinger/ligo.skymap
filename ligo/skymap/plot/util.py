@@ -36,8 +36,8 @@ def colorbar(*args):
 
     # Plot colorbar
     cb = plt.colorbar(*args,
-        orientation='horizontal', shrink=0.4,
-        ticks=locator, format=formatter)
+                      orientation='horizontal', shrink=0.4,
+                      ticks=locator, format=formatter)
 
     if cb.orientation == 'vertical':
         axis = cb.ax.yaxis

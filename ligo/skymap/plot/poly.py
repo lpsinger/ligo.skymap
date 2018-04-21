@@ -22,7 +22,7 @@ from shapely import geometry
 import numpy as np
 import healpy as hp
 
-from .angle import *
+from .angle import reference_angle, wrapped_angle
 
 __all__ = ('subdivide_vertices', 'cut_dateline',
            'cut_prime_meridian', 'make_rect_poly')

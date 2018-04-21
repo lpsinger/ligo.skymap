@@ -174,7 +174,8 @@ class LigoLWEventSource(OrderedDict, EventSource):
             coinc_event_num = int(coinc_event_id)
             sngls = [sngl_inspirals_by_event_id[event_id] for event_id
                      in event_ids_by_coinc_event_id[coinc_event_id]]
-            if offsets_by_time_slide_id is None and coinc.time_slide_id == TimeSlideID(0):
+            if offsets_by_time_slide_id is None and \
+                    coinc.time_slide_id == TimeSlideID(0):
                 log.warn(
                     'Time slide record is missing for %s, '
                     'guessing that this is zero-lag', coinc.time_slide_id)

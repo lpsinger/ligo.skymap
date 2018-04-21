@@ -202,7 +202,7 @@ def main(args=None):
         ra = sim_inspiral.longitude
         dec = sim_inspiral.latitude
         inc = sim_inspiral.inclination
-        phi = sim_inspiral.coa_phase
+        # phi = sim_inspiral.coa_phase  # arbitrary?
         psi = sim_inspiral.polarization
         epoch = lal.LIGOTimeGPS(
             sim_inspiral.geocent_end_time, sim_inspiral.geocent_end_time_ns)

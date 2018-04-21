@@ -30,7 +30,7 @@ import os
 import sys
 import matplotlib
 from matplotlib import cm
-from ..plot import cmap
+from ..plot import cmap  # noqa
 from ..util import sqlite
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI

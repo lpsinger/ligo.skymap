@@ -293,9 +293,9 @@ def main(args=None):
         used_W = []
 
         # Loop over individual detectors and create SnglInspiral entries.
-        for ifo, abs_snr, arg_snr, toa, horizon, location, signal_model, W_ in zip(
-                opts.detector, abs_snrs, arg_snrs, toas, horizons,
-                locations, signal_models, W):
+        for ifo, abs_snr, arg_snr, toa, horizon, location, signal_model, W_ \
+                in zip(opts.detector, abs_snrs, arg_snrs, toas, horizons,
+                       locations, signal_models, W):
 
             if np.random.uniform() > opts.duty_cycle:
                 continue

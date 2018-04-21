@@ -84,8 +84,8 @@ def test_ligolw():
     assert repr(event).startswith(
         "<LigoLWEvent(singles=(<LigoLWSingleEvent(detector='H1', snr=12.")
     single_event, *_ = event.singles
-    assert str(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
-    assert repr(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"
+    assert str(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"  # noqa
+    assert repr(single_event) == "<LigoLWSingleEvent(detector='H1', snr=12.035994, phase=-1.0371021, time=970976257.4808338)>"  # noqa
 
 
 def test_ligolw_document():
@@ -228,6 +228,7 @@ def test_detector_disabled():
     for event in raising_source.values():
         with raises(events.DetectorDisabledError, expected_message):
             event.singles
+
 
 def test_hdf(tmpdir):
     """Test reading events from HDF5 files."""

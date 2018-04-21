@@ -1,5 +1,4 @@
 import pkg_resources
-import pytest
 
 dist = 'ligo.skymap'
 group = 'console_scripts'

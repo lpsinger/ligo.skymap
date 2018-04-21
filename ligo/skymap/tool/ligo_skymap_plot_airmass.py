@@ -31,7 +31,8 @@ def parser():
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
-        '--site', choices=EarthLocation.get_site_names(), required=True)
+        '--site', choices=EarthLocation.get_site_names(),
+        help='Observatory site', required=True)
     parser.add_argument(
         '--time', help='UTC time')
     return parser

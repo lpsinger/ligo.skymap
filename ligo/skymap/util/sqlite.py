@@ -30,7 +30,7 @@ def _open_r(string):
 
 
 def _open_w(string):
-    with _open(string, 'wb') as f:
+    with _open(string, 'wb'):
         pass
     return sqlite3.connect(string)
 

@@ -17,7 +17,7 @@
 """
 Read events from pipedown/GstLal-style XML output.
 """
-from .base import *
+from .base import Event, EventSource, SingleEvent
 from ...util.decorator import memoized
 from collections import OrderedDict, defaultdict
 import errno

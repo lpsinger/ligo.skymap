@@ -61,7 +61,8 @@ def log_post(params, min_distance, max_distance, prior_distance_power,
              cosmology, gmst, sample_rate, toas, snr_series, responses,
              locations, horizons, xmin, xmax):
     if cosmology:
-        raise NotImplementedError('Cosmology not yet implemented for MCMC mode')
+        raise NotImplementedError(
+            'Cosmology not yet implemented for MCMC mode')
     _, _, distance, _, _, _ = params.T
     good = np.logical_and.reduce((xmin <= params) & (params <= xmax), axis=-1)
     out = np.empty_like(distance)

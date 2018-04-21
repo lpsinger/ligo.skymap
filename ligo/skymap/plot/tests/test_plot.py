@@ -133,6 +133,7 @@ def test_reticle():
     ax.set_ylim(0, 1)
 
     for args, x in zip(args_list, np.linspace(0.1, 0.9, len(args_list))):
-        for which, y in zip(which_list, np.linspace(0.1, 0.9, len(which_list))):
+        for which, y in zip(which_list,
+                            np.linspace(0.1, 0.9, len(which_list))):
             ax.plot(x, y, marker=reticle(*args, which=which))
     return fig

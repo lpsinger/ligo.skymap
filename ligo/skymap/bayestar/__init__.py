@@ -68,7 +68,9 @@ def log_post(params, min_distance, max_distance, prior_distance_power,
     out = np.empty_like(distance)
     out[~good] = -np.inf
     out[good] = (prior_distance_power * np.log(distance[good]) +
-        log_likelihood_toa_phoa_snr(*params[good].T, gmst, sample_rate, toas,                                       snr_series, responses, locations, horizons))
+                 log_likelihood_toa_phoa_snr(*params[good].T, gmst,
+                                             sample_rate, toas, snr_series,
+                                             responses, locations, horizons))
     return out
 
 

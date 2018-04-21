@@ -13,19 +13,19 @@ from _pytest.doctest import _get_checker, get_optionflags, DoctestItem
 import pytest
 
 
-### Copied from pytest
+## Copied from pytest
 def pytest_collect_file(path, parent):
     config = parent.config
     if path.ext == ".py":
         if config.option.doctestmodules and not _is_setup_py(config, path, parent):
             return DoctestModule(path, parent)
-### End copied from pytest
+## End copied from pytest
 
 
 class DoctestModule(pytest.Module):
     def collect(self):
         import numpy as np
-        ### Copied from pytest
+        ## Copied from pytest
         import doctest
         if self.fspath.basename == "conftest.py":
             module = self.config.pluginmanager._importconftest(self.fspath)
@@ -42,7 +42,7 @@ class DoctestModule(pytest.Module):
         optionflags = get_optionflags(self)
         runner = doctest.DebugRunner(verbose=0, optionflags=optionflags,
                                      checker=_get_checker())
-        ### End copied from pytest
+        ## End copied from pytest
 
         for method in module.__dict__.values():
             if isinstance(method, np.ufunc) or isinstance(

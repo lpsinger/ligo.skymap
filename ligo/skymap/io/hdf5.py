@@ -238,7 +238,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     >>> write_samples(table, 'bar.hdf5', 'bat/baz') # doctest: +ELLIPSIS
     Traceback (most recent call last):
         ...
-    AssertionError: 
+    AssertionError:
     Arrays are not equal
     Column foo is a fixed column, but its values are not identical
     ...

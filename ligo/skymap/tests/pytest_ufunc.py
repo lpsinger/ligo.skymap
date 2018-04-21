@@ -17,7 +17,8 @@ import pytest
 def pytest_collect_file(path, parent):
     config = parent.config
     if path.ext == ".py":
-        if config.option.doctestmodules and not _is_setup_py(config, path, parent):
+        if config.option.doctestmodules and not _is_setup_py(
+                config, path, parent):
             return DoctestModule(path, parent)
 ## End copied from pytest
 

@@ -346,8 +346,8 @@ def main(args=None):
 
         # Maximum barycentered arrival time error:
         # |distance from array barycenter to furthest detector| / c + 5 ms
-        max_abs_t = np.max(
-            np.sqrt(np.sum(np.square(used_locations / lal.C_SI), axis=1))) + 0.005
+        max_abs_t = 0.005 + np.max(
+            np.sqrt(np.sum(np.square(used_locations / lal.C_SI), axis=1)))
 
         # Add Coinc table entry.
         coinc = lsctables.Coinc()

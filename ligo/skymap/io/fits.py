@@ -68,7 +68,6 @@ import time
 import lal
 from astropy.table import Table
 from .. import moc
-from ..util.file import rm_f
 
 __all__ = ("read_sky_map", "write_sky_map")
 

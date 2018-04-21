@@ -33,3 +33,4 @@ def test_localize_1_detector():
     skymap = localize(test_event)
     rasterized = rasterize(skymap)
     # FIXME: work out what this should be
+    assert rasterized

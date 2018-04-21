@@ -17,13 +17,15 @@
 """
 Read events from PyCBC-style HDF5 output.
 """
-from .base import *
 from operator import itemgetter
 from itertools import groupby
+
 import h5py
 import numpy as np
 import lal
 from glue.segments import segment, segmentlist
+
+from .base import *
 
 __all__ = ('HDFEventSource',)
 

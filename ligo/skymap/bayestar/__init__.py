@@ -349,7 +349,7 @@ def localize(
     try:
         distmean = skymap.columns.pop('DISTMEAN')
         diststd = skymap.columns.pop('DISTSTD')
-    except:
+    except KeyError:
         distmean, diststd, _ = distance.parameters_to_moments(
             skymap['DISTMU'], skymap['DISTSIGMA'])
     else:

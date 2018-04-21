@@ -96,6 +96,14 @@ Postprocessing
    ligo/skymap/tool/ligo_skymap_plot_stats
    ligo/skymap/tool/ligo_skymap_stats
 
+**************
+Developer Info
+**************
+
+* `Change Log <CHANGES.html>`_
+* `GitLab Project Page <http://git.ligo.org/leo-singer/ligo.skymap>`_
+* `Python Package Index <https://pypi.org/project/ligo.skymap>`_
+
 *****
 Index
 *****

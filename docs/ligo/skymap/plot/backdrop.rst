@@ -1,5 +1,5 @@
-Module `ligo.skymap.plot.backdrop`
-==================================
+Common All-Sky Bitmap Images (`ligo.skymap.plot.backdrop`)
+==========================================================
 
 .. automodule:: ligo.skymap.plot.backdrop
     :members:

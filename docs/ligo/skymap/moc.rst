@@ -1,5 +1,6 @@
-Module `ligo.skymap.moc`
-========================
+Multi-Order HEALPix Maps (`ligo.skymap.moc`)
+============================================
+
 .. automodule:: ligo.skymap.moc
 .. autofunction:: nest2uniq
 .. autofunction:: uniq2nest

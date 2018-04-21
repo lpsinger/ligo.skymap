@@ -1,5 +1,5 @@
-Module `ligo.skymap.distance`
-==============================
+Posterior Distance Distributions (`ligo.skymap.distance`)
+=========================================================
 .. module:: ligo.skymap.distance
 
 Functions for working with distance posteriors.

@@ -1,5 +1,5 @@
-Module `ligo.skymap.util.sqlite`
-================================
+SQLite Utilities (`ligo.skymap.util.sqlite`)
+============================================
 
 .. automodule:: ligo.skymap.util.sqlite
     :members:

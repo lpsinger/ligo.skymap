@@ -1,5 +1,5 @@
-Module `ligo.skymap.coordinates.detector`
-=========================================
+Detector Frame (`ligo.skymap.coordinates.detector`)
+===================================================
 
 .. automodule:: ligo.skymap.coordinates.detector
     :members:

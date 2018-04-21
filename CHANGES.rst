@@ -9,6 +9,9 @@
 
 - Deprecate all functions in ``ligo.skymap.postprocess.detector_frame``.
 
+- Overhaul documentation so that all essential functionality is presented on
+  the front page.
+
 0.0.6 (2018-04-13)
 ==================
 

@@ -1,5 +1,5 @@
-Module `ligo.skymap.io.hdf5`
-============================
+Posterior Samples I/O (`ligo.skymap.io.hdf5`)
+=============================================
 
 .. automodule:: ligo.skymap.io.hdf5
     :members:

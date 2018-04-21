@@ -1,5 +1,5 @@
-Module `ligo.skymap.io.fits`
-============================
+Sky Map I/O (`ligo.skymap.io.fits`)
+===================================
 
 .. automodule:: ligo.skymap.io.fits
     :members:

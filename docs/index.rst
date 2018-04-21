@@ -41,15 +41,59 @@ Quick Start
 
    install
 
-*********
-Reference
-*********
+*****************
+API Documentation
+*****************
 
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/tool/index
-   ligo/skymap/index
+   ligo/skymap/bayestar
+   ligo/skymap/coordinates/index
+   ligo/skymap/distance
+   ligo/skymap/healpix_tree
+   ligo/skymap/io/index
+   ligo/skymap/kde
+   ligo/skymap/moc
+   ligo/skymap/plot/index
+   ligo/skymap/postprocess/index
+   ligo/skymap/util/index
+
+******************
+Command Line Tools
+******************
+
+BAYESTAR Rapid Sky Localization
+-------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/tool/bayestar_localize_coincs
+   ligo/skymap/tool/bayestar_localize_lvalert
+   ligo/skymap/tool/bayestar_realize_coincs
+   ligo/skymap/tool/bayestar_sample_model_psd
+
+Sky Map Visualization
+---------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/tool/ligo_skymap_contour
+   ligo/skymap/tool/ligo_skymap_plot
+   ligo/skymap/tool/ligo_skymap_plot_airmass
+   ligo/skymap/tool/ligo_skymap_plot_volume
+
+Postprocessing
+--------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/tool/ligo_skymap_from_samples
+   ligo/skymap/tool/ligo_skymap_plot_stats
+   ligo/skymap/tool/ligo_skymap_stats
 
 *****
 Index

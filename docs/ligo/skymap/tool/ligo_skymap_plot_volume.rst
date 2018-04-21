@@ -1,5 +1,5 @@
-Script `ligo-skymap-plot-volume`
-================================
+3D Volume Rendering (`ligo-skymap-plot-volume`)
+===============================================
 
 .. argparse::
     :module: ligo.skymap.tool.ligo_skymap_plot_volume

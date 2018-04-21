@@ -1,5 +1,5 @@
-Module `ligo.skymap.io.events`
-==============================
+Event Candidate I/O (`ligo.skymap.io.events`)
+=============================================
 .. module:: ligo.skymap.io.events
 
 This module provides a high-level interface for reading event records from

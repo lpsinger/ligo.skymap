@@ -1,5 +1,5 @@
-Module `ligo.skymap.kde`
-========================
+Kernel Density Estimation (`ligo.skymap.kde`)
+=============================================
 
 .. automodule:: ligo.skymap.kde
     :members:

@@ -1,5 +1,5 @@
-Module `ligo.skymap.util.file`
-==============================
+File Utilities (`ligo.skymap.util.file`)
+========================================
 
 .. automodule:: ligo.skymap.util.file
     :members:

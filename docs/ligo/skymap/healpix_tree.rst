@@ -1,5 +1,5 @@
-Module `ligo.skymap.healpix_tree`
-=================================
+HEALPix Trees (`ligo.skymap.healpix_tree`)
+==========================================
 
 .. automodule:: ligo.skymap.healpix_tree
     :members:

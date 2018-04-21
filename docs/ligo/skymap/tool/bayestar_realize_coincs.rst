@@ -1,5 +1,5 @@
-Script `bayestar-realize-coincs`
-================================
+Simulate Triggers (`bayestar-realize-coincs`)
+=============================================
 
 .. argparse::
     :module: ligo.skymap.tool.bayestar_realize_coincs

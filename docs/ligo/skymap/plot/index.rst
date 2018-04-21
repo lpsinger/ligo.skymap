@@ -1,5 +1,5 @@
-Module `ligo.skymap.plot`
-=========================
+Plotting and Visualization (`ligo.skymap.plot`)
+===============================================
 
 .. module:: ligo.skymap.plot
 

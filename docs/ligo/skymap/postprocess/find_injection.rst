@@ -1,5 +1,5 @@
-Module `ligo.skymap.postprocess.find_injection`
-===============================================
+Injection Finding (`ligo.skymap.postprocess.find_injection`)
+============================================================
 
 .. automodule:: ligo.skymap.postprocess.find_injection
     :members:

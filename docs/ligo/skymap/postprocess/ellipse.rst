@@ -1,5 +1,5 @@
-Module `ligo.skymap.postprocess.ellipse`
-========================================
+Uncertainty Ellipses (`ligo.skymap.postprocess.ellipse`)
+========================================================
 
 .. automodule:: ligo.skymap.postprocess.ellipse
     :members:

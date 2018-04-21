@@ -1,5 +1,5 @@
-Module `ligo.skymap.postprocess.contour`
-========================================
+Contouring (`ligo.skymap.postprocess.contour`)
+==============================================
 
 .. automodule:: ligo.skymap.postprocess.contour
     :members:

@@ -1,5 +1,5 @@
-Script `ligo-skymap-plot-airmass`
-=================================
+Airmass Plots (`ligo-skymap-plot-airmass`)
+==========================================
 
 .. argparse::
     :module: ligo.skymap.tool.ligo_skymap_plot_airmass

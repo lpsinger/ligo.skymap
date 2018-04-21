@@ -1,5 +1,5 @@
-Module `ligo.skymap.plot.pp`
-============================
+Probability-Probability Plots (`ligo.skymap.plot.pp`)
+=====================================================
 
 .. automodule:: ligo.skymap.plot.pp
     :members:

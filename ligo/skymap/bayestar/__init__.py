@@ -27,14 +27,12 @@ References
 """
 
 import inspect
-import itertools
 import logging
 import os
 import sys
 
 from astropy.table import Column, Table
 from astropy import units as u
-import healpy as hp
 import lal
 import lalsimulation
 import numpy as np

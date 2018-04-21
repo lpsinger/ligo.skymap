@@ -376,7 +376,7 @@ def main(args=None):
         coinc_inspiral.snr = net_snr
         coinc_inspiral_table.append(coinc_inspiral)
 
-        # Record all sngl_inspiral records and associate them with coincidences.
+        # Record all sngl_inspiral records and associate them with coincs.
         for sngl_inspiral, W in zip(sngl_inspirals, used_W):
             # Give this sngl_inspiral record an id and add it to the table.
             sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()

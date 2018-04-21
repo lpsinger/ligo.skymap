@@ -326,8 +326,8 @@ def localize(
     # prior is of the form r**k for k<0
     if min_distance == 0 and prior_distance_power < 0:
         raise ValueError(('Prior is a power law r^k with k={}, '
-                          'undefined at min_distance=0')
-                          .format(prior_distance_power))
+                          'undefined at min_distance=0').format(
+                              prior_distance_power))
 
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')

@@ -404,7 +404,6 @@ def main(args=None):
             coinc_map.event_id = sngl_inspiral.event_id
             coinc_map_table.append(coinc_map)
 
-
     # Record process end time.
     ligolw_process.set_process_end_time(process)
 

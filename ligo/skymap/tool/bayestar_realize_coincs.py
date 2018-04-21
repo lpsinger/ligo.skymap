@@ -104,7 +104,6 @@ def main(args=None):
     from glue.ligolw import table as ligolw_table
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw import lsctables
-    Attributes = ligolw.sax.xmlreader.AttributesImpl
 
     # glue, LAL and pylal imports.
     from glue import segments

@@ -91,7 +91,8 @@ def main(args=None):
     lal.ClobberDebugLevel(lal.LALNDEBUG)
 
     # Read coinc file.
-    log.info('%s:reading input files', ','.join(file.name for file in opts.input))
+    log.info(
+        '%s:reading input files', ','.join(file.name for file in opts.input))
     event_source = events.open(*opts.input, sample=opts.pycbc_sample)
 
     mkpath(opts.output)
@@ -113,7 +114,7 @@ def main(args=None):
                'error=' + os.path.join(opts.output, '$(CoincEventId).err'),
                'log=' + os.path.join(opts.output, '$(CoincEventId).log'),
                'arguments="' + ' '.join(arg for arg in sys.argv
-                   if arg != '--condor-submit') +
+                                        if arg != '--condor-submit') +
                ' --coinc-event-id $(CoincEventId)"',
                '-append', 'queue CoincEventId in ' + ' '.join(
                    str(coinc_event_id) for coinc_event_id in event_source),

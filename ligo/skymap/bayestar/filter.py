@@ -26,7 +26,6 @@ import math
 import lal
 import lalsimulation
 import numpy as np
-from scipy import optimize
 from scipy import interpolate
 from scipy import linalg
 

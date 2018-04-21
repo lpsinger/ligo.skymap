@@ -187,8 +187,8 @@ def main(args=None):
     out_xmldoc.childNodes[0].appendChild(coinc_inspiral_table)
 
     # Precompute values that are common to all simulations.
-    detectors = [
-        lalsimulation.DetectorPrefixToLALDetector(ifo) for ifo in opts.detector]
+    detectors = [lalsimulation.DetectorPrefixToLALDetector(ifo)
+                 for ifo in opts.detector]
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 

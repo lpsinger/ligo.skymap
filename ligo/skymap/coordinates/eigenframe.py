@@ -63,7 +63,6 @@ class EigenFrame(BaseCoordinateFrame):
         `EigenFrame`
             A new coordinate frame
         """
-        obj = cls()
         v = coords.icrs.cartesian.xyz.value
         _, R = np.linalg.eigh(np.dot(v, v.T))
         R = R[:, ::-1]  # Order by descending eigenvalue

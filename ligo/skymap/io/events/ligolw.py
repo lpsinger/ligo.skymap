@@ -62,7 +62,8 @@ def _read_xml(f, fallbackpath=None):
         try:
             doc = load_filename(f, contenthandler=ContentHandler)
         except IOError as e:
-            if e.errno == errno.ENOENT and fallbackpath and not os.path.isabs(f):
+            if e.errno == errno.ENOENT and fallbackpath and \
+                    not os.path.isabs(f):
                 f = os.path.join(fallbackpath, f)
                 doc = load_filename(f, contenthandler=ContentHandler)
             else:

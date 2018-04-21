@@ -85,7 +85,8 @@ from astropy.coordinates import ITRS, SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
 from astropy.visualization.wcsaxes import WCSAxes
-from astropy.visualization.wcsaxes.formatter_locator import AngleFormatterLocator
+from astropy.visualization.wcsaxes.formatter_locator import (
+    AngleFormatterLocator)
 from astropy.visualization.wcsaxes.frame import EllipticalFrame
 from astropy.wcs import WCS
 from astropy.wcs.wcs import WCSSUB_CELESTIAL

@@ -58,7 +58,8 @@ def main(args=None):
 
     # Make an empty airmass chart.
     # FIXME: have to add a dummy target until
-    # https://github.com/astropy/astroplan/pull/349 is in a release of astroplan
+    # https://github.com/astropy/astroplan/pull/349
+    # is in a release of astroplan
     observer = Observer.at_site(opts.site)
     ax = plot_airmass([SkyCoord(0, 0, unit='rad')], observer,
                       Time(opts.time) if opts.time is not None else Time.now(),

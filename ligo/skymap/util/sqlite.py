@@ -17,9 +17,7 @@
 #
 """Tools for reading and writing SQLite databases"""
 
-import os
 import sqlite3
-import sys
 _open = open
 
 
@@ -66,6 +64,7 @@ def open(string, mode):
     --------
 
     >>> import tempfile
+    >>> import os
     >>> with tempfile.TemporaryDirectory() as d:
     ...     open(os.path.join(d, 'test.sqlite'), 'w')
     ...
@@ -123,6 +122,7 @@ def get_filename(connection):
     --------
 
     >>> import tempfile
+    >>> import os
     >>> with tempfile.TemporaryDirectory() as d:
     ...     with sqlite3.connect(os.path.join(d, 'test.sqlite')) as db:
     ...         print(get_filename(db))

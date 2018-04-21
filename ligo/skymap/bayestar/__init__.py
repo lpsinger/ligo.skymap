@@ -179,7 +179,7 @@ def localize(
     psds = [single.psd for single in singles]
     psds = [filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data,
                                    f_high_truncate=f_high_truncate)
-                                   for psd in psds]
+            for psd in psds]
 
     log.debug('calculating templates')
     H = filter.sngl_inspiral_psd(waveform, f_min=f_low, **event.template_args)

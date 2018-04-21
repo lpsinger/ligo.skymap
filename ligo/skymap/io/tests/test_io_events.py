@@ -3,7 +3,6 @@ import gzip
 import os
 import re
 import subprocess
-import sys
 
 from glue.ligolw.utils import load_filename
 import h5py

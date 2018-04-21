@@ -64,7 +64,6 @@ Or, you can call the constructor of `PPPlot` directly.
     ax.add_confidence_band(n, alpha=0.95)
     ax.add_lightning(n, 20)
     ax.add_diagonal()
-    fig.savefig('example.png')
 """
 import matplotlib
 from matplotlib import axes

@@ -51,7 +51,7 @@ def main(args=None):
 
     from ..io import fits
     from .. import moc
-    from .. import plot
+    from .. import plot  # noqa
     from ..util import quantile
 
     m = fits.read_sky_map(opts.input.name, moc=True)

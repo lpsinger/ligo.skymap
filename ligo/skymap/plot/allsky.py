@@ -126,8 +126,6 @@ def wcs_to_celestial_frame_itrs(wcs):
     if wcs.wcs.lng == -1 or wcs.wcs.lat == -1:
         return None
 
-    radesys = wcs.wcs.radesys
-
     if np.isnan(wcs.wcs.equinox):
         equinox = None
     else:

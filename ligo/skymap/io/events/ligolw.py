@@ -17,16 +17,13 @@
 """
 Read events from pipedown/GstLal-style XML output.
 """
-from .base import Event, EventSource, SingleEvent
-from ...util.decorator import memoized
 from collections import OrderedDict, defaultdict
 import errno
+import itertools
 import logging
 import operator
 import os.path
-from itertools import groupby
-import lal
-import lal.series
+
 from glue.ligolw import array, lsctables, param
 from glue.ligolw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
 from glue.ligolw.lsctables import (
@@ -34,6 +31,11 @@ from glue.ligolw.lsctables import (
     SnglInspiralID, SnglInspiralTable, TimeSlideID, TimeSlideTable)
 from glue.ligolw.table import get_table
 from glue.ligolw.utils import load_filename, load_fileobj
+import lal
+import lal.series
+
+from .base import Event, EventSource, SingleEvent
+from ...util.decorator import memoized
 
 __all__ = ('LigoLWEventSource',)
 
@@ -138,7 +140,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
             coinc_event_id:
                 tuple(coinc_map.event_id for coinc_map in coinc_maps)
             for coinc_event_id, coinc_maps
-            in groupby(sorted(coinc_map_table, key=key), key=key)}
+            in itertools.groupby(sorted(coinc_map_table, key=key), key=key)}
         sngl_inspirals_by_event_id = {
             row.event_id: row for row in sngl_inspiral_table}
 

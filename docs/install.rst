@@ -20,7 +20,7 @@ When you use pip to install `ligo.skymap` with pip, it will automatically
 install the following required Python packages:
 
 *  `Astropy <http://www.astropy.org>`_ ≥ 3.0
-*  `Numpy <http://www.numpy.org>`_ ≥ 1.10
+*  `Numpy <http://www.numpy.org>`_ ≥ 1.13
 *  `Healpy <http://healpy.readthedocs.io>`_ ≥ 1.9.1
    (note, considering a transition to
    `astropy-healpix <http://astropy-healpix.readthedocs.io>`_,

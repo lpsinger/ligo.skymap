@@ -19,9 +19,9 @@
 Calculate summary statistics for a batch of sky maps.
 
 The filenames of the sky maps may be provided as positional command line
-arguments, and may also be provided as globs (such as '*.fits.gz'). If supplied
-with the optional --database argument, then also match sky maps with injections
-from an inspinjfind-style sqlite database.
+arguments, and may also be provided as globs (such as ``*.fits.gz``). If
+supplied with the optional ``--database`` argument, then also match sky maps
+with injections from an inspinjfind-style sqlite database.
 
 All angular separations are in degrees, all areas are in square degrees, and
 all volumes are in cubic megaparsecs. The output is written as tab-separated

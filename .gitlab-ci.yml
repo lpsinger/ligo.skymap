@@ -101,7 +101,6 @@ docs:
   variables:
     GIT_STRATEGY: none
   before_script:
-    - export MPLBACKEND=agg
     - tar --strip-components 1 -xf dist/*
   script:
     - python3 setup.py build_docs

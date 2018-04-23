@@ -100,8 +100,8 @@ Postprocessing
 Developer Info
 **************
 
-* `Change Log <CHANGES.html>`_
-* `Development Instructions <develop.html>`_
+* :doc:`Changelog <changes>`
+* :doc:`Development Instructions <develop>`
 * `GitLab Project Page <http://git.ligo.org/leo-singer/ligo.skymap>`_
 * `Python Package Index <https://pypi.org/project/ligo.skymap>`_
 

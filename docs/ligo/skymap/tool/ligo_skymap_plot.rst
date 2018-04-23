@@ -21,4 +21,3 @@ To plot the localization for GW150914::
 .. argparse::
     :module: ligo.skymap.tool.ligo_skymap_plot
     :func: parser
-

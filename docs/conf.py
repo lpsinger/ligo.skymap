@@ -184,8 +184,3 @@ if eval(setup_cfg.get('edit_on_github')):
 # -- Options for the sphinx-argparse extension --------------------------------
 
 extensions += ['sphinxarg.ext']
-
-# -- Set headless-friendly matplotlib backend ---------------------------------
-
-import matplotlib
-matplotlib.use('agg')

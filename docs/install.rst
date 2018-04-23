@@ -1,12 +1,24 @@
 Installation
 ============
 
-Required dependencies
----------------------
+The recommended way to install the latest stable release of `ligo.skymap` is
+with `pip <https://pip.pypa.io>`_. This method will install a pre-built binary
+from the `Python package index <https://pypi.org/project/ligo.skymap/>`_ and
+will install all required Python packages automatically.
 
-`ligo.skymap` has the following Python requirements:
+Basic requirements
+------------------
 
+*  Linux or macOS
 *  `Python <https://www.python.org>`_ ≥ 3.5
+*  `pip <https://pip.pypa.io>`_
+
+Python dependencies
+-------------------
+
+When you use pip to install `ligo.skymap` with pip, it will automatically
+install the following required Python packages:
+
 *  `Astropy <http://www.astropy.org>`_ ≥ 3.0
 *  `Numpy <http://www.numpy.org>`_ ≥ 1.10
 *  `Healpy <http://healpy.readthedocs.io>`_ ≥ 1.9.1
@@ -19,15 +31,6 @@ Required dependencies
 *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
 
-Source dependencies
--------------------
-
-If you are building `ligo.skymap` from source, you will also need:
-
-*  `GSL <https://www.gnu.org/software/gsl>`_ ≥ 1.15
-*  `chealpix <https://sourceforge.net/projects/healpix/files/Healpix_3.30/>`_
-   (note, source code bundled with `ligo.skymap`)
-
 Optional dependencies
 ---------------------
 
@@ -39,11 +42,10 @@ The following packages are optional for specific features:
 Quick start
 -----------
 
-The recommended way to install `ligo.skymap` is with
-`pip <https://pip.pypa.io>`_::
+Just run this command::
 
     $ pip install ligo.skymap
 
-Note, if you want to run BAYESTAR, you will also need to install LALSuite::
+If you want to run BAYESTAR, you will also need to install LALSuite::
 
     $ pip install lalsuite ligo.skymap

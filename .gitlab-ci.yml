@@ -102,6 +102,7 @@ docs:
     GIT_STRATEGY: none
   before_script:
     - tar --strip-components 1 -xf dist/*
+    - echo 'backend: agg' > matplotlibrc
   script:
     - python3 setup.py build_docs
   artifacts:

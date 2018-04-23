@@ -20,11 +20,11 @@ Plot an all-sky map on a Mollweide projection.
 By default, plot in celestial coordinates (RA, Dec).
 
 To plot in geographic coordinates (longitude, latitude) with major
-coastlines overlaid, provide the --geo flag.
+coastlines overlaid, provide the ``--geo`` flag.
 
-Public-domain cartographic data is courtesy of Natural Earth
-(http://www.naturalearthdata.com) and processed with MapShaper
-(http://www.mapshaper.org).
+Public-domain cartographic data is courtesy of `Natural Earth
+<http://www.naturalearthdata.com>`_ and processed with `MapShaper
+<http://www.mapshaper.org>`_.
 """
 
 from argparse import FileType

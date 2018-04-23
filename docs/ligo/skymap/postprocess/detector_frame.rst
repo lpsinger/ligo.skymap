@@ -7,4 +7,3 @@ This module is **deprecated**. Please use
 .. automodule:: ligo.skymap.postprocess.detector_frame
     :members:
     :show-inheritance:
-

@@ -42,6 +42,7 @@ The following packages are optional for specific features:
 *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ for using BAYESTAR
 *  `pytest <https://docs.pytest.org>`_ for running the test suite
 *  `Astroplan <http://astroplan.readthedocs.io/>`_ for airmass charts
+*  `Emcee <http://emcee.readthedocs.io/en/latest/>`_ ≥ 3.0 for the optional MCMC variant of BAYESTAR
 
 Quick Start
 -----------

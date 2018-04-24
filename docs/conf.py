@@ -73,6 +73,8 @@ exclude_patterns.append('_templates')
 rst_epilog += """
 """
 
+intersphinx_mapping['emcee'] = ('http://emcee.readthedocs.io/en/latest/', None)
+
 # -- Project information ------------------------------------------------------
 
 # This does not *have* to match the package name, but typically does

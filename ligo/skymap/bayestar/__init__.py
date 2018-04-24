@@ -60,42 +60,25 @@ log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
 
 def log_post(params, min_distance, max_distance, prior_distance_power,
              cosmology, gmst, sample_rate, toas, snr_series, responses,
-             locations, horizons, xmin, xmax):
+             locations, horizons):
     if cosmology:
         raise NotImplementedError(
             'Cosmology not yet implemented for MCMC mode')
     _, _, distance, _, _, _ = params.T
-    good = np.logical_and.reduce((xmin <= params) & (params <= xmax), axis=-1)
-    out = np.empty_like(distance)
-    out[~good] = -np.inf
-    out[good] = (prior_distance_power * np.log(distance[good]) +
-                 log_likelihood_toa_phoa_snr(*params[good].T, gmst,
-                                             sample_rate, toas, snr_series,
-                                             responses, locations, horizons))
-    return out
+    return (prior_distance_power * np.log(distance) +
+            log_likelihood_toa_phoa_snr(*params.T, gmst, sample_rate, toas,
+                                        snr_series, responses, locations,
+                                        horizons))
 
 
 @with_numpy_random_seed
 def localize_emcee(args, xmin, xmax, chain_dump=None):
     # Set up sampler
-    from emcee import EnsembleSampler
+    from .ez_emcee import ez_emcee
     from ..kde import Clustered2Plus1DSkyKDE
-    nwalkers = 20
-    nburnin = 1000
-    nthin = 10
-    niter = 10000 + nburnin
-    ndim = len(xmin)
-    sampler = EnsembleSampler(
-        nwalkers, ndim, log_post, args=args, kwargs=dict(xmin=xmin, xmax=xmax),
-        vectorize=True)
 
-    # Draw initial state from multivariate uniform distribution
-    p0 = np.random.uniform(xmin, xmax, (nwalkers, ndim))
-
-    # Gather samples
-    sampler.run_mcmc(p0, niter, progress=True)
-    chain = sampler.get_chain(flat=True, thin=nthin, discard=nburnin)
-    del sampler
+    # Gather posterior samples
+    chain = ez_emcee(log_post, xmin, xmax, args=args, vectorize=True)
 
     # Transform back from sin_dec to dec and cos_inclination to inclination
     chain[:, 1] = np.arcsin(chain[:, 1])
@@ -103,6 +86,7 @@ def localize_emcee(args, xmin, xmax, chain_dump=None):
 
     # Optionally save posterior sample chain to file.
     if chain_dump:
+        _, ndim = chain.shape
         names = 'ra dec distance inclination twopsi time'.split()[:ndim]
         write_samples(Table(rows=chain, names=names), chain_dump,
                       path='/bayestar/posterior_samples', overwrite=True)

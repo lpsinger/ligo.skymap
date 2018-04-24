@@ -46,6 +46,7 @@ API Documentation
    :maxdepth: 1
 
    ligo/skymap/bayestar
+   ligo/skymap/bayestar/ez_emcee
    ligo/skymap/coordinates/index
    ligo/skymap/distance
    ligo/skymap/healpix_tree

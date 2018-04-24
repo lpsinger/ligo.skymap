@@ -3,16 +3,26 @@ from collections import namedtuple
 import lal
 import pytest
 
+from ...io.events.base import Event, SingleEvent
 from .. import localize, rasterize
 
 
-MockSingleEvent = namedtuple(
+_MockSingleEvent = namedtuple(
     'MockSingleEvent', 'detector snr phase time psd snr_series')
 
-MockEvent = namedtuple(
+_MockEvent = namedtuple(
     'MockEvent', 'singles template_args')
 
-template_args = {'mass1': 1.4, 'mass2': 1.4}
+
+class MockSingleEvent(_MockSingleEvent, SingleEvent):
+    pass
+
+
+class MockEvent(_MockEvent, Event):
+    pass
+
+
+template_args = {'mass1': 1.414, 'mass2': 1.414}
 
 
 def test_localize_0_detectors():
@@ -28,9 +38,18 @@ def test_localize_1_detector():
     psd = lal.CreateREAL8FrequencySeries(
         None, 0, 0, 32, lal.DimensionlessUnit, 128)
     psd.data.data[:] = 1
-    test_single_event = MockSingleEvent('H1', 10, 0, 0, psd, None)
+    test_single_event = MockSingleEvent(
+        'H1', 12.345, 0.6789, 0.1234, psd, None)
     test_event = MockEvent([test_single_event], template_args)
     skymap = localize(test_event)
-    rasterized = rasterize(skymap)
+
+    # Make sure that none of the extrinsic parameters are in the event history
+    history = '\n'.join(skymap.meta['history'])
+    print(history)
+    for forbidden in ['snr=', '12.345', 'time=', '0.6789', 'phase=', '0.1234',
+                      'mass1=', 'mass2=', '1.414']:
+        assert forbidden not in history
+
     # FIXME: work out what this should be
+    rasterized = rasterize(skymap)
     assert rasterized

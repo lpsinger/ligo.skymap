@@ -42,6 +42,7 @@ from .. import distance
 from . import filter
 from ..io.hdf5 import write_samples
 from ..io.fits import metadata_for_version_module
+from ..io.events.base import Event
 from . import filter  # noqa
 from .. import moc
 from .. import healpix_tree
@@ -154,8 +155,16 @@ def localize(
     if len(event.singles) == 0:
         raise ValueError('Cannot localize an event with zero detectors.')
 
+    # Hide event parameters, but show all other arguments
+    def formatvalue(value):
+        if isinstance(value, Event):
+            return '=...'
+        else:
+            return '=' + repr(value)
+
     frame = inspect.currentframe()
-    argstr = inspect.formatargvalues(*inspect.getargvalues(frame))
+    argstr = inspect.formatargvalues(*inspect.getargvalues(frame),
+                                     formatvalue=formatvalue)
     start_time = lal.GPSTimeNow()
 
     singles = event.singles

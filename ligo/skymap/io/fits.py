@@ -23,14 +23,14 @@ this:
 
 .. code-block:: sh
 
-    $ funhead -a test.fits.gz
+    $ fitsheader test.fits.gz
+    # HDU 0 in test.fits.gz
     SIMPLE  =                    T / conforms to FITS standard
     BITPIX  =                    8 / array data type
     NAXIS   =                    0 / number of array dimensions
     EXTEND  =                    T
-    END
-          Extension: xtension
 
+    # HDU 1 in test.fits.gz
     XTENSION= 'BINTABLE'           / binary table extension
     BITPIX  =                    8 / array data type
     NAXIS   =                    2 / number of array dimensions
@@ -57,7 +57,6 @@ this:
     DATE    = '2013-04-08T21:50:32' / UTC date of file creation
     CREATOR = 'fits.py '           / Program that created this file
     RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
-    END
 """
 
 import math

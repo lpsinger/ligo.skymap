@@ -1,3 +1,5 @@
+.. highlight:: sh
+
 2D All-Sky Plots (`ligo-skymap-plot`)
 =====================================
 

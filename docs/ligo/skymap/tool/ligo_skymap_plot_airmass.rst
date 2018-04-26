@@ -1,3 +1,5 @@
+.. highlight:: sh
+
 Airmass Plots (`ligo-skymap-plot-airmass`)
 ==========================================
 

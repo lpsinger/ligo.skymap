@@ -1,3 +1,5 @@
+.. highlight:: sh
+
 3D Volume Rendering (`ligo-skymap-plot-volume`)
 ===============================================
 

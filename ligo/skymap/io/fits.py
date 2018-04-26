@@ -19,7 +19,9 @@
 #
 """
 Reading and writing HEALPix FITS files. An example FITS header looks like
-this::
+this:
+
+.. code-block:: sh
 
     $ funhead -a test.fits.gz
     SIMPLE  =                    T / conforms to FITS standard

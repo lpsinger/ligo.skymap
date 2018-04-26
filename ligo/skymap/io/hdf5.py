@@ -66,7 +66,7 @@ def _find_table(group, tablename):
 
     Returns
     -------
-    `h5py.Dataset`
+    dataset : `h5py.Dataset`
         The dataset whose name is `tablename`
 
     Raises
@@ -76,6 +76,7 @@ def _find_table(group, tablename):
 
     Examples
     --------
+
     Check that we can find a file by name:
 
     >>> import os.path
@@ -151,7 +152,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Returns
     -------
-    `astropy.table.Table`
+    chain : `astropy.table.Table`
         The sample chain as an Astropy table.
 
     Examples

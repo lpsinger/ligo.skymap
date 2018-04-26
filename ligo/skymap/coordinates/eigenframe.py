@@ -60,7 +60,7 @@ class EigenFrame(BaseCoordinateFrame):
 
         Returns
         -------
-        `EigenFrame`
+        frame : `EigenFrame`
             A new coordinate frame
         """
         v = coords.icrs.cartesian.xyz.value
@@ -90,7 +90,7 @@ class EigenFrame(BaseCoordinateFrame):
 
         Returns
         -------
-        `EigenFrame`
+        frame : `EigenFrame`
             A new coordinate frame
         """
         R = principal_axes(prob, distmu, distsigma, nest=nest)

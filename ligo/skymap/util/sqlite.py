@@ -50,7 +50,7 @@ def open(string, mode):
 
     Returns
     -------
-    `sqlite3.Connection`
+    connection : `sqlite3.Connection`
 
     Raises
     ------

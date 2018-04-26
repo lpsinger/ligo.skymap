@@ -63,7 +63,7 @@ def MagicEventSource(f, *args, **kwargs):
 
     Returns
     -------
-    `EventSource`
+    source : `EventSource`
     """
     if isinstance(f, h5py.File):
         opener = hdf.open

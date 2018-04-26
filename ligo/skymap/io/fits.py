@@ -252,8 +252,8 @@ def write_sky_map(filename, m, **kwargs):
 
     **kwargs
         Additional metadata to add to FITS header. If m is an
-        astropy.table.Table instance, then the header is initialized from both
-        m.meta and **kwargs.
+        `astropy.table.Table` instance, then the header is initialized from
+        both `m.meta` and `kwargs`.
 
     References
     ----------

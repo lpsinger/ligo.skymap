@@ -17,7 +17,7 @@ Building from source
 
 To build `ligo.skymap` from source, first clone the git repository::
 
-    $ https://git.ligo.org/leo-singer/ligo.skymap.git
+    $ git clone https://git.ligo.org/leo-singer/ligo.skymap.git
 
 Then install it with pip::
 

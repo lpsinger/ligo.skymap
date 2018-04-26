@@ -224,7 +224,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.patches.PathPatch`
+        patch : `matplotlib.patches.PathPatch`
         """
         return self.add_patch(WCSInsetPatch(
             ax, *args, transform=self.get_transform('world'), **kwargs))
@@ -250,7 +250,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.patches.ConnectionPatch`
+        patch : `matplotlib.patches.ConnectionPatch`
         """
         return self.add_patch(WCSInsetConnectionPatch(
             self, ax, loc, *args, **kwargs))
@@ -296,7 +296,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.patches.FancyArrowPatch`
+        patch : `matplotlib.patches.FancyArrowPatch`
         """
         return self.add_patch(ScaleBar(self, *args, **kwargs))
 
@@ -337,7 +337,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.contour.QuadContourSet`
+        countours : `matplotlib.contour.QuadContourSet`
         """
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
@@ -366,7 +366,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.contour.QuadContourSet`
+        contours : `matplotlib.contour.QuadContourSet`
         """
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
@@ -395,7 +395,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        `matplotlib.image.AxesImage`
+        image : `matplotlib.image.AxesImage`
         """
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)

@@ -100,10 +100,13 @@ Postprocessing
 Developer Info
 **************
 
-* :doc:`Changelog <changes>`
-* :doc:`Development Instructions <develop>`
-* `GitLab Project Page <http://git.ligo.org/leo-singer/ligo.skymap>`_
-* `Python Package Index <https://pypi.org/project/ligo.skymap>`_
+.. toctree::
+   :maxdepth: 1
+
+   changes
+   develop
+   GitLab Project Page <http://git.ligo.org/leo-singer/ligo.skymap>
+   Python Package Index <https://pypi.org/project/ligo.skymap>
 
 *****
 Index

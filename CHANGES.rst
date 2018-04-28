@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.7 (unreleased)
+0.0.7 (2018-04-27)
 ==================
 
 - Move ``ligo.skymap.eigenframe.EigenFrame`` to

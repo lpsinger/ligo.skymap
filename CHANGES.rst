@@ -18,6 +18,10 @@ Changelog
 
 - Move ``ligo.skymap.command`` to top-level ``ligo.skymap.tool`` module.
 
+- Require version 0.3.2 of the ``reproject`` package because of a regression
+  that was caused by improper handling of nans in the ``astropy-healpix``
+  package. See <https://github.com/astropy/astropy-healpix/pull/77>.
+
 0.0.6 (2018-04-13)
 ==================
 

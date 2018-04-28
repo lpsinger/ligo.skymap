@@ -3,20 +3,21 @@
 Installation
 ============
 
-The recommended way to install the latest stable release of `ligo.skymap` is
-with `pip <https://pip.pypa.io>`_. This method will install a pre-built binary
-from the `Python package index <https://pypi.org/project/ligo.skymap/>`_ and
-will install all required Python packages automatically.
+The recommended way to install `ligo.skymap` is using `pip
+<https://pip.pypa.io>`_, which will also automatically install all of the
+required Python packages listed below. On Linux and macOS systems, this method
+will install pre-built binaries from the `Python package index
+<https://pypi.org/project/ligo.skymap/>`_. (On other operating systems you can
+:doc:`install from source <develop>`.)
 
-Basic requirements
+Basic Requirements
 ------------------
 
-*  Linux or macOS
 *  `Python <https://www.python.org>`_ ≥ 3.5
 *  `pip <https://pip.pypa.io>`_
 
-Python dependencies
--------------------
+Required Python Dependencies
+----------------------------
 
 When you use pip to install `ligo.skymap` with pip, it will automatically
 install the following required Python packages:
@@ -33,8 +34,8 @@ install the following required Python packages:
 *  `Reproject <https://reproject.readthedocs.io>`_ = 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
 
-Optional dependencies
----------------------
+Optional Python Dependencies
+----------------------------
 
 The following packages are optional for specific features:
 
@@ -42,7 +43,7 @@ The following packages are optional for specific features:
 *  `pytest <https://docs.pytest.org>`_ for running the test suite
 *  `Astroplan <http://astroplan.readthedocs.io/>`_ for airmass charts
 
-Quick start
+Quick Start
 -----------
 
 Just run this command::

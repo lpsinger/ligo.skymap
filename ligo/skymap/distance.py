@@ -16,7 +16,22 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Distance ansatz functions.
+Distance distribution functions from [1]_, [2]_, [3]_.
+
+References
+----------
+
+.. [1] Singer, Chen, & Holz, 2016. "Going the Distance: Mapping Host Galaxies
+       of LIGO and Virgo Sources in Three Dimensions Using Local Cosmography
+       and Targeted Follow-up." ApJL, 829, L15
+       <https://doi.org/10.3847/2041-8205/829/1/L15>.
+
+.. [2] Singer, Chen, & Holz, 2016. "Supplement: 'Going the Distance: Mapping
+       Host Galaxies of LIGO and Virgo Sources in Three Dimensions Using Local
+       Cosmography and Targeted Follow-up' (2016, ApJL, 829, L15)." ApJS, 226,
+       10 <https://doi.org/10.3847/0067-0049/226/1/10>.
+
+.. [3] https://asd.gsfc.nasa.gov/Leo.Singer/going-the-distance
 """
 
 import numpy as np

@@ -155,8 +155,12 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
         # Burn in
         progress.set_description('Burning in')
         for pos, _, _ in sampler.sample(
-                pos, iterations=nburnin, storechain=False, adapt=True):
+                pos, iterations=nburnin, storechain=False):
             progress.update()
+
+        sampler = Sampler(nwalkers, ndim, log_prob_fn, logp,
+                          ntemps=ntemps, loglargs=args, logpargs=[lo, hi],
+                          **options)
 
         acl = np.nan
         while not np.isfinite(acl) or sampler.time < nindep * acl:

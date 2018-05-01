@@ -5,7 +5,8 @@ Changelog
 0.0.8 (unreleased)
 ==================
 
-- No changes yet.
+- Add ``ligo-skymap-combine``, a tool to combine sky localizations from
+  different observations into a joint skymap.
 
 0.0.7 (2018-04-27)
 ==================

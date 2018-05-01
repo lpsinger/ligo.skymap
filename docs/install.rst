@@ -31,6 +31,7 @@ install the following required Python packages:
 *  `h5py <https://www.h5py.org>`_
 *  `Matplotlib <https://matplotlib.org>`_ ≥ 2.1.0
 *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
+*  `ptemcee <https://github.com/willvousden/ptemcee>`_
 *  `Reproject <https://reproject.readthedocs.io>`_ = 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
 
@@ -42,7 +43,6 @@ The following packages are optional for specific features:
 *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ for using BAYESTAR
 *  `pytest <https://docs.pytest.org>`_ for running the test suite
 *  `Astroplan <http://astroplan.readthedocs.io/>`_ for airmass charts
-*  `Emcee <http://emcee.readthedocs.io/en/latest/>`_ ≥ 3.0 for the optional MCMC variant of BAYESTAR
 
 Quick Start
 -----------

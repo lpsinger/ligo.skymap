@@ -19,6 +19,12 @@
 """
 Generate a FITS sky map file from posterior samples using clustering and
 kernel density estimation.
+
+The output consist of two files:
+
+*  ``skypost.obj``, a `pickle <https://docs.python.org/3/library/pickle.html>_`
+   representation of the kernel density estimator
+*  ``skymap.fits.gz``, a 3D localization in HEALPix/FITS format
 """
 
 

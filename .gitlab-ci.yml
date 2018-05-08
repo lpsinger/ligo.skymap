@@ -1,52 +1,56 @@
-# This is a prebuilt Docker container that contains all of the dependencies.
-# It is prebuilt to speed up continuous integration.
-# The Dockerfile is stored on the 'docker' branch.
-image: containers.ligo.org/leo-singer/ligo.skymap
-
 stages:
-  - sdist
-  - build
+  - dist
+  - dependencies
+  - test
   - deploy
 
+.docker: &docker
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  after_script:
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+#
+# Build Python source package.
+#
+
 sdist:
-  stage: sdist
+  image: python
+  stage: dist
   script:
-    - python3 setup.py sdist
+    - python setup.py sdist -d .
   artifacts:
     paths:
-      - dist/
+      - '*.tar.*'
     expire_in: 30 minutes
 
-# Build receipe for standalone wheels on Linux
+#
+# Build binary wheels Linux and macOS.
+#
+
 .wheel:manylinux1: &wheel-manylinux1
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
   image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
-  stage: build
-  variables:
-    GIT_STRATEGY: none
-  before_script:
-    - tar --strip-components 1 -xf dist/*
+  stage: dist
   script:
     # Build and install LALSuite
     - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*:\(.*\)-manylinux1/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
     - auditwheel repair dist/*.whl
     - rm dist/*
-    - mv wheelhouse/* dist/
-  dependencies:
-    - sdist
+    - mv wheelhouse/* .
   artifacts:
     paths:
-      - dist/
+      - '*.whl'
     expire_in: 30 minutes
 
-# Build receipe for standalone wheels on macOS
 .wheel:macos: &wheel-macos
   tags:
     - macos
-  stage: build
+  stage: dist
   script:
     - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*:cp\(.\)\(.\).*/\1.\2/')
     # Enter virtualenv so that we have a controlled version of Numpy
@@ -56,16 +60,13 @@ sdist:
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl
-    - rm dist/*
-    - mv wheelhouse/* dist/
-  dependencies:
-    - sdist
+    - rm -f *.whl
+    - mv wheelhouse/* .
   artifacts:
     paths:
-      - dist/
+      - '*.whl'
     expire_in: 30 minutes
 
-# Build wheels for all supported platforms
 wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
@@ -75,39 +76,143 @@ wheel:cp35-cp35m-macosx:
 wheel:cp36-cp36m-macosx:
   <<: *wheel-macos
 
-test:
-  stage: build
+#
+# Generate pip requirements.txt file that captures everything listed
+# in install_requires in setup.cfg.
+#
+
+requirements:
+  image: python
+  stage: dist
+  script:
+    - python setup.py egg_info
+    - mv ligo.skymap.egg-info/requires.txt requirements.txt
+  artifacts:
+    paths:
+      - requirements.txt
+    expire_in: 30 minutes
+
+#
+# Build Docker containers for dependencies listed in requirements.txt,
+# plus dependencies for running the unit tests, collecting coverage data,
+# and generating the docs.
+#
+
+.dependencies: &dependencies
+  stage: dependencies
+  variables:
+    GIT_STRATEGY: none
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
+  script:
+    - |
+      cat <<EOF > Dockerfile
+      FROM python:${CI_JOB_NAME#*python}
+      COPY requirements.txt .
+      RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
+      RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr sphinx sphinx-argparse flake8 pep8-naming
+      RUN pip --no-cache-dir install -r requirements.txt
+      RUN rm -f requirements.txt
+  dependencies:
+    - requirements
+  <<: *docker
+
+dependencies/python3.5:
+  <<: *dependencies
+
+dependencies/python3.6:
+  <<: *dependencies
+
+#
+# Generate documentation.
+#
+
+docs:
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - tar --strip-components 1 -xf *.tar.*
+    - python setup.py build_docs
+  dependencies:
+    - sdist
+  artifacts:
+    paths:
+      - docs/_build/html/
+    expire_in: 30 minutes
+
+#
+# Test the wheels.
+#
+
+.test: &test
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - pip install *.whl
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(parallel="auto", verbose=True))'
+
+test/python3.5:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.5:$CI_COMMIT_REF_NAME
+  dependencies:
+    - wheel:cp35-cp35m-manylinux1
+
+test/python3.6:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  dependencies:
+    - wheel:cp36-cp36m-manylinux1
+
+#
+# Measure test coverage:
+# - pytest-cov for Python code
+# - gcc coverage for C code
+#
+
+test/coverage:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
   before_script:
-    - tar --strip-components 1 -xf dist/*
+    - tar --strip-components 1 -xf *.tar.*
   script:
     # Run tests
-    - python3 setup.py test --coverage -vv --args='-vv'
+    - python setup.py test --coverage -vv --args='-vv'
     # Write gcovr test coverage
     - mkdir gcovr
     - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
+  dependencies:
+    - sdist
   artifacts:
     paths:
       - .coverage
       - build/temp.*/src/*.gc*
       - gcovr/
       - htmlcov/
-    expire_in: 5 minutes
+    expire_in: 30 minutes
 
-docs:
-  stage: build
+#
+# Run flake8 linter to enforce code style.
+#
+
+lint:
+  allow_failure: true
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  stage: test
   variables:
     GIT_STRATEGY: none
-  before_script:
-    - tar --strip-components 1 -xf dist/*
   script:
-    - python3 setup.py build_docs
-  artifacts:
-    paths:
-      - docs/_build/html
-    expire_in: 30 minutes
+    - tar --strip-components 1 -xf *.tar.*
+    - flake8 --show-source .
+  dependencies:
+    - sdist
+
+#
+# Gather coverage reports and docs for GitLab pages and build badges.
+#
 
 coverage:c:
   variables:
@@ -115,10 +220,10 @@ coverage:c:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   before_script:
-    - tar --strip-components 1 -xf dist/*
+    - tar --strip-components 1 -xf *.tar.*
   dependencies:
     - sdist
-    - test
+    - test/coverage
   script:
     # Display coverage summary
     - gcovr build/temp*/src -r .
@@ -129,34 +234,13 @@ coverage:py:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   stage: deploy
   before_script:
-    - tar --strip-components 1 -xf dist/*
+    - tar --strip-components 1 -xf *.tar.*
   dependencies:
     - sdist
-    - test
+    - test/coverage
   script:
     # Print coverage summary
     - python3 -m coverage report
-
-deploy:wheel:
-  stage: deploy
-  image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
-  variables:
-    GIT_STRATEGY: none
-  script:
-    # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
-    - /opt/python/cp36-cp36m/bin/pip install twine
-    - /opt/python/cp36-cp36m/bin/twine upload dist/*
-  dependencies:
-    - sdist
-    - wheel:cp35-cp35m-manylinux1
-    - wheel:cp36-cp36m-manylinux1
-    - wheel:cp35-cp35m-macosx
-    - wheel:cp36-cp36m-macosx
-  artifacts:
-    paths:
-      - dist
-  only:
-    - tags
 
 pages:
   variables:
@@ -169,10 +253,32 @@ pages:
     - mv htmlcov public/cov/py
   dependencies:
     - docs
-    - test
+    - test/coverage
   artifacts:
     paths:
       - public
     expire_in: 30 days
   only:
     - master
+
+#
+# Upload to PyPI.
+#
+
+deploy:wheel:
+  stage: deploy
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
+  variables:
+    GIT_STRATEGY: none
+  script:
+    # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
+    - /opt/python/cp36-cp36m/bin/pip install twine
+    - /opt/python/cp36-cp36m/bin/twine upload *
+  dependencies:
+    - sdist
+    - wheel:cp35-cp35m-manylinux1
+    - wheel:cp36-cp36m-manylinux1
+    - wheel:cp35-cp35m-macosx
+    - wheel:cp36-cp36m-macosx
+  only:
+    - tags

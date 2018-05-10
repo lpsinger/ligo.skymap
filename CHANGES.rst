@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.8 (unreleased)
+0.0.8 (2018-05-10)
 ==================
 
 - Add ``ligo-skymap-combine``, a tool to combine sky localizations from

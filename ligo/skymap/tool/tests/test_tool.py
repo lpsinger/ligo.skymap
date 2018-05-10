@@ -7,8 +7,8 @@ import numpy as np
 import healpy as hp
 
 from . import run_entry_point
-from ...io import read_sky_map, write_sky_map
-from ...distance import parameters_to_moments
+from ... import io
+from ... import distance
 
 
 @pytest.fixture
@@ -129,13 +129,13 @@ def test_combine(tmpdir):
     d_mu = np.zeros_like(m1)
     d_sigma = np.ones_like(m1)
     d_norm = np.ones_like(m1)
-    write_sky_map(fn1, np.vstack((m1, d_mu, d_sigma, d_norm)).T)
+    io.write_sky_map(fn1, np.vstack((m1, d_mu, d_sigma, d_norm)).T)
 
     run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
 
-    m3, meta3 = read_sky_map(fn3, nest=True, distances=True)
+    m3, meta3 = io.read_sky_map(fn3, nest=True, distances=True)
 
     # check that marginal distance moments match what was simulated
-    mean, std, _ = parameters_to_moments(d_mu[0], d_sigma[0])
+    mean, std, _ = distance.parameters_to_moments(d_mu[0], d_sigma[0])
     assert meta3['distmean'] == pytest.approx(mean)
     assert meta3['diststd'] == pytest.approx(std)

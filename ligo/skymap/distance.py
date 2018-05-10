@@ -208,7 +208,6 @@ Check that the moments scale as expected when we vary sigma.
 Check some more arbitrary values using numerical quadrature:
 
 >>> import scipy.integrate
->>> from ligo.skymap.core import conditional_pdf
 >>> sigma = 1.0
 >>> for mu in np.linspace(-10, 10):
 ...     mean, std, norm = parameters_to_moments(mu, sigma)

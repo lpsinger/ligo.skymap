@@ -19,16 +19,16 @@
 Produce GW sky maps for all coincidences in search pipeline output database
 in LIGO-LW XML, LIGO-LW SQLite, or PyCBC HDF5 format.
 
-The distance prior is controlled by the --prior-distance-power argument.
-If you set --prior-distance-power=k, then the distance prior is
+The distance prior is controlled by the ``--prior-distance-power`` argument.
+If you set ``--prior-distance-power`` to k, then the distance prior is
 proportional to r^k. The default is 2, uniform in volume.
 
-If the --min-distance argument is omitted, it defaults to zero. If the
---max-distance argument is omitted, it defaults to the SNR=4 horizon
+If the ``--min-distance`` argument is omitted, it defaults to zero. If the
+``--max-distance argument`` is omitted, it defaults to the SNR=4 horizon
 distance of the most sensitive detector.
 
 A FITS file is created for each sky map, having a filename of the form
-"X.fits" where X is the LIGO-LW row id of the coinc.
+``X.fits`` where X is the LIGO-LW row id of the coinc.
 """
 
 from argparse import FileType

@@ -52,9 +52,6 @@ package are:
 
 See the `installation instructions`_ or the `full documentation`_.
 
-**Note**: Since the migration of these tools from LALSuite is very recent, the
-modules, scripts, and documentation in this package are subject to change.
-
 .. _`Script bayestar-localize-coincs`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
 .. _`Script ligo-skymap-from-samples`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
 .. _`Script ligo-skymap-plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html

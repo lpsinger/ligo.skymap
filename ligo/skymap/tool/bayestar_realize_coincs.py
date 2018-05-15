@@ -26,9 +26,9 @@ triggers and coincidences.
 The root-mean square measurement error depends on the SNR of the signal, so
 there is a choice for how to generate perturbed time and phase measurements:
 
- - zero-noise: no measurement error at all
- - from-truth: use true, nominal SNR in each detector
- - from-measurement: first perturb SNR with measurement error, then use
+ - `zero-noise`: no measurement error at all
+ - `from-truth`: use true, nominal SNR in each detector
+ - `from-measurement`: first perturb SNR with measurement error, then use
    that perturbed SNR to compute covariance of time and phase errors
 """
 

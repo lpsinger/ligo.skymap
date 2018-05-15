@@ -11,6 +11,8 @@ Changelog
 
 - Make some cosmetic improvements to airmass charts.
 
+- Update common files from Astropy package template.
+
 0.0.8 (2018-05-10)
 ==================
 

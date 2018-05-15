@@ -18,12 +18,12 @@
 r"""
 Listen for new events from LVAlert and perform sky localization.
 
-`bayestar_localize_lvalert` supports two modes of operation. You can
+`bayestar-localize-lvalert` supports two modes of operation. You can
 explicitly specify the GraceDb ID on the command line, as in::
 
-    $ bayestar_localize_lvalert T90713
+    $ bayestar-localize-lvalert T90713
 
-Or, `bayetar_localize_lvalert` can read GraceDB IDs from stdin (e.g., from the
+Or, `bayetar-localize-lvalert` can read GraceDB IDs from stdin (e.g., from the
 terminal, or redirected from a fifo)::
 
     $ mkfifo /var/run/bayestar

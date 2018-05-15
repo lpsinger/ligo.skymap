@@ -23,7 +23,7 @@ explicitly specify the GraceDb ID on the command line, as in::
 
     $ bayestar_localize_lvalert T90713
 
-Or, `bayetar_localize_lvalert` can GraceDB IDs from stdin (e.g., from the
+Or, `bayetar_localize_lvalert` can read GraceDB IDs from stdin (e.g., from the
 terminal, or redirected from a fifo)::
 
     $ mkfifo /var/run/bayestar

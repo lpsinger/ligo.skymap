@@ -58,21 +58,9 @@ def main(args=None):
         with fits.open(input_file) as hdus:
             header = hdus[0].header.copy()
             header.extend(hdus[1].header)
-            nonstd_name = hdus[1].columns.names[0] != 'PROB'
-            if nonstd_name:
-                # FIXME special case for Fermi/GBM localizations which use a
-                # different name for the first field of HDU 1
-                # (PROBABILITY vs PROB)
-                has_distance = False
-                data = (hp.read_map(hdus, nest=True),)
-                meta = {'instruments': set([header['INSTRUME']])}
-            else:
-                has_distance = 'DISTMU' in hdus[1].columns.names
-                data, meta = read_sky_map(hdus, nest=True,
-                                          distances=has_distance)
-
-        nside = hp.npix2nside(len(data[0]))
-        input_skymaps.append((nside, data[0], meta, header))
+            has_distance = 'DISTMU' in hdus[1].columns.names
+            data, meta = read_sky_map(hdus, nest=True,
+                                      distances=has_distance)
 
         if has_distance:
             if dist_mu is not None:
@@ -81,6 +69,11 @@ def main(args=None):
             dist_mu = data[1]
             dist_sigma = data[2]
             dist_norm = data[3]
+        else:
+            data = (data,)
+
+        nside = hp.npix2nside(len(data[0]))
+        input_skymaps.append((nside, data[0], meta, header))
 
     max_nside = max(x[0] for x in input_skymaps)
 

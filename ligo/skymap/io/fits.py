@@ -485,6 +485,14 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
                 if from_fits is not None:
                     m.meta[key] = from_fits(value)
 
+    # FIXME: Fermi GBM HEALPix maps use the column name 'PROBABILITY',
+    # instead of the LIGO/Virgo convention of 'PROB'.
+    #
+    # Fermi may change to our convention in the future, but for now we
+    # rename the column.
+    if 'PROBABILITY' in m.colnames:
+        m.rename_column('PROBABILITY', 'PROB')
+
     if 'UNIQ' not in m.colnames:
         m = Table([col.ravel() for col in m.columns.values()], meta=m.meta)
 

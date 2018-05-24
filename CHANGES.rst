@@ -5,7 +5,9 @@ Changelog
 0.0.9 (unreleased)
 ==================
 
-- No changes yet.
+- On reading, rename columns from Fermi GBM HEALPix files to match the
+  LIGO/Virgo convention. In particular, rename any column named `PROBABILITY`
+  to `PROB`.
 
 0.0.8 (2018-05-10)
 ==================

@@ -176,9 +176,9 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Test reading a file that was written using the LAL HDF5 C API:
 
-    >>> from pkg_resources import resource_filename
-    >>> filename = resource_filename(__name__, 'tests/data/test.hdf5')
-    >>> table = read_samples(filename)
+    >>> from astropy.utils.data import get_pkg_data_filename
+    >>> table = read_samples(get_pkg_data_filename('tests/data/test.hdf5',
+    ...                                            package='ligo.skymap.io'))
     >>> table.colnames
     ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'rst', 'ghi']
     """

@@ -21,6 +21,8 @@ Make an airmass chart for a LIGO/Virgo probability sky map.
 
 from argparse import FileType
 
+import numpy as np
+
 from . import ArgumentParser, figure_parser
 
 
@@ -38,6 +40,12 @@ def parser():
     return parser
 
 
+def condition_secz(x):
+    """Condition secz airmass formula: values <= 0 are below the horizon,
+    which we map to infinite airmass."""
+    return np.where(x <= 0, np.inf, x)
+
+
 def main(args=None):
     opts = parser().parse_args(args)
 
@@ -48,7 +56,7 @@ def main(args=None):
     from astropy.time import Time
     from matplotlib.patches import Patch
     from matplotlib import pyplot as plt
-    import numpy as np
+    from tqdm import tqdm
 
     from ..io import fits
     from .. import moc
@@ -68,26 +76,30 @@ def main(args=None):
 
     # Remove the fake source and determine times that were used for the plot.
     del ax.lines[:]
-    t = Time(np.linspace(*ax.get_xlim()), format='plot_date')
+    times = Time(np.linspace(*ax.get_xlim()), format='plot_date')
 
-    # Calculate airmass at every point in time and for every HEALPix pixel.
     theta, phi = moc.uniq2ang(m['UNIQ'])
     coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
     prob = moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY']
-    airmass = coords.transform_to(observer.altaz(t[:, np.newaxis])).secz
-    airmass[airmass <= 0] = np.inf
 
-    # Plot probability-weighted airmass contours.
+    levels = np.arange(0.9, 0.0, -0.1)
+    nlevels = len(levels)
+    quantiles = np.concatenate((0.5 - 0.5 * levels, 0.5 + 0.5 * levels))
+
+    airmass = np.column_stack([
+        quantile(
+            condition_secz(coords.transform_to(observer.altaz(t)).secz),
+            quantiles,
+            weights=prob)
+        for t in tqdm(times)])
+
     cmap = plt.get_cmap()
-    alphas = np.arange(0.45, 0.0, -0.05)
-    for alpha in alphas:
-        lo, hi = quantile(airmass, [0.5 - alpha, 0.5 + alpha],
-                          weights=prob, axis=1)
-        ax.fill_between(t.plot_date, lo, hi, color=cmap(2 * alpha), zorder=2)
+    for level, lo, hi in zip(levels, airmass[:nlevels], airmass[nlevels:]):
+        ax.fill_between(times.plot_date, lo, hi, color=cmap(level), zorder=2)
 
     ax.legend(
-        [Patch(facecolor=cmap(2 * alpha)) for alpha in alphas],
-        ['{}%'.format(int(200 * alpha)) for alpha in alphas])
+        [Patch(facecolor=cmap(level)) for level in levels],
+        ['{}%'.format(int(100 * level)) for level in levels])
     ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
     plt.subplots_adjust(bottom=0.2)

@@ -50,18 +50,32 @@ def main(args=None):
     opts = parser().parse_args(args)
 
     # Late imports
+    import json
+
     from astroplan import Observer
     from astroplan.plots import plot_airmass
     from astropy.coordinates import SkyCoord
     from astropy.time import Time
+    from astropy.utils.data import get_pkg_data_fileobj
+    from matplotlib import dates
     from matplotlib.patches import Patch
     from matplotlib import pyplot as plt
     from tqdm import tqdm
+    import pytz
 
     from ..io import fits
     from .. import moc
     from .. import plot  # noqa
     from ..extern.quantile import quantile
+
+    # FIXME: Astropy's site registry provides time zones,
+    # but the Astropy API does not provide access to them.
+    with get_pkg_data_fileobj('coordinates/sites.json',
+                              package='astropy') as f:
+        sites = json.load(f)
+    timezones = {key: value.get('timezone') for key, value in sites.items()}
+    for site in sites.values():
+        timezones.update(dict.fromkeys(site['aliases'], site.get('timezone')))
 
     m = fits.read_sky_map(opts.input.name, moc=True)
 
@@ -101,7 +115,20 @@ def main(args=None):
     ax.legend(
         [Patch(facecolor=cmap(level)) for level in levels],
         ['{}%'.format(int(100 * level)) for level in levels])
-    ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
+    # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
+
+    # ADd local time axis
+    if opts.site in timezones:
+        timezone = timezones[opts.site]
+        tzinfo = pytz.timezone(timezone)
+        ax2 = ax.twiny()
+        ax2.set_xlim(ax.get_xlim())
+        ax2.set_xticks(ax.get_xticks())
+        ax2.xaxis.set_major_formatter(dates.DateFormatter('%H:%M', tz=tzinfo))
+        plt.setp(ax2.get_xticklabels(), rotation=-30, ha='right')
+        ax2.set_xlabel("Time from {} [{}]".format(
+            min(times).to_datetime(tzinfo).date(),
+            timezone))
 
     plt.subplots_adjust(bottom=0.2)
 

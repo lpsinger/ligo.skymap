@@ -65,9 +65,9 @@ def main(args=None):
     ax = plot_airmass([SkyCoord(0, 0, unit='rad')], observer,
                       Time(opts.time) if opts.time is not None else Time.now(),
                       brightness_shading=True)
-    del ax.lines[:]
 
     # Remove the fake source and determine times that were used for the plot.
+    del ax.lines[:]
     t = Time(np.linspace(*ax.get_xlim()), format='plot_date')
 
     # Calculate airmass at every point in time and for every HEALPix pixel.

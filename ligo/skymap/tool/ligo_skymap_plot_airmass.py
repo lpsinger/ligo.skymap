@@ -130,7 +130,5 @@ def main(args=None):
             min(times).to_datetime(tzinfo).date(),
             timezone))
 
-    plt.subplots_adjust(bottom=0.2)
-
     # Show or save output.
     opts.output()

@@ -51,6 +51,7 @@ def main(args=None):
 
     # Late imports
     import json
+    import operator
 
     from astroplan import Observer
     from astroplan.plots import plot_airmass
@@ -87,7 +88,7 @@ def main(args=None):
     t0 = Time(opts.time) if opts.time is not None else Time.now()
     t0 = observer.midnight(t0)
     ax = plot_airmass([SkyCoord(0, 0, unit='rad')], observer, t0,
-                      brightness_shading=True, altitude_yaxis=True)
+                       altitude_yaxis=True)
 
     # Remove the fake source and determine times that were used for the plot.
     del ax.lines[:]
@@ -116,6 +117,30 @@ def main(args=None):
         [Patch(facecolor=cmap(level)) for level in levels],
         ['{}%'.format(int(100 * level)) for level in levels])
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
+
+    start = times[0]
+    twilights = [
+        (times[0].datetime, 0.0),
+        (observer.sun_set_time(Time(start), which='next').datetime, 0.0),
+        (observer.twilight_evening_civil(Time(start), which='next').datetime, 0.1),
+        (observer.twilight_evening_nautical(Time(start), which='next').datetime, 0.2),
+        (observer.twilight_evening_astronomical(Time(start), which='next').datetime, 0.3),
+        (observer.twilight_morning_astronomical(Time(start), which='next').datetime, 0.4),
+        (observer.twilight_morning_nautical(Time(start), which='next').datetime, 0.3),
+        (observer.twilight_morning_civil(Time(start), which='next').datetime, 0.2),
+        (observer.sun_rise_time(Time(start), which='next').datetime, 0.1),
+        (times[-1].datetime, 0.0),
+    ]
+
+    twilights.sort(key=operator.itemgetter(0))
+    for i, twi in enumerate(twilights[1:], 1):
+        if twi[1] != 0:
+            ax.axvspan(twilights[i - 1][0], twilights[i][0],
+                       ymin=0, ymax=1, color='grey', alpha=twi[1], linewidth=0)
+        if twi[1] != 0.4:
+            ax.axvspan(twilights[i - 1][0], twilights[i][0],
+                       ymin=0, ymax=1, color='white', alpha=0.8 - 2 * twi[1],
+                       zorder=3, linewidth=0)
 
     # Add local time axis
     if opts.site in timezones:

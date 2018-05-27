@@ -87,7 +87,7 @@ def main(args=None):
     t0 = Time(opts.time) if opts.time is not None else Time.now()
     t0 = observer.midnight(t0)
     ax = plot_airmass([SkyCoord(0, 0, unit='rad')], observer, t0,
-                      brightness_shading=True)
+                      brightness_shading=True, altitude_yaxis=True)
 
     # Remove the fake source and determine times that were used for the plot.
     del ax.lines[:]
@@ -117,7 +117,7 @@ def main(args=None):
         ['{}%'.format(int(100 * level)) for level in levels])
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
-    # ADd local time axis
+    # Add local time axis
     if opts.site in timezones:
         timezone = timezones[opts.site]
         tzinfo = pytz.timezone(timezone)

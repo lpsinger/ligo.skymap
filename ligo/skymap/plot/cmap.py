@@ -18,10 +18,9 @@
 
 from matplotlib import cm
 from matplotlib import colors
+import pkg_resources
 import numpy as np
 import warnings
-
-from astropy.utils.data import get_pkg_data_fileobj
 
 __all__ = ()
 
@@ -29,7 +28,7 @@ __all__ = ()
 for name in ['cylon']:
     # Read in color map RGB data.
     try:
-        with get_pkg_data_fileobj(name + '.csv') as f:
+        with pkg_resources.resource_stream(__name__, name + '.csv') as f:
             data = np.loadtxt(f, delimiter=',')
     except IOError as e:
         warnings.warn('Failed to load "{0}" colormap'.format(name))

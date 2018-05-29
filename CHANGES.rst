@@ -9,6 +9,8 @@ Changelog
   LIGO/Virgo convention. In particular, rename any column named `PROBABILITY`
   to `PROB`.
 
+- Make some cosmetic improvements to airmass charts.
+
 0.0.8 (2018-05-10)
 ==================
 

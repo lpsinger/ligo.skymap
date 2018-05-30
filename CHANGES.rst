@@ -11,6 +11,10 @@ Changelog
 
 - Make some cosmetic improvements to airmass charts.
 
+- Rewrite the MCMC mode of BAYESTAR using ``ligo.skymap.ez_emcee``, a new
+  reusable, fire-and-forget, parallel-tempering, MCMC sampler that features
+  automated convergence testing and progress monitoring.
+
 - Update common files from Astropy package template.
 
 0.0.8 (2018-05-10)

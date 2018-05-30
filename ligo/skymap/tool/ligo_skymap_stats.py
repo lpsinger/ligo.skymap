@@ -221,10 +221,7 @@ def main(args=None):
     else:
         omp.num_threads = 1  # disable OpenMP parallelism
 
-        try:
-            from emcee.interruptible_pool import InterruptiblePool as Pool
-        except ImportError:
-            from multiprocessing import Pool
+        from multiprocessing import Pool
         pool_map = Pool(opts.jobs, startup, args).imap
     startup(*args)
 

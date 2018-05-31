@@ -23,7 +23,9 @@ of GRB 170817A into a more precise localization::
     from ligo.skymap.tool.ligo_skymap_combine import main as combine
     from ligo.skymap.tool.ligo_skymap_plot import main as plot
     from astropy.utils.data import download_file
+    from tempfile import NamedTemporaryFile
     gw_map = download_file('https://dcc.ligo.org/public/0146/G1701985/001/bayestar_no_virgo.fits.gz', cache=True)
     gbm_map = download_file('https://gammaray.nsstc.nasa.gov/gbm/science/grbs/grb170817a/gbuts_healpix_systematic.fit', cache=True)
-    combine([gw_map, gbm_map, 'gw_gbm_combined.fits.gz'])
-    plot(['gw_gbm_combined.fits.gz'])
+    with NamedTemporaryFile(suffix='.fits.gz') as combined_map:
+        combine([gw_map, gbm_map, combined_map.name])
+        plot([combined_map.name])

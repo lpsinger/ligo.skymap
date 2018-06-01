@@ -67,7 +67,7 @@ def main(args=None):
     from ..io import fits
     from .. import moc
     from .. import plot  # noqa
-    from ..extern.quantile import quantile
+    from ..extern.quantile import percentile
 
     # FIXME: Astropy's site registry provides time zones,
     # but the Astropy API does not provide access to them.
@@ -98,14 +98,14 @@ def main(args=None):
     coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
     prob = moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY']
 
-    levels = np.arange(0.9, 0.0, -0.1)
+    levels = np.arange(90, 0, -10)
     nlevels = len(levels)
-    quantiles = np.concatenate((0.5 - 0.5 * levels, 0.5 + 0.5 * levels))
+    percentiles = np.concatenate((50 - 0.5 * levels, 50 + 0.5 * levels))
 
     airmass = np.column_stack([
-        quantile(
+        percentile(
             condition_secz(coords.transform_to(observer.altaz(t)).secz),
-            quantiles,
+            percentiles,
             weights=prob)
         for t in tqdm(times)])
 
@@ -115,7 +115,7 @@ def main(args=None):
 
     ax.legend(
         [Patch(facecolor=cmap(level)) for level in levels],
-        ['{}%'.format(int(100 * level)) for level in levels])
+        ['{}%'.format(level) for level in levels])
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
     # Adapted from astroplan

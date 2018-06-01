@@ -9,7 +9,14 @@ Changelog
   LIGO/Virgo convention. In particular, rename any column named `PROBABILITY`
   to `PROB`.
 
-- Make some cosmetic improvements to airmass charts.
+- Reduce the memory footprint of ``ligo-skymap-plot-airmass`` by transposing
+  two nested loops.
+
+- Make some cosmetic improvements to ``ligo-skymap-plot-airmass``:
+
+  * Add altitude and local time axes.
+  * Center plot on local solar midnight.
+  * Adjust blending and z-order of twilight shading.
 
 - Rewrite the MCMC mode of BAYESTAR using ``ligo.skymap.ez_emcee``, a new
   reusable, fire-and-forget, parallel-tempering, MCMC sampler that features

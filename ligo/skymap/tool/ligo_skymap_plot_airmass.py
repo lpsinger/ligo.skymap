@@ -118,6 +118,7 @@ def main(args=None):
         ['{}%'.format(int(100 * level)) for level in levels])
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
+    # Adapted from astroplan
     start = times[0]
     twilights = [
         (times[0].datetime, 0.0),

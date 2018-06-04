@@ -52,10 +52,12 @@ def main(args=None):
     # Late imports
     import json
     import operator
+    import sys
 
     from astroplan import Observer
     from astroplan.plots import plot_airmass
     from astropy.coordinates import SkyCoord
+    from astropy.table import Table
     from astropy.time import Time
     from astropy.utils.data import get_pkg_data_fileobj
     from matplotlib import dates
@@ -132,6 +134,8 @@ def main(args=None):
         (observer.sun_rise_time(Time(start), which='next').datetime, 0.1),
         (times[-1].datetime, 0.0),
     ]
+    twilight_evening = Time(twilights[4][0])
+    twilight_morning = Time(twilights[5][0])
 
     twilights.sort(key=operator.itemgetter(0))
     for i, twi in enumerate(twilights[1:], 1):
@@ -155,6 +159,17 @@ def main(args=None):
         ax2.set_xlabel("Time from {} [{}]".format(
             min(times).to_datetime(tzinfo).date(),
             timezone))
+
+    # Write airmass table to stdout.
+    times.format = 'isot'
+    table = Table(masked=True)
+    table['time'] = times
+    table['sun_alt'] = np.ma.masked_greater_equal(observer.sun_altaz(times).alt, 0)
+    table['sun_alt'].format = lambda x: '{}'.format(int(np.round(x)))
+    for p, data in sorted(zip(percentiles, airmass)):
+        table[str(p)] = np.ma.masked_invalid(data)
+        table[str(p)].format = lambda x: '{:.01f}'.format(np.around(x, 1))
+    table.write(sys.stdout, format='ascii.fixed_width')
 
     # Show or save output.
     opts.output()

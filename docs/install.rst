@@ -22,6 +22,7 @@ Required Python Dependencies
 When you use pip to install `ligo.skymap` with pip, it will automatically
 install the following required Python packages:
 
+*  `Astroplan <http://astroplan.readthedocs.io>`_
 *  Astropy_ ≥ 3.0
 *  `Numpy <http://www.numpy.org>`_ ≥ 1.13
 *  `Healpy <http://healpy.readthedocs.io>`_ ≥ 1.9.1
@@ -30,10 +31,15 @@ install the following required Python packages:
    which is easier to install)
 *  `h5py <https://www.h5py.org>`_
 *  `Matplotlib <https://matplotlib.org>`_ ≥ 2.1.0
+*  `NetworkX <https://networkx.github.io>`_
 *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
 *  `ptemcee <https://github.com/willvousden/ptemcee>`_
 *  `Reproject <https://reproject.readthedocs.io>`_ = 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
+*  `Seaborn <https://seaborn.pydata.org>`_ ≥ 0.8.0
+*  `Shapely <http://toblerity.org/shapely/>`_
+*  `tqdm <https://tqdm.github.io>`_
+*  `pytz <http://pytz.sourceforge.net>`_
 
 Optional Python Dependencies
 ----------------------------
@@ -42,7 +48,6 @@ The following packages are optional for specific features:
 
 *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ for using BAYESTAR
 *  `pytest <https://docs.pytest.org>`_ for running the test suite
-*  `Astroplan <http://astroplan.readthedocs.io/>`_ for airmass charts
 
 Quick Start
 -----------

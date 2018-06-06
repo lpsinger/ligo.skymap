@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.9 (unreleased)
+0.0.9 (2018-06-06)
 ==================
 
 - On reading, rename columns from Fermi GBM HEALPix files to match the

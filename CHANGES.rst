@@ -18,6 +18,8 @@ Changelog
   * Center plot on local solar midnight.
   * Adjust blending and z-order of twilight shading.
 
+- ``ligo-skymap-plot-airmass`` will now write an airmass table to stdout.
+
 - Rewrite the MCMC mode of BAYESTAR using ``ligo.skymap.ez_emcee``, a new
   reusable, fire-and-forget, parallel-tempering, MCMC sampler that features
   automated convergence testing and progress monitoring.

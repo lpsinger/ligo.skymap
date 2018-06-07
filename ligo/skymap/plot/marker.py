@@ -59,7 +59,7 @@ def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
     x = np.cos(angle)
     y = np.sin(angle)
     R = [[x, y], [-y, x]]
-    vertdict = dict(l=[-1, 0], r=[1, 0], b=[0, -1], t=[0, 1])
+    vertdict = {'l': [-1, 0], 'r': [1, 0], 'b': [0, -1], 't': [0, 1]}
     verts = [vertdict[direction] for direction in which]
     codes = [Path.MOVETO, Path.LINETO] * len(verts)
     verts = np.dot(verts, R)

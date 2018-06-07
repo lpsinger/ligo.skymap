@@ -15,6 +15,5 @@ def test_version(entry_point, capsys):
     """Check that --version works."""
     run_entry_point(entry_point, '--version')
     out, err = capsys.readouterr()
-    name, _, _ = version.__name__.rpartition('.')
-    assert out == name + ' ' + version.version + '\n'
+    assert out.strip().endswith(version.version)
     assert err == ''

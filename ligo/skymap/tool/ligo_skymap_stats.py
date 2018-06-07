@@ -175,11 +175,14 @@ def process(fitsfilename):
                     coinc_event_id, sqlite.get_filename(db)))
         simulation_id, true_ra, true_dec, true_dist, far, snr = row
 
-    (searched_area, searched_prob, offset, searched_modes, contour_areas,
-     area_probs, contour_modes, searched_prob_dist, contour_dists,
-     searched_vol, searched_prob_vol, contour_vols
-    ) = find_injection_moc(sky_map, true_ra, true_dec, true_dist,
-                           contours=contour_pvalues, areas=areas, modes=modes)
+    (
+        searched_area, searched_prob, offset, searched_modes, contour_areas,
+        area_probs, contour_modes, searched_prob_dist, contour_dists,
+        searched_vol, searched_prob_vol, contour_vols
+    ) = find_injection_moc(
+        sky_map, true_ra, true_dec, true_dist,
+        contours=contour_pvalues, areas=areas, modes=modes
+    )
 
     if snr is None:
         snr = np.nan

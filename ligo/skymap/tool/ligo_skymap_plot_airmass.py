@@ -134,8 +134,6 @@ def main(args=None):
         (observer.sun_rise_time(Time(start), which='next').datetime, 0.1),
         (times[-1].datetime, 0.0),
     ]
-    twilight_evening = Time(twilights[4][0])
-    twilight_morning = Time(twilights[5][0])
 
     twilights.sort(key=operator.itemgetter(0))
     for i, twi in enumerate(twilights[1:], 1):

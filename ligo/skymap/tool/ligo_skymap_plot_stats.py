@@ -157,8 +157,8 @@ def main(args=None):
             pattern = r'\verb/{0}/'
         else:
             pattern = '{0}'
-        labels = tuple(pattern.format(os.path.basename(name))
-            for name in dataset_names)
+        labels = tuple(
+            pattern.format(os.path.basename(name)) for name in dataset_names)
         if len(datasets) == 1:
             title += ' ({0} events)'.format(len(datasets[0]))
 

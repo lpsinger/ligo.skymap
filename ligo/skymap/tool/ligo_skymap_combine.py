@@ -30,8 +30,9 @@ from . import ArgumentParser
 
 def parser():
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
-                        nargs='+', help='Input sky localizations')
+    parser.add_argument('input', metavar='INPUT.fits[.gz]',
+                        type=FileType('rb'), nargs='+',
+                        help='Input sky localizations')
     # FIXME the output option has type str because astropy.io.fits.writeto()
     # only honors the .gz extension when given a file name string (as of 3.0.1)
     parser.add_argument('output', metavar='OUTPUT.fits[.gz]', type=str,
@@ -132,8 +133,10 @@ def main(args=None):
     out_kwargs['HISTORY'] = []
     for i, x in enumerate(input_skymaps):
         out_kwargs['HISTORY'].append('')
-        out_kwargs['HISTORY'].append('Headers of HDUs 0 and 1 of input file {:d}:'.format(i))
+        out_kwargs['HISTORY'].append(
+            'Headers of HDUs 0 and 1 of input file {:d}:'.format(i))
         out_kwargs['HISTORY'].append('')
-        out_kwargs['HISTORY'] += ['{} = {}'.format(k, v) for k, v in x[3].items()]
+        out_kwargs['HISTORY'] += [
+            '{} = {}'.format(k, v) for k, v in x[3].items()]
 
     write_sky_map(args.output, out_data, **out_kwargs)

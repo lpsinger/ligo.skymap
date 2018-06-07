@@ -5,7 +5,7 @@ Changelog
 0.0.10 (unreleased)
 ===================
 
-- No changes yet.
+- Make lalsuite and lscsoft-glue required dependencies.
 
 0.0.9 (2018-06-06)
 ==================

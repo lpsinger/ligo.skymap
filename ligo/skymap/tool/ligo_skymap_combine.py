@@ -43,6 +43,7 @@ def parser():
                              ' responsible for the combined output')
     return parser
 
+
 def main(args=None):
     args = parser().parse_args(args)
 

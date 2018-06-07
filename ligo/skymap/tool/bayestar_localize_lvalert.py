@@ -111,7 +111,7 @@ def main(args=None):
 
         try:
             event = event_source[graceid]
-        except:
+        except:  # noqa: E722
             log.exception('failed to read event %s from GraceDB', graceid)
             continue
 
@@ -154,7 +154,7 @@ def main(args=None):
             # Produce log message and then exit if we receive SIGINT (ctrl-C).
             log.exception("sky localization failed")
             raise
-        except:
+        except:  # noqa: E722
             # Produce log message for any otherwise uncaught exception.
             # Unless we are in dry-run mode, keep going.
             log.exception("sky localization failed")

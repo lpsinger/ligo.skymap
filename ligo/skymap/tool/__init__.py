@@ -34,6 +34,8 @@ from ..plot import cmap  # noqa
 from ..util import sqlite
 from .. import version
 
+version_string = version.__package__ + ' ' + version.version
+
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
 # until we have determined that it is necessary based on the command line
 # arguments.
@@ -179,9 +181,9 @@ class MatplotlibFigureType(argparse.FileType):
         cmdline = ' '.join([program] + sys.argv[1:])
         metadata = {'Title': cmdline}
         if ext == '.png':
-            metadata['Software'] = get_version()
+            metadata['Software'] = version_string
         elif ext in {'.pdf', '.ps', '.eps'}:
-            metadata['Creator'] = get_version()
+            metadata['Creator'] = version_string
         return plt.savefig(self.string, metadata=metadata)
 
     def __call__(self, string):
@@ -375,8 +377,7 @@ class ArgumentParser(argparse.ArgumentParser):
         self.register('action', 'glob', GlobAction)
         self.register('action', 'loglevel', LogLevelAction)
         self.add_argument(
-            '--version', action='version',
-            version=version.__package__ + ' ' + version.version)
+            '--version', action='version', version=version_string)
         self.add_argument(
             '-l', '--loglevel', action='loglevel', default='INFO')
 

@@ -5,7 +5,7 @@ group = 'console_scripts'
 
 __all__ = ('entry_points', 'run_entry_point')
 
-entry_points = list(pkg_resources.get_entry_map(dist, group).keys())
+entry_points = sorted(pkg_resources.get_entry_map(dist, group).keys())
 
 
 def run_entry_point(name, *args):

@@ -32,6 +32,7 @@ import matplotlib
 from matplotlib import cm
 from ..plot import cmap  # noqa
 from ..util import sqlite
+from .. import version
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
 # until we have determined that it is necessary based on the command line
@@ -41,11 +42,6 @@ if 'matplotlib.pyplot' in sys.modules:
     plt.switch_backend('Template')
 else:
     matplotlib.use('Template', warn=False, force=True)
-
-
-def get_version():
-    from .. import version
-    return version.__name__.replace('.version', '') + ' ' + version.version
 
 
 class EnableAction(argparse.Action):
@@ -295,14 +291,6 @@ del colormap_choices
 del group
 
 
-# Defer loading SWIG bindings until version string is needed.
-class VersionAction(argparse._VersionAction):
-    def __call__(self, parser, namespace, values, option_string=None):
-        self.version = get_version()
-        super(VersionAction, self).__call__(
-            parser, namespace, values, option_string)
-
-
 @type_with_sideeffect(str)
 def loglevel_type(value):
     try:
@@ -386,8 +374,9 @@ class ArgumentParser(argparse.ArgumentParser):
                  add_help=add_help)
         self.register('action', 'glob', GlobAction)
         self.register('action', 'loglevel', LogLevelAction)
-        self.register('action', 'version', VersionAction)
-        self.add_argument('--version', action='version')
+        self.add_argument(
+            '--version', action='version',
+            version=version.__package__ + ' ' + version.version)
         self.add_argument(
             '-l', '--loglevel', action='loglevel', default='INFO')
 

@@ -83,8 +83,8 @@ def cos_angle_distance(theta0, phi0, theta1, phi1):
     """Cosine of angular separation in radians between two points on the
     unit sphere."""
     cos_angle_distance = (
-        np.cos(phi1 - phi0) * np.sin(theta0) * np.sin(theta1)
-        + np.cos(theta0) * np.cos(theta1))
+        np.cos(phi1 - phi0) * np.sin(theta0) * np.sin(theta1) +
+        np.cos(theta0) * np.cos(theta1))
     return np.clip(cos_angle_distance, -1, 1)
 
 

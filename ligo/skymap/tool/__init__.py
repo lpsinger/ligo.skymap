@@ -59,12 +59,12 @@ class EnableAction(argparse.Action):
             raise ValueError('Option string must start with --enable-')
         option_strings = [opt, opt.replace('--enable-', '--disable-')]
         super(EnableAction, self).__init__(
-                 option_strings,
-                 dest=dest,
-                 nargs=0,
-                 default=default,
-                 required=required,
-                 help=help)
+            option_strings,
+            dest=dest,
+            nargs=0,
+            default=default,
+            required=required,
+            help=help)
 
     def __call__(self, parser, namespace, values, option_string):
         if option_string.startswith('--enable-'):
@@ -363,17 +363,17 @@ class ArgumentParser(argparse.ArgumentParser):
         if description is None:
             description = parent_frame.f_globals.get('__doc__', None)
         super(ArgumentParser, self).__init__(
-                 prog=prog,
-                 usage=usage,
-                 description=description,
-                 epilog=epilog,
-                 parents=parents,
-                 formatter_class=HelpFormatter,
-                 prefix_chars=prefix_chars,
-                 fromfile_prefix_chars=fromfile_prefix_chars,
-                 argument_default=argument_default,
-                 conflict_handler=conflict_handler,
-                 add_help=add_help)
+            prog=prog,
+            usage=usage,
+            description=description,
+            epilog=epilog,
+            parents=parents,
+            formatter_class=HelpFormatter,
+            prefix_chars=prefix_chars,
+            fromfile_prefix_chars=fromfile_prefix_chars,
+            argument_default=argument_default,
+            conflict_handler=conflict_handler,
+            add_help=add_help)
         self.register('action', 'glob', GlobAction)
         self.register('action', 'loglevel', LogLevelAction)
         self.add_argument(

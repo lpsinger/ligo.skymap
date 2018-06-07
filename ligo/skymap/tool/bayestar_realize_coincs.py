@@ -367,8 +367,8 @@ def main(args=None):
             sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals)
         # FIXME: should only be detected sngls
         coinc_inspiral.end = lal.LIGOTimeGPS(
-            sum(sngl_inspiral.end.ns() for sngl_inspiral in sngl_inspirals)
-            // len(sngl_inspirals) * 1e-9)
+            sum(sngl_inspiral.end.ns() for sngl_inspiral in sngl_inspirals) //
+            len(sngl_inspirals) * 1e-9)
         coinc_inspiral.mass = sim_inspiral.mass1 + sim_inspiral.mass2
         coinc_inspiral.mchirp = sim_inspiral.mchirp
         coinc_inspiral.combined_far = 0.0  # Not provided

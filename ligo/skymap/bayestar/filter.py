@@ -193,7 +193,7 @@ def truncated_ifft(y, nsamples_out=None):
     lal.COMPLEX16VectorFFT(output_workspace, input_workspace, plan)
     x = output_workspace.data.copy()  # Make sure this is a deep copy
 
-    for j in range(c-2, -1, -1):
+    for j in range(c - 2, -1, -1):
         input_workspace.data = y[j::c]
         lal.COMPLEX16VectorFFT(output_workspace, input_workspace, plan)
         x *= twiddle  # FIXME: check stability of this recurrence relation.
@@ -264,7 +264,7 @@ def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0,
         S2x=float(kwargs.get('spin2x') or 0),
         S2y=float(kwargs.get('spin2y') or 0),
         S2z=float(kwargs.get('spin2z') or 0),
-        distance=1e6*lal.PC_SI, inclination=0, phiRef=0,
+        distance=1e6 * lal.PC_SI, inclination=0, phiRef=0,
         longAscNodes=0, eccentricity=0, meanPerAno=0,
         deltaF=0, f_min=f_min, f_max=f_max, f_ref=f_ref,
         LALparams=params, approximant=approx)

@@ -281,8 +281,7 @@ class PPPlot(axes.Axes):
                 arrowprops=dict(
                     arrowstyle="->",
                     shrinkA=0, shrinkB=2, linewidth=0.5,
-                    connectionstyle="angle,angleA=0,angleB=45,rad=0")
-                )
+                    connectionstyle="angle,angleA=0,angleB=45,rad=0"))
 
         return self.fill_betweenx(p, ci_lo, ci_hi, **kwargs)
 

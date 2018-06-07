@@ -101,8 +101,8 @@ def main(args=None):
     if opts.chain:
         chain = io.read_samples(opts.chain.name)
         chain = np.dot(R.T, (hp.ang2vec(
-            0.5 * np.pi - chain['dec'], chain['ra'])
-            * np.atleast_2d(chain['dist']).T).T)
+            0.5 * np.pi - chain['dec'], chain['ra']) *
+            np.atleast_2d(chain['dist']).T).T)
 
     fig = plt.figure(frameon=False)
     n = 1 if opts.projection else 2
@@ -118,7 +118,7 @@ def main(args=None):
     colors = seaborn.color_palette(n_colors=len(opts.radecdist) + 1)
 
     truth_marker = marker.reticle(
-        inner=0.5*np.sqrt(2), outer=1.5*np.sqrt(2), angle=45)
+        inner=0.5 * np.sqrt(2), outer=1.5 * np.sqrt(2), angle=45)
 
     for iface, (axis0, axis1, (sp0, sp1)) in enumerate((
             (1, 0, [0, 0]),
@@ -157,7 +157,7 @@ def main(args=None):
 
         # Mark locations
         for (ra, dec, dist), color in zip(opts.radecdist, colors[1:]):
-            theta = 0.5*np.pi - np.deg2rad(dec)
+            theta = 0.5 * np.pi - np.deg2rad(dec)
             phi = np.deg2rad(ra)
             xyz = np.dot(R.T, hp.ang2vec(theta, phi) * dist)
             ax.plot(
@@ -213,7 +213,7 @@ def main(args=None):
         # Plot conditional distance distribution at true position
         # and mark true distance.
         for (ra, dec, dist), color in zip(opts.radecdist, colors[1:]):
-            theta = 0.5*np.pi - np.deg2rad(dec)
+            theta = 0.5 * np.pi - np.deg2rad(dec)
             phi = np.deg2rad(ra)
             ipix = hp.ang2pix(nside, theta, phi)
             ax.fill_between(d, scipy.stats.norm(

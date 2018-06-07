@@ -95,7 +95,7 @@ class BoundedKDE(gaussian_kde):
                 pts[i, :] += P
                 den += super(BoundedKDE, self).evaluate(pts)
 
-                pts[i, :] -= 2.0*P
+                pts[i, :] -= 2.0 * P
                 den += super(BoundedKDE, self).evaluate(pts)
 
                 pts[i, :] = pts_orig[i, :]
@@ -274,11 +274,12 @@ class ClusteredKDE(object):
             #
             # * one weighting factor for the cluster (minus one for the
             #   overall constraint that the weights must sum to one)
-            nparams = self.k*ndim + self.k*((ndim+1)*(ndim)/2) + self.k - 1
+            nparams = (self.k * ndim +
+                       0.5 * self.k * (ndim + 1) * ndim + self.k - 1)
             with np.errstate(divide='ignore'):
                 self.bic = (
                     np.sum(np.log(self.eval_kdes(pts))) -
-                    nparams/2.0*np.log(npts))
+                    0.5 * nparams * np.log(npts))
 
     def eval_kdes(self, pts):
         pts = pts.T
@@ -438,9 +439,9 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
 
     def eval_kdes(self, pts):
         base = super(Clustered2DSkyKDE, self).eval_kdes
-        dphis = (0.0, 2.0*np.pi, -2.0*np.pi)
+        dphis = (0.0, 2 * np.pi, -2 * np.pi)
         phi, z = pts.T
-        return sum(base(np.column_stack((phi+dphi, z))) for dphi in dphis)
+        return sum(base(np.column_stack((phi + dphi, z))) for dphi in dphis)
 
 
 class Clustered3DSkyKDE(SkyKDE):

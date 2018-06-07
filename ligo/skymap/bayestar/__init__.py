@@ -272,15 +272,15 @@ def localize(
     # the sngl_inspiral records. Relax valid interval slightly from
     # +/- 0.5 deltaT to +/- 0.6 deltaT for floating point roundoff error.
     for single, series in zip(singles, snr_series):
-        if np.abs(0.5 * (nsamples - 1) * series.deltaT
-                  + float(series.epoch - single.time)) >= 0.6 * deltaT:
+        if np.abs(0.5 * (nsamples - 1) * series.deltaT +
+                  float(series.epoch - single.time)) >= 0.6 * deltaT:
             raise ValueError('BAYESTAR expects the SNR time series to be '
                              'centered on the single-detector trigger times')
 
     # Extract the TOAs in GPS nanoseconds from the SNR time series, assuming
     # that the trigger happened in the middle.
-    toas_ns = [series.epoch.ns() + 1e9 * 0.5 * (len(series.data.data) - 1)
-               * series.deltaT for series in snr_series]
+    toas_ns = [series.epoch.ns() + 1e9 * 0.5 * (len(series.data.data) - 1) *
+               series.deltaT for series in snr_series]
 
     # Collect all of the SNR series in one array.
     snr_series = np.vstack([series.data.data for series in snr_series])
@@ -330,7 +330,7 @@ def localize(
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
-            xmax=[2*np.pi, 1, max_distance, 1, 2*np.pi, 2*max_abs_t],
+            xmax=[2 * np.pi, 1, max_distance, 1, 2 * np.pi, 2 * max_abs_t],
             chain_dump=chain_dump)
     else:
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)

@@ -93,7 +93,7 @@ def test_combine(tmpdir):
     nside1 = 32
     npix1 = hp.nside2npix(nside1)
     m1 = np.zeros(npix1)
-    disc_idx = hp.query_disc(nside1, (1, 0, 0), np.pi/2)
+    disc_idx = hp.query_disc(nside1, (1, 0, 0), np.pi / 2)
     m1[disc_idx] = 1
     m1 /= m1.sum()
     hp.write_map(fn1, m1, column_names=['PROBABILITY'],
@@ -104,7 +104,7 @@ def test_combine(tmpdir):
     nside2 = 64
     npix2 = hp.nside2npix(nside2)
     m2 = np.zeros(npix2)
-    disc_idx = hp.query_disc(nside2, (0, 1, 0), np.pi/2)
+    disc_idx = hp.query_disc(nside2, (0, 1, 0), np.pi / 2)
     m2[disc_idx] = 1
     m2 /= m2.sum()
     hp.write_map(fn2, m2, column_names=['PROBABILITY'],

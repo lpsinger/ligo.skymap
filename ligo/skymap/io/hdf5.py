@@ -260,7 +260,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...     write_samples(
     ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
     ...         metadata={'bat/baz': {'widget': 'shoephone'}})
-    """
+    """  # noqa: W291
     # Copy the table so that we do not modify the original.
     table = table.copy()
 

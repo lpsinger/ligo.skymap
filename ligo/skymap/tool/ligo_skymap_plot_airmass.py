@@ -124,14 +124,22 @@ def main(args=None):
     start = times[0]
     twilights = [
         (times[0].datetime, 0.0),
-        (observer.sun_set_time(Time(start), which='next').datetime, 0.0),
-        (observer.twilight_evening_civil(Time(start), which='next').datetime, 0.1),
-        (observer.twilight_evening_nautical(Time(start), which='next').datetime, 0.2),
-        (observer.twilight_evening_astronomical(Time(start), which='next').datetime, 0.3),
-        (observer.twilight_morning_astronomical(Time(start), which='next').datetime, 0.4),
-        (observer.twilight_morning_nautical(Time(start), which='next').datetime, 0.3),
-        (observer.twilight_morning_civil(Time(start), which='next').datetime, 0.2),
-        (observer.sun_rise_time(Time(start), which='next').datetime, 0.1),
+        (observer.sun_set_time(
+            Time(start), which='next').datetime, 0.0),
+        (observer.twilight_evening_civil(
+            Time(start), which='next').datetime, 0.1),
+        (observer.twilight_evening_nautical(
+            Time(start), which='next').datetime, 0.2),
+        (observer.twilight_evening_astronomical(
+            Time(start), which='next').datetime, 0.3),
+        (observer.twilight_morning_astronomical(
+            Time(start), which='next').datetime, 0.4),
+        (observer.twilight_morning_nautical(
+            Time(start), which='next').datetime, 0.3),
+        (observer.twilight_morning_civil(
+            Time(start), which='next').datetime, 0.2),
+        (observer.sun_rise_time(
+            Time(start), which='next').datetime, 0.1),
         (times[-1].datetime, 0.0),
     ]
 
@@ -162,7 +170,8 @@ def main(args=None):
     times.format = 'isot'
     table = Table(masked=True)
     table['time'] = times
-    table['sun_alt'] = np.ma.masked_greater_equal(observer.sun_altaz(times).alt, 0)
+    table['sun_alt'] = np.ma.masked_greater_equal(
+        observer.sun_altaz(times).alt, 0)
     table['sun_alt'].format = lambda x: '{}'.format(int(np.round(x)))
     for p, data in sorted(zip(percentiles, airmass)):
         table[str(p)] = np.ma.masked_invalid(data)

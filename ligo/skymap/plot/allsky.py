@@ -410,7 +410,7 @@ class GlobeAxes(AutoScaledWCSAxes):
         kwargs = dict(kwargs)
         center = SkyCoord(kwargs.pop('center', '0d 0d')).icrs
         header = {
-            'NAXIS':  2,
+            'NAXIS': 2,
             'NAXIS1': 180,
             'NAXIS2': 180,
             'CRPIX1': 90.5,
@@ -435,7 +435,7 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
         center = SkyCoord(kwargs.pop('center', '0d 0d')).icrs
         radius = u.Quantity(kwargs.pop('radius', '1 deg')).to(u.deg).value
         header = {
-            'NAXIS':  2,
+            'NAXIS': 2,
             'NAXIS1': 512,
             'NAXIS2': 512,
             'CRPIX1': 256.5,
@@ -457,7 +457,7 @@ class AllSkyAxes(AutoScaledWCSAxes):
         kwargs = dict(kwargs)
         obstime = kwargs.pop('obstime', None)
         header = {
-            'NAXIS':  2,
+            'NAXIS': 2,
             'NAXIS1': 360,
             'NAXIS2': 180,
             'CRPIX1': 180.5,
@@ -473,8 +473,8 @@ class AllSkyAxes(AutoScaledWCSAxes):
             header['DATE-OBS'] = Time(obstime).utc.isot
         super(AllSkyAxes, self).__init__(
             header, *args, frame_class=EllipticalFrame, **kwargs)
-        self.coords[0].set_ticks(exclude_overlapping=True, spacing=45*u.deg)
-        self.coords[1].set_ticks(exclude_overlapping=True, spacing=30*u.deg)
+        self.coords[0].set_ticks(exclude_overlapping=True, spacing=45 * u.deg)
+        self.coords[1].set_ticks(exclude_overlapping=True, spacing=30 * u.deg)
 
 
 class Astro(object):

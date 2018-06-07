@@ -197,7 +197,7 @@ def polar_profile(m, nest=False):
 
     theta = np.arccos(costheta)
     m_int = np.asarray(
-        [m[i:i+j].sum() * stheta * 0.5 * npix / j
+        [m[i:i + j].sum() * stheta * 0.5 * npix / j
          for i, j, stheta in zip(startpix, ringpix, sintheta)])
 
     return theta, m_int

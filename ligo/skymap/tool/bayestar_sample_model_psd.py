@@ -35,8 +35,7 @@ def parser():
     psd_names = sorted(
         name[len(psd_name_prefix):]
         for name, func in inspect.getmembers(lalsimulation)
-        if name.startswith(psd_name_prefix) and callable(func)
-        and (
+        if name.startswith(psd_name_prefix) and callable(func) and (
             '(double f) -> double' in func.__doc__ or
             '(REAL8FrequencySeries psd, double flow) -> int' in func.__doc__))
 

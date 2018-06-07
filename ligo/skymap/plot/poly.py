@@ -36,8 +36,9 @@ def subdivide_vertices(vertices, subdivisions):
         np.arange(subdivisions + 1, dtype=float) / subdivisions).T.repeat(
             vertices.shape[1], 1)
     for i in range(len(vertices)):
-        subvertices[i*subdivisions:(i+1)*subdivisions] = frac[:0:-1, :] * \
-            np.expand_dims(vertices[i-1, :], 0).repeat(subdivisions, 0) + \
+        subvertices[i * subdivisions:(i + 1) * subdivisions] = \
+            frac[:0:-1, :] * \
+            np.expand_dims(vertices[i - 1, :], 0).repeat(subdivisions, 0) + \
             frac[:-1, :] * \
             np.expand_dims(vertices[i, :], 0).repeat(subdivisions, 0)
     return subvertices
@@ -108,8 +109,8 @@ def cut_prime_meridian(vertices):
 
         # Find the closer of the left or the right map boundary for
         # each vertex in the line segment.
-        lon_0 = 0. if v0[0] < np.pi else 2*np.pi
-        lon_1 = 0. if v1[0] < np.pi else 2*np.pi
+        lon_0 = 0. if v0[0] < np.pi else 2 * np.pi
+        lon_1 = 0. if v1[0] < np.pi else 2 * np.pi
 
         # Set the output vertices to the polar cap plus the original
         # vertices.
@@ -131,10 +132,10 @@ def cut_prime_meridian(vertices):
 
         # Construct polygon representing map boundaries.
         frame_poly = geometry.Polygon(np.asarray([
-            [0., np.pi/2],
-            [0., -np.pi/2],
-            [2*np.pi, -np.pi/2],
-            [2*np.pi, np.pi/2]]))
+            [0., 0.5 * np.pi],
+            [0., -0.5 * np.pi],
+            [2 * np.pi, -0.5 * np.pi],
+            [2 * np.pi, 0.5 * np.pi]]))
 
         # Intersect with polygon re-wrapped to lie in [-π, π) or [π, 3π).
         for shift in [0, 2 * np.pi]:

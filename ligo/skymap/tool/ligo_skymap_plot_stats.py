@@ -88,7 +88,8 @@ def main(args=None):
         min_offset = np.min(combined)
         max_offset = np.max(combined)
     if have_runtime:
-        combined = np.concatenate([dataset['runtime'] for dataset in datasets_])
+        combined = np.concatenate([dataset['runtime']
+                                   for dataset in datasets_])
         if np.any(np.isfinite(combined)):
             min_runtime = np.nanmin(combined)
             max_runtime = np.nanmax(combined)
@@ -105,15 +106,16 @@ def main(args=None):
         log10_far = np.arange(log10_min_far, log10_max_far + 1)
         bin_edges = 10.**log10_far
         bin_names = ['far_1e{0}'.format(e) for e in log10_far]
-        bin_titles = [
-            r'$\mathrm{{FAR}} \leq 10^{{{0}}}$ Hz'.format(e) for e in log10_far]
+        bin_titles = [r'$\mathrm{{FAR}} \leq 10^{{{0}}}$ Hz'.format(e)
+                      for e in log10_far]
     elif opts.group_by == 'snr':
         combined = np.concatenate([dataset['snr'] for dataset in datasets_])
         min_snr = int(np.floor(np.min(combined)))
         max_snr = int(np.floor(np.max(combined)))
         bin_edges = np.arange(min_snr, max_snr + 1)
         bin_names = ['snr_{0}'.format(e) for e in bin_edges]
-        bin_titles = [r'$\mathrm{{SNR}} \geq {0}$'.format(e) for e in bin_edges]
+        bin_titles = [r'$\mathrm{{SNR}} \geq {0}$'.format(e)
+                      for e in bin_edges]
     else:
         bin_edges = [None]
         bin_names = ['.']
@@ -238,18 +240,41 @@ def main(args=None):
                     searched_prob = data['p_value']
                 lines, = ax1.add_series(searched_prob, label=label)
                 color = lines.get_color()
-                ax2.hist(data['searched_area'], histtype='step', label=label, bins=np.logspace(np.log10(min_searched_area), np.log10(max_searched_area), 1000 if opts.cumulative else 20), cumulative=opts.cumulative, normed=opts.normed, color=color)
+                ax2.hist(data['searched_area'],
+                         histtype='step', label=label, color=color,
+                         cumulative=opts.cumulative, normed=opts.normed,
+                         bins=np.logspace(np.log10(min_searched_area),
+                                          np.log10(max_searched_area),
+                                          1000 if opts.cumulative else 20))
                 if have_offset:
-                    ax3.hist(data['offset'], histtype='step', label=label, bins=np.logspace(np.log10(min_offset), np.log10(max_offset), 1000 if opts.cumulative else 20), cumulative=opts.cumulative, normed=opts.normed, color=color)
-                if have_runtime:
-                    if np.any(np.isfinite(data['runtime'])):
-                        ax4.hist(data['runtime'], histtype='step', bins=np.logspace(np.log10(min_runtime), np.log10(max_runtime), 1000 if opts.cumulative else 20), cumulative=opts.cumulative, normed=opts.normed, color=color)
+                    ax3.hist(data['offset'],
+                             histtype='step', label=label, color=color,
+                             cumulative=opts.cumulative, normed=opts.normed,
+                             bins=np.logspace(np.log10(min_offset),
+                                              np.log10(max_offset),
+                                              1000 if opts.cumulative else 20))
+                if have_runtime and np.any(np.isfinite(data['runtime'])):
+                    ax4.hist(data['runtime'],
+                             histtype='step', color=color,
+                             cumulative=opts.cumulative, normed=opts.normed,
+                             bins=np.logspace(np.log10(min_runtime),
+                                              np.log10(max_runtime),
+                                              1000 if opts.cumulative else 20))
                 if have_searched_prob_dist:
-                    ax5.add_series(data['searched_prob_dist'], label=label, color=color)
+                    ax5.add_series(data['searched_prob_dist'],
+                                   label=label, color=color)
                 if have_searched_prob_vol:
-                    ax6.add_series(data['searched_prob_vol'], label=label, color=color)
+                    ax6.add_series(data['searched_prob_vol'],
+                                   label=label, color=color)
                     if np.any(np.isfinite(data['searched_vol'])):
-                        ax7.hist(data['searched_vol'], histtype='step', label=label, bins=np.logspace(np.log10(min_searched_vol), np.log10(max_searched_vol), 1000 if opts.cumulative else 20), cumulative=opts.cumulative, normed=opts.normed, color=color)
+                        ax7.hist(data['searched_vol'],
+                                 histtype='step', label=label, color=color,
+                                 cumulative=opts.cumulative,
+                                 normed=opts.normed,
+                                 bins=np.logspace(np.log10(min_searched_vol),
+                                                  np.log10(max_searched_vol),
+                                                  1000 if opts.cumulative
+                                                  else 20))
 
         # Finish and save plot 1.
         pb.update(i * 7)

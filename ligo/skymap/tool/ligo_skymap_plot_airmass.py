@@ -89,8 +89,8 @@ def main(args=None):
     observer = Observer.at_site(opts.site)
     t0 = Time(opts.time) if opts.time is not None else Time.now()
     t0 = observer.midnight(t0)
-    ax = plot_airmass([SkyCoord(0, 0, unit='rad')], observer, t0,
-                       altitude_yaxis=True)
+    ax = plot_airmass(
+        [SkyCoord(0, 0, unit='rad')], observer, t0, altitude_yaxis=True)
 
     # Remove the fake source and determine times that were used for the plot.
     del ax.lines[:]

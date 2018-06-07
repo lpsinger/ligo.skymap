@@ -20,8 +20,9 @@ instruments in order to form a more constrained localization.
 
 If one of the input maps contains distance information (for instance from
 BAYESTAR or LALInference) then the marginal distance posterior in the output
-map is updated according to the restriction in sky location imposed by the other
-input map(s). Only one input map can currently have distance information."""
+map is updated according to the restriction in sky location imposed by the
+other input map(s). Only one input map can currently have distance
+information."""
 
 from argparse import FileType
 

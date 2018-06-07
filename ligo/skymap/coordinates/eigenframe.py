@@ -95,8 +95,6 @@ class EigenFrame(BaseCoordinateFrame):
         """
         R = principal_axes(prob, distmu, distsigma, nest=nest)
         R = R[:, ::-1]  # Order by descending eigenvalue
-
-        obj = cls()
         e_x, e_y, e_z = CartesianRepresentation(R, unit=dimensionless_unscaled)
         return cls(e_x=e_x, e_y=e_y, e_z=e_z)
 

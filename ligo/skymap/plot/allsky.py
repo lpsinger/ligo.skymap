@@ -80,7 +80,7 @@ The following example demonstrates most of the features of this module.
         marker=ligo.skymap.plot.reticle(),
         markersize=30,
         markeredgewidth=3)
-"""
+"""  # noqa: E501
 from astropy.coordinates import ITRS, SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
@@ -338,7 +338,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         countours : `matplotlib.contour.QuadContourSet`
-        """
+        """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
         return self.contour(img, **kwargs)
@@ -367,7 +367,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         contours : `matplotlib.contour.QuadContourSet`
-        """
+        """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
         return self.contourf(img, **kwargs)
@@ -396,7 +396,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         image : `matplotlib.image.AxesImage`
-        """
+        """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
         return self.imshow(img, **kwargs)

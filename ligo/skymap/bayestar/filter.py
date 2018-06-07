@@ -161,7 +161,7 @@ def truncated_ifft(y, nsamples_out=None):
     Traceback (most recent call last):
       ...
     ValueError: Input is too short: you gave me an input of length 1024, but you asked for an IFFT of length 1025.
-    """
+    """  # noqa: E501
     nsamples = len(y)
     if nsamples_out is None:
         nsamples_out = nsamples

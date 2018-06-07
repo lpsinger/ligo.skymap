@@ -57,7 +57,7 @@ this:
     DATE    = '2013-04-08T21:50:32' / UTC date of file creation
     CREATOR = 'fits.py '           / Program that created this file
     RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
-"""
+"""  # noqa: E501
 
 import math
 import healpy as hp
@@ -332,7 +332,7 @@ def write_sky_map(filename, m, **kwargs):
     VCSVERS = 'foo 1.0 '           / Software version
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
-    """
+    """  # noqa: E501
 
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
         m = Table(m)

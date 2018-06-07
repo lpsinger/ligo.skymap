@@ -34,7 +34,7 @@ __all__ = ('find_injection_moc', 'FoundInjection')
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.
     Based on <http://en.wikipedia.org/w/index.php?title=Flood_fill&oldid=566525693#Alternative_implementations>.
-    """
+    """  # noqa: E501
     # Initialize stack with starting pixel index.
     stack = [ipix]
     while stack:

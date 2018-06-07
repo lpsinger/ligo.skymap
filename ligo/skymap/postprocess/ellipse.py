@@ -321,7 +321,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
     >>> print(dec, a, b, pa, area)
     0.0 64.77564 33.50986 9.21748 6372.42573
-    """
+    """  # noqa: E501
     try:
         prob['UNIQ']
     except (IndexError, KeyError, ValueError):

@@ -30,6 +30,8 @@ install the following required Python packages:
    `astropy-healpix <http://astropy-healpix.readthedocs.io>`_,
    which is easier to install)
 *  `h5py <https://www.h5py.org>`_
+*  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_
+*  `lscsoft-glue <https://pypi.org/project/lscsoft-glue/>`_
 *  `Matplotlib <https://matplotlib.org>`_ ≥ 2.1.0
 *  `NetworkX <https://networkx.github.io>`_
 *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
@@ -46,7 +48,6 @@ Optional Python Dependencies
 
 The following packages are optional for specific features:
 
-*  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ for using BAYESTAR
 *  `pytest <https://docs.pytest.org>`_ for running the test suite
 
 Quick Start

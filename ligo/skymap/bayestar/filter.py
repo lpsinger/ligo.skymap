@@ -233,7 +233,8 @@ def get_f_lso(mass1, mass2):
     return 1 / (6 ** 1.5 * np.pi * (mass1 + mass2) * lal.MTSUN_SI)
 
 
-def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0, **kwargs):
+def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0,
+                      **kwargs):
     # FIXME: uberbank mass criterion. Should find a way to get this from
     # pipeline output metadata.
     if waveform == 'o1-uberbank':

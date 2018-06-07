@@ -2,13 +2,13 @@ from itertools import chain, combinations, product
 
 import matplotlib
 matplotlib.use('agg')
-from astropy import units as u
-import numpy as np
-import healpy as hp
-import matplotlib.pyplot as plt
-import pytest
+from astropy import units as u  # noqa: E402
+import numpy as np  # noqa: E402
+import healpy as hp  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+import pytest  # noqa: E402
 
-from ..marker import reticle
+from ..marker import reticle  # noqa: E402
 
 
 def pp_plot():

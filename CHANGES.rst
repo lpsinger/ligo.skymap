@@ -7,6 +7,9 @@ Changelog
 
 - Make lalsuite and lscsoft-glue required dependencies.
 
+- The Python code is now required to pass linting by
+  `Flake8 <http://flake8.pycqa.org/en/latest/>`_.
+
 0.0.9 (2018-06-06)
 ==================
 

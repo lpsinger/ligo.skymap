@@ -199,7 +199,6 @@ test/coverage:
 #
 
 lint:
-  allow_failure: true
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   stage: test
   variables:

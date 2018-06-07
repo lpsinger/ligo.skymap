@@ -215,6 +215,7 @@ lint:
 #
 
 coverage:c:
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   variables:
     GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
@@ -229,6 +230,7 @@ coverage:c:
     - gcovr build/temp*/src -r .
 
 coverage:py:
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   variables:
     GIT_STRATEGY: none
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'

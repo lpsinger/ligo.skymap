@@ -56,7 +56,8 @@ sdist:
     # Enter virtualenv so that we have a controlled version of Numpy
     - virtualenv-${PYVERS} env
     - source env/bin/activate
-    - pip install -q delocate numpy==1.7.0
+    # FIXME: https://github.com/matthew-brett/delocate/pull/38
+    - pip install -q git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate numpy==1.7.0
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl

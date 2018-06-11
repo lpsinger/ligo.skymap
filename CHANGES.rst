@@ -5,7 +5,8 @@ Changelog
 0.0.11 (unreleased)
 ===================
 
-- No changes yet.
+- Prebuilt binary wheels for macOS are now relocatable. See
+  `delocate#38 <https://github.com/matthew-brett/delocate/pull/38>`_.
 
 0.0.10 (2018-06-07)
 ===================

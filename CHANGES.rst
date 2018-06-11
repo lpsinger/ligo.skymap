@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.11 (unreleased)
+0.0.11 (2018-06-11)
 ===================
 
 - Prebuilt binary wheels for macOS are now relocatable. See

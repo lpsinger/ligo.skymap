@@ -42,11 +42,7 @@ from astropy.utils.data import download_file
 from astropy.wcs import WCS
 from matplotlib.image import imread
 import numpy as np
-try:
-    from PIL.Image import DecompressionBombWarning
-except ImportError:
-    # FIXME: drop this when we can depend on pillow >= 2.5.0
-    DecompressionBombWarning = RuntimeWarning
+from PIL.Image import DecompressionBombWarning
 from reproject import reproject_interp
 
 __all__ = ('bluemarble', 'blackmarble', 'mellinger', 'reproject_interp_rgb')

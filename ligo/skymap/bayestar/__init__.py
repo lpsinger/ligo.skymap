@@ -97,59 +97,12 @@ def localize_emcee(args, xmin, xmax, chain_dump=None):
     return ckde.as_healpix()
 
 
-def localize(
+def condition(
         event, waveform='o2-uberbank', f_low=30.0,
-        min_distance=None, max_distance=None, prior_distance_power=None,
-        cosmology=False, mcmc=False, chain_dump=None,
         enable_snr_series=True, f_high_truncate=0.95):
-    """Localize a compact binary signal using the BAYESTAR algorithm.
 
-    Parameters
-    ----------
-    event : `ligo.skymap.io.events.Event`
-        The event candidate.
-    waveform : str, optional
-        The name of the waveform approximant.
-    f_low : float, optional
-        The low frequency cutoff.
-    min_distance, max_distance : float, optional
-        The limits of integration over luminosity distance, in Mpc
-        (default: determine automatically from detector sensitivity).
-    prior_distance_power : int, optional
-        The power of distance that appears in the prior
-        (default: 2, uniform in volume).
-    cosmology: bool, optional
-        Set to enable a uniform in comoving volume prior (default: false).
-    mcmc : bool, optional
-        Set to use MCMC sampling rather than more accurate Gaussian quadrature.
-    chain_dump : str, optional
-        Save posterior samples to this filename if `mcmc` is set.
-    enable_snr_series : bool, optional
-        Set to False to disable SNR time series.
-    f_high_truncate : float, optional
-        Truncate the noise power spectral densities at this factor times the
-        highest sampled frequency to suppress artifacts caused by incorrect
-        PSD conditioning by some matched filter pipelines.
-
-    Returns
-    -------
-    skymap : `astropy.table.Table`
-        A 3D sky map in multi-order HEALPix format.
-    """
     if len(event.singles) == 0:
         raise ValueError('Cannot localize an event with zero detectors.')
-
-    # Hide event parameters, but show all other arguments
-    def formatvalue(value):
-        if isinstance(value, Event):
-            return '=...'
-        else:
-            return '=' + repr(value)
-
-    frame = inspect.currentframe()
-    argstr = inspect.formatargvalues(*inspect.getargvalues(frame),
-                                     formatvalue=formatvalue)
-    start_time = lal.GPSTimeNow()
 
     singles = event.singles
     if not enable_snr_series:
@@ -195,9 +148,6 @@ def localize(
     # Center detector array.
     locations -= (np.sum(locations * weights.reshape(-1, 1), axis=0) /
                   np.sum(weights))
-
-    if cosmology:
-        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
 
     if enable_snr_series:
         log.warn('Enabling input of SNR time series. '
@@ -294,10 +244,74 @@ def localize(
     toas -= mean_toa
     epoch += int(np.round(1e9 * mean_toa))
     epoch = lal.LIGOTimeGPS(0, int(epoch))
-    gmst = lal.GreenwichMeanSiderealTime(epoch)
 
     # Translate SNR time series back to time of first sample.
     toas -= 0.5 * (nsamples - 1) * deltaT
+
+    return epoch, sample_rate, toas, snr_series, responses, locations, horizons
+
+
+def localize(
+        event, waveform='o2-uberbank', f_low=30.0,
+        min_distance=None, max_distance=None, prior_distance_power=None,
+        cosmology=False, mcmc=False, chain_dump=None,
+        enable_snr_series=True, f_high_truncate=0.95):
+    """Localize a compact binary signal using the BAYESTAR algorithm.
+
+    Parameters
+    ----------
+    event : `ligo.skymap.io.events.Event`
+        The event candidate.
+    waveform : str, optional
+        The name of the waveform approximant.
+    f_low : float, optional
+        The low frequency cutoff.
+    min_distance, max_distance : float, optional
+        The limits of integration over luminosity distance, in Mpc
+        (default: determine automatically from detector sensitivity).
+    prior_distance_power : int, optional
+        The power of distance that appears in the prior
+        (default: 2, uniform in volume).
+    cosmology: bool, optional
+        Set to enable a uniform in comoving volume prior (default: false).
+    mcmc : bool, optional
+        Set to use MCMC sampling rather than more accurate Gaussian quadrature.
+    chain_dump : str, optional
+        Save posterior samples to this filename if `mcmc` is set.
+    enable_snr_series : bool, optional
+        Set to False to disable SNR time series.
+    f_high_truncate : float, optional
+        Truncate the noise power spectral densities at this factor times the
+        highest sampled frequency to suppress artifacts caused by incorrect
+        PSD conditioning by some matched filter pipelines.
+
+    Returns
+    -------
+    skymap : `astropy.table.Table`
+        A 3D sky map in multi-order HEALPix format.
+    """
+
+    # Hide event parameters, but show all other arguments
+    def formatvalue(value):
+        if isinstance(value, Event):
+            return '=...'
+        else:
+            return '=' + repr(value)
+
+    frame = inspect.currentframe()
+    argstr = inspect.formatargvalues(*inspect.getargvalues(frame),
+                                     formatvalue=formatvalue)
+    start_time = lal.GPSTimeNow()
+
+    if cosmology:
+        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
+
+    epoch, sample_rate, toas, snr_series, responses, locations, horizons = \
+        condition(event, waveform=waveform, f_low=f_low,
+                  enable_snr_series=enable_snr_series,
+                  f_high_truncate=f_high_truncate)
+
+    gmst = lal.GreenwichMeanSiderealTime(epoch)
 
     # If minimum distance is not specified, then default to 0 Mpc.
     if min_distance is None:
@@ -325,6 +339,7 @@ def localize(
     args = (min_distance, max_distance, prior_distance_power, cosmology, gmst,
             sample_rate, toas, snr_series, responses, locations, horizons)
     if mcmc:
+        max_abs_t = 2 * snr_series.data.shape[1] / sample_rate
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
@@ -367,7 +382,7 @@ def localize(
     skymap.meta['origin'] = 'LIGO/Virgo'
     skymap.meta['gps_time'] = float(epoch)
     skymap.meta['runtime'] = float(end_time - start_time)
-    skymap.meta['instruments'] = {single.detector for single in singles}
+    skymap.meta['instruments'] = {single.detector for single in event.singles}
     skymap.meta['gps_creation_time'] = end_time
     skymap.meta['history'] = [
         '',

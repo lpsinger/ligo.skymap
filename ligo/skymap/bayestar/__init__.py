@@ -290,9 +290,7 @@ def localize(
     # initial datatype.
     epoch = sum(toas_ns) // len(toas_ns)
     toas = 1e-9 * (np.asarray(toas_ns) - epoch)
-    # FIXME: np.average does not yet support masked arrays.
-    # Replace with np.average when numpy 1.13.0 is available.
-    mean_toa = np.sum(toas * weights) / np.sum(weights)
+    mean_toa = np.average(toas, weights=weights)
     toas -= mean_toa
     epoch += int(np.round(1e9 * mean_toa))
     epoch = lal.LIGOTimeGPS(0, int(epoch))

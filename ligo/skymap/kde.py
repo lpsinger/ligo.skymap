@@ -247,11 +247,7 @@ class ClusteredKDE(object):
                 sel = (assign == i)
                 cluster_pts = pts[sel, :]
                 # Equivalent to but faster than len(set(pts))
-                # FIXME: replace with the following in Numpy >= 1.13.0:
-                #   nuniq = len(np.unique(cluster_pts, axis=0))
-                nuniq = len(np.unique(
-                    np.ascontiguousarray(cluster_pts).view(
-                        'V{}'.format(ndim * pts.dtype.itemsize))))
+                nuniq = len(np.unique(cluster_pts, axis=0))
                 # Skip if there are fewer unique points than dimensions
                 if nuniq <= ndim:
                     continue

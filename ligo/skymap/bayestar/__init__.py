@@ -251,6 +251,35 @@ def condition(
     return epoch, sample_rate, toas, snr_series, responses, locations, horizons
 
 
+def condition_prior(horizons, min_distance=None, max_distance=None,
+                    prior_distance_power=None, cosmology=False):
+    if cosmology:
+        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
+
+    # If minimum distance is not specified, then default to 0 Mpc.
+    if min_distance is None:
+        min_distance = 0
+
+    # If maximum distance is not specified, then default to the SNR=4
+    # horizon distance of the most sensitive detector.
+    if max_distance is None:
+        max_distance = max(horizons) / 4
+
+    # If prior_distance_power is not specified, then default to 2
+    # (p(r) ~ r^2, uniform in volume).
+    if prior_distance_power is None:
+        prior_distance_power = 2
+
+    # Raise an exception if 0 Mpc is the minimum effective distance and the
+    # prior is of the form r**k for k<0
+    if min_distance == 0 and prior_distance_power < 0:
+        raise ValueError(('Prior is a power law r^k with k={}, '
+                          'undefined at min_distance=0').format(
+                              prior_distance_power))
+
+    return min_distance, max_distance, prior_distance_power, cosmology
+
+
 def localize(
         event, waveform='o2-uberbank', f_low=30.0,
         min_distance=None, max_distance=None, prior_distance_power=None,
@@ -303,36 +332,16 @@ def localize(
                                      formatvalue=formatvalue)
     start_time = lal.GPSTimeNow()
 
-    if cosmology:
-        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
-
     epoch, sample_rate, toas, snr_series, responses, locations, horizons = \
         condition(event, waveform=waveform, f_low=f_low,
                   enable_snr_series=enable_snr_series,
                   f_high_truncate=f_high_truncate)
 
+    min_distance, max_distance, prior_distance_power, cosmology = \
+        condition_prior(horizons, min_distance, max_distance,
+                        prior_distance_power, cosmology)
+
     gmst = lal.GreenwichMeanSiderealTime(epoch)
-
-    # If minimum distance is not specified, then default to 0 Mpc.
-    if min_distance is None:
-        min_distance = 0
-
-    # If maximum distance is not specified, then default to the SNR=4
-    # horizon distance of the most sensitive detector.
-    if max_distance is None:
-        max_distance = max(horizons) / 4
-
-    # If prior_distance_power is not specified, then default to 2
-    # (p(r) ~ r^2, uniform in volume).
-    if prior_distance_power is None:
-        prior_distance_power = 2
-
-    # Raise an exception if 0 Mpc is the minimum effective distance and the
-    # prior is of the form r**k for k<0
-    if min_distance == 0 and prior_distance_power < 0:
-        raise ValueError(('Prior is a power law r^k with k={}, '
-                          'undefined at min_distance=0').format(
-                              prior_distance_power))
 
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')

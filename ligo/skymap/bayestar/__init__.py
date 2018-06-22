@@ -44,12 +44,14 @@ from ..io.hdf5 import write_samples
 from ..io.fits import metadata_for_version_module
 from ..io.events.base import Event
 from . import filter  # noqa
+from ..kde import Clustered2Plus1DSkyKDE
 from .. import moc
 from .. import healpix_tree
 from .. import version
 from .. import core
 from ..core import log_posterior_toa_phoa_snr
 from ..util.numpy import require_contiguous
+from .ez_emcee import ez_emcee
 
 __all__ = ('derasterize', 'localize', 'rasterize')
 
@@ -64,10 +66,6 @@ def log_post(params, *args, **kwargs):
 
 @with_numpy_random_seed
 def localize_emcee(args, xmin, xmax, chain_dump=None):
-    # Set up sampler
-    from .ez_emcee import ez_emcee
-    from ..kde import Clustered2Plus1DSkyKDE
-
     # Gather posterior samples
     chain = ez_emcee(log_post, xmin, xmax, args=args, vectorize=True)
 

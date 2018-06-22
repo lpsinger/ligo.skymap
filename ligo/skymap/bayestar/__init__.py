@@ -48,27 +48,18 @@ from .. import moc
 from .. import healpix_tree
 from .. import version
 from .. import core
-from ..core import log_likelihood_toa_phoa_snr
+from ..core import log_posterior_toa_phoa_snr
 from ..util.numpy import require_contiguous
 
 __all__ = ('derasterize', 'localize', 'rasterize')
 
 log = logging.getLogger('BAYESTAR')
 
-log_likelihood_toa_phoa_snr = require_contiguous(log_likelihood_toa_phoa_snr)
+log_posterior_toa_phoa_snr = require_contiguous(log_posterior_toa_phoa_snr)
 
 
-def log_post(params, min_distance, max_distance, prior_distance_power,
-             cosmology, gmst, sample_rate, toas, snr_series, responses,
-             locations, horizons):
-    if cosmology:
-        raise NotImplementedError(
-            'Cosmology not yet implemented for MCMC mode')
-    _, _, distance, _, _, _ = params.T
-    return (prior_distance_power * np.log(distance) +
-            log_likelihood_toa_phoa_snr(*params.T, gmst, sample_rate, toas,
-                                        snr_series, responses, locations,
-                                        horizons))
+def log_post(params, *args, **kwargs):
+    return log_posterior_toa_phoa_snr(*params.T, *args, **kwargs)
 
 
 @with_numpy_random_seed

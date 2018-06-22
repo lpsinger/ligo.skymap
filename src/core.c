@@ -856,7 +856,7 @@ fail: /* Cleanup */
 };
 
 
-static void log_likelihood_toa_phoa_snr_loop(
+static void log_posterior_toa_phoa_snr_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0],
@@ -882,29 +882,33 @@ static void log_likelihood_toa_phoa_snr_loop(
         for (npy_intp j = 0; j < nifos; j ++)
         {
             snrs[j] = (const float complex *)
-                &args[9][i * steps[9] + j * steps[15]];
+                &args[13][i * steps[13] + j * steps[19]];
             responses[j] = (const float (*)[3])
-                &args[10][i * steps[10] + j * steps[17]];
+                &args[14][i * steps[14] + j * steps[21]];
             locations[j] = (const double *)
-                &args[11][i * steps[11] + j * steps[20]];
+                &args[15][i * steps[15] + j * steps[24]];
         }
 
         /* FIXME: args must be void ** to avoid alignment warnings */
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        *(double *) &args[13][i * steps[13]] = bayestar_log_likelihood_toa_phoa_snr(
-        *(double *) &args[0][i * steps[0]],
-        *(double *) &args[1][i * steps[1]],
-        *(double *) &args[2][i * steps[2]],
-        *(double *) &args[3][i * steps[3]],
-        *(double *) &args[4][i * steps[4]],
-        *(double *) &args[5][i * steps[5]],
-        *(double *) &args[6][i * steps[6]],
+        *(double *)   &args[17][i * steps[17]] = bayestar_log_posterior_toa_phoa_snr(
+        *(double *)   &args[0][i * steps[0]],
+        *(double *)   &args[1][i * steps[1]],
+        *(double *)   &args[2][i * steps[2]],
+        *(double *)   &args[3][i * steps[3]],
+        *(double *)   &args[4][i * steps[4]],
+        *(double *)   &args[5][i * steps[5]],
+        *(double *)   &args[6][i * steps[6]],
+        *(double *)   &args[7][i * steps[7]],
+        *(int *)      &args[8][i * steps[8]],
+        *(npy_bool *) &args[9][i * steps[9]],
+        *(double *)   &args[10][i * steps[10]],
         nifos, nsamples,
-        *(double *) &args[7][i * steps[7]],
-         (const double *) &args[8][i * steps[8]],
+        *(double *) &args[11][i * steps[11]],
+         (const double *) &args[12][i * steps[12]],
          snrs, responses, locations,
-         (const double *) &args[12][i * steps[12]]);
+         (const double *) &args[16][i * steps[16]]);
         #pragma GCC diagnostic pop
     }
 
@@ -964,13 +968,13 @@ static const PyUFuncGenericFunction
     uniq2order_loops[] = {uniq2order_loop},
     uniq2pixarea_loops[] = {uniq2pixarea_loop},
     uniq2ang_loops[] = {uniq2ang_loop},
-    log_likelihood_toa_phoa_snr_loops[] = {log_likelihood_toa_phoa_snr_loop},
+    log_posterior_toa_phoa_snr_loops[] = {log_posterior_toa_phoa_snr_loop},
     signal_amplitude_model_loops[] = {signal_amplitude_model_loop};
 
-static const char log_likelihood_toa_phoa_snr_types[] = {
+static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_CFLOAT, NPY_FLOAT, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_DOUBLE};
+    NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE,
+    NPY_DOUBLE, NPY_CFLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
 
 static const char volume_render_ufunc_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
@@ -1041,11 +1045,11 @@ PyMODINIT_FUNC PyInit_core(void)
     #endif
 
     PyModule_AddObject(
-        module, "log_likelihood_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
-            log_likelihood_toa_phoa_snr_loops, no_ufunc_data,
-            log_likelihood_toa_phoa_snr_types, 1, 13, 1, PyUFunc_None,
-            "log_likelihood_toa_phoa_snr", NULL, 0,
-            "(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,ndim,ndim),(nifos,ndim),(nifos)->()"));
+        module, "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
+            log_posterior_toa_phoa_snr_loops, no_ufunc_data,
+            log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
+            "log_posterior_toa_phoa_snr", NULL, 0,
+            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,ndim,ndim),(nifos,ndim),(nifos)->()"));
 
     PyModule_AddObject(
         module, "conditional_pdf", PyUFunc_FromFuncAndData(

@@ -1031,7 +1031,7 @@ done:
 }
 
 
-double bayestar_log_likelihood_toa_phoa_snr(
+double bayestar_log_posterior_toa_phoa_snr(
     /* Parameters */
     double ra,                      /* Right ascension (rad) */
     double sin_dec,                 /* Sin(declination) */
@@ -1039,6 +1039,11 @@ double bayestar_log_likelihood_toa_phoa_snr(
     double u,                       /* Cos(inclination) */
     double twopsi,                  /* Twice polarization angle (rad) */
     double t,                       /* Barycentered arrival time (s) */
+    /* Prior */
+    double min_distance,            /* Minimum distance */
+    double max_distance,            /* Maximum distance */
+    int prior_distance_power,       /* Power of distance in prior */
+    int cosmology,                  /* Set to nonzero to include comoving volume correction */
     /* Data */
     double gmst,                    /* GMST (rad) */
     unsigned int nifos,             /* Number of detectors */
@@ -1050,6 +1055,11 @@ double bayestar_log_likelihood_toa_phoa_snr(
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
 ) {
+	bayestar_init();
+
+	if (distance < min_distance || distance > max_distance)
+		return -INFINITY;
+
     const double dec = asin(sin_dec);
     const double u2 = gsl_pow_2(u);
     const double complex exp_i_twopsi = exp_i(twopsi);
@@ -1082,8 +1092,14 @@ double bayestar_log_likelihood_toa_phoa_snr(
     A *= gsl_pow_2(FUDGE);
     i0arg_times_r *= gsl_pow_2(FUDGE);
 
-    return (A * one_by_r + i0arg_times_r) * one_by_r
-        + log(gsl_sf_bessel_I0_scaled(i0arg_times_r * one_by_r));
+    double result = (A * one_by_r + i0arg_times_r) * one_by_r
+        + log(gsl_sf_bessel_I0_scaled(i0arg_times_r * one_by_r)
+				* gsl_pow_int(distance, prior_distance_power));
+
+	if (cosmology)
+		result += log_dVC_dVL(distance);
+
+	return result;
 }
 
 

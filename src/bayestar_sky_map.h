@@ -105,7 +105,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     const double *horizons          /* SNR=1 horizon distances for each detector */
 );
 
-double bayestar_log_likelihood_toa_phoa_snr(
+double bayestar_log_posterior_toa_phoa_snr(
     /* Parameters */
     double ra,                      /* Right ascension (rad) */
     double sin_dec,                 /* Sin(declination) */
@@ -113,6 +113,11 @@ double bayestar_log_likelihood_toa_phoa_snr(
     double u,                       /* Cos(inclination) */
     double twopsi,                  /* Twice polarization angle (rad) */
     double t,                       /* Barycentered arrival time (s) */
+    /* Prior */
+    double min_distance,            /* Minimum distance */
+    double max_distance,            /* Maximum distance */
+    int prior_distance_power,       /* Power of distance in prior */
+    int cosmology,                  /* Set to nonzero to include comoving volume correction */
     /* Data */
     double gmst,                    /* GMST (rad) */
     unsigned int nifos,             /* Number of detectors */

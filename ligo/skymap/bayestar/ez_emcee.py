@@ -109,10 +109,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
                 pos, iterations=nburnin, storechain=False):
             progress.update()
 
-        sampler = Sampler(nwalkers, ndim, log_prob_fn, logp,
-                          ntemps=ntemps, loglargs=args, logpargs=[lo, hi],
-                          **options)
-
+        sampler.reset()
         acl = np.nan
         while not np.isfinite(acl) or sampler.time < nindep * acl:
 

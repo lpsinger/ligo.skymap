@@ -5,7 +5,9 @@ Changelog
 0.0.12 (unreleased)
 ===================
 
-- No changes yet.
+- ``bayestar_localize_lvalert`` will now write the correct GraceDb URL
+  to FITS file headers in the case that it is run with a non-default GraceDb
+  server.
 
 0.0.11 (2018-06-11)
 ===================

@@ -65,6 +65,7 @@ def main(args=None):
     import re
     import sys
     import tempfile
+    import urllib.parse
     from ..bayestar import localize, rasterize
     from ..io import fits
     from ..io import events
@@ -91,6 +92,10 @@ def main(args=None):
     gracedb = ligo.gracedb.rest.GraceDb(
         os.environ.get(
             'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))
+
+    # Determine the base URL for event pages.
+    scheme, netloc, *_ = urllib.parse.urlparse(gracedb.service_url)
+    base_url = urllib.parse.urlunparse((scheme, netloc, 'events', '', '', ''))
 
     if opts.chain_dump:
         chain_dump = re.sub(r'.fits(.gz)?$', r'.hdf5', opts.output)
@@ -134,8 +139,7 @@ def main(args=None):
                 enable_snr_series=opts.enable_snr_series,
                 f_high_truncate=opts.f_high_truncate))
             sky_map.meta['objid'] = str(graceid)
-            sky_map.meta['url'] = 'https://gracedb.ligo.org/events/{0}'.format(
-                graceid)
+            sky_map.meta['url'] = '{}/{}'.format(base_url, graceid)
             log.info("sky localization complete")
 
             # upload FITS file

@@ -9,6 +9,8 @@ Changelog
   to FITS file headers in the case that it is run with a non-default GraceDb
   server.
 
+- BAYESTAR's SNR series time stamp assertions now include a bit more detail.
+
 0.0.11 (2018-06-11)
 ===================
 

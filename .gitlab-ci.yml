@@ -4,13 +4,6 @@ stages:
   - test
   - deploy
 
-.docker: &docker
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  after_script:
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
-
 #
 # Build Python source package.
 #
@@ -105,6 +98,7 @@ requirements:
     GIT_STRATEGY: none
     IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
@@ -115,9 +109,10 @@ requirements:
       RUN rm -f requirements.txt
       RUN pip uninstall ligo-segments  # FIXME: something funny going on with namespace packages?
       EOF
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
   dependencies:
     - requirements
-  <<: *docker
 
 dependencies/python3.5:
   <<: *dependencies

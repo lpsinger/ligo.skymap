@@ -113,6 +113,7 @@ requirements:
       RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr sphinx sphinx-argparse flake8
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
+      RUN pip uninstall ligo-segments  # FIXME: something funny going on with namespace packages?
   dependencies:
     - requirements
   <<: *docker

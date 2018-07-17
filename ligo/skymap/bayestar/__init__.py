@@ -49,7 +49,7 @@ from .. import moc
 from .. import healpix_tree
 from .. import version
 from .. import core
-from ..core import log_posterior_toa_phoa_snr
+from ..core import log_posterior_toa_phoa_snr as _log_posterior_toa_phoa_snr
 from ..util.numpy import require_contiguous
 from .ez_emcee import ez_emcee
 
@@ -57,7 +57,18 @@ __all__ = ('derasterize', 'localize', 'rasterize')
 
 log = logging.getLogger('BAYESTAR')
 
-log_posterior_toa_phoa_snr = require_contiguous(log_posterior_toa_phoa_snr)
+_log_posterior_toa_phoa_snr = require_contiguous(_log_posterior_toa_phoa_snr)
+
+
+# Wrap so that ufunc parameter names are known
+def log_posterior_toa_phoa_snr(
+        ra, sin_dec, distance, u, twopsi, t, min_distance, max_distance,
+        prior_distance_power, cosmology, gmst, sample_rate, epochs, snrs,
+        responses, locations, horizons):
+    return _log_posterior_toa_phoa_snr(
+        ra, sin_dec, distance, u, twopsi, t, min_distance, max_distance,
+        prior_distance_power, cosmology, gmst, sample_rate, epochs, snrs,
+        responses, locations, horizons)
 
 
 def log_post(params, *args, **kwargs):

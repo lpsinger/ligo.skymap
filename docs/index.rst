@@ -70,6 +70,7 @@ BAYESTAR Rapid Sky Localization
 
    ligo/skymap/tool/bayestar_localize_coincs
    ligo/skymap/tool/bayestar_localize_lvalert
+   ligo/skymap/tool/bayestar_mcmc
    ligo/skymap/tool/bayestar_realize_coincs
    ligo/skymap/tool/bayestar_sample_model_psd
 

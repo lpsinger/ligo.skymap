@@ -5,7 +5,9 @@ Changelog
 0.0.13 (unreleased)
 ===================
 
-- No changes yet.
+- Add ``bayestar-mcmc`` tool for pure Markov Chain Monte Carlo parameter
+  estimation, without sky map postprocessing but with options for holding
+  parameters at fixed values.
 
 0.0.12 (2018-07-18)
 ===================

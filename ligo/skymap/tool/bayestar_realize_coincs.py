@@ -389,10 +389,10 @@ def main(args=None):
                 epoch = sngl_inspiral.end - (len(snr) - 1) / sample_rate
                 snr = np.concatenate((snr[:0:-1].conj(), snr))
                 snr *= sngl_inspiral.snr * np.exp(1j * sngl_inspiral.coa_phase)
-                snr_series = lal.CreateCOMPLEX16TimeSeries(
+                snr_series = lal.CreateCOMPLEX8TimeSeries(
                     'snr', epoch, 0, dt, lal.StrainUnit, len(snr))
                 snr_series.data.data[:] = snr
-                elem = lal.series.build_COMPLEX16TimeSeries(snr_series)
+                elem = lal.series.build_COMPLEX8TimeSeries(snr_series)
                 elem.appendChild(
                     ligolw_param.Param.from_pyvalue(
                         u'event_id', sngl_inspiral.event_id))

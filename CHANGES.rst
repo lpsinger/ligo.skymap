@@ -13,6 +13,9 @@ Changelog
 
 - Add phase convention for gstlal-spiir, which needs to be confirmed upstream.
 
+- Fix datatype of simulated SNR time series produced by
+  ``bayestar-realize-coincs``.
+
 0.0.11 (2018-06-11)
 ===================
 

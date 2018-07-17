@@ -11,6 +11,8 @@ Changelog
 
 - BAYESTAR's SNR series time stamp assertions now include a bit more detail.
 
+- Add phase convention for gstlal-spiir, which needs to be confirmed upstream.
+
 0.0.11 (2018-06-11)
 ===================
 

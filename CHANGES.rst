@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.12 (unreleased)
+0.0.12 (2018-07-18)
 ===================
 
 - ``bayestar_localize_lvalert`` will now write the correct GraceDb URL

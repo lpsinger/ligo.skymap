@@ -417,8 +417,8 @@ class InterpolatedPSD(interpolate.interp1d):
             log.warning('Assuming PSD is infinite at %g Hz because PSD is '
                         'only sampled down to %g Hz', f_min, self._f_min)
         if f_max > self._f_max:
-            log.warning('Assuming PSD is infinite at %g Hz because PSD is only '
-                     'sampled up to %g Hz', f_max, self._f_max)
+            log.warning('Assuming PSD is infinite at %g Hz because PSD is '
+                        'only sampled up to %g Hz', f_max, self._f_max)
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),
             np.exp(super(InterpolatedPSD, self).__call__(np.log(f))), np.inf)

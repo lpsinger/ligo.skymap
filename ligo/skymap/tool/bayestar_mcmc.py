@@ -157,19 +157,18 @@ def main(args=None):
 
         # Fix parameters
         for i, key in reversed(list(enumerate(['ra', 'dec', 'distance']))):
-            try:
-                value = getattr(opts, key)
-            except AttributeError:
-                pass
-            else:
-                if key in ['ra', 'dec']:
-                    # FIXME: figure out a more elegant way to address different
-                    # units in command line arguments and posterior samples
-                    value = np.deg2rad(value)
+            value = getattr(opts, key)
+            if value is None:
+                continue
 
-                kwargs[transformed_names[i]] = value
-                del (xmin[i], xmax[i], names[i], transformed_names[i],
-                     forward_transforms[i], reverse_transforms[i])
+            if key in ['ra', 'dec']:
+                # FIXME: figure out a more elegant way to address different
+                # units in command line arguments and posterior samples
+                value = np.deg2rad(value)
+
+            kwargs[transformed_names[i]] = value
+            del (xmin[i], xmax[i], names[i], transformed_names[i],
+                 forward_transforms[i], reverse_transforms[i])
 
         log.info('%s:sampling', coinc_event_id)
 

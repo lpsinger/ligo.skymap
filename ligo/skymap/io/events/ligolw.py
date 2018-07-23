@@ -179,7 +179,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
                      in event_ids_by_coinc_event_id[coinc_event_id]]
             if offsets_by_time_slide_id is None and \
                     coinc.time_slide_id == TimeSlideID(0):
-                log.warn(
+                log.warning(
                     'Time slide record is missing for %s, '
                     'guessing that this is zero-lag', coinc.time_slide_id)
                 offsets = defaultdict(float)
@@ -197,7 +197,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
             invert_phases = self._phase_convention(
                 program_for_process_id[coinc.process_id])
             if invert_phases:
-                log.warn(PHASE_CONVENTION_WARNING)
+                log.warning(PHASE_CONVENTION_WARNING)
 
             singles = tuple(LigoLWSingleEvent(
                 self, sngl.ifo, sngl.snr, sngl.coa_phase,

@@ -238,13 +238,15 @@ def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0,
     # FIXME: uberbank mass criterion. Should find a way to get this from
     # pipeline output metadata.
     if waveform == 'o1-uberbank':
-        log.warn('Template is unspecified; using ER8/O1 uberbank criterion')
+        log.warning('Template is unspecified; '
+                    'using ER8/O1 uberbank criterion')
         if mass1 + mass2 < 4:
             waveform = 'TaylorF2threePointFivePN'
         else:
             waveform = 'SEOBNRv2_ROM_DoubleSpin'
     elif waveform == 'o2-uberbank':
-        log.warn('Template is unspecified; using ER10/O2 uberbank criterion')
+        log.warning('Template is unspecified; '
+                    'using ER10/O2 uberbank criterion')
         if mass1 + mass2 < 4:
             waveform = 'TaylorF2threePointFivePN'
         else:
@@ -395,7 +397,7 @@ class InterpolatedPSD(interpolate.interp1d):
         # FIXME: This is a hack to fix an issue with the detection pipeline's
         # PSD conditioning. Remove this when the issue is fixed upstream.
         if f_high_truncate < 1.0:
-            log.warn(
+            log.warning(
                 'Truncating PSD at %g of maximum frequency to suppress '
                 'rolloff artifacts. This option may be removed in the future.',
                 f_high_truncate)
@@ -412,10 +414,10 @@ class InterpolatedPSD(interpolate.interp1d):
         f_min = np.min(f)
         f_max = np.max(f)
         if f_min < self._f_min:
-            log.warn('Assuming PSD is infinite at %g Hz because PSD is only '
-                     'sampled down to %g Hz', f_min, self._f_min)
+            log.warning('Assuming PSD is infinite at %g Hz because PSD is '
+                        'only sampled down to %g Hz', f_min, self._f_min)
         if f_max > self._f_max:
-            log.warn('Assuming PSD is infinite at %g Hz because PSD is only '
+            log.warning('Assuming PSD is infinite at %g Hz because PSD is only '
                      'sampled up to %g Hz', f_max, self._f_max)
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),

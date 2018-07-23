@@ -150,8 +150,8 @@ def condition(
                   np.sum(weights))
 
     if enable_snr_series:
-        log.warn('Enabling input of SNR time series. '
-                 'This feature is UNREVIEWED.')
+        log.warning('Enabling input of SNR time series. '
+                    'This feature is UNREVIEWED.')
         snr_series = [single.snr_series for single in singles]
         if all(s is None for s in snr_series):
             snr_series = None
@@ -166,10 +166,10 @@ def condition(
         np.sqrt(np.sum(np.square(locations), axis=1))) + 0.005
 
     if snr_series is None:
-        log.warn("No SNR time series found, so we are creating a zero-noise "
-                 "SNR time series from the whitened template's "
-                 "autocorrelation sequence. The sky localization uncertainty "
-                 "may be underestimated.")
+        log.warning("No SNR time series found, so we are creating a "
+                    "zero-noise SNR time series from the whitened template's "
+                    "autocorrelation sequence. The sky localization "
+                    "uncertainty may be underestimated.")
 
         acors, sample_rates = zip(
             *[filter.autocorrelation(_, max_abs_t) for _ in HS])
@@ -256,7 +256,7 @@ def condition(
 def condition_prior(horizons, min_distance=None, max_distance=None,
                     prior_distance_power=None, cosmology=False):
     if cosmology:
-        log.warn('Enabling cosmological prior. This feature is UNREVIEWED.')
+        log.warning('Enabling cosmological prior. This feature is UNREVIEWED.')
 
     # If minimum distance is not specified, then default to 0 Mpc.
     if min_distance is None:

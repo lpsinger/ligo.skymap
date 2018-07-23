@@ -56,9 +56,12 @@ def parser():
     group = parser.add_argument_group(
         'fixed parameter options',
         'Options to hold certain parameters constant')
-    group.add_argument('--ra', metavar='DEG', help='Right ascension')
-    group.add_argument('--dec', metavar='DEG', help='Declination')
-    group.add_argument('--distance', metavar='Mpc', help='Luminosity distance')
+    group.add_argument('--ra', type=float, metavar='DEG',
+                       help='Right ascension')
+    group.add_argument('--dec', type=float, metavar='DEG',
+                       help='Declination')
+    group.add_argument('--distance', type=float, metavar='Mpc',
+                       help='Luminosity distance')
 
     return parser
 
@@ -130,10 +133,10 @@ def main(args=None):
 
         log.info('%s:preparing', coinc_event_id)
 
-        epoch, sample_rate, toas, snr_series, responses, locations, horizons \
-            = condition(event, waveform=opts.waveform, f_low=opts.f_low,
-                        enable_snr_series=opts.enable_snr_series,
-                        f_high_truncate=opts.f_high_truncate)
+        epoch, sample_rate, epochs, snrs, responses, locations, horizons = \
+            condition(event, waveform=opts.waveform, f_low=opts.f_low,
+                      enable_snr_series=opts.enable_snr_series,
+                      f_high_truncate=opts.f_high_truncate)
 
         min_distance, max_distance, prior_distance_power, cosmology = \
             condition_prior(horizons, opts.min_distance, opts.max_distance,
@@ -141,10 +144,7 @@ def main(args=None):
 
         gmst = lal.GreenwichMeanSiderealTime(epoch)
 
-        args = (min_distance, max_distance, prior_distance_power, cosmology,
-                gmst, sample_rate, toas, snr_series, responses, locations,
-                horizons)
-        max_abs_t = 2 * snr_series.data.shape[1] / sample_rate
+        max_abs_t = 2 * snrs.data.shape[1] / sample_rate
         xmin = [0, -1, min_distance, -1, 0, 0]
         xmax = [2 * np.pi, 1, max_distance, 1, 2 * np.pi, 2 * max_abs_t]
         names = 'ra dec distance inclination twopsi time'.split()
@@ -153,7 +153,11 @@ def main(args=None):
                               np.cos, identity, identity]
         reverse_transforms = [identity, np.arcsin, identity,
                               np.arccos, identity, identity]
-        kwargs = {}
+        kwargs = dict(min_distance=min_distance, max_distance=max_distance,
+                      prior_distance_power=prior_distance_power,
+                      cosmology=cosmology, gmst=gmst, sample_rate=sample_rate,
+                      epochs=epochs, snrs=snrs, responses=responses,
+                      locations=locations, horizons=horizons)
 
         # Fix parameters
         for i, key in reversed(list(enumerate(['ra', 'dec', 'distance']))):
@@ -173,8 +177,7 @@ def main(args=None):
         log.info('%s:sampling', coinc_event_id)
 
         # Run MCMC
-        chain = ez_emcee(log_post, xmin, xmax,
-                         args=args, kwargs=kwargs, vectorize=True)
+        chain = ez_emcee(log_post, xmin, xmax, kwargs=kwargs, vectorize=True)
 
         # Transform back from sin_dec to dec and cos_inclination to inclination
         for i, func in enumerate(reverse_transforms):

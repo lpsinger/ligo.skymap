@@ -71,8 +71,17 @@ def log_posterior_toa_phoa_snr(
         responses, locations, horizons)
 
 
+# Wrap so that fixed parameter values are pulled from keyword arguments
 def log_post(params, *args, **kwargs):
-    return log_posterior_toa_phoa_snr(*params.T, *args, **kwargs)
+    # Names of parameters
+    keys = ('ra', 'sin_dec', 'distance', 'u', 'twopsi', 't')
+
+    params = list(params.T)
+    kwargs = dict(kwargs)
+
+    return log_posterior_toa_phoa_snr(
+        *(kwargs.pop(key) if key in kwargs else params.pop(0) for key in keys),
+        *args, **kwargs)
 
 
 @with_numpy_random_seed

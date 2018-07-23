@@ -99,8 +99,8 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
     with tqdm(total=nburnin + nindep * nsteps) as progress:
 
         sampler = Sampler(nwalkers, ndim, log_prob_fn, logp,
-                          ntemps=ntemps, loglargs=args, logpargs=[lo, hi],
-                          **options)
+                          ntemps=ntemps, loglargs=args, loglkwargs=kwargs,
+                          logpargs=[lo, hi], **options)
         pos = np.random.uniform(lo, hi, (ntemps, nwalkers, ndim))
 
         # Burn in

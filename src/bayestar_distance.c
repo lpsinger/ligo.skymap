@@ -454,6 +454,34 @@ static double marginal_ppf_df(double r, void *params)
 }
 
 
+static double marginal_ppf_initial_guess(
+    double p, long long npix,
+    const double *prob, const double *mu,
+    const double *sigma, const double *norm)
+{
+	/* Find the most probable pixel that has valid distance information. */
+	long long max_ipix = -1;
+	double max_prob = -INFINITY;
+	for (long long ipix = 0; ipix < npix; ipix ++)
+	{
+		if (isfinite(mu[ipix]) && prob[ipix] > max_prob)
+		{
+			max_ipix = ipix;
+			max_prob = prob[ipix];
+		}
+	}
+
+	if (max_ipix >= 0)
+	{
+		return bayestar_distance_conditional_ppf(
+			p, mu[max_ipix], sigma[max_ipix], norm[max_ipix]);
+	} else {
+		/* No pixels with valid distance info found: just guess 100 Mpc. */
+		return 100;
+	}
+}
+
+
 double bayestar_distance_marginal_ppf(
     double p, long long npix,
     const double *prob, const double *mu,
@@ -470,9 +498,7 @@ double bayestar_distance_marginal_ppf(
     static const int max_iter = 50;
     marginal_ppf_params params = {p, npix, prob, mu, sigma, norm};
     int iter = 0;
-    const size_t max_ipix = gsl_stats_max_index(prob, 1, npix);
-    double r = bayestar_distance_conditional_ppf(
-        p, mu[max_ipix], sigma[max_ipix], norm[max_ipix]);
+    double r = marginal_ppf_initial_guess(p, npix, prob, mu, sigma, norm);
     int status;
 
     /* Set up solver (on stack). */

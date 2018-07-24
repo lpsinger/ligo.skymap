@@ -9,6 +9,9 @@ Changelog
   estimation, without sky map postprocessing but with options for holding
   parameters at fixed values.
 
+- Fix a corner case in the initialization of the ``distance.marginal_ppf``
+  solver that could cause NaN return values.
+
 0.0.12 (2018-07-18)
 ===================
 

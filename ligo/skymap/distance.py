@@ -435,8 +435,6 @@ def ud_grade(prob, distmu, distsigma, *args, **kwargs):
         Distance location parameter (Mpc)
     distsigma : `numpy.ndarray`
         Distance scale parameter (Mpc)
-    distnorm : `numpy.ndarray`
-        Distance normalization factor (Mpc^-2)
     *args, **kwargs :
         Additional arguments to `healpy.ud_grade` (e.g.,
         `nside`, `order_in`, `order_out`).

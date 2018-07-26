@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Functions related to matched filtering.
+Utility functions for BAYESTAR that are related to matched filtering.
 """
 
 import logging
@@ -82,14 +82,14 @@ def truncated_ifft(y, nsamples_out=None):
     See http://www.fftw.org/pruned.html for a discussion of related algorithms.
 
     Perform inverse FFT to obtain truncated autocorrelation time series.
-    This makes use of a folded DFT for a speedup of
+    This makes use of a folded DFT for a speedup of::
 
         log(nsamples)/log(nsamples_out)
 
     over directly computing the inverse FFT and truncating. Here is how it
     works. Say we have a frequency-domain signal X[k], for 0 ≤ k ≤ N - 1. We
     want to compute its DFT x[n], for 0 ≤ n ≤ M, where N is divisible by M:
-    N = cM, for some integer c. The DFT is:
+    N = cM, for some integer c. The DFT is::
 
                N - 1
                ______
@@ -131,8 +131,11 @@ def truncated_ifft(y, nsamples_out=None):
     x : `numpy.ndarray`
         The first nsamples_out samples of the IFFT of x, zero-padded if
 
+    Examples
+    --------
 
     First generate the IFFT of a random signal:
+
     >>> nsamples_out = 1024
     >>> y = np.random.randn(nsamples_out) + np.random.randn(nsamples_out) * 1j
     >>> plan = CreateReverseCOMPLEX16FFTPlan(nsamples_out, 0)
@@ -143,6 +146,7 @@ def truncated_ifft(y, nsamples_out=None):
     >>> x = time.data
 
     Now check that the truncated IFFT agrees:
+
     >>> np.allclose(x, truncated_ifft(y), rtol=1e-15)
     True
     >>> np.allclose(x, truncated_ifft(y, 1024), rtol=1e-15)
@@ -325,6 +329,8 @@ def autocorrelation(H, out_duration):
     -------
     acor : `numpy.ndarray`
         The complex-valued autocorrelation sequence.
+    sample_rate : float
+        The sample rate.
     """
 
     # Compute duration of template, rounded up to a power of 2.
@@ -353,7 +359,8 @@ def autocorrelation(H, out_duration):
 
 
 def abs2(y):
-    """Return the |z|^2 for a complex number z."""
+    """Return the absolute value squared, :math:`|z|^2` ,for a complex number
+    :math:`z`, without performing a square root."""
     return np.square(y.real) + np.square(y.imag)
 
 
@@ -433,7 +440,11 @@ class SignalModel(object):
     Note that the autocorrelation series and the moments are related,
     as shown below.
 
+    Examples
+    --------
+
     Create signal model:
+
     >>> from . import filter
     >>> sngl = lambda: None
     >>> H = filter.sngl_inspiral_psd(
@@ -443,15 +454,18 @@ class SignalModel(object):
     >>> sm = SignalModel(W)
 
     Compute one-sided autocorrelation function:
+
     >>> out_duration = 0.1
     >>> a, sample_rate = filter.autocorrelation(W, out_duration)
 
     Restore negative time lags using symmetry:
+
     >>> a = np.concatenate((a[:0:-1].conj(), a))
 
     Compute the first 2 frequency moments by taking derivatives of the
     autocorrelation sequence using centered finite differences.
     The nth frequency moment should be given by (-1j)^n a^(n)(t).
+
     >>> acor_moments = []
     >>> for i in range(2):
     ...     acor_moments.append(a[len(a) // 2])
@@ -460,9 +474,11 @@ class SignalModel(object):
     >>> acor_moments = np.real(acor_moments)
 
     Compute the first 2 frequency moments using this class.
+
     >>> quad_moments = [sm.get_sn_moment(i) for i in range(2)]
 
     Compare them.
+
     >>> for i, (am, qm) in enumerate(zip(acor_moments, quad_moments)):
     ...     assert np.allclose(am, qm, rtol=0.05)
     """

@@ -103,7 +103,7 @@ def interpolate_max_catmull_rom_even(y):
     # greatest endpoint
     for root in roots:
         if np.isreal(root) and 0 < root < 1:
-            new_t_max = root
+            new_t_max = np.real(root)
             new_y_max = poly_re(new_t_max) + poly_im(new_t_max) * 1j
             new_y_max_abs2 = abs2(new_y_max)
             if new_y_max_abs2 > y_max_abs2:

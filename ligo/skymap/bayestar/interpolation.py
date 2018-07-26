@@ -23,6 +23,8 @@ Sub-sample interpolation for matched filter time series.
 import numpy as np
 from scipy import optimize
 
+from .filter import abs2
+
 __all__ = ('interpolate_max',)
 
 

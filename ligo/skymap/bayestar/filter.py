@@ -297,7 +297,7 @@ def signal_psd_series(H, S):
     return ret
 
 
-def autocorrelation(H, out_duration):
+def autocorrelation(H, out_duration, normalize=True):
     """
     Calculate the complex autocorrelation sequence a(t), for t >= 0, of an
     inspiral signal.
@@ -331,7 +331,8 @@ def autocorrelation(H, out_duration):
     nsamples_out = int(np.ceil(out_duration * sample_rate))
 
     acor = truncated_ifft(power, nsamples_out)
-    acor /= np.abs(acor[0])
+    if normalize:
+        acor /= np.abs(acor[0])
 
     # If we have done this right, then the zeroth sample represents lag 0
     if np.all(np.isreal(H.data.data)):

@@ -27,9 +27,7 @@ The root-mean square measurement error depends on the SNR of the signal, so
 there is a choice for how to generate perturbed time and phase measurements:
 
  - `zero-noise`: no measurement error at all
- - `from-truth`: use true, nominal SNR in each detector
- - `from-measurement`: first perturb SNR with measurement error, then use
-   that perturbed SNR to compute covariance of time and phase errors
+ - `gaussian-noise`: measurement error for a matched filter in Gaussian noise
 """
 
 from argparse import FileType
@@ -73,7 +71,7 @@ def parser():
         'are found')
     parser.add_argument(
         '--measurement-error', default='zero-noise',
-        choices=('zero-noise', 'from-truth', 'from-measurement'),
+        choices=('zero-noise', 'gaussian-noise'),
         help='How to compute the measurement error')
     parser.add_argument(
         '--enable-snr-series', default=False, action='store_true',
@@ -88,6 +86,80 @@ def parser():
         '--duty-cycle', type=float, default=1.0,
         help='Single-detector duty cycle')
     return parser
+
+
+def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
+                 response, location, measurement_error='zero-noise'):
+    import lal
+    import numpy as np
+    from scipy.interpolate import interp1d
+
+    from ..bayestar import filter
+    from ..bayestar.interpolation import interpolate_max
+
+    duration = 0.1
+
+    # Calculate whitened template autocorrelation sequence.
+    HS = filter.signal_psd_series(H, S)
+    n = len(HS.data.data)
+    acor, sample_rate = filter.autocorrelation(HS, duration)
+
+    # Calculate time, amplitude, and phase.
+    u = np.cos(inc)
+    u2 = np.square(u)
+    signal_model = filter.SignalModel(HS)
+    horizon = signal_model.get_horizon_distance()
+    Fplus, Fcross = lal.ComputeDetAMResponse(response, ra, dec, psi, gmst)
+    toa = lal.TimeDelayFromEarthCenter(location, ra, dec, epoch)
+    z = (0.5 * (1 + u2) * Fplus + 1j * u * Fcross) * horizon / distance
+
+    # Calculate complex autocorrelation sequence.
+    snr_series = z * np.concatenate((acor[:0:-1].conj(), acor))
+
+    # If requested, add noise.
+    if measurement_error == 'gaussian-noise':
+        sigmasq = 4 * np.sum(HS.deltaF * np.abs(HS.data.data))
+        amp = 4 * n * HS.deltaF**0.5 * np.sqrt(HS.data.data / sigmasq)
+        N = lal.CreateCOMPLEX16FrequencySeries(
+            '', HS.epoch, HS.f0, HS.deltaF, HS.sampleUnits, n)
+        N.data.data = amp * (
+            np.random.randn(n) + 1j * np.random.randn(n))
+        noise_term, sample_rate_2 = filter.autocorrelation(
+            N, 2 * duration - 1 / sample_rate, normalize=False)
+        assert sample_rate == sample_rate_2
+        snr_series += noise_term
+
+    # Shift SNR series to the nearest sample.
+    int_samples, frac_samples = divmod(
+        (1e-9 * epoch.gpsNanoSeconds + toa) * sample_rate, 1)
+    if frac_samples > 0.5:
+        int_samples += 1
+        frac_samples -= 1
+    epoch = lal.LIGOTimeGPS(epoch.gpsSeconds, 0)
+    n = len(acor) - 1
+    mprime = np.arange(-n, n + 1)
+    m = mprime + frac_samples
+    re, im = (
+        interp1d(m, x, kind='cubic', bounds_error=False, fill_value=0)(mprime)
+        for x in (snr_series.real, snr_series.imag))
+    snr_series = re + 1j * im
+
+    # Find the trigger values.
+    i_nearest = np.argmax(np.abs(snr_series[n-n//2:n+n//2+1])) + n-n//2
+    i_interp, z_interp = interpolate_max(i_nearest, snr_series,
+                                         n // 2, method='lanczos')
+    toa = epoch + (int_samples + i_interp - n) / sample_rate
+    snr = np.abs(z_interp)
+    phase = np.angle(z_interp)
+
+    # Shift and truncate the SNR time series.
+    epoch += (int_samples + i_nearest - n - n // 2) / sample_rate
+    snr_series = snr_series[(i_nearest - n // 2):(i_nearest + n // 2 + 1)]
+    tseries = lal.CreateCOMPLEX8TimeSeries(
+        'snr', epoch, 0, 1 / sample_rate,
+        lal.DimensionlessUnit, len(snr_series))
+    tseries.data.data = snr_series
+    return horizon, snr, toa, phase, tseries
 
 
 def main(args=None):
@@ -144,6 +216,7 @@ def main(args=None):
     psds = {
         key: filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
         for key, psd in psds.items() if psd is not None}
+    psds = [psds[ifo] for ifo in opts.detector]
 
     # Read injection file.
     xmldoc, _ = ligolw_utils.load_fileobj(
@@ -214,10 +287,6 @@ def main(args=None):
         sim_inspiral.spin2x = 0
         sim_inspiral.spin2y = 0
 
-        # Pre-evaluate some trigonometric functions that we will need.
-        u = np.cos(inc)
-        u2 = np.square(u)
-
         # Signal models for each detector.
         H = filter.sngl_inspiral_psd(
             waveform,
@@ -230,70 +299,22 @@ def main(args=None):
             spin2y=sim_inspiral.spin2y,
             spin2z=sim_inspiral.spin2z,
             f_min=f_low)
-        W = [filter.signal_psd_series(H, psds[ifo]) for ifo in opts.detector]
-        signal_models = [filter.SignalModel(_) for _ in W]
 
-        # Get SNR=1 horizon distances for each detector.
-        horizons = np.asarray([
-            signal_model.get_horizon_distance()
-            for signal_model in signal_models])
-
-        # Get antenna factors for each detector.
-        Fplus, Fcross = np.asarray([
-            lal.ComputeDetAMResponse(response, ra, dec, psi, gmst)
-            for response in responses]).T
-
-        # Compute TOAs at each detector.
-        toas = np.asarray(
-            [lal.TimeDelayFromEarthCenter(location, ra, dec, epoch)
-             for location in locations])
-
-        # Compute SNR in each detector.
-        snrs = (0.5 * (1 + u2) * Fplus + 1j * u * Fcross) * horizons / DL
-
-        abs_snrs = np.abs(snrs)
-        arg_snrs = np.angle(snrs)
-
-        if opts.measurement_error == 'zero-noise':
-            pass
-        elif opts.measurement_error == 'from-truth':
-            # If user asked, apply noise to amplitudes /before/ adding noise to
-            # TOAs and phases.
-
-            # Add noise to SNR estimates.
-            abs_snrs += np.random.randn(len(abs_snrs))
-
-            for i, signal_model in enumerate(signal_models):
-                arg_snrs[i], toas[i] = np.random.multivariate_normal(
-                    [arg_snrs[i], toas[i]], signal_model.get_cov(abs_snrs[i]))
-
-            snrs = abs_snrs * np.exp(1j * arg_snrs)
-        elif opts.measurement_error == 'from-measurement':
-            # Otherwise, by defualt, apply noise to TOAs and phases first.
-
-            for i, signal_model in enumerate(signal_models):
-                arg_snrs[i], toas[i] = np.random.multivariate_normal(
-                    [arg_snrs[i], toas[i]], signal_model.get_cov(abs_snrs[i]))
-
-            # Add noise to SNR estimates.
-            abs_snrs += np.random.randn(len(abs_snrs))
-
-            snrs = abs_snrs * np.exp(1j * arg_snrs)
-        else:
-            raise RuntimeError("This code should not be reached.")
+        horizons, abs_snrs, toas, arg_snrs, snr_series = zip(*(
+            simulate_snr(
+                ra, dec, psi, inc, DL, epoch, gmst, H, S, response, location,
+                measurement_error=opts.measurement_error)
+            for S, response, location in zip(psds, responses, locations)))
 
         sngl_inspirals = []
+        used_snr_series = []
         net_snr = 0.0
         count_triggers = 0
-        used_locations = []
-        used_signal_models = []
-        used_abs_snrs = []
-        used_W = []
 
         # Loop over individual detectors and create SnglInspiral entries.
-        for ifo, abs_snr, arg_snr, toa, horizon, location, signal_model, W_ \
+        for ifo, abs_snr, arg_snr, toa, horizon, location, series \
                 in zip(opts.detector, abs_snrs, arg_snrs, toas, horizons,
-                       locations, signal_models, W):
+                       locations, snr_series):
 
             if np.random.uniform() > opts.duty_cycle:
                 continue
@@ -318,17 +339,13 @@ def main(args=None):
             sngl_inspiral.spin2x = sim_inspiral.spin2x
             sngl_inspiral.spin2y = sim_inspiral.spin2y
             sngl_inspiral.spin2z = sim_inspiral.spin2z
-            sngl_inspiral.end_time = (epoch + toa).gpsSeconds
-            sngl_inspiral.end_time_ns = (epoch + toa).gpsNanoSeconds
+            sngl_inspiral.end_time = toa.gpsSeconds
+            sngl_inspiral.end_time_ns = toa.gpsNanoSeconds
             sngl_inspiral.snr = abs_snr
-            sngl_inspiral.coa_phase = np.angle(np.exp(1j * arg_snr))
+            sngl_inspiral.coa_phase = arg_snr
             sngl_inspiral.eff_distance = horizon / sngl_inspiral.snr
             sngl_inspirals.append(sngl_inspiral)
-
-            used_locations.append(locations)
-            used_signal_models.append(signal_model)
-            used_abs_snrs.append(abs_snr)
-            used_W.append(W_)
+            used_snr_series.append(series)
 
         net_snr = np.sqrt(net_snr)
 
@@ -339,19 +356,6 @@ def main(args=None):
         # If network SNR < threshold, then the injection is not found. Skip it.
         if net_snr < opts.net_snr_threshold:
             continue
-
-        weights = [
-            1 / np.square(signal_model.get_crb_toa_uncert(snr))
-            for signal_model, snr in zip(used_signal_models, used_abs_snrs)]
-
-        # Center detector array.
-        used_locations = np.asarray(used_locations)
-        used_locations -= np.average(used_locations, weights=weights, axis=0)
-
-        # Maximum barycentered arrival time error:
-        # |distance from array barycenter to furthest detector| / c + 5 ms
-        max_abs_t = 0.005 + np.max(
-            np.sqrt(np.sum(np.square(used_locations / lal.C_SI), axis=1)))
 
         # Add Coinc table entry.
         coinc = lsctables.Coinc()
@@ -382,21 +386,13 @@ def main(args=None):
         coinc_inspiral_table.append(coinc_inspiral)
 
         # Record all sngl_inspiral records and associate them with coincs.
-        for sngl_inspiral, W in zip(sngl_inspirals, used_W):
+        for sngl_inspiral, series in zip(sngl_inspirals, used_snr_series):
             # Give this sngl_inspiral record an id and add it to the table.
             sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()
             sngl_inspiral_table.append(sngl_inspiral)
 
             if opts.enable_snr_series:
-                snr, sample_rate = filter.autocorrelation(W, max_abs_t)
-                dt = 1 / sample_rate
-                epoch = sngl_inspiral.end - (len(snr) - 1) / sample_rate
-                snr = np.concatenate((snr[:0:-1].conj(), snr))
-                snr *= sngl_inspiral.snr * np.exp(1j * sngl_inspiral.coa_phase)
-                snr_series = lal.CreateCOMPLEX8TimeSeries(
-                    'snr', epoch, 0, dt, lal.StrainUnit, len(snr))
-                snr_series.data.data[:] = snr
-                elem = lal.series.build_COMPLEX8TimeSeries(snr_series)
+                elem = lal.series.build_COMPLEX8TimeSeries(series)
                 elem.appendChild(
                     ligolw_param.Param.from_pyvalue(
                         u'event_id', sngl_inspiral.event_id))

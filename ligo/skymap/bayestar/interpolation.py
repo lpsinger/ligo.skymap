@@ -211,7 +211,8 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         `quadratic-fit` methods. The interpolation will consider a sliding
         window of `2 * window_length + 1` samples centered on `imax`.
     method : {'catmull-rom', 'lanczos', 'nearest-neighbor', 'quadratic-fit'}
-        The interpolation method:
+        The interpolation method. Can be any of the following:
+
         * `catmull-rom`: Catmull-Rom cubic splines
           The `window_length` parameter is ignored (understood to be 2).
         * `lanczos`: Lanczos filter interpolation

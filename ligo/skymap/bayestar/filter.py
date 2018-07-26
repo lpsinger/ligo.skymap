@@ -344,8 +344,9 @@ def autocorrelation(H, out_duration):
     acor /= np.abs(acor[0])
 
     # If we have done this right, then the zeroth sample represents lag 0
-    assert np.argmax(np.abs(acor)) == 0
-    assert np.isreal(acor[0])
+    if np.all(np.isreal(H.data.data)):
+        assert np.argmax(np.abs(acor)) == 0
+        assert np.isreal(acor[0])
 
     # Done!
     return acor, float(sample_rate)

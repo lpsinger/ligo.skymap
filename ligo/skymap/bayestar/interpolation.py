@@ -207,14 +207,16 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
     y : `numpy.ndarray`
         The complex series.
     window_length : int
-        The window of the interpolation function. The interpolation will
-        consider a sliding window of `2 * window_length + 1` samples centered
-        on `imax`.
+        The window of the interpolation function for the `lanczos` and
+        `quadratic-fit` methods. The interpolation will consider a sliding
+        window of `2 * window_length + 1` samples centered on `imax`.
     method : {'catmull-rom', 'lanczos', 'nearest-neighbor', 'quadratic-fit'}
         The interpolation method:
         * `catmull-rom`: Catmull-Rom cubic splines
+          The `window_length` parameter is ignored (understood to be 2).
         * `lanczos`: Lanczos filter interpolation
-        * `nearest-neighbor`: Nearest neighbor (e.g., no interpolation)
+        * `nearest-neighbor`: Nearest neighbor (e.g., no interpolation).
+          The `window_length` parameter is ignored (understood to be 0).
         * `quadratic-fit`: Fit the absolute value of the SNR to a quadratic
           function and the phase to a linear function.
 

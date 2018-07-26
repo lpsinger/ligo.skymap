@@ -23,7 +23,7 @@ Sub-sample interpolation for matched filter time series.
 import numpy as np
 from scipy import optimize
 
-from .filter import abs2
+from .filter import abs2, exp_i
 
 __all__ = ('interpolate_max',)
 
@@ -141,34 +141,37 @@ def interpolate_max_quadratic_fit(imax, y, window_length):
     """Quadratic fit to absolute value of y. Note that this one does not alter
     the value at the maximum."""
 
-    poly = np.polyfit(
-        np.arange(-window_length, window_length + 1.),
-        np.abs(y[imax - window_length:imax + window_length + 1]),
-        2)
+    t = np.arange(-window_length, window_length + 1.)
+    y = y[imax - window_length:imax + window_length + 1]
+    y_abs = np.abs(y)
+    poly = np.polyfit(t, y_abs, 2)
 
     # Find which of the two matched interior points has a greater magnitude
     t_max = -1.
-    y_max = y[imax - 1]
-    y_max_abs2 = abs2(y_max)
+    y_max = y[window_length - 1]
+    y_max_abs = y_abs[window_length - 1]
 
     new_t_max = 1.
-    new_y_max = y[imax + 1]
-    new_y_max_abs2 = abs2(new_y_max)
+    new_y_max = y[window_length + 1]
+    new_y_max_abs = y_abs[window_length + 1]
 
-    if new_y_max_abs2 > y_max_abs2:
+    if new_y_max_abs > y_max_abs:
         t_max = new_t_max
         y_max = new_y_max
-        y_max_abs2 = new_y_max_abs2
+        y_max_abs = new_y_max_abs
 
     # Determine if the global extremum of the polynomial is a
     # local maximum in (-1, 1)
     A, B, C = poly
     new_t_max = -0.5 * B / A
-    new_y_max_abs2 = np.square(np.polyval(poly, new_t_max))
-    if -1 < new_t_max < 1 and new_y_max_abs2 > y_max_abs2:
+    new_y_max_abs = np.polyval(poly, new_t_max)
+    if -1 < new_t_max < 1 and new_y_max_abs > y_max_abs:
         t_max = new_t_max
+        y_max_abs = new_y_max_abs
+        y_phase = np.interp(t_max, t, np.unwrap(np.angle(y)))
+        y_max = y_max_abs * exp_i(y_phase)
 
-    return imax + t_max, y[imax]
+    return imax + t_max, y_max
 
 
 #
@@ -213,7 +216,7 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         * `lanczos`: Lanczos filter interpolation
         * `nearest-neighbor`: Nearest neighbor (e.g., no interpolation)
         * `quadratic-fit`: Fit the absolute value of the SNR to a quadratic
-          function.
+          function and the phase to a linear function.
 
     Returns
     -------

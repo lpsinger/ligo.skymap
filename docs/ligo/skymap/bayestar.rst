@@ -14,3 +14,4 @@ Supporting Modules
 
    bayestar/ez_emcee
    bayestar/filter
+   bayestar/interpolation

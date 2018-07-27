@@ -24,6 +24,11 @@ Changelog
 - The ``bayestar-realize-coincs`` tool now copies over spins from the input
   ``sim_inspiral`` table to the output ``sngl_inspiral`` table.
 
+- Switch the FFT implementation from LAL (which calls `FFTW
+  <http://www.fftw.org>`_) to `scipy.fftpack
+  <https://docs.scipy.org/doc/scipy/reference/tutorial/fftpack.html>`_, which
+  is faster for small transform sizes (e.g. <= 1024).
+
 0.0.12 (2018-07-18)
 ===================
 

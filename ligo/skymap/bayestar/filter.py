@@ -27,14 +27,10 @@ import lal
 import lalsimulation
 import numpy as np
 from scipy import interpolate
+from scipy import fftpack as fft
 from scipy import linalg
 
-from ..util.decorator import memoized
-
 log = logging.getLogger('BAYESTAR')
-
-# Memoize FFT plans
-CreateReverseCOMPLEX16FFTPlan = memoized(lal.CreateReverseCOMPLEX16FFTPlan)
 
 
 def ceil_pow_2(n):
@@ -138,12 +134,7 @@ def truncated_ifft(y, nsamples_out=None):
 
     >>> nsamples_out = 1024
     >>> y = np.random.randn(nsamples_out) + np.random.randn(nsamples_out) * 1j
-    >>> plan = CreateReverseCOMPLEX16FFTPlan(nsamples_out, 0)
-    >>> freq = lal.CreateCOMPLEX16Vector(nsamples_out)
-    >>> freq.data = y
-    >>> time = lal.CreateCOMPLEX16Vector(nsamples_out)
-    >>> _ = lal.COMPLEX16VectorFFT(time, freq, plan)
-    >>> x = time.data
+    >>> x = fft.ifft(y)
 
     Now check that the truncated IFFT agrees:
 
@@ -187,27 +178,20 @@ def truncated_ifft(y, nsamples_out=None):
     c = nsamples // nsamples_batch
 
     # FIXME: Implement for real-to-complex FFTs as well.
-    plan = CreateReverseCOMPLEX16FFTPlan(nsamples_batch, 0)
-    input_workspace = lal.CreateCOMPLEX16Vector(nsamples_batch)
-    output_workspace = lal.CreateCOMPLEX16Vector(nsamples_batch)
     twiddle = exp_i(2 * np.pi * np.arange(nsamples_batch) / nsamples)
 
-    j = c - 1
-    input_workspace.data = y[j::c]
-    lal.COMPLEX16VectorFFT(output_workspace, input_workspace, plan)
-    x = output_workspace.data.copy()  # Make sure this is a deep copy
+    x = fft.ifft(y.reshape(nsamples_batch, c).T)
 
-    for j in range(c - 2, -1, -1):
-        input_workspace.data = y[j::c]
-        lal.COMPLEX16VectorFFT(output_workspace, input_workspace, plan)
-        x *= twiddle  # FIXME: check stability of this recurrence relation.
-        x += output_workspace.data
+    result = x[-1]
+    for row in x[-2::-1]:
+        result *= twiddle  # FIXME: check stability of this recurrence relation
+        result += row
 
     # Now need to truncate remaining samples.
     if nsamples_out < nsamples_batch:
-        x = x[:nsamples_out]
+        result = result[:nsamples_out]
 
-    return x
+    return result / c
 
 
 def get_approximant_and_orders_from_string(s):

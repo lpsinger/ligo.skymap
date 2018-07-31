@@ -12,6 +12,11 @@ Changelog
 - Fix a corner case in the initialization of the ``distance.marginal_ppf``
   solver that could cause NaN return values.
 
+- Silence ``numpy.genfromtxt`` Unicode deprecation warning in
+  ``ligo-skymap-plot-stats`` and update the minimum version of Numpy to 1.14.
+  See the related `Numpy changelog entry
+  <https://docs.scipy.org/doc/numpy/release.html#encoding-argument-for-text-io-functions>`_.
+
 0.0.12 (2018-07-18)
 ===================
 

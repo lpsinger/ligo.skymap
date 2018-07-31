@@ -101,7 +101,6 @@ def main(args=None):
     from glue.ligolw import param as ligolw_param
     from glue.ligolw.utils import process as ligolw_process
     from glue.ligolw.utils import search_summary as ligolw_search_summary
-    from glue.ligolw import table as ligolw_table
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw import lsctables
 
@@ -151,8 +150,7 @@ def main(args=None):
         opts.input, contenthandler=ContentHandler)
 
     # Extract simulation table from injection file.
-    sim_inspiral_table = ligolw_table.get_table(
-        xmldoc, lsctables.SimInspiralTable.tableName)
+    sim_inspiral_table = lsctables.SimInspiralTable.get_table(xmldoc)
 
     # Create a SnglInspiral table and initialize its row ID counter.
     sngl_inspiral_table = lsctables.New(lsctables.SnglInspiralTable)

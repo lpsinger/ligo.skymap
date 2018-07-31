@@ -29,7 +29,6 @@ from glue.ligolw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
 from glue.ligolw.lsctables import (
     CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
     SnglInspiralID, SnglInspiralTable, TimeSlideID, TimeSlideTable)
-from glue.ligolw.table import get_table
 from glue.ligolw.utils import load_filename, load_fileobj
 import lal
 import lal.series
@@ -125,11 +124,11 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
     def _make_events(self, doc, psd_file, coinc_def):
         # Look up necessary tables.
-        coinc_table = get_table(doc, CoincTable.tableName)
-        coinc_map_table = get_table(doc, CoincMapTable.tableName)
-        sngl_inspiral_table = get_table(doc, SnglInspiralTable.tableName)
+        coinc_table = CoincTable.get_table(doc)
+        coinc_map_table = CoincMapTable.get_table(doc)
+        sngl_inspiral_table = SnglInspiralTable.get_table(doc)
         try:
-            time_slide_table = get_table(doc, TimeSlideTable.tableName)
+            time_slide_table = TimeSlideTable.get_table(doc)
         except ValueError:
             offsets_by_time_slide_id = None
         else:
@@ -147,7 +146,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
         # Filter rows by coinc_def if requested.
         if coinc_def is not None:
-            coinc_def_table = get_table(doc, CoincDefTable.tableName)
+            coinc_def_table = CoincDefTable.get_table(doc)
             coinc_def_ids = {
                 row.coinc_def_id for row in coinc_def_table
                 if (row.search, row.search_coinc_type) ==
@@ -158,12 +157,12 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
         snr_dict = dict(self._snr_series_by_sngl_inspiral(doc))
 
-        process_table = get_table(doc, ProcessTable.tableName)
+        process_table = ProcessTable.get_table(doc)
         program_for_process_id = {
             row.process_id: row.program for row in process_table}
 
         try:
-            process_params_table = get_table(doc, ProcessParamsTable.tableName)
+            process_params_table = ProcessParamsTable.get_table(doc)
         except ValueError:
             psd_filenames_by_process_id = {}
         else:

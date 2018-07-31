@@ -36,6 +36,7 @@ install the following required Python packages:
 *  `NetworkX <https://networkx.github.io>`_
 *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
 *  `ptemcee <https://github.com/willvousden/ptemcee>`_
+*  `pyFFTW <https://pyfftw.readthedocs.io/>`_
 *  `Reproject <https://reproject.readthedocs.io>`_ = 0.3.2
 *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
 *  `Seaborn <https://seaborn.pydata.org>`_ ≥ 0.8.0

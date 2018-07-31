@@ -57,7 +57,3 @@ Quick Start
 Just run this command::
 
     $ pip install ligo.skymap
-
-If you want to run BAYESTAR, you will also need to install LALSuite::
-
-    $ pip install lalsuite ligo.skymap

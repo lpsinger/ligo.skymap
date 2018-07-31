@@ -17,6 +17,10 @@ Changelog
   See the related `Numpy changelog entry
   <https://docs.scipy.org/doc/numpy/release.html#encoding-argument-for-text-io-functions>`_.
 
+- Silence deprecation warning in ``ligo-skymap-plot-stats`` due to Matplotlib
+  renaming the ``hist`` method's keyword argument from ``normed`` to
+  ``density``.
+
 0.0.12 (2018-07-18)
 ===================
 

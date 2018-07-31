@@ -243,21 +243,21 @@ def main(args=None):
                 color = lines.get_color()
                 ax2.hist(data['searched_area'],
                          histtype='step', label=label, color=color,
-                         cumulative=opts.cumulative, normed=opts.normed,
+                         cumulative=opts.cumulative, density=opts.normed,
                          bins=np.logspace(np.log10(min_searched_area),
                                           np.log10(max_searched_area),
                                           1000 if opts.cumulative else 20))
                 if have_offset:
                     ax3.hist(data['offset'],
                              histtype='step', label=label, color=color,
-                             cumulative=opts.cumulative, normed=opts.normed,
+                             cumulative=opts.cumulative, density=opts.normed,
                              bins=np.logspace(np.log10(min_offset),
                                               np.log10(max_offset),
                                               1000 if opts.cumulative else 20))
                 if have_runtime and np.any(np.isfinite(data['runtime'])):
                     ax4.hist(data['runtime'],
                              histtype='step', color=color,
-                             cumulative=opts.cumulative, normed=opts.normed,
+                             cumulative=opts.cumulative, density=opts.normed,
                              bins=np.logspace(np.log10(min_runtime),
                                               np.log10(max_runtime),
                                               1000 if opts.cumulative else 20))
@@ -271,7 +271,7 @@ def main(args=None):
                         ax7.hist(data['searched_vol'],
                                  histtype='step', label=label, color=color,
                                  cumulative=opts.cumulative,
-                                 normed=opts.normed,
+                                 density=opts.normed,
                                  bins=np.logspace(np.log10(min_searched_vol),
                                                   np.log10(max_searched_vol),
                                                   1000 if opts.cumulative

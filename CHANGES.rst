@@ -21,6 +21,9 @@ Changelog
   renaming the ``hist`` method's keyword argument from ``normed`` to
   ``density``.
 
+- The ``bayestar-realize-coincs`` tool now copies over spins from the input
+  ``sim_inspiral`` table to the output ``sngl_inspiral`` table.
+
 0.0.12 (2018-07-18)
 ===================
 

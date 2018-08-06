@@ -1,7 +1,8 @@
 /*
- * logaddexp, adapted from numpy/core/src/npymath/npy_math.c.src.
+ * logaddexp, adapted from numpy/core/src/npymath/npy_math.c.src,
+ * as of https://github.com/numpy/numpy/pull/5113
  *
- * Copyright (c) 2005-2011, NumPy Developers.
+ * Copyright (c) 2005-2017, NumPy Developers.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,18 +34,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <math.h>
+
 
 static double logaddexp(double x, double y)
 {
-    const double tmp = x - y;
-    if (tmp > 0) {
-        return x + log1p(exp(-tmp));
-    }
-    else if (tmp <= 0) {
-        return y + log1p(exp(tmp));
+    if (x == y) {
+        /* Handles infinities of the same sign without warnings */
+        return x + M_LN2;
     }
     else {
-        /* NaNs, or infinities of the same sign involved */
-        return x + y;
+        const double tmp = x - y;
+        if (tmp > 0) {
+            return x + log1p(exp(-tmp));
+        }
+        else if (tmp <= 0) {
+            return y + log1p(exp(tmp));
+        }
+        else {
+            /* NaNs */
+            return tmp;
+        }
     }
 }

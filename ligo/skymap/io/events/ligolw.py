@@ -19,6 +19,7 @@ Read events from pipedown/GstLal-style XML output.
 """
 from collections import OrderedDict, defaultdict
 import errno
+from functools import lru_cache
 import itertools
 import logging
 import operator
@@ -93,7 +94,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
         doc, filename = _read_xml(f)
         self._fallbackpath = (
             os.path.dirname(filename) if filename else fallbackpath)
-        self._psds_for_file = memoized(self._psds_for_file)
+        self._psds_for_file = lru_cache(maxsize=None)(self._psds_for_file)
         super(LigoLWEventSource, self).__init__(
             self._make_events(doc, psd_file, coinc_def))
 

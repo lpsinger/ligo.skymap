@@ -35,7 +35,6 @@ import lal
 import lal.series
 
 from .base import Event, EventSource, SingleEvent
-from ...util.decorator import memoized
 
 __all__ = ('LigoLWEventSource',)
 

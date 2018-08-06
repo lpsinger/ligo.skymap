@@ -19,22 +19,8 @@
 Collection of Python decorators.
 """
 
-from functools import lru_cache, wraps
-from astropy.utils.misc import NumpyRNGContext
+from functools import lru_cache
 
-__all__ = ('memoized', 'with_numpy_random_seed')
+__all__ = ('memoized',)
 
 memoized = lru_cache(maxsize=None)
-
-
-def with_numpy_random_seed(func, seed=0):
-    """Decorate a function so that it is called with a pre-defined random seed.
-    The random seed is restored when the function returns."""
-
-    @wraps(func)
-    def wrapped_func(*args, **kwargs):
-        with NumpyRNGContext(seed):
-            ret = func(*args, **kwargs)
-        return ret
-
-    return wrapped_func

@@ -37,7 +37,6 @@ import lal
 import lalsimulation
 import numpy as np
 
-from ..util.decorator import with_numpy_random_seed
 from .. import distance
 from . import filter
 from ..io.hdf5 import write_samples
@@ -84,7 +83,6 @@ def log_post(params, *args, **kwargs):
         *args, **kwargs)
 
 
-@with_numpy_random_seed
 def localize_emcee(args, xmin, xmax, chain_dump=None):
     # Gather posterior samples
     chain = ez_emcee(log_post, xmin, xmax, args=args, vectorize=True)

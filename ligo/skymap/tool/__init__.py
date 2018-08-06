@@ -30,6 +30,7 @@ import os
 import sys
 import matplotlib
 from matplotlib import cm
+import numpy as np
 from ..plot import cmap  # noqa
 from ..util import sqlite
 from .. import version
@@ -322,6 +323,20 @@ class LogLevelAction(argparse._StoreAction):
             option_strings, dest, nargs=nargs, const=const, default=default,
             type=type, choices=choices, required=required, help=help,
             metavar=metavar)
+
+
+@type_with_sideeffect(int)
+def seed(value):
+    np.random.seed(value)
+
+
+random_parser = argparse.ArgumentParser(add_help=False)
+group = random_parser.add_argument_group(
+    'random number generator options',
+    'Options that affect the Numpy pseudo-random number genrator')
+group.add_argument(
+    '--seed', type=seed, help='Pseudo-random number generator seed '
+    '[default: initialized from /dev/urandom or clock]')
 
 
 class HelpFormatter(argparse.RawDescriptionHelpFormatter,

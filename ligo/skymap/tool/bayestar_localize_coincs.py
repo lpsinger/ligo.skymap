@@ -34,12 +34,13 @@ A FITS file is created for each sky map, having a filename of the form
 from argparse import FileType
 
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, mkpath)
+    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, random_parser,
+    mkpath)
 
 
 def parser():
     parser = ArgumentParser(
-        parents=[waveform_parser, prior_parser, mcmc_parser])
+        parents=[waveform_parser, prior_parser, mcmc_parser, random_parser])
     parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
         help='Keep processing events if a sky map fails to converge')
@@ -98,6 +99,9 @@ def main(args=None):
     mkpath(opts.output)
 
     if opts.condor_submit:
+        if opts.seed is not None:
+            raise NotImplementedError(
+                '--seed does not yet work with --condor-submit')
         if opts.coinc_event_id:
             raise ValueError(
                 'must not set --coinc-event-id with --condor-submit')

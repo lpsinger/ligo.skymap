@@ -34,7 +34,7 @@ there is a choice for how to generate perturbed time and phase measurements:
 
 from argparse import FileType
 
-from . import ArgumentParser, register_to_xmldoc
+from . import ArgumentParser, random_parser, register_to_xmldoc
 
 
 def parser():
@@ -43,7 +43,7 @@ def parser():
     available_ifos = sorted(det.frDetector.prefix
                             for det in lal.CachedDetectors)
 
-    parser = ArgumentParser()
+    parser = ArgumentParser(parents=[random_parser])
     parser.add_argument(
         'input', metavar='IN.xml[.gz]', type=FileType('rb'),
         default='-', help='Name of input file')

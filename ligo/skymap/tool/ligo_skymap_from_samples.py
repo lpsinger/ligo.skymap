@@ -27,12 +27,14 @@ The output consist of two files:
 *  ``skymap.fits.gz``, a 3D localization in HEALPix/FITS format
 """
 
+from argparse import FileType, SUPPRESS
+
+from . import ArgumentParser, DirType, EnableAction, random_parser
+
 
 def parser():
     # Command line interface.
-    from argparse import FileType, SUPPRESS
-    from . import ArgumentParser, DirType, EnableAction
-    parser = ArgumentParser()
+    parser = ArgumentParser(parents=[random_parser])
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')
     # Only present for backward compatibility with --samples syntax
@@ -54,7 +56,6 @@ def parser():
                         help='generate HEALPix map of distance estimates')
     parser.add_argument('-j', '--jobs', action='store_true',
                         help='Use multiple threads')
-    parser.add_argument('--seed', type=int, help='use specified random seed')
     parser.add_argument('--objid', help='event ID to store in FITS header')
     return parser
 
@@ -90,9 +91,6 @@ def main(args=None):
         # Note that if arg.maxpts > len(data), then this
         # just selects the entire array.
         log.info('taking random subsample of chain')
-        if args.seed is not None:
-            # use fixed seed so that results are reproducible
-            np.random.seed(args.seed)
         data = data[np.random.choice(len(data), args.maxpts, replace=False)]
     try:
         dist = data['dist']

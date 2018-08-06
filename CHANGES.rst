@@ -29,6 +29,10 @@ Changelog
   <https://docs.scipy.org/doc/scipy/reference/tutorial/fftpack.html>`_, which
   is faster for small transform sizes (e.g. <= 1024).
 
+- Add ``--seed`` option to ``bayestar-localize-coincs``,
+  ``bayestar-localize-lvalert``, ``bayestar-mcmc``, and
+  ``bayestar-realize-coincs``.
+
 0.0.12 (2018-07-18)
 ===================
 

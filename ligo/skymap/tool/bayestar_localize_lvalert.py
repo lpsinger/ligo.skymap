@@ -32,12 +32,13 @@ terminal, or redirected from a fifo)::
 """
 
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, iterlines)
+    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, random_parser,
+    iterlines)
 
 
 def parser():
     parser = ArgumentParser(
-        parents=[waveform_parser, prior_parser, mcmc_parser])
+        parents=[waveform_parser, prior_parser, mcmc_parser, random_parser])
     parser.add_argument(
         '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
         help='disable certain detectors')

@@ -22,11 +22,12 @@ Markov-Chain Monte Carlo sky localization.
 from argparse import FileType
 
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, mkpath)
+    ArgumentParser, waveform_parser, prior_parser, random_parser, mkpath)
 
 
 def parser():
-    parser = ArgumentParser(parents=[waveform_parser, prior_parser])
+    parser = ArgumentParser(parents=[waveform_parser, prior_parser,
+                                     random_parser])
     parser.add_argument(
         'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',
         nargs='+', type=FileType('rb'),
@@ -99,6 +100,9 @@ def main(args=None):
     mkpath(opts.output)
 
     if opts.condor_submit:
+        if opts.seed is not None:
+            raise NotImplementedError(
+                '--seed does not yet work with --condor-submit')
         if opts.coinc_event_id:
             raise ValueError(
                 'must not set --coinc-event-id with --condor-submit')

@@ -195,6 +195,7 @@ static void dVC_dVL_init(void)
         x[i] = dVC_dVL_tmin + i * dVC_dVL_dt;
     int ret = gsl_spline_init(dVC_dVL_interp, x, dVC_dVL_data, len);
     assert(ret == GSL_SUCCESS);
+	(void)ret; /* Silence unused variable warning */
 }
 
 
@@ -568,6 +569,7 @@ static void u_points_weights_init(void)
         /* Don't bother checking return value; the only
          * possible failure is in index bounds checking. */
         assert(ret == GSL_SUCCESS);
+		(void)ret; /* Silence unused variable warning */
 
         u_points_weights[iu][1] = log(weight);
     }
@@ -821,6 +823,7 @@ static void bayestar_init(void)
 {
     int ret = pthread_once(&bayestar_init_once, bayestar_init_func);
     assert(ret == 0);
+	(void)ret; /* Silence unsigned variable warning */
 }
 
 

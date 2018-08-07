@@ -228,5 +228,42 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         `imax - 0.5` and `imax + 0.5`.
     ymax_interp : complex
         The interpolated value at the maximum.
+
+    Example
+    -------
+
+    .. plot::
+       :context: reset
+       :include-source:
+       :align: center
+
+        z = np.asarray([ 9.135017 -2.8185585j,  9.995214 -1.1222992j,
+                        10.682851 +0.8188147j, 10.645139 +3.0268786j,
+                         9.713133 +5.5589147j,  7.9043484+7.9039335j,
+                         5.511646 +9.333084j ,  2.905198 +9.715742j ,
+                         0.5302934+9.544538j ])
+
+        amp = np.abs(z)
+        arg = np.rad2deg(np.unwrap(np.angle(z)))
+        arg -= (np.median(arg) // 360) * 360
+        imax = np.argmax(amp)
+        window = 4
+
+        fig, (ax_amp, ax_arg) = plt.subplots(2, 1, figsize=(5, 6), sharex=True)
+        ax_arg.set_xlabel('Sample index')
+        ax_amp.set_ylabel('Amplitude')
+        ax_arg.set_ylabel('Phase')
+        args, kwargs = ('.-',), dict(color='lightgray', label='data')
+        ax_amp.plot(amp, *args, **kwargs)
+        ax_arg.plot(arg, *args, **kwargs)
+        for method in ['lanczos', 'catmull-rom', 'quadratic-fit', 'nearest-neighbor']:
+            i, y = interpolate_max(imax, z, window, method)
+            amp = np.abs(y)
+            arg = np.rad2deg(np.angle(y))
+            args, kwargs = ('o',), dict(mfc='none', label=method)
+            ax_amp.plot(i, amp, *args, **kwargs)
+            ax_arg.plot(i, arg, *args, **kwargs)
+        ax_arg.legend()
+        fig.tight_layout()
     """
     return _interpolants[method](imax, y, window_length)

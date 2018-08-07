@@ -256,7 +256,8 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         args, kwargs = ('.-',), dict(color='lightgray', label='data')
         ax_amp.plot(amp, *args, **kwargs)
         ax_arg.plot(arg, *args, **kwargs)
-        for method in ['lanczos', 'catmull-rom', 'quadratic-fit', 'nearest-neighbor']:
+        for method in ['lanczos', 'catmull-rom',
+                       'quadratic-fit', 'nearest-neighbor']:
             i, y = interpolate_max(imax, z, window, method)
             amp = np.abs(y)
             arg = np.rad2deg(np.angle(y))

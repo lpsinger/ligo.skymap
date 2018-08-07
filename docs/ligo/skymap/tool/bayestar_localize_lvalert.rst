@@ -1,3 +1,5 @@
+.. highlight:: sh
+
 Online Localization `bayestar-localize-lvalert`
 ===============================================
 

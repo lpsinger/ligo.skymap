@@ -1,3 +1,5 @@
+.. highlight:: sh
+
 Joint Sky Localization (`ligo-skymap-combine`)
 ==============================================
 

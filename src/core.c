@@ -1034,7 +1034,7 @@ PyMODINIT_FUNC PyInit_core(void)
         goto done;
 
     PyModule_AddObject(module, "omp",
-        PyObject_CallFunctionObjArgs(&OmpType, NULL));
+        PyObject_CallFunctionObjArgs((PyObject *) &OmpType, NULL));
 
     /* Ignore warnings in Numpy API */
     #pragma GCC diagnostic push

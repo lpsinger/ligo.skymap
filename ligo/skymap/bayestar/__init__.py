@@ -226,12 +226,11 @@ def condition(
                          'mixed lengths')
 
     # Perform sanity checks that the middle sample of the SNR time series match
-    # the sngl_inspiral records. Relax valid interval slightly from
-    # +/- 0.5 deltaT to +/- 0.6 deltaT for floating point roundoff error.
+    # the sngl_inspiral records.
     for ifo, single, series in zip(ifos, singles, snr_series):
         shift = np.abs(0.5 * (nsamples - 1) * series.deltaT +
                        float(series.epoch - single.time))
-        if shift >= 0.6 * deltaT:
+        if shift >= deltaT:
             raise ValueError('BAYESTAR expects the SNR time series to be '
                              'centered on the single-detector trigger times, '
                              'but {} was off by {} s'.format(ifo, shift))

@@ -33,6 +33,14 @@ Changelog
   ``bayestar-localize-lvalert``, ``bayestar-mcmc``, and
   ``bayestar-realize-coincs``.
 
+- Some reasonable sub-sample trigger interpolation schemes can return peak
+  times that are almost a full sample away from the maximum sample if the SNR
+  time series has a pronounced skew in one direction in the vicinity of the
+  maximum. Such an example occurs for the ``catmull-rom`` interpolation method
+  for the new unit tests in ``ligo.skymap.bayestar.tests.test_interpolation``.
+  Because of this, relax the tolerance of BAYESTAR's sanity check on
+  single-detector trigger times and SNR series timestamps to a full sample.
+
 0.0.12 (2018-07-18)
 ===================
 

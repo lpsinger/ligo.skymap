@@ -226,11 +226,12 @@ def condition(
                          'mixed lengths')
 
     # Perform sanity checks that the middle sample of the SNR time series match
-    # the sngl_inspiral records.
+    # the sngl_inspiral records to the nearest sample (plus the smallest
+    # representable LIGOTimeGPS difference of 1 nanosecond).
     for ifo, single, series in zip(ifos, singles, snr_series):
         shift = np.abs(0.5 * (nsamples - 1) * series.deltaT +
                        float(series.epoch - single.time))
-        if shift >= deltaT:
+        if shift >= deltaT + 1e-9:
             raise ValueError('BAYESTAR expects the SNR time series to be '
                              'centered on the single-detector trigger times, '
                              'but {} was off by {} s'.format(ifo, shift))

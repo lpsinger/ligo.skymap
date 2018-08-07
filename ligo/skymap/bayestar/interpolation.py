@@ -271,4 +271,4 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
     ymax_interp : complex
         The interpolated value at the maximum.
     """
-    return _interpolants[method](imax, y, window_length)
+    return _interpolants[method](imax, np.asarray(y), window_length)

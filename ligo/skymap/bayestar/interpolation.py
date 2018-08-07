@@ -27,6 +27,10 @@ Example
    :include-source:
    :align: center
 
+    from ligo.skymap.bayestar.interpolation import interpolate_max
+    from matplotlib import pyplot as plt
+    import numpy as np
+
     z = np.asarray([ 9.135017 -2.8185585j,  9.995214 -1.1222992j,
                     10.682851 +0.8188147j, 10.645139 +3.0268786j,
                      9.713133 +5.5589147j,  7.9043484+7.9039335j,

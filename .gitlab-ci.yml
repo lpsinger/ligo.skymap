@@ -1,6 +1,5 @@
 stages:
   - dist
-  - dependencies
   - test
   - deploy
 
@@ -71,31 +70,14 @@ wheel:cp36-cp36m-macosx:
   <<: *wheel-macos
 
 #
-# Generate pip requirements.txt file that captures everything listed
-# in install_requires in setup.cfg.
-#
-
-requirements:
-  image: python
-  stage: dist
-  script:
-    - python setup.py egg_info
-    - mv ligo.skymap.egg-info/requires.txt requirements.txt
-  artifacts:
-    paths:
-      - requirements.txt
-    expire_in: 30 minutes
-
-#
 # Build Docker containers for dependencies listed in requirements.txt,
 # plus dependencies for running the unit tests, collecting coverage data,
 # and generating the docs.
 #
 
 .dependencies: &dependencies
-  stage: dependencies
+  stage: dist
   variables:
-    GIT_STRATEGY: none
     IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -111,8 +93,6 @@ requirements:
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
-  dependencies:
-    - requirements
 
 dependencies/python3.5:
   <<: *dependencies

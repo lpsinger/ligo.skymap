@@ -34,6 +34,7 @@ if sys.version_info < tuple((int(val) for val in __minimum_python_version__.spli
 
 import ah_bootstrap
 from setuptools import setup
+import pkg_resources
 
 # A dirty hack to get around some early import/configurations ambiguities
 if sys.version_info[0] >= 3:
@@ -133,11 +134,14 @@ package_info['package_data'][PACKAGENAME].extend(c_files)
 # ``setup``, since these are now deprecated. See this link for more details:
 # https://groups.google.com/forum/#!topic/astropy-dev/urYO8ckB2uM
 
+with open('requirements.txt', 'r') as f:
+    install_requires = [str(r) for r in pkg_resources.parse_requirements(f)]
+
 setup(name=PACKAGENAME,
       version=VERSION,
       description=DESCRIPTION,
       scripts=scripts,
-      install_requires=[s.strip() for s in metadata.get('install_requires', 'astropy').split(',')],
+      install_requires=install_requires,
       author=AUTHOR,
       author_email=AUTHOR_EMAIL,
       license=LICENSE,

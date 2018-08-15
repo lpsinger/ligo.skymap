@@ -22,14 +22,14 @@ References
 ----------
 
 .. [1] Singer, Chen, & Holz, 2016. "Going the Distance: Mapping Host Galaxies
-       of LIGO and Virgo Sources in Three Dimensions Using Local Cosmography
-       and Targeted Follow-up." ApJL, 829, L15
-       <https://doi.org/10.3847/2041-8205/829/1/L15>.
+   of LIGO and Virgo Sources in Three Dimensions Using Local Cosmography and
+   Targeted Follow-up." ApJL, 829, L15
+   <https://doi.org/10.3847/2041-8205/829/1/L15>.
 
 .. [2] Singer, Chen, & Holz, 2016. "Supplement: 'Going the Distance: Mapping
-       Host Galaxies of LIGO and Virgo Sources in Three Dimensions Using Local
-       Cosmography and Targeted Follow-up' (2016, ApJL, 829, L15)." ApJS, 226,
-       10 <https://doi.org/10.3847/0067-0049/226/1/10>.
+   Host Galaxies of LIGO and Virgo Sources in Three Dimensions Using Local
+   Cosmography and Targeted Follow-up' (2016, ApJL, 829, L15)." ApJS, 226, 10
+   <https://doi.org/10.3847/0067-0049/226/1/10>.
 
 .. [3] https://asd.gsfc.nasa.gov/Leo.Singer/going-the-distance
 """

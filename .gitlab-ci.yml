@@ -89,7 +89,6 @@ wheel:cp36-cp36m-macosx:
       RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr pycobertura sphinx sphinx-argparse flake8
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
-      RUN pip uninstall -y ligo-segments  # FIXME: something funny going on with namespace packages?
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG

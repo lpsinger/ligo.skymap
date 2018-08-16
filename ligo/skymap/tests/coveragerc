@@ -4,6 +4,7 @@ omit =
    {packagename}/_astropy_init*
    {packagename}/conftest*
    {packagename}/cython_version*
+   {packagename}/extern/*
    {packagename}/setup_package*
    {packagename}/*/setup_package*
    {packagename}/*/*/setup_package*

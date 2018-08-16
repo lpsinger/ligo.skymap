@@ -2,12 +2,12 @@
 ligo.skymap
 ###########
 
-.. image:: https://vignette.wikia.nocookie.net/memoryalpha/images/c/cf/Picard_and_Data_in_stellar_cartography.jpg/revision/latest/scale-to-width-down/640?cb=20100527083827&path-prefix=en
+.. figure:: https://vignette.wikia.nocookie.net/memoryalpha/images/c/cf/Picard_and_Data_in_stellar_cartography.jpg/revision/latest/scale-to-width-down/640?cb=20100527083827&path-prefix=en
    :alt: Picard and Data in stellar cartography
    :width: 640px
    :height: 269px
 
-*LIGO's stellar cartography department.*
+   *LIGO's stellar cartography department.*
 
 The `ligo.skymap` package provides tools for reading, writing, generating, and
 visualizing gravitational-wave probability maps from LIGO and Virgo. It

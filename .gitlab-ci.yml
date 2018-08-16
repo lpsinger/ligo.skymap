@@ -86,7 +86,7 @@ wheel:cp36-cp36m-macosx:
       FROM python:${CI_JOB_NAME#*python}
       COPY requirements.txt .
       RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr sphinx sphinx-argparse flake8
+      RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr pycobertura sphinx sphinx-argparse flake8
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
       RUN pip uninstall -y ligo-segments  # FIXME: something funny going on with namespace packages?
@@ -144,8 +144,16 @@ test/python3.6:
 
 #
 # Measure test coverage:
-# - pytest-cov for Python code
-# - gcc coverage for C code
+# - coverage.py for Python code
+# - gcov/gcovr for C code
+#
+# Export the results from both to Cobertura format because it's an XML format
+# that both coverage.py and gcovr can write, merge them by hand, and then
+# write HTML and text summaries.
+#
+# This would be a lot prettier if we could use coveralls or codecov.io,
+# which support multilingual test coverage. However, those products don't
+# integrate with git.ligo.org (or at least, they don't integrate for free).
 #
 
 test/coverage:
@@ -154,22 +162,62 @@ test/coverage:
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
+  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   before_script:
     - tar --strip-components 1 -xf *.tar.*
   script:
-    # Run tests
+    # Run tests.
     - python setup.py test --coverage -vv --args='-vv'
-    # Write gcovr test coverage
-    - mkdir gcovr
-    - gcovr build/temp*/src -r . --html --html-detail -o gcovr/index.html
+    # Write coverage reports in Cobertura format.
+    - gcovr build/temp*/src -r . -x -o c-coverage.xml
+    - coverage xml -o py-coverage.xml
+    # Merge coverage reports. They're just XML, after all.
+    - |
+      python - <<EOF
+      import lxml.etree
+      import copy
+
+      doc1 = lxml.etree.parse('py-coverage.xml')
+      doc2 = lxml.etree.parse('c-coverage.xml')
+      root1 = doc1.getroot()
+      root2 = doc2.getroot()
+      root1.attrib['lines-covered'] = str(
+          int(root1.attrib['lines-covered']) +
+          int(root2.attrib['lines-covered']))
+      root1.attrib['lines-valid'] = str(
+          int(root1.attrib['lines-valid']) +
+          int(root2.attrib['lines-valid']))
+      try:
+          root1.attrib['line-rate'] = str(
+              int(root1.attrib['lines-covered']) /
+              int(root1.attrib['lines-valid']))
+      except ZeroDivisionError:
+          root1.attrib['line-rate'] = '0'
+      root1.attrib['branches-covered'] = str(
+          int(root1.attrib['branches-covered']) +
+          int(root2.attrib['branches-covered']))
+      root1.attrib['branches-valid'] = str(
+          int(root1.attrib['branches-valid']) +
+          int(root2.attrib['branches-valid']))
+      try:
+          root1.attrib['branch-rate'] = str(
+              int(root1.attrib['branches-covered']) /
+              int(root1.attrib['branches-valid']))
+      except ZeroDivisionError:
+          root1.attrib['branch-rate'] = '0'
+      packages = root1.find('./packages')
+      packages.extend(root2.iterfind('./packages/package'))
+      doc1.write('coverage.xml')
+      EOF
+    # Write human-readable report.
+    - pycobertura show coverage.xml -f html -o coverage.html
+    - pycobertura show coverage.xml
   dependencies:
     - sdist
   artifacts:
     paths:
-      - .coverage
-      - build/temp.*/src/*.gc*
-      - gcovr/
-      - htmlcov/
+      - coverage.xml
+      - coverage.html
     expire_in: 30 minutes
 
 #
@@ -191,45 +239,13 @@ lint:
 # Gather coverage reports and docs for GitLab pages and build badges.
 #
 
-coverage:c:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
-  variables:
-    GIT_STRATEGY: none
-  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  stage: deploy
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
-  dependencies:
-    - sdist
-    - test/coverage
-  script:
-    # Display coverage summary
-    - gcovr build/temp*/src -r .
-
-coverage:py:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
-  variables:
-    GIT_STRATEGY: none
-  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  stage: deploy
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
-  dependencies:
-    - sdist
-    - test/coverage
-  script:
-    # Print coverage summary
-    - python3 -m coverage report
-
 pages:
   variables:
     GIT_STRATEGY: none
   stage: deploy
   script:
     - mv docs/_build/html public
-    - mkdir -p public/cov
-    - mv gcovr public/cov/c
-    - mv htmlcov public/cov/py
+    - mv coverage.html public/coverage.html
   dependencies:
     - docs
     - test/coverage

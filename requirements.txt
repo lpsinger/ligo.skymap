@@ -4,6 +4,7 @@ healpy
 h5py
 lalsuite
 lscsoft-glue
+ligo-gracedb
 matplotlib>=2.1.0
 networkx
 numpy>=1.14

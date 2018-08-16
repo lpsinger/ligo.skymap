@@ -1,12 +1,11 @@
 import os
-import subprocess
 
 import pytest
 
 import numpy as np
 import healpy as hp
 
-from . import run_entry_point
+from . import run_entry_point, run_glue, run_lalsuite
 from ... import io
 from ... import distance
 
@@ -25,22 +24,22 @@ def psd(tmpdir):
 @pytest.fixture
 def inj(tmpdir):
     filename = str(tmpdir / 'inj.xml')
-    subprocess.check_call(['lalapps_inspinj',
-                           '-o', filename,
-                           '--m-distr=fixMasses',
-                           '--fixed-mass1=1.4',
-                           '--fixed-mass2=1.4',
-                           '--gps-start-time=1000000000',
-                           '--gps-end-time=1000000001',
-                           '--time-step=1',
-                           '--l-distr=random',
-                           '--i-distr=uniform',
-                           '--d-distr=uniform',
-                           '--min-distance=1',
-                           '--max-distance=200e3',
-                           '--waveform=TaylorF2threePointFivePN',
-                           '--disable-spin',
-                           '--f-lower=10'])
+    run_lalsuite('lalapps_inspinj',
+                 '-o', filename,
+                 '--m-distr=fixMasses',
+                 '--fixed-mass1=1.4',
+                 '--fixed-mass2=1.4',
+                 '--gps-start-time=1000000000',
+                 '--gps-end-time=1000000001',
+                 '--time-step=1',
+                 '--l-distr=random',
+                 '--i-distr=uniform',
+                 '--d-distr=uniform',
+                 '--min-distance=1',
+                 '--max-distance=200e3',
+                 '--waveform=TaylorF2threePointFivePN',
+                 '--disable-spin',
+                 '--f-lower=10')
     return filename
 
 
@@ -56,22 +55,62 @@ def coinc(inj, psd, tmpdir):
 @pytest.fixture
 def inj_coinc(inj, coinc, tmpdir):
     filename = str(tmpdir / 'inj_coinc.xml')
-    subprocess.check_call(['ligolw_add', inj, coinc, '-o', filename])
-    subprocess.check_call(['lalapps_inspinjfind', filename])
+    run_glue('ligolw_add', inj, coinc, '-o', filename)
+    run_lalsuite('lalapps_inspinjfind', filename)
     return filename
 
 
 @pytest.fixture
 def inj_coinc_sqlite(inj_coinc, tmpdir):
     filename = str(tmpdir / 'inj_coinc.sqlite')
-    subprocess.check_call(['ligolw_sqlite', inj_coinc, '-p', '-d', filename])
+    run_glue('ligolw_sqlite', inj_coinc, '-p', '-d', filename)
     return filename
 
 
 @pytest.fixture
 def localize_coincs(coinc, psd, tmpdir):
     run_entry_point('bayestar-localize-coincs', coinc, '-o', str(tmpdir))
-    return tmpdir
+    return str(tmpdir / '0.fits')
+
+
+# Note: any test that uses this fixture should be marked with
+# @pytest.mark.internet_off to make sure that it does not actually
+# contact GraceDb.
+@pytest.fixture
+def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
+
+    class MockGraceDb:
+
+        def __init__(self, service_url, *args, **kwargs):
+            self.service_url = service_url
+
+        def files(self, graceid, filename):
+            assert graceid == 'G1234'
+            mock_filename = {'coinc.xml': coinc, 'psd.xml.gz': psd}[filename]
+            return open(mock_filename, 'rb')
+
+        def writelog(self, *args, **kwargs):
+            pass
+
+    monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
+
+    filename = str(tmpdir / 'bayestar.fits.gz')
+    run_entry_point('bayestar-localize-lvalert', 'G1234', '-N', '-o', filename)
+    return filename
+
+
+@pytest.mark.internet_off
+def test_localize_coincs_lvalert(localize_coincs, localize_lvalert):
+    """Check that bayestar-localize-coincs and bayestar-localize-lvalert
+    produce the same output."""
+    skymap1, meta1 = io.read_sky_map(localize_coincs, distances=True)
+    skymap2, meta2 = io.read_sky_map(localize_lvalert, distances=True)
+    for col1, col2 in zip(skymap1, skymap2):
+        np.testing.assert_allclose(col1, col2)
+    for key in 'gps_time origin vcs_version vcs_revision build_date'.split():
+        assert meta1[key] == meta2[key]
+    for key in 'distmean diststd log_bci log_bsn'.split():
+        np.testing.assert_allclose(meta1[key], meta2[key])
 
 
 # FIXME: Skip until

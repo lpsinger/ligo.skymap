@@ -49,6 +49,17 @@ from astropy_helpers.git_helpers import get_git_devstr
 from astropy_helpers.version_helpers import generate_version_py
 
 
+# Monkey patch find_packages to only locate our namespace package
+from setuptools import PEP420PackageFinder
+from astropy_helpers import setup_helpers
+
+def find_packages(where='.', exclude=(), include=('*',)):
+    return PEP420PackageFinder.find(
+        where=where, exclude=exclude, include=('ligo.*',))
+
+setup_helpers._find_packages = find_packages
+
+
 # order of priority for long_description:
 #   (1) set in setup.cfg,
 #   (2) load LONG_DESCRIPTION.rst,

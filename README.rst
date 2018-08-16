@@ -9,27 +9,6 @@ ligo.skymap
 
 *LIGO's stellar cartography department.*
 
-+-----------+-----------------+------------+----------+
-| **Build** | **Python code** | **C code** | **Docs** |
-+===========+=================+============+==========+
-| |_build_| | |_python_code_| | |_c_code_| | |docs|__ |
-+-----------+-----------------+------------+----------+
-
-.. |_build_| image:: https://git.ligo.org/leo-singer/ligo.skymap/badges/master/pipeline.svg
-   :alt: pipeline status
-   :target: https://git.ligo.org/leo-singer/ligo.skymap/pipelines
-
-.. |_python_code_| image:: https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:py
-   :alt: coverage report
-   :target: https://leo-singer.docs.ligo.org/ligo.skymap/cov/py
-
-.. |_c_code_| image:: https://git.ligo.org/leo-singer/ligo.skymap/badges/master/coverage.svg?job=coverage:c
-   :alt: coverage report
-   :target: https://leo-singer.docs.ligo.org/ligo.skymap/cov/c
-
-.. |docs| replace:: Latest
-__ https://leo-singer.docs.ligo.org/ligo.skymap/
-
 The `ligo.skymap` package provides tools for reading, writing, generating, and
 visualizing gravitational-wave probability maps from LIGO and Virgo. It
 provides several tools that used to live in `LALSuite

@@ -16,11 +16,12 @@
 #
 """Register some extra Matplotlib color maps"""
 
+import warnings
+
 from matplotlib import cm
 from matplotlib import colors
-import pkg_resources
 import numpy as np
-import warnings
+import pkg_resources
 
 __all__ = ()
 

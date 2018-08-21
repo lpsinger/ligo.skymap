@@ -74,7 +74,7 @@ def localize_coincs(coinc, psd, tmpdir):
 
 
 # Note: any test that uses this fixture should be marked with
-# @pytest.mark.internet_off to make sure that it does not actually
+# @pytest.mark.internet_off to make sure that it cannot actually
 # contact GraceDb.
 @pytest.fixture
 def localize_lvalert(coinc, psd, tmpdir, monkeypatch):

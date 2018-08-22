@@ -1,13 +1,10 @@
 import os
 
+import numpy as np
 import pytest
 
-import numpy as np
-import healpy as hp
-
-from . import run_entry_point, run_glue, run_lalsuite
 from ... import io
-from ... import distance
+from . import run_entry_point, run_glue, run_lalsuite
 
 
 @pytest.fixture
@@ -74,7 +71,7 @@ def localize_coincs(coinc, psd, tmpdir):
 
 
 # Note: any test that uses this fixture should be marked with
-# @pytest.mark.internet_off to make sure that it cannot actually
+# @pytest.mark.internet_off to make sure that it does not actually
 # contact GraceDb.
 @pytest.fixture
 def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
@@ -100,9 +97,11 @@ def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
 
 
 @pytest.mark.internet_off
-def test_localize_coincs_lvalert(localize_coincs, localize_lvalert):
-    """Check that bayestar-localize-coincs and bayestar-localize-lvalert
-    produce the same output."""
+def test_bayestar(localize_coincs, localize_lvalert, inj_coinc_sqlite, tmpdir):
+    """Test bayestar-realize-coincs, bayestar-localize-coincs,
+    bayestar-localize-lvalert, and ligo-skymap-stats."""
+    # Check that bayestar-localize-coincs and bayestar-localize-lvalert
+    # produce the same output.
     skymap1, meta1 = io.read_sky_map(localize_coincs, distances=True)
     skymap2, meta2 = io.read_sky_map(localize_lvalert, distances=True)
     for col1, col2 in zip(skymap1, skymap2):
@@ -112,69 +111,9 @@ def test_localize_coincs_lvalert(localize_coincs, localize_lvalert):
     for key in 'distmean diststd log_bci log_bsn'.split():
         np.testing.assert_allclose(meta1[key], meta2[key])
 
-
-# FIXME: Skip until
-# https://git.ligo.org/lscsoft/lalsuite/merge_requests/192
-# is fixed in a release
-@pytest.mark.skip
-def test_stats(inj_coinc_sqlite, localize_coincs, tmpdir):
-    filename = str(tmpdir / 'bayestar.out')
-    run_entry_point('ligo-skymap-stats', '-o', filename,
-                    inj_coinc_sqlite, os.path.join(localize_coincs, '*.fits'))
-
-
-def test_combine(tmpdir):
-    fn1 = str(tmpdir / 'skymap1.fits.gz')
-    fn2 = str(tmpdir / 'skymap2.fits.gz')
-    fn3 = str(tmpdir / 'joint_skymap.fits.gz')
-
-    # generate a hemisphere of constant probability
-    nside1 = 32
-    npix1 = hp.nside2npix(nside1)
-    m1 = np.zeros(npix1)
-    disc_idx = hp.query_disc(nside1, (1, 0, 0), np.pi / 2)
-    m1[disc_idx] = 1
-    m1 /= m1.sum()
-    hp.write_map(fn1, m1, column_names=['PROBABILITY'],
-                 extra_header=[('INSTRUME', 'X1')])
-
-    # generate another hemisphere of constant probability
-    # but with higher resolution and rotated 90 degrees
-    nside2 = 64
-    npix2 = hp.nside2npix(nside2)
-    m2 = np.zeros(npix2)
-    disc_idx = hp.query_disc(nside2, (0, 1, 0), np.pi / 2)
-    m2[disc_idx] = 1
-    m2 /= m2.sum()
-    hp.write_map(fn2, m2, column_names=['PROBABILITY'],
-                 extra_header=[('INSTRUME', 'Y1')])
-
-    run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
-
-    m3 = hp.read_map(fn3, nest=True)
-    npix3 = len(m3)
-    nside3 = hp.npix2nside(npix3)
-    pix_area3 = hp.nside2pixarea(nside3)
-
-    # resolution must match the highest original resolution
-    assert npix3 == npix2
-    # probability must be normalized to 1
-    assert m3.sum() == pytest.approx(1)
-    # support must be ¼ of the sphere
-    tolerance = 10 * hp.nside2pixarea(nside1)
-    assert sum(m3 > 0) * pix_area3 == pytest.approx(np.pi, abs=tolerance)
-
-    # generate a BAYESTAR-like map with mock distance information
-    d_mu = np.zeros_like(m1)
-    d_sigma = np.ones_like(m1)
-    d_norm = np.ones_like(m1)
-    io.write_sky_map(fn1, np.vstack((m1, d_mu, d_sigma, d_norm)).T)
-
-    run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
-
-    m3, meta3 = io.read_sky_map(fn3, nest=True, distances=True)
-
-    # check that marginal distance moments match what was simulated
-    mean, std, _ = distance.parameters_to_moments(d_mu[0], d_sigma[0])
-    assert meta3['distmean'] == pytest.approx(mean)
-    assert meta3['diststd'] == pytest.approx(std)
+    # Test ligo-skymap-stats.
+    out1 = str(tmpdir / 'stats1.out')
+    out2 = str(tmpdir / 'stats2.out')
+    args = ('ligo-skymap-stats', '--modes', '-p', '90', '-a', '100', '-o')
+    run_entry_point(*args, out1, localize_coincs, '-d', inj_coinc_sqlite)
+    run_entry_point(*args, out2, localize_lvalert)

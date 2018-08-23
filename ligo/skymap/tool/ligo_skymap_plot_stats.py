@@ -152,11 +152,11 @@ def main(args=None):
         ['offset', 'angle from true location and mode of posterior (deg)'],
         ['runtime', 'run time (s)']]
 
-    keys = range(*np.ceil([keys.min(), keys.max()+1]).astype(int))
+    keys = range(*np.floor([keys.min(), keys.max()+1]).astype(int))
     total = len(keys) * (len(pp_plot_settings) + len(hist_settings))
     with tqdm(total=total) as progress:
         for key in keys:
-            filtered = [d[d['key'] <= key] for d in datasets]
+            filtered = [d[d['key'] >= key] for d in datasets]
             title = key_to_title(key)
             nsamples = {len(d) for d in filtered}
             if len(nsamples) == 1:

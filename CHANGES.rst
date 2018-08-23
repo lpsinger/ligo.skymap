@@ -41,6 +41,8 @@ Changelog
   Because of this, relax the tolerance of BAYESTAR's sanity check on
   single-detector trigger times and SNR series timestamps to a full sample.
 
+- Rewrite ``ligo-skymap-plot-stats`` to reduce code duplication.
+
 0.0.12 (2018-07-18)
 ===================
 

@@ -22,16 +22,9 @@ import healpy as hp
 import numpy as np
 
 from .. import moc
+from ..extern.quantile import quantile
 
 __all__ = ('find_ellipse',)
-
-
-# FIXME: use weighted percentile function.
-# See https://github.com/numpy/numpy/pull/9211
-def wmedian(x, weights):
-    i = np.argsort(x)
-    c = np.cumsum(weights[i])
-    return np.interp(0.5, c / c[-1], x[i])
 
 
 def find_ellipse(prob, cl=90, projection='ARC', nest=False):
@@ -186,7 +179,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> skymap_moc = read_sky_map(healpix_hdu, moc=True)
     >>> ellipse = find_ellipse(skymap_moc)
     >>> print(*np.around(ellipse, 5))
-    195.03715 -19.27587 8.67609 1.18167 63.60452 32.08015
+    195.03709 -19.27589 8.67611 1.18167 63.60454 32.08015
 
     **Example 3**
 
@@ -246,7 +239,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
     >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
     >>> print(ra, dec, a, b, area)
-    44.99999 0.0 2.14242 2.14209 14.4677
+    45.0 0.0 2.14241 2.14208 14.4677
 
     This one is centered at RA=45°, Dec=0°, and is elongated in the north-south
     direction.
@@ -257,7 +250,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
     >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
     >>> print(ra, dec, a, b, pa, area)
-    44.99998 0.0 13.58769 2.08298 90.0 88.57797
+    45.0 0.0 13.58769 2.08298 90.0 88.57797
 
     This one is centered at RA=0°, Dec=0°, and is elongated in the east-west
     direction.
@@ -339,7 +332,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         nest = True
 
     # Find median a posteriori sky position.
-    xyz0 = [wmedian(x, prob) for x in hp.pix2vec(nside, ipix, nest=nest)]
+    xyz0 = [quantile(x, 0.5, weights=prob)
+            for x in hp.pix2vec(nside, ipix, nest=nest)]
     (ra,), (dec,) = hp.vec2ang(np.asarray(xyz0), lonlat=True)
 
     # Construct WCS with the specified projection

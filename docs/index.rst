@@ -29,14 +29,15 @@ package are:
 *  Module :mod:`ligo.skymap.plot`: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
-***********
-Quick Start
-***********
+**********************
+Quick Start, Tutorials
+**********************
 
 .. toctree::
    :maxdepth: 1
 
-   install
+   quickstart/install
+   quickstart/bayestar-injections
 
 *****************
 API Documentation

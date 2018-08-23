@@ -8,7 +8,7 @@ The recommended way to install `ligo.skymap` is using `pip
 required Python packages listed below. On Linux and macOS systems, this method
 will install pre-built binaries from the `Python package index
 <https://pypi.org/project/ligo.skymap/>`_. (On other operating systems you can
-:doc:`install from source <develop>`.)
+:doc:`install from source <../develop>`.)
 
 Basic Requirements
 ------------------

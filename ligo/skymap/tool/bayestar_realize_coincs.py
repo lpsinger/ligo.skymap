@@ -32,7 +32,7 @@ there is a choice for how to generate perturbed time and phase measurements:
 
 from argparse import FileType
 
-from . import ArgumentParser, random_parser, register_to_xmldoc
+from . import ArgumentParser, EnableAction, random_parser, register_to_xmldoc
 
 
 def parser():
@@ -74,7 +74,7 @@ def parser():
         choices=('zero-noise', 'gaussian-noise'),
         help='How to compute the measurement error')
     parser.add_argument(
-        '--enable-snr-series', default=False, action='store_true',
+        '--enable-snr-series', action=EnableAction,
         help='Enable output of SNR time series')
     parser.add_argument(
         '--reference-psd', metavar='PSD.xml[.gz]', type=FileType('rb'),

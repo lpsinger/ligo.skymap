@@ -167,7 +167,7 @@ Changelog
 
 - Bring back simulation tools from LALSuite.
 
-- Add ligo-skymap-plot-airmass, a tool for probabilistic airmass charts.
+- Add ``ligo-skymap-plot-airmass``, a tool for probabilistic airmass charts.
 
 0.0.2 (2018-03-12)
 ==================

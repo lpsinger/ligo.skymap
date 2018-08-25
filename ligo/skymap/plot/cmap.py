@@ -16,8 +16,6 @@
 #
 """Register some extra Matplotlib color maps"""
 
-import warnings
-
 from matplotlib import cm
 from matplotlib import colors
 import numpy as np
@@ -28,12 +26,8 @@ __all__ = ()
 
 for name in ['cylon']:
     # Read in color map RGB data.
-    try:
-        with pkg_resources.resource_stream(__name__, name + '.csv') as f:
-            data = np.loadtxt(f, delimiter=',')
-    except IOError as e:
-        warnings.warn('Failed to load "{0}" colormap'.format(name))
-        continue
+    with pkg_resources.resource_stream(__name__, name + '.csv') as f:
+        data = np.loadtxt(f, delimiter=',')
 
     # Create color map.
     cmap = colors.LinearSegmentedColormap.from_list(name, data)

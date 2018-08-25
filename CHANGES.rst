@@ -46,6 +46,8 @@ Changelog
 - Add ``--measurement-error gaussian-noise`` option to
   ``bayestar-realize-coincs`` to simulate a matched filter in Gaussian noise.
 
+- Remove deprecated module ``ligo.skymap.postprocess.detector_frame``.
+
 0.0.12 (2018-07-18)
 ===================
 

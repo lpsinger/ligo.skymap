@@ -7,7 +7,6 @@ Sky Map Postprocessing (`ligo.skymap.postprocess`)
    :maxdepth: 1
 
    contour
-   detector_frame
    ellipse
    find_injection
    util

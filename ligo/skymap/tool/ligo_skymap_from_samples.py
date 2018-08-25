@@ -138,16 +138,18 @@ def main(args=None):
         hpmap.meta['distmean'] = np.mean(dist)
         hpmap.meta['diststd'] = np.std(dist)
 
-    names = data.dtype.names
-    if 'time' in names:
-        hpmap.meta['gps_time'] = data['time'].mean()
-    elif 'time_mean' in names:
-        hpmap.meta['gps_time'] = data['time_mean'].mean()
-    elif 'time_maxl' in names:
-        hpmap.meta['gps_time'] = data['time_maxl'].mean()
+    keys = ['time', 'time_mean', 'time_maxl']
+    for key in keys:
+        try:
+            time = data[key]
+        except KeyError:
+            continue
+        else:
+            hpmap.meta['gps_time'] = time.mean()
+            break
     else:
-        parser.error(
-            "Cannot find time, time_mean, or time maxl variable in posterior.")
+        log.warning(
+            'Cannot determine the event time from any of the columns %r', keys)
 
     io.write_sky_map(os.path.join(args.outdir, args.fitsoutname),
                      hpmap, nest=True)

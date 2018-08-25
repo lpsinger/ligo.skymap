@@ -364,6 +364,10 @@ int cubic_interp_test(void)
                         k, k);
                 }
             }
+            gsl_test(!gsl_isnan(bicubic_interp_eval(interp, 0, GSL_NAN)),
+                "testing that bicubic interpolant for nan input returns nan");
+            gsl_test(!gsl_isnan(bicubic_interp_eval(interp, GSL_NAN, 0)),
+                "testing that bicubic interpolant for nan input returns nan");
             assert(interp);
             bicubic_interp_free(interp);
         }

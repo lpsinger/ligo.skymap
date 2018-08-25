@@ -12,6 +12,7 @@ omit =
    {packagename}/*/tests/*
    {packagename}/*/*/tests/*
    {packagename}/version*
+   {packagename}/plot/cylon.py  # only used for generating color map
 
 [report]
 exclude_lines =

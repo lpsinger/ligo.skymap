@@ -42,4 +42,5 @@ def samples(seed, tmpdir):
 
 def test_from_samples(samples, tmpdir):
     """Test ligo-skyamp-from-samples."""
-    run_entry_point('ligo-skymap-from-samples', samples, '-o', str(tmpdir))
+    run_entry_point('ligo-skymap-from-samples', '--seed', '150914',
+                    samples, '-o', str(tmpdir))

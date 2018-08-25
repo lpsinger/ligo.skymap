@@ -21,7 +21,7 @@ import numpy as np
 __all__ = ('add_newdoc_ufunc', 'require_contiguous')
 
 
-def add_newdoc_ufunc(func, doc):
+def add_newdoc_ufunc(func, doc):  # pragma: no cover
     """The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
     docstring if it is `NULL`. This workaround avoids an exception when the
     user tries to `reload()` this module."""

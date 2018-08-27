@@ -1,18 +1,18 @@
 [run]
-source = ligo/skymap
+source = {packagename}
 omit =
-   ligo/skymap/_astropy_init*
-   ligo/skymap/conftest*
-   ligo/skymap/cython_version*
-   ligo/skymap/extern/*
-   ligo/skymap/setup_package*
-   ligo/skymap/*/setup_package*
-   ligo/skymap/*/*/setup_package*
-   ligo/skymap/tests/*
-   ligo/skymap/*/tests/*
-   ligo/skymap/*/*/tests/*
-   ligo/skymap/version*
-   ligo/skymap/plot/cylon*  # only used for generating color map
+   {packagename}/_astropy_init*
+   {packagename}/conftest*
+   {packagename}/cython_version*
+   {packagename}/extern/*
+   {packagename}/setup_package*
+   {packagename}/*/setup_package*
+   {packagename}/*/*/setup_package*
+   {packagename}/tests/*
+   {packagename}/*/tests/*
+   {packagename}/*/*/tests/*
+   {packagename}/version*
+   {packagename}/plot/cylon.py  # only used for generating color map
 
 [report]
 exclude_lines =

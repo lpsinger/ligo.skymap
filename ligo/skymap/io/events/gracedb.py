@@ -14,6 +14,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
+from ligo.gracedb import rest
+
 from .base import EventSource
 from .ligolw import LigoLWEventSource
 
@@ -33,8 +35,7 @@ class GraceDBEventSource(EventSource):
 
     def __init__(self, graceids, client=None):
         if client is None:
-            from ligo.gracedb.rest import GraceDb
-            client = GraceDb()
+            client = rest.GraceDb()
         self._client = client
         self._graceids = graceids
 

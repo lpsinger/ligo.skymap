@@ -3,6 +3,7 @@ import gzip
 import os
 import re
 import subprocess
+from unittest.mock import patch
 
 from glue.ligolw.utils import load_filename
 import h5py
@@ -121,10 +122,10 @@ def test_sqlite(tmpdir):
         ligolw_assertions(source)
 
 
+@patch('ligo.gracedb.rest.GraceDb', MockGraceDb)
 def test_gracedb():
     """Test reading events from GraceDB records."""
-    client = MockGraceDb()
-    source = events.gracedb.open(['G211117', 'G197392'], client)
+    source = events.gracedb.open(['G211117', 'G197392'])
     assert len(source) == 2
     for i, (event_id, event) in enumerate(source.items()):
         if i == 0:
@@ -187,11 +188,11 @@ def test_gracedb():
                 'spin2z': -0.53029484}
 
 
+@patch('ligo.gracedb.rest.GraceDb', MockGraceDb)
 def test_detector_disabled():
     """Test reading from event sources with certain detectors disabled."""
-    client = MockGraceDb()
     graceids = ('G211117', 'G197392')
-    base_source = events.gracedb.open(graceids, client)
+    base_source = events.gracedb.open(graceids)
 
     source = events.detector_disabled.open(base_source, ['H1'])
     assert len(source) == 2

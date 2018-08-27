@@ -12,7 +12,7 @@ omit =
    ligo/skymap/*/tests/*
    ligo/skymap/*/*/tests/*
    ligo/skymap/version*
-   ligo/skymap/plot/cylon.py  # only used for generating color map
+   ligo/skymap/plot/cylon*  # only used for generating color map
 
 [report]
 exclude_lines =

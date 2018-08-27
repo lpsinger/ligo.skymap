@@ -1,5 +1,5 @@
 [run]
-source = ligo/skymapligo/skymap
+source = ligo/skymap
 omit =
    ligo/skymap/_astropy_init*
    ligo/skymap/conftest*

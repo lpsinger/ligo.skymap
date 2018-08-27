@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.13 (unreleased)
+0.0.13 (2018-08-27)
 ===================
 
 - Add ``bayestar-mcmc`` tool for pure Markov Chain Monte Carlo parameter

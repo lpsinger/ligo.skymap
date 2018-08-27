@@ -45,7 +45,6 @@ def test_localize_1_detector():
 
     # Make sure that none of the extrinsic parameters are in the event history
     history = '\n'.join(skymap.meta['history'])
-    print(history)
     for forbidden in ['snr=', '12.345', 'time=', '0.6789', 'phase=', '0.1234',
                       'mass1=', 'mass2=', '1.414']:
         assert forbidden not in history

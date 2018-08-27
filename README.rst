@@ -31,9 +31,9 @@ package are:
 
 See the `installation instructions`_ or the `full documentation`_.
 
-.. _`Script bayestar-localize-coincs`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
-.. _`Script ligo-skymap-from-samples`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
-.. _`Script ligo-skymap-plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
-.. _`Module ligo.skymap.plot`: https://leo-singer.docs.ligo.org/ligo.skymap/ligo/skymap/plot
-.. _`installation instructions`: https://leo-singer.docs.ligo.org/ligo.skymap/quickstart/install.html
-.. _`full documentation`: https://leo-singer.docs.ligo.org/ligo.skymap
+.. _`Script bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
+.. _`Script ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
+.. _`Script ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
+.. _`Module ligo.skymap.plot`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/plot
+.. _`installation instructions`: https://lscsoft.docs.ligo.org/ligo.skymap/quickstart/install.html
+.. _`full documentation`: https://lscsoft.docs.ligo.org/ligo.skymap

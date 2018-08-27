@@ -106,7 +106,7 @@ Developer Info
 
    changes
    develop
-   GitLab Project Page <http://git.ligo.org/leo-singer/ligo.skymap>
+   GitLab Project Page <http://git.ligo.org/lscsoft/ligo.skymap>
    Python Package Index <https://pypi.org/project/ligo.skymap>
 
 *****

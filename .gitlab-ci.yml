@@ -166,7 +166,7 @@ test/coverage:
     - tar --strip-components 1 -xf *.tar.*
   script:
     # Run tests.
-    - python setup.py test --coverage -vv --args='-vv'
+    - python setup.py test --coverage -V
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml

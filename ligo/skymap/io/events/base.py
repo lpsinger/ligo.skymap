@@ -18,7 +18,7 @@
 Base classes for reading events from search pipelines.
 """
 
-from abc import ABCMeta, abstractproperty
+from abc import ABCMeta
 from collections import Mapping
 
 __all__ = ('EventSource', 'Event', 'SingleEvent')
@@ -67,11 +67,13 @@ class Event(metaclass=ABCMeta):
         Dictionary of template parameters
     """
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def singles(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def template_args(self):
         raise NotImplementedError
 
@@ -104,27 +106,33 @@ class SingleEvent(metaclass=ABCMeta):
         SNR time series
     """
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def detector(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def snr(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def phase(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def time(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def zerolag_time(self):
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def psd(self):
         raise NotImplementedError
 

@@ -50,10 +50,7 @@ class GraceDBEventSource(EventSource):
         return event
 
     def __len__(self):
-        try:
-            return len(self._graceids)
-        except TypeError:
-            raise NotImplementedError
+        return len(self._graceids)
 
 
 open = GraceDBEventSource

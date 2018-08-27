@@ -39,7 +39,7 @@ class EventSource(Mapping):
     def __str__(self):
         try:
             length = len(self)
-        except NotImplementedError:
+        except (NotImplementedError, TypeError):
             contents = '...'
         else:
             contents = '...{} items...'.format(length)

@@ -24,7 +24,7 @@ components (the `a` and `b` coordinates).
 This particular color map was selected from 20 random realizations of this
 construction."""
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     from colormath.color_conversions import convert_color
     from colormath.color_objects import LabColor, sRGBColor
     from scipy.interpolate import interp1d

@@ -205,7 +205,7 @@ class HDFSingleEvent(SingleEvent):
         elif self._detector_num == 1:
             value += 0.5 * shift
         else:
-            raise RuntimeError('This line should not be reached')
+            raise AssertionError('This line should not be reached')
         return value
 
     @property

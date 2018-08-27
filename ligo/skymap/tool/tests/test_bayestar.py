@@ -115,4 +115,4 @@ def test_bayestar(localize_coincs, localize_lvalert, inj_coinc_sqlite, tmpdir):
     out2 = str(tmpdir / 'stats2.out')
     args = ('ligo-skymap-stats', '--modes', '-p', '90', '-a', '100', '-o')
     run_entry_point(*args, out1, localize_coincs, '-d', inj_coinc_sqlite)
-    run_entry_point(*args, out2, localize_lvalert)
+    run_entry_point(*args, out2, localize_lvalert, '-j', '2')

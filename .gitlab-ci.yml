@@ -15,7 +15,7 @@ sdist:
   artifacts:
     paths:
       - '*.tar.*'
-    expire_in: 30 minutes
+    expire_in: 3 hours
 
 #
 # Build binary wheels Linux and macOS.
@@ -37,7 +37,7 @@ sdist:
   artifacts:
     paths:
       - '*.whl'
-    expire_in: 30 minutes
+    expire_in: 3 hours
 
 .wheel:macos: &wheel-macos
   tags:
@@ -58,7 +58,7 @@ sdist:
   artifacts:
     paths:
       - '*.whl'
-    expire_in: 30 minutes
+    expire_in: 3 hours
 
 wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
@@ -116,7 +116,7 @@ docs:
   artifacts:
     paths:
       - docs/_build/html/
-    expire_in: 30 minutes
+    expire_in: 3 hours
 
 #
 # Test the wheels.
@@ -217,7 +217,7 @@ test/coverage:
     paths:
       - coverage.xml
       - coverage.html
-    expire_in: 30 minutes
+    expire_in: 3 hours
 
 #
 # Run flake8 linter to enforce code style.

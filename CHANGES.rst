@@ -2,10 +2,11 @@
 Changelog
 #########
 
-0.0.14 (unreleased)
+0.0.14 (2018-08-28)
 ===================
 
-- No changes yet.
+- Increase lifetime of continuous integration artifacts. The unit tests take
+  longer now because they are more complete.
 
 0.0.13 (2018-08-27)
 ===================

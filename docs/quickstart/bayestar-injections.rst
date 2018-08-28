@@ -43,7 +43,7 @@ Run the following command to generate a handful of BNS events::
     `# WARNING: distances are in kpc.` \
     --d-distr volume \
     --min-distance 1 --max-distance 600e3 \
-    \ # Sky position and inclination distribution: isotropic. \
+    `# Sky position and inclination distribution: isotropic.` \
     --l-distr random --i-distr uniform \
     `# Write a table of CBC injections to inj.xml.` \
     --f-lower 30 --disable-spin \

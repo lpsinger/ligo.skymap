@@ -64,9 +64,13 @@ wheel:cp35-cp35m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
+wheel:cp37-cp37m-manylinux1:
+  <<: *wheel-manylinux1
 wheel:cp35-cp35m-macosx:
   <<: *wheel-macos
 wheel:cp36-cp36m-macosx:
+  <<: *wheel-macos
+wheel:cp37-cp37m-macosx:
   <<: *wheel-macos
 
 #
@@ -99,12 +103,15 @@ dependencies/python3.5:
 dependencies/python3.6:
   <<: *dependencies
 
+dependencies/python3.7:
+  <<: *dependencies
+
 #
 # Generate documentation.
 #
 
 docs:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -141,6 +148,12 @@ test/python3.6:
   dependencies:
     - wheel:cp36-cp36m-manylinux1
 
+test/python3.7:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  dependencies:
+    - wheel:cp37-cp37m-manylinux1
+
 #
 # Measure test coverage:
 # - coverage.py for Python code
@@ -157,7 +170,7 @@ test/python3.6:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
@@ -224,7 +237,7 @@ test/coverage:
 #
 
 lint:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -266,13 +279,15 @@ deploy:wheel:
     GIT_STRATEGY: none
   script:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
-    - /opt/python/cp36-cp36m/bin/pip install twine
-    - /opt/python/cp36-cp36m/bin/twine upload *
+    - /opt/python/cp37-cp37m/bin/pip install twine
+    - /opt/python/cp37-cp37m/bin/twine upload *
   dependencies:
     - sdist
     - wheel:cp35-cp35m-manylinux1
     - wheel:cp36-cp36m-manylinux1
+    - wheel:cp37-cp37m-manylinux1
     - wheel:cp35-cp35m-macosx
     - wheel:cp36-cp36m-macosx
+    - wheel:cp37-cp37m-macosx
   only:
     - tags

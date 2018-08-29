@@ -281,7 +281,7 @@ def main(args=None):
         waveform = (sim_inspiral.waveform if opts.waveform is None
                     else opts.waveform)
 
-        # FIXME: Set tranverse spin components to 0
+        # FIXME: Set transverse spin components to 0
         sim_inspiral.spin1x = 0
         sim_inspiral.spin1y = 0
         sim_inspiral.spin2x = 0

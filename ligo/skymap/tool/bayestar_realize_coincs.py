@@ -31,13 +31,18 @@ there is a choice for how to generate perturbed time and phase measurements:
 """
 
 from argparse import FileType
+import functools
+import os
+
+import lal
+from ..util import lal as lal_pickle_support  # noqa: F401
+import numpy as np
 
 from . import ArgumentParser, EnableAction, random_parser, register_to_xmldoc
 
 
 def parser():
     # Determine list of known detectors for command line arguments.
-    import lal
     available_ifos = sorted(det.frDetector.prefix
                             for det in lal.CachedDetectors)
 
@@ -48,6 +53,9 @@ def parser():
     parser.add_argument(
         '-o', '--output', metavar='OUT.xml[.gz]', type=FileType('wb'),
         default='-', help='Name of output file')
+    parser.add_argument(
+        '-j', '--jobs', type=int, default=1, const=None, nargs='?',
+        help='Number of threads')
     parser.add_argument(
         '--detector', metavar='|'.join(available_ifos), nargs='+',
         help='Detectors to use', choices=available_ifos, required=True)
@@ -90,8 +98,6 @@ def parser():
 
 def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
                  response, location, measurement_error='zero-noise'):
-    import lal
-    import numpy as np
     from scipy.interpolate import interp1d
 
     from ..bayestar import filter
@@ -159,14 +165,48 @@ def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
         'snr', epoch, 0, 1 / sample_rate,
         lal.DimensionlessUnit, len(snr_series))
     tseries.data.data = snr_series
-    return horizon, snr, toa, phase, tseries
+    return horizon, snr, phase, toa, tseries
+
+
+def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error):
+    from ..bayestar import filter
+
+    seed, sim_inspiral = seed_sim_inspiral
+    np.random.seed(seed)
+
+    # Unpack some values from the row in the table.
+    DL = sim_inspiral.distance
+    ra = sim_inspiral.longitude
+    dec = sim_inspiral.latitude
+    inc = sim_inspiral.inclination
+    # phi = sim_inspiral.coa_phase  # arbitrary?
+    psi = sim_inspiral.polarization
+    epoch = sim_inspiral.time_geocent
+    gmst = lal.GreenwichMeanSiderealTime(epoch)
+
+    # Signal models for each detector.
+    H = filter.sngl_inspiral_psd(
+        sim_inspiral.waveform,
+        mass1=sim_inspiral.mass1,
+        mass2=sim_inspiral.mass2,
+        spin1x=sim_inspiral.spin1x,
+        spin1y=sim_inspiral.spin1y,
+        spin1z=sim_inspiral.spin1z,
+        spin2x=sim_inspiral.spin2x,
+        spin2y=sim_inspiral.spin2y,
+        spin2z=sim_inspiral.spin2z,
+        f_min=sim_inspiral.f_lower)
+
+    return [
+        simulate_snr(
+            ra, dec, psi, inc, DL, epoch, gmst, H, S, response, location,
+            measurement_error=measurement_error)
+        for S, response, location in zip(psds, responses, locations)]
 
 
 def main(args=None):
     p = parser()
     opts = p.parse_args(args)
-
-    import os
 
     # LIGO-LW XML imports.
     from glue.ligolw import ligolw
@@ -179,7 +219,6 @@ def main(args=None):
     # glue, LAL and pylal imports.
     from glue import segments
     import glue.lal
-    import lal
     import lal.series
     import lalsimulation
     from lalinspiral.thinca import InspiralCoincDef
@@ -188,9 +227,6 @@ def main(args=None):
     # BAYESTAR imports.
     from ..io.events.ligolw import ContentHandler
     from ..bayestar import filter
-
-    # Other imports.
-    import numpy as np
 
     # Open output file.
     out_xmldoc = ligolw.Document()
@@ -263,48 +299,47 @@ def main(args=None):
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 
-    for sim_inspiral in tqdm(sim_inspiral_table):
+    # Fix up sim_inspiral table with values from command line options.
+    if opts.f_low is not None:
+        for row in sim_inspiral_table:
+            row.f_lower = opts.f_low
+    if opts.waveform is not None:
+        for row in sim_inspiral_table:
+            row.waveform = opts.waveform
+    # FIXME: Set transverse spin components to 0.
+    for row in sim_inspiral_table:
+        row.spin1x = row.spin1y = row.spin2x = row.spin2y = 0
 
-        # Unpack some values from the row in the table.
-        m1 = sim_inspiral.mass1
-        m2 = sim_inspiral.mass2
-        f_low = sim_inspiral.f_lower if opts.f_low is None else opts.f_low
-        DL = sim_inspiral.distance
-        ra = sim_inspiral.longitude
-        dec = sim_inspiral.latitude
-        inc = sim_inspiral.inclination
-        # phi = sim_inspiral.coa_phase  # arbitrary?
-        psi = sim_inspiral.polarization
-        epoch = lal.LIGOTimeGPS(
-            sim_inspiral.geocent_end_time, sim_inspiral.geocent_end_time_ns)
-        gmst = lal.GreenwichMeanSiderealTime(epoch)
-        waveform = (sim_inspiral.waveform if opts.waveform is None
-                    else opts.waveform)
+    if opts.jobs == 1:
+        pool_map = map
+    else:
+        from .. import omp
+        from multiprocessing import Pool
+        omp.num_threads = 1  # disable OpenMP parallelism
+        pool_map = Pool(opts.jobs).imap
 
-        # FIXME: Set transverse spin components to 0
-        sim_inspiral.spin1x = 0
-        sim_inspiral.spin1y = 0
-        sim_inspiral.spin2x = 0
-        sim_inspiral.spin2y = 0
+    func = functools.partial(simulate, psds=psds,
+                             responses=responses, locations=locations,
+                             measurement_error=opts.measurement_error)
 
-        # Signal models for each detector.
-        H = filter.sngl_inspiral_psd(
-            waveform,
-            mass1=sim_inspiral.mass1,
-            mass2=sim_inspiral.mass2,
-            spin1x=sim_inspiral.spin1x,
-            spin1y=sim_inspiral.spin1y,
-            spin1z=sim_inspiral.spin1z,
-            spin2x=sim_inspiral.spin2x,
-            spin2y=sim_inspiral.spin2y,
-            spin2z=sim_inspiral.spin2z,
-            f_min=f_low)
+    # Make sure that each thread gets a different random number state.
+    # We start by drawing a random integer s in the main thread, and
+    # then the i'th subprocess will seed itself with the integer i + s.
+    #
+    # The seed must be an unsigned 32-bit integer, so if there are n
+    # threads, then s must be drawn from the interval [0, 2**32 - n).
+    #
+    # Note that *we* are thread 0, so there are a total of
+    # n=1+len(sim_inspiral_table) threads.
+    seed = np.random.randint(0, 2 ** 32 - len(sim_inspiral_table) - 1)
+    np.random.seed(seed)
 
-        horizons, abs_snrs, toas, arg_snrs, snr_series = zip(*(
-            simulate_snr(
-                ra, dec, psi, inc, DL, epoch, gmst, H, S, response, location,
-                measurement_error=opts.measurement_error)
-            for S, response, location in zip(psds, responses, locations)))
+    for sim_inspiral, simulation in zip(
+            sim_inspiral_table,
+            tqdm(pool_map(func,
+                          zip(seed + 1 + np.arange(len(sim_inspiral_table)),
+                              sim_inspiral_table)),
+                 total=len(sim_inspiral_table))):
 
         sngl_inspirals = []
         used_snr_series = []
@@ -312,9 +347,8 @@ def main(args=None):
         count_triggers = 0
 
         # Loop over individual detectors and create SnglInspiral entries.
-        for ifo, abs_snr, arg_snr, toa, horizon, location, series \
-                in zip(opts.detector, abs_snrs, arg_snrs, toas, horizons,
-                       locations, snr_series):
+        for ifo, (horizon, abs_snr, arg_snr, toa, series) \
+                in zip(opts.detector, simulation):
 
             if np.random.uniform() > opts.duty_cycle:
                 continue
@@ -327,20 +361,19 @@ def main(args=None):
 
             # Create SnglInspiral entry.
             sngl_inspiral = lsctables.SnglInspiral()
-            for validcolumn in sngl_inspiral_table.validcolumns.keys():
+            for validcolumn in lsctables.SnglInspiralTable.validcolumns.keys():
                 setattr(sngl_inspiral, validcolumn, None)
             sngl_inspiral.process_id = process.process_id
             sngl_inspiral.ifo = ifo
-            sngl_inspiral.mass1 = m1
-            sngl_inspiral.mass2 = m2
+            sngl_inspiral.mass1 = sim_inspiral.mass1
+            sngl_inspiral.mass2 = sim_inspiral.mass2
             sngl_inspiral.spin1x = sim_inspiral.spin1x
             sngl_inspiral.spin1y = sim_inspiral.spin1y
             sngl_inspiral.spin1z = sim_inspiral.spin1z
             sngl_inspiral.spin2x = sim_inspiral.spin2x
             sngl_inspiral.spin2y = sim_inspiral.spin2y
             sngl_inspiral.spin2z = sim_inspiral.spin2z
-            sngl_inspiral.end_time = toa.gpsSeconds
-            sngl_inspiral.end_time_ns = toa.gpsNanoSeconds
+            sngl_inspiral.end = toa
             sngl_inspiral.snr = abs_snr
             sngl_inspiral.coa_phase = arg_snr
             sngl_inspiral.eff_distance = horizon / sngl_inspiral.snr

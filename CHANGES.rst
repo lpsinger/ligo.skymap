@@ -7,6 +7,9 @@ Changelog
 
 - Parallelize ``bayestar-realize-coincs``.
 
+- Add ``--min-distance`` and ``--max-distance`` options to
+  ``bayestar-realize-coincs``.
+
 0.0.14 (2018-08-28)
 ===================
 

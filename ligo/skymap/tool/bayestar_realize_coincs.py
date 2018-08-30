@@ -78,6 +78,12 @@ def parser():
         help='Emit coincidences only when at least this many triggers '
         'are found')
     parser.add_argument(
+        '--min-distance', type=float, default=0.0,
+        help='Skip events with distance less than this value')
+    parser.add_argument(
+        '--max-distance', type=float, default=float('inf'),
+        help='Skip events with distance greater than this value')
+    parser.add_argument(
         '--measurement-error', default='zero-noise',
         choices=('zero-noise', 'gaussian-noise'),
         help='How to compute the measurement error')
@@ -321,6 +327,9 @@ def main(args=None):
     locations = [det.location for det in detectors]
 
     # Fix up sim_inspiral table with values from command line options.
+    sim_inspiral_table[:] = [
+        row for row in sim_inspiral_table
+        if opts.min_distance <= row.distance <= opts.max_distance]
     if opts.f_low is not None:
         for row in sim_inspiral_table:
             row.f_lower = opts.f_low

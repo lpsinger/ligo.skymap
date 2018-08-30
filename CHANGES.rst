@@ -5,7 +5,7 @@ Changelog
 0.0.15 (unreleased)
 ===================
 
-- Parallelize bayestar-realize-coincs.
+- Parallelize ``bayestar-realize-coincs``.
 
 0.0.14 (2018-08-28)
 ===================

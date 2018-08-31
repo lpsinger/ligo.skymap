@@ -195,4 +195,4 @@ def main(args=None):
         hdf5.write_samples(
             chain,
             os.path.join(opts.output, '{}.hdf5'.format(int_coinc_event_id)),
-            path='/bayestar/posterior_samples')
+            path='/bayestar/posterior_samples', overwrite=True)

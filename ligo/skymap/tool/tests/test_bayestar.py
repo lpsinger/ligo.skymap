@@ -12,7 +12,7 @@ def psd(tmpdir):
                     '-o', filename,
                     '--H1=aLIGOZeroDetHighPower',
                     '--L1=aLIGOZeroDetHighPower',
-                    '--V1=AdvVirgo')
+                    '--V1=AdVDesignSensitivityP1200087')
     return filename
 
 

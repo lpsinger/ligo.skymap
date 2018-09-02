@@ -2,7 +2,7 @@ astroplan
 astropy>=3.0
 healpy
 h5py
-lalsuite
+lalsuite>=6.48.1.dev20180902
 lscsoft-glue
 ligo-gracedb
 matplotlib>=2.1.0

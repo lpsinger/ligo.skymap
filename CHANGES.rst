@@ -2,13 +2,15 @@
 Changelog
 #########
 
-0.0.15 (unreleased)
+0.0.15 (2018-09-04)
 ===================
 
 - Parallelize ``bayestar-realize-coincs``.
 
 - Add ``--min-distance`` and ``--max-distance`` options to
   ``bayestar-realize-coincs``.
+
+- Add unit tests and binary wheels for Python 3.7.
 
 0.0.14 (2018-08-28)
 ===================

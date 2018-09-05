@@ -148,9 +148,9 @@ def cut_prime_meridian(vertices):
                 out_vertices += [np.asarray(intersection.exterior)]
     else:
         # There were more than two intersections. Not implemented!
-        raise NotImplemented('The polygon intersected the map boundaries two '
-                             'or more times, so it is probably not simple and '
-                             'convex.')
+        raise NotImplementedError('The polygon intersected the map boundaries '
+                                  'two or more times, so it is probably not '
+                                  'simple and convex.')
 
     # Done!
     return out_vertices

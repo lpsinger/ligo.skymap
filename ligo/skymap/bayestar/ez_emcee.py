@@ -121,7 +121,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
                 progress.update()
 
             # Refresh convergence statistics
-            progress.set_description('Checking convergence')
+            progress.set_description('Checking')
             acl = sampler.get_autocorr_time()[0].max()
             if np.isfinite(acl):
                 acl = int(np.ceil(acl))

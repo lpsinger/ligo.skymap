@@ -157,8 +157,6 @@ def condition(
                   np.sum(weights))
 
     if enable_snr_series:
-        log.warning('Enabling input of SNR time series. '
-                    'This feature is UNREVIEWED.')
         snr_series = [single.snr_series for single in singles]
         if all(s is None for s in snr_series):
             snr_series = None

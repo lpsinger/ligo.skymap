@@ -13,6 +13,5 @@ ptemcee
 reproject>=0.3.2
 scipy>=0.14
 seaborn>=0.8.0
-shapely
 tqdm
 pytz

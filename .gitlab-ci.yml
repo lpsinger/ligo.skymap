@@ -60,14 +60,10 @@ sdist:
       - '*.whl'
     expire_in: 3 hours
 
-wheel:cp35-cp35m-manylinux1:
-  <<: *wheel-manylinux1
 wheel:cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
 wheel:cp37-cp37m-manylinux1:
   <<: *wheel-manylinux1
-wheel:cp35-cp35m-macosx:
-  <<: *wheel-macos
 wheel:cp36-cp36m-macosx:
   <<: *wheel-macos
 wheel:cp37-cp37m-macosx:
@@ -96,9 +92,6 @@ wheel:cp37-cp37m-macosx:
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
-
-dependencies/python3.5:
-  <<: *dependencies
 
 dependencies/python3.6:
   <<: *dependencies
@@ -135,12 +128,6 @@ docs:
   script:
     - pip install *.whl
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(verbose=True))'
-
-test/python3.5:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.5:$CI_COMMIT_REF_NAME
-  dependencies:
-    - wheel:cp35-cp35m-manylinux1
 
 test/python3.6:
   <<: *test
@@ -283,10 +270,8 @@ deploy:wheel:
     - /opt/python/cp37-cp37m/bin/twine upload *
   dependencies:
     - sdist
-    - wheel:cp35-cp35m-manylinux1
     - wheel:cp36-cp36m-manylinux1
     - wheel:cp37-cp37m-manylinux1
-    - wheel:cp35-cp35m-macosx
     - wheel:cp36-cp36m-macosx
     - wheel:cp37-cp37m-macosx
   only:

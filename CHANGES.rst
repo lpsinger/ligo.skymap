@@ -5,7 +5,7 @@ Changelog
 0.0.16 (unreleased)
 ===================
 
-- No changes yet.
+- Drop support for Python 3.5.
 
 0.0.15 (2018-09-04)
 ===================

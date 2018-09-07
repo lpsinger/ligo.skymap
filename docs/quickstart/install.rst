@@ -13,7 +13,7 @@ will install pre-built binaries from the `Python package index
 Basic Requirements
 ------------------
 
-*  `Python <https://www.python.org>`_ ≥ 3.5
+*  `Python <https://www.python.org>`_ ≥ 3.6
 *  `pip <https://pip.pypa.io>`_
 
 Required Python Dependencies

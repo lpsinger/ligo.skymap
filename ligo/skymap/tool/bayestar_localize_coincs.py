@@ -87,7 +87,7 @@ def main(args=None):
     from collections import OrderedDict
     import sys
 
-    # Squelch annoying and uniformative LAL log messages.
+    # Squelch annoying and uninformative LAL log messages.
     import lal
     lal.ClobberDebugLevel(lal.LALNDEBUG)
 

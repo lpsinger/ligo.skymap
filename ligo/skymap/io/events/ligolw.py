@@ -33,15 +33,11 @@ from glue.ligolw.lsctables import (
 from glue.ligolw.utils import load_filename, load_fileobj
 import lal
 import lal.series
+from lalinspiral.thinca import InspiralCoincDef
 
 from .base import Event, EventSource, SingleEvent
 
 __all__ = ('LigoLWEventSource',)
-
-# Adapted from lalinspiral.thinca
-InspiralCoincDef = lsctables.CoincDef(
-    search='inspiral', search_coinc_type=0,
-    description='sngl_inspiral<-->sngl_inspiral coincidences')
 
 log = logging.getLogger('BAYESTAR')
 

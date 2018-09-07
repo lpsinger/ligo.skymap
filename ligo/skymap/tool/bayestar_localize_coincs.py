@@ -85,6 +85,7 @@ def main(args=None):
     # Other imports.
     import os
     from collections import OrderedDict
+    import subprocess
     import sys
 
     # Squelch annoying and uninformative LAL log messages.
@@ -105,25 +106,32 @@ def main(args=None):
         if opts.coinc_event_id:
             raise ValueError(
                 'must not set --coinc-event-id with --condor-submit')
-        cmd = ['condor_submit', 'accounting_group=ligo.dev.o3.cbc.pe.bayestar',
-               'on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)',
-               'on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)',
-               'on_exit_hold_reason = (ExitBySignal == True ? strcat('
-               '"The job exited with signal ", ExitSignal) : strcat('
-               '"The job exited with signal ", ExitCode))',
-               'request_memory = 1000 MB',
-               'universe=vanilla', 'getenv=true',
-               'executable=/usr/bin/env',
-               'JobBatchName=BAYESTAR', 'environment="OMP_NUM_THREADS=1"',
-               'error=' + os.path.join(opts.output, '$(CoincEventId).err'),
-               'log=' + os.path.join(opts.output, '$(CoincEventId).log'),
-               'arguments="' + ' '.join(arg for arg in sys.argv
-                                        if arg != '--condor-submit') +
-               ' --coinc-event-id $(CoincEventId)"',
-               '-append', 'queue CoincEventId in ' + ' '.join(
-                   str(coinc_event_id) for coinc_event_id in event_source),
-               '/dev/null']
-        os.execvp('condor_submit', cmd)
+        with subprocess.Popen(['condor_submit'],
+                              # FIXME: use text=True instead in Python >= 3.7
+                              encoding=sys.stdin.encoding,
+                              stdin=subprocess.PIPE) as proc:
+            f = proc.stdin
+            print('''
+                  accounting_group = ligo.dev.o3.cbc.pe.bayestar
+                  on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
+                  on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+                  on_exit_hold_reason = (ExitBySignal == True \
+                    ? strcat("The job exited with signal ", ExitSignal) \
+                    : strcat("The job exited with code ", ExitCode))
+                  request_memory = 1000 MB
+                  universe = vanilla
+                  getenv = true
+                  executable = /usr/bin/env
+                  JobBatchName = BAYESTAR
+                  environment = "OMP_NUM_THREADS=1"
+                  ''', file=f)
+            print('error =', os.path.join(opts.output, '$(cid).err'), file=f)
+            print('log =', os.path.join(opts.output, '$(cid).log'), file=f)
+            print('arguments = "',
+                  *(arg for arg in sys.argv if arg != '--condor-submit'),
+                  '--coinc-event-id $(cid)"', file=f)
+            print('queue cid in', *event_source, file=f)
+        sys.exit(proc.returncode)
 
     # Loop over all coinc_event <-> sim_inspiral coincs.
     if opts.coinc_event_id:

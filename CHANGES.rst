@@ -7,6 +7,11 @@ Changelog
 
 - Drop support for Python 3.5.
 
+- The ``bayestar-localize-coincs`` tool's ``--condor-submit`` option now passes
+  the submit file directives to ``condor_submit`` via stdin rather than on the
+  command line, so that the number of jobs is not limited by the operating
+  system's maximum number of command line arguments.
+
 0.0.15 (2018-09-04)
 ===================
 

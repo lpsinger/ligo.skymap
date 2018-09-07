@@ -12,6 +12,9 @@ Changelog
   command line, so that the number of jobs is not limited by the operating
   system's maximum number of command line arguments.
 
+- Print warnings from ``ligo.skymap.io.events.ligolw.open()`` only once per
+  file to avoid excessive terminal output when reading large files.
+
 0.0.15 (2018-09-04)
 ===================
 

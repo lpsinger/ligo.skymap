@@ -79,13 +79,6 @@ def _read_xml(f, fallbackpath=None):
     return doc, filename
 
 
-PHASE_CONVENTION_WARNING = """\
-Using anti-FINDCHIRP phase convention; inverting phases. This is currently \
-the default and it is appropriate for gstlal and MBTA but not pycbc as of \
-observing run 1 ("O1"). The default setting is likely to change in the future.\
-"""
-
-
 class LigoLWEventSource(OrderedDict, EventSource):
 
     def __init__(self, f, psd_file=None, coinc_def=InspiralCoincDef,
@@ -151,9 +144,9 @@ class LigoLWEventSource(OrderedDict, EventSource):
                 row.coinc_def_id for row in coinc_def_table
                 if (row.search, row.search_coinc_type) ==
                 (coinc_def.search, coinc_def.search_coinc_type)}
-            coinc_table = (
+            coinc_table = [
                 row for row in coinc_table
-                if row.coinc_def_id in coinc_def_ids)
+                if row.coinc_def_id in coinc_def_ids]
 
         snr_dict = dict(self._snr_series_by_sngl_inspiral(doc))
 
@@ -171,16 +164,30 @@ class LigoLWEventSource(OrderedDict, EventSource):
                 for process_param in process_params_table
                 if process_param.param == '--reference-psd'}
 
+        ts0 = TimeSlideID(0)
+        for time_slide_id in {coinc.time_slide_id for coinc in coinc_table}:
+            if offsets_by_time_slide_id is None and time_slide_id == ts0:
+                log.warning(
+                    'Time slide record is missing for %s, '
+                    'guessing that this is zero-lag', time_slide_id)
+
+        for program in {program_for_process_id[coinc.process_id]
+                        for coinc in coinc_table}:
+            invert_phases = self._phase_convention(program)
+            if invert_phases:
+                log.warning(
+                    'Using anti-FINDCHIRP phase convention; inverting phases. '
+                    'This is currently the default and it is appropriate for '
+                    'gstlal and MBTA but not pycbc as of observing run 1 '
+                    '("O1"). The default setting is likely to change in the '
+                    'future.')
+
         for coinc in coinc_table:
             coinc_event_id = coinc.coinc_event_id
             coinc_event_num = int(coinc_event_id)
             sngls = [sngl_inspirals_by_event_id[event_id] for event_id
                      in event_ids_by_coinc_event_id[coinc_event_id]]
-            if offsets_by_time_slide_id is None and \
-                    coinc.time_slide_id == TimeSlideID(0):
-                log.warning(
-                    'Time slide record is missing for %s, '
-                    'guessing that this is zero-lag', coinc.time_slide_id)
+            if offsets_by_time_slide_id is None and coinc.time_slide_id == ts0:
                 offsets = defaultdict(float)
             else:
                 offsets = offsets_by_time_slide_id[coinc.time_slide_id]
@@ -195,8 +202,6 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
             invert_phases = self._phase_convention(
                 program_for_process_id[coinc.process_id])
-            if invert_phases:
-                log.warning(PHASE_CONVENTION_WARNING)
 
             singles = tuple(LigoLWSingleEvent(
                 self, sngl.ifo, sngl.snr, sngl.coa_phase,

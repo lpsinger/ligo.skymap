@@ -35,7 +35,6 @@ import functools
 import os
 
 import lal
-from ..util import lal as lal_pickle_support  # noqa: F401
 import numpy as np
 
 from . import ArgumentParser, EnableAction, random_parser, register_to_xmldoc

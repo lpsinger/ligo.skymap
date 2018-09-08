@@ -18,11 +18,11 @@
 """Construct a LIGO-LW XML power spectral density file for a network of
 detectors by evaluating a model power noise sensitivity curve."""
 
-from argparse import FileType, SUPPRESS
+from argparse import SUPPRESS
 import inspect
 import os
 
-from . import ArgumentParser, register_to_xmldoc
+from . import ArgumentParser, FileType, register_to_xmldoc
 
 psd_name_prefix = 'SimNoisePSD'
 

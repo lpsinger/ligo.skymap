@@ -20,9 +20,7 @@ Plot a volumetric posterior in three-projection view.
 """
 
 
-from argparse import FileType
-
-from . import ArgumentParser, figure_parser
+from . import ArgumentParser, FileType, figure_parser
 
 
 def parser():

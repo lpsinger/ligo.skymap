@@ -24,9 +24,7 @@ map is updated according to the restriction in sky location imposed by the
 other input map(s). Only one input map can currently have distance
 information."""
 
-from argparse import FileType
-
-from . import ArgumentParser
+from . import ArgumentParser, FileType
 
 
 def parser():

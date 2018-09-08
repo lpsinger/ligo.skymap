@@ -20,11 +20,10 @@ Create summary plots for sky maps of found injections, optionally binned
 cumulatively by false alarm rate or SNR.
 """
 
-from argparse import FileType
 from distutils.dir_util import mkpath
 import os
 
-from . import ArgumentParser
+from . import ArgumentParser, FileType
 
 
 def parser():

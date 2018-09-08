@@ -47,6 +47,21 @@ else:
     matplotlib.use('Template', warn=False, force=True)
 
 
+class FileType(argparse.FileType):
+    """Inherit from :class:`argparse.FileType` to enable opening stdin or
+    stdout in binary mode.
+
+    This is a workaround for https://bugs.python.org/issue14156."""
+
+    def __call__(self, string):
+        if string == '-' and 'b' in self._mode:
+            if 'r' in self._mode:
+                return sys.stdin.buffer
+            elif 'w' in self._mode:
+                return sys.stdout.buffer
+        return super().__call__(string)
+
+
 class EnableAction(argparse.Action):
 
     def __init__(self,
@@ -164,7 +179,7 @@ group.add_argument(
 del group
 
 
-class MatplotlibFigureType(argparse.FileType):
+class MatplotlibFigureType(FileType):
 
     def __init__(self):
         super(MatplotlibFigureType, self).__init__('wb')
@@ -417,7 +432,7 @@ class DirType(object):
         return string
 
 
-class SQLiteType(argparse.FileType):
+class SQLiteType(FileType):
     """Open an SQLite database, or fail if it does not exist.
 
     Here is an example of trying to open a file that does not exist for

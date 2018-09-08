@@ -90,12 +90,11 @@ values with the following columns:
 
 """
 
-from argparse import FileType
 import sqlite3
 
 import numpy as np
 
-from . import ArgumentParser, SQLiteType
+from . import ArgumentParser, FileType, SQLiteType
 from ..io import fits
 from ..postprocess import find_injection_moc
 from ..util import sqlite

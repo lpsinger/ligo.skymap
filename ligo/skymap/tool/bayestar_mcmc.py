@@ -19,10 +19,9 @@
 Markov-Chain Monte Carlo sky localization.
 """
 
-from argparse import FileType
-
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, random_parser, mkpath)
+    ArgumentParser, FileType, waveform_parser,
+    prior_parser, random_parser, mkpath)
 
 
 def parser():

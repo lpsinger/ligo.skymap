@@ -30,14 +30,14 @@ there is a choice for how to generate perturbed time and phase measurements:
  - `gaussian-noise`: measurement error for a matched filter in Gaussian noise
 """
 
-from argparse import FileType
 import functools
 import os
 
 import lal
 import numpy as np
 
-from . import ArgumentParser, EnableAction, random_parser, register_to_xmldoc
+from . import (
+    ArgumentParser, EnableAction, FileType, random_parser, register_to_xmldoc)
 
 
 def parser():

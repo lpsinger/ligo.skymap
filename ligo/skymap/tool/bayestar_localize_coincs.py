@@ -31,11 +31,9 @@ A FITS file is created for each sky map, having a filename of the form
 ``X.fits`` where X is the LIGO-LW row id of the coinc.
 """
 
-from argparse import FileType
-
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, random_parser,
-    mkpath)
+    ArgumentParser, FileType, mkpath,
+    waveform_parser, prior_parser, mcmc_parser, random_parser)
 
 
 def parser():

@@ -19,11 +19,9 @@
 Make an airmass chart for a LIGO/Virgo probability sky map.
 """
 
-from argparse import FileType
-
 import numpy as np
 
-from . import ArgumentParser, figure_parser
+from . import ArgumentParser, FileType, figure_parser
 
 
 def parser():

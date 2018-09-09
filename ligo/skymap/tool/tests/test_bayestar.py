@@ -49,17 +49,9 @@ def coinc(inj, psd, tmpdir):
 
 
 @pytest.fixture
-def inj_coinc(inj, coinc, tmpdir):
-    filename = str(tmpdir / 'inj_coinc.xml')
-    run_glue('ligolw_add', inj, coinc, '-o', filename)
-    run_lalsuite('lalapps_inspinjfind', filename)
-    return filename
-
-
-@pytest.fixture
-def inj_coinc_sqlite(inj_coinc, tmpdir):
-    filename = str(tmpdir / 'inj_coinc.sqlite')
-    run_glue('ligolw_sqlite', inj_coinc, '-p', '-d', filename)
+def coinc_sqlite(coinc, tmpdir):
+    filename = str(tmpdir / 'coinc.sqlite')
+    run_glue('ligolw_sqlite', coinc, '-p', '-d', filename)
     return filename
 
 
@@ -96,7 +88,7 @@ def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
 
 
 @pytest.mark.internet_off
-def test_bayestar(localize_coincs, localize_lvalert, inj_coinc_sqlite, tmpdir):
+def test_bayestar(localize_coincs, localize_lvalert, coinc_sqlite, tmpdir):
     """Test bayestar-realize-coincs, bayestar-localize-coincs,
     bayestar-localize-lvalert, and ligo-skymap-stats."""
     # Check that bayestar-localize-coincs and bayestar-localize-lvalert
@@ -114,5 +106,5 @@ def test_bayestar(localize_coincs, localize_lvalert, inj_coinc_sqlite, tmpdir):
     out1 = str(tmpdir / 'stats1.out')
     out2 = str(tmpdir / 'stats2.out')
     args = ('ligo-skymap-stats', '--modes', '-p', '90', '-a', '100', '-o')
-    run_entry_point(*args, out1, localize_coincs, '-d', inj_coinc_sqlite)
+    run_entry_point(*args, out1, localize_coincs, '-d', coinc_sqlite)
     run_entry_point(*args, out2, localize_lvalert, '-j', '2')

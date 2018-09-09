@@ -128,17 +128,13 @@ The output is saved in the current working directory to FITS files named
 5. Find Injections (Optional)
 -----------------------------
 
-Optionally, if you want to generate P-P plots, you need to cross-match
-your injections with your coincidences. This uses three tools from LALSuite and
-Glue chained together: ``ligolw_add``, ``lalapps_inspinjfind``, and
-``ligolw_sqlite``. Run the following command::
+Optionally, if you want to generate P-P plots, you need to convert the
+``coinc.xml`` file to SQLite using the ``ligolw_sqlite`` tool from glue. Run
+the following command::
 
-    ligolw_add coinc.xml inj.xml \
-    | lalapps_inspinjfind \
-    | ligolw_sqlite --preserve-ids --replace --database \
-    found.sqlite /dev/stdin
+    ligolw_sqlite --preserve-ids --replace --database coinc.sqlite coinc.xml
 
-The output is saved in SQLite format as ``found.sqlite``.
+The output is saved in SQLite format as ``coinc.sqlite``.
 
 6. Analyze Sky Maps
 -------------------
@@ -150,7 +146,7 @@ to gather summary statistics including credible areas for each sky map::
     `# Write output to bayestar.tsv.` \
     -o bayestar.tsv \
     `# Include this option to enable P-P plots.` \
-    --database found.sqlite \
+    --database coinc.sqlite \
     `# Read all sky maps in this directory.` \
     *.fits \
     `# Optional: calculate the 50% and 90% credible areas.` \

@@ -16,6 +16,9 @@ Changelog
 - Print warnings from ``ligo.skymap.io.events.ligolw.open()`` only once per
   file to avoid excessive terminal output when reading large files.
 
+- ``bayestar-realize-coincs`` now fills in the SimInspiral table and associates
+  coincidences with found injections.
+
 0.0.15 (2018-09-04)
 ===================
 

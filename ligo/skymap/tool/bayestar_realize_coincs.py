@@ -30,6 +30,7 @@ there is a choice for how to generate perturbed time and phase measurements:
  - `gaussian-noise`: measurement error for a matched filter in Gaussian noise
 """
 
+import copy
 import functools
 import os
 
@@ -173,7 +174,8 @@ def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
     return horizon, snr, phase, toa, tseries
 
 
-def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error):
+def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error,
+             f_low=None, waveform=None):
     from ..bayestar import filter
 
     seed, sim_inspiral = seed_sim_inspiral
@@ -189,9 +191,12 @@ def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error):
     epoch = sim_inspiral.time_geocent
     gmst = lal.GreenwichMeanSiderealTime(epoch)
 
+    f_low = f_low or sim_inspiral.f_lower
+    waveform = waveform or sim_inspiral.waveform
+
     # Signal models for each detector.
     H = filter.sngl_inspiral_psd(
-        sim_inspiral.waveform,
+        waveform,
         mass1=sim_inspiral.mass1,
         mass2=sim_inspiral.mass2,
         spin1x=sim_inspiral.spin1x,
@@ -200,7 +205,7 @@ def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error):
         spin2x=sim_inspiral.spin2x,
         spin2y=sim_inspiral.spin2y,
         spin2z=sim_inspiral.spin2z,
-        f_min=sim_inspiral.f_lower)
+        f_min=f_low)
 
     return [
         simulate_snr(
@@ -226,6 +231,7 @@ def main(args=None):
     import glue.lal
     import lal.series
     import lalsimulation
+    from lalinspiral.inspinjfind import InspiralSCExactCoincDef
     from lalinspiral.thinca import InspiralCoincDef
     from tqdm import tqdm
 
@@ -285,12 +291,17 @@ def main(args=None):
         opts.input, contenthandler=ContentHandler)
 
     # Extract simulation table from injection file.
-    sim_inspiral_table = lsctables.SimInspiralTable.get_table(xmldoc)
+    orig_sim_inspiral_table = lsctables.SimInspiralTable.get_table(
+        xmldoc)
 
     # Create a SnglInspiral table and initialize its row ID counter.
     sngl_inspiral_table = lsctables.New(lsctables.SnglInspiralTable)
     out_xmldoc.childNodes[0].appendChild(sngl_inspiral_table)
     sngl_inspiral_table.set_next_id(lsctables.SnglInspiralID(0))
+
+    # Create a SimInspiral table to store found injections.
+    sim_inspiral_table = lsctables.New(lsctables.SimInspiralTable)
+    out_xmldoc.childNodes[0].appendChild(sim_inspiral_table)
 
     # Create a time slide entry.  Needed for coinc_event rows.
     time_slide_table = lsctables.New(lsctables.TimeSlideTable)
@@ -298,14 +309,15 @@ def main(args=None):
     time_slide_id = time_slide_table.get_time_slide_id(
         {ifo: 0 for ifo in opts.detector}, create_new=process)
 
-    # Create a CoincDef table and record a CoincDef row for
-    # sngl_inspiral <-> sngl_inspiral coincidences.
+    # Create and populate CoincDef table.
     coinc_def_table = lsctables.New(lsctables.CoincDefTable)
     out_xmldoc.childNodes[0].appendChild(coinc_def_table)
-    coinc_def = InspiralCoincDef
-    coinc_def_id = coinc_def_table.get_next_id()
-    coinc_def.coinc_def_id = coinc_def_id
-    coinc_def_table.append(coinc_def)
+    inspiral_coinc_def = copy.copy(InspiralCoincDef)
+    inspiral_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
+    coinc_def_table.append(inspiral_coinc_def)
+    found_coinc_def = copy.copy(InspiralSCExactCoincDef)
+    found_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
+    coinc_def_table.append(found_coinc_def)
 
     # Create a CoincMap table.
     coinc_map_table = lsctables.New(lsctables.CoincMapTable)
@@ -325,19 +337,10 @@ def main(args=None):
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 
-    # Fix up sim_inspiral table with values from command line options.
-    sim_inspiral_table[:] = [
-        row for row in sim_inspiral_table
+    # Prune injections that are outside distance limits.
+    orig_sim_inspiral_table[:] = [
+        row for row in orig_sim_inspiral_table
         if opts.min_distance <= row.distance <= opts.max_distance]
-    if opts.f_low is not None:
-        for row in sim_inspiral_table:
-            row.f_lower = opts.f_low
-    if opts.waveform is not None:
-        for row in sim_inspiral_table:
-            row.waveform = opts.waveform
-    # FIXME: Set transverse spin components to 0.
-    for row in sim_inspiral_table:
-        row.spin1x = row.spin1y = row.spin2x = row.spin2y = 0
 
     if opts.jobs == 1:
         pool_map = map
@@ -349,7 +352,8 @@ def main(args=None):
 
     func = functools.partial(simulate, psds=psds,
                              responses=responses, locations=locations,
-                             measurement_error=opts.measurement_error)
+                             measurement_error=opts.measurement_error,
+                             f_low=opts.f_low, waveform=opts.waveform)
 
     # Make sure that each thread gets a different random number state.
     # We start by drawing a random integer s in the main thread, and
@@ -364,11 +368,11 @@ def main(args=None):
     np.random.seed(seed)
 
     for sim_inspiral, simulation in zip(
-            sim_inspiral_table,
-            tqdm(pool_map(func,
-                          zip(seed + 1 + np.arange(len(sim_inspiral_table)),
-                              sim_inspiral_table)),
-                 total=len(sim_inspiral_table))):
+            orig_sim_inspiral_table,
+            tqdm(pool_map(func, zip(np.arange(len(orig_sim_inspiral_table))
+                                    + seed + 1,
+                                    orig_sim_inspiral_table)),
+                 total=len(orig_sim_inspiral_table))):
 
         sngl_inspirals = []
         used_snr_series = []
@@ -423,7 +427,7 @@ def main(args=None):
         coinc = lsctables.Coinc()
         coinc.coinc_event_id = coinc_table.get_next_id()
         coinc.process_id = process.process_id
-        coinc.coinc_def_id = coinc_def_id
+        coinc.coinc_def_id = inspiral_coinc_def.coinc_def_id
         coinc.time_slide_id = time_slide_id
         coinc.set_instruments(opts.detector)
         coinc.nevents = len(opts.detector)
@@ -466,6 +470,30 @@ def main(args=None):
             coinc_map.table_name = sngl_inspiral_table.tableName
             coinc_map.event_id = sngl_inspiral.event_id
             coinc_map_table.append(coinc_map)
+
+        # Record injection
+        sim_inspiral_table.append(sim_inspiral)
+
+        # Record coincidence associating the injection with the event
+        found_coinc = lsctables.Coinc()
+        found_coinc.coinc_event_id = coinc_table.get_next_id()
+        found_coinc.process_id = process.process_id
+        found_coinc.coinc_def_id = found_coinc_def.coinc_def_id
+        found_coinc.time_slide_id = time_slide_id
+        found_coinc.instruments = None
+        found_coinc.nevents = None
+        found_coinc.likelihood = None
+        coinc_table.append(found_coinc)
+        coinc_map = lsctables.CoincMap()
+        coinc_map.coinc_event_id = found_coinc.coinc_event_id
+        coinc_map.table_name = sim_inspiral_table.tableName
+        coinc_map.event_id = sim_inspiral.simulation_id
+        coinc_map_table.append(coinc_map)
+        coinc_map = lsctables.CoincMap()
+        coinc_map.coinc_event_id = found_coinc.coinc_event_id
+        coinc_map.table_name = coinc_table.tableName
+        coinc_map.event_id = coinc.coinc_event_id
+        coinc_map_table.append(coinc_map)
 
     # Record process end time.
     ligolw_process.set_process_end_time(process)

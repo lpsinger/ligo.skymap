@@ -1,7 +1,11 @@
+from glue.ligolw import lsctables as lsctables
+from glue.ligolw import utils as ligolw_utils
+from lalinspiral.thinca import InspiralCoincDef
 import numpy as np
 import pytest
 
 from ... import io
+from ...io.events.ligolw import ContentHandler
 from . import run_entry_point, run_glue, run_lalsuite
 
 
@@ -49,6 +53,36 @@ def coinc(inj, psd, tmpdir):
 
 
 @pytest.fixture
+def coinc_without_inj(coinc, tmpdir):
+    """Produce a coinc.xml file with the found coincs stripped out."""
+    filename = str(tmpdir / 'coinc_without_inj.xml')
+    xmldoc = ligolw_utils.load_filename(coinc, contenthandler=ContentHandler)
+
+    # Prune coinc_def table
+    coinc_def_table = lsctables.CoincDefTable.get_table(xmldoc)
+    included = [row for row in coinc_def_table
+                if row.search_coinc_type == InspiralCoincDef.search_coinc_type
+                and row.search == InspiralCoincDef.search]
+    included_coinc_def_ids = {row.coinc_def_id for row in included}
+    coinc_def_table[:] = included
+
+    # Prune coinc table
+    coinc_table = lsctables.CoincTable.get_table(xmldoc)
+    included = [row for row in coinc_table
+                if row.coinc_def_id in included_coinc_def_ids]
+    included_coinc_ids = {row.coinc_event_id for row in included}
+    coinc_table[:] = included
+
+    # Prune coinc_map table
+    coinc_map_table = lsctables.CoincMapTable.get_table(xmldoc)
+    coinc_map_table[:] = [row for row in coinc_map_table
+                          if row.coinc_event_id in included_coinc_ids]
+
+    ligolw_utils.write_filename(xmldoc, filename)
+    return filename
+
+
+@pytest.fixture
 def coinc_sqlite(coinc, tmpdir):
     filename = str(tmpdir / 'coinc.sqlite')
     run_glue('ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
@@ -65,7 +99,7 @@ def localize_coincs(coinc, psd, tmpdir):
 # @pytest.mark.internet_off to make sure that it does not actually
 # contact GraceDb.
 @pytest.fixture
-def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
+def localize_lvalert(coinc_without_inj, psd, tmpdir, monkeypatch):
 
     class MockGraceDb:
 
@@ -74,7 +108,8 @@ def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
 
         def files(self, graceid, filename):
             assert graceid == 'G1234'
-            mock_filename = {'coinc.xml': coinc, 'psd.xml.gz': psd}[filename]
+            mock_filename = {'coinc.xml': coinc_without_inj,
+                             'psd.xml.gz': psd}[filename]
             return open(mock_filename, 'rb')
 
         def writeLog(self, *args, **kwargs):

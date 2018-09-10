@@ -51,7 +51,7 @@ def coinc(inj, psd, tmpdir):
 @pytest.fixture
 def coinc_sqlite(coinc, tmpdir):
     filename = str(tmpdir / 'coinc.sqlite')
-    run_glue('ligolw_sqlite', coinc, '-p', '-d', filename)
+    run_glue('ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
     return filename
 
 

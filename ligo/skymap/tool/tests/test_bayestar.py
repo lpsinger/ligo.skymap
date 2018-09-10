@@ -77,7 +77,7 @@ def localize_lvalert(coinc, psd, tmpdir, monkeypatch):
             mock_filename = {'coinc.xml': coinc, 'psd.xml.gz': psd}[filename]
             return open(mock_filename, 'rb')
 
-        def writelog(self, *args, **kwargs):
+        def writeLog(self, *args, **kwargs):
             pass
 
     monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)

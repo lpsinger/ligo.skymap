@@ -42,7 +42,7 @@ def inj(tmpdir):
 def coinc(inj, psd, tmpdir):
     filename = str(tmpdir / 'coinc.xml')
     run_entry_point('bayestar-realize-coincs',
-                    '--measurement-error', 'gaussian-noise',
+                    '--measurement-error', 'gaussian-noise', '--f-low', '25',
                     '--reference-psd', psd, '-o', filename, inj,
                     '--enable-snr-series', '--detector', 'H1', 'L1', 'V1')
     return filename

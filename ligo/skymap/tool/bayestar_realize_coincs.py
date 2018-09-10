@@ -346,124 +346,134 @@ def main(args=None):
     seed = np.random.randint(0, 2 ** 32 - len(sim_inspiral_table) - 1)
     np.random.seed(seed)
 
-    for sim_inspiral, simulation in zip(
-            orig_sim_inspiral_table,
-            tqdm(pool_map(func, zip(np.arange(len(orig_sim_inspiral_table))
-                                    + seed + 1,
-                                    orig_sim_inspiral_table)),
-                 total=len(orig_sim_inspiral_table))):
+    count_coincs = 0
 
-        sngl_inspirals = []
-        used_snr_series = []
-        net_snr = 0.0
-        count_triggers = 0
+    with tqdm(total=len(orig_sim_inspiral_table)) as progress:
+        for sim_inspiral, simulation in zip(
+                orig_sim_inspiral_table,
+                pool_map(func, zip(np.arange(len(orig_sim_inspiral_table))
+                                   + seed + 1,
+                                   orig_sim_inspiral_table))):
+            progress.update()
 
-        # Loop over individual detectors and create SnglInspiral entries.
-        for ifo, (horizon, abs_snr, arg_snr, toa, series) \
-                in zip(opts.detector, simulation):
+            sngl_inspirals = []
+            used_snr_series = []
+            net_snr = 0.0
+            count_triggers = 0
 
-            if np.random.uniform() > opts.duty_cycle:
+            # Loop over individual detectors and create SnglInspiral entries.
+            for ifo, (horizon, abs_snr, arg_snr, toa, series) \
+                    in zip(opts.detector, simulation):
+
+                if np.random.uniform() > opts.duty_cycle:
+                    continue
+                elif abs_snr >= opts.snr_threshold:
+                    # If SNR < threshold, then the injection is not found.
+                    # Skip it.
+                    count_triggers += 1
+                    net_snr += np.square(abs_snr)
+                elif not opts.keep_subthreshold:
+                    continue
+
+                # Create SnglInspiral entry.
+                used_snr_series.append(series)
+                sngl_inspirals.append(
+                    sngl_inspiral_table.RowType(**dict(
+                        dict.fromkeys(sngl_inspiral_table.validcolumns, None),
+                        process_id=process.process_id,
+                        ifo=ifo,
+                        mass1=sim_inspiral.mass1,
+                        mass2=sim_inspiral.mass2,
+                        spin1x=sim_inspiral.spin1x,
+                        spin1y=sim_inspiral.spin1y,
+                        spin1z=sim_inspiral.spin1z,
+                        spin2x=sim_inspiral.spin2x,
+                        spin2y=sim_inspiral.spin2y,
+                        spin2z=sim_inspiral.spin2z,
+                        end=toa,
+                        snr=abs_snr,
+                        coa_phase=arg_snr,
+                        eff_distance=horizon / abs_snr)))
+
+            net_snr = np.sqrt(net_snr)
+
+            # If too few triggers were found, then skip this event.
+            if count_triggers < opts.min_triggers:
                 continue
-            elif abs_snr >= opts.snr_threshold:
-                # If SNR < threshold, then the injection is not found. Skip it.
-                count_triggers += 1
-                net_snr += np.square(abs_snr)
-            elif not opts.keep_subthreshold:
+
+            # If network SNR < threshold, then the injection is not found.
+            # Skip it.
+            if net_snr < opts.net_snr_threshold:
                 continue
 
-            # Create SnglInspiral entry.
-            used_snr_series.append(series)
-            sngl_inspirals.append(
-                sngl_inspiral_table.RowType(**dict(
-                    dict.fromkeys(sngl_inspiral_table.validcolumns, None),
-                    process_id=process.process_id,
-                    ifo=ifo,
-                    mass1=sim_inspiral.mass1,
-                    mass2=sim_inspiral.mass2,
-                    spin1x=sim_inspiral.spin1x,
-                    spin1y=sim_inspiral.spin1y,
-                    spin1z=sim_inspiral.spin1z,
-                    spin2x=sim_inspiral.spin2x,
-                    spin2y=sim_inspiral.spin2y,
-                    spin2z=sim_inspiral.spin2z,
-                    end=toa,
-                    snr=abs_snr,
-                    coa_phase=arg_snr,
-                    eff_distance=horizon / abs_snr)))
+            # Add Coinc table entry.
+            coinc = coinc_table.appendRow(
+                coinc_event_id=coinc_table.get_next_id(),
+                process_id=process.process_id,
+                coinc_def_id=inspiral_coinc_def.coinc_def_id,
+                time_slide_id=time_slide_id,
+                insts=opts.detector,
+                nevents=len(opts.detector),
+                likelihood=None)
 
-        net_snr = np.sqrt(net_snr)
-
-        # If too few triggers were found, then skip this event.
-        if count_triggers < opts.min_triggers:
-            continue
-
-        # If network SNR < threshold, then the injection is not found. Skip it.
-        if net_snr < opts.net_snr_threshold:
-            continue
-
-        # Add Coinc table entry.
-        coinc = coinc_table.appendRow(
-            coinc_event_id=coinc_table.get_next_id(),
-            process_id=process.process_id,
-            coinc_def_id=inspiral_coinc_def.coinc_def_id,
-            time_slide_id=time_slide_id,
-            insts=opts.detector,
-            nevents=len(opts.detector),
-            likelihood=None)
-
-        # Add CoincInspiral table entry.
-        coinc_inspiral_table.appendRow(
-            coinc_event_id=coinc.coinc_event_id,
-            instruments=[
-                sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals],
-            end=lal.LIGOTimeGPS(  # FIXME: should only be detected sngls
-                sum(sngl_inspiral.end.ns() for sngl_inspiral in sngl_inspirals)
-                // len(sngl_inspirals) * 1e-9),
-            mass=sim_inspiral.mass1 + sim_inspiral.mass2,
-            mchirp=sim_inspiral.mchirp,
-            combined_far=0.0,  # Not provided
-            false_alarm_rate=0.0,  # Not provided
-            minimum_duration=None,  # Not provided
-            snr=net_snr)
-
-        # Record all sngl_inspiral records and associate them with coincs.
-        for sngl_inspiral, series in zip(sngl_inspirals, used_snr_series):
-            # Give this sngl_inspiral record an id and add it to the table.
-            sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()
-            sngl_inspiral_table.append(sngl_inspiral)
-
-            if opts.enable_snr_series:
-                elem = lal.series.build_COMPLEX8TimeSeries(series)
-                elem.appendChild(
-                    Param.from_pyvalue(u'event_id', sngl_inspiral.event_id))
-                xmlroot.appendChild(elem)
-
-            # Add CoincMap entry.
-            coinc_map_table.appendRow(
+            # Add CoincInspiral table entry.
+            coinc_inspiral_table.appendRow(
                 coinc_event_id=coinc.coinc_event_id,
-                table_name=sngl_inspiral_table.tableName,
-                event_id=sngl_inspiral.event_id)
+                instruments=[
+                    sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals],
+                end=lal.LIGOTimeGPS(  # FIXME: should only be detected sngls
+                    sum(sngl_inspiral.end.ns()
+                        for sngl_inspiral in sngl_inspirals)
+                    // len(sngl_inspirals) * 1e-9),
+                mass=sim_inspiral.mass1 + sim_inspiral.mass2,
+                mchirp=sim_inspiral.mchirp,
+                combined_far=0.0,  # Not provided
+                false_alarm_rate=0.0,  # Not provided
+                minimum_duration=None,  # Not provided
+                snr=net_snr)
 
-        # Record injection
-        sim_inspiral_table.append(sim_inspiral)
+            # Record all sngl_inspiral records and associate them with coincs.
+            for sngl_inspiral, series in zip(sngl_inspirals, used_snr_series):
+                # Give this sngl_inspiral record an id and add it to the table.
+                sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()
+                sngl_inspiral_table.append(sngl_inspiral)
 
-        # Record coincidence associating the injection with the event
-        found_coinc = coinc_table.appendRow(
-            coinc_event_id=coinc_table.get_next_id(),
-            process_id=process.process_id,
-            coinc_def_id=found_coinc_def.coinc_def_id,
-            time_slide_id=time_slide_id,
-            instruments=None,
-            nevents=None,
-            likelihood=None)
-        coinc_map_table.appendRow(
-            coinc_event_id=found_coinc.coinc_event_id,
-            table_name=sim_inspiral_table.tableName,
-            event_id=sim_inspiral.simulation_id)
-        coinc_map_table.appendRow(
-            coinc_event_id=found_coinc.coinc_event_id,
-            table_name=coinc_table.tableName,
-            event_id=coinc.coinc_event_id)
+                if opts.enable_snr_series:
+                    elem = lal.series.build_COMPLEX8TimeSeries(series)
+                    elem.appendChild(
+                        Param.from_pyvalue(u'event_id',
+                                           sngl_inspiral.event_id))
+                    xmlroot.appendChild(elem)
+
+                # Add CoincMap entry.
+                coinc_map_table.appendRow(
+                    coinc_event_id=coinc.coinc_event_id,
+                    table_name=sngl_inspiral_table.tableName,
+                    event_id=sngl_inspiral.event_id)
+
+            # Record injection
+            sim_inspiral_table.append(sim_inspiral)
+
+            # Record coincidence associating the injection with the event
+            found_coinc = coinc_table.appendRow(
+                coinc_event_id=coinc_table.get_next_id(),
+                process_id=process.process_id,
+                coinc_def_id=found_coinc_def.coinc_def_id,
+                time_slide_id=time_slide_id,
+                instruments=None,
+                nevents=None,
+                likelihood=None)
+            coinc_map_table.appendRow(
+                coinc_event_id=found_coinc.coinc_event_id,
+                table_name=sim_inspiral_table.tableName,
+                event_id=sim_inspiral.simulation_id)
+            coinc_map_table.appendRow(
+                coinc_event_id=found_coinc.coinc_event_id,
+                table_name=coinc_table.tableName,
+                event_id=coinc.coinc_event_id)
+
+            count_coincs += 1
+            progress.set_postfix(saved=count_coincs)
 
     # Record process end time.
     ligolw_process.set_process_end_time(process)

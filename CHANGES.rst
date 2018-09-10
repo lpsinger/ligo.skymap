@@ -19,6 +19,9 @@ Changelog
 - ``bayestar-realize-coincs`` now fills in the SimInspiral table and associates
   coincidences with found injections.
 
+- ``bayestar-realize-coincs`` now prints a running count of the number of
+  injections that have been found and saved.
+
 0.0.15 (2018-09-04)
 ===================
 

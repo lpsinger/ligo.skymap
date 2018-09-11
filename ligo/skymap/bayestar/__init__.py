@@ -229,7 +229,7 @@ def condition(
     for ifo, single, series in zip(ifos, singles, snr_series):
         shift = np.abs(0.5 * (nsamples - 1) * series.deltaT +
                        float(series.epoch - single.time))
-        if shift >= deltaT + 1e-9:
+        if shift >= deltaT + 1e-8:
             raise ValueError('BAYESTAR expects the SNR time series to be '
                              'centered on the single-detector trigger times, '
                              'but {} was off by {} s'.format(ifo, shift))

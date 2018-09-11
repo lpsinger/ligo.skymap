@@ -16,8 +16,10 @@ Changelog
 - Print warnings from ``ligo.skymap.io.events.ligolw.open()`` only once per
   file to avoid excessive terminal output when reading large files.
 
-- ``bayestar-realize-coincs`` now fills in the SimInspiral table and associates
-  coincidences with found injections.
+- ``bayestar-realize-coincs`` now copies the process table from the injection
+  file and fills in the SimInspiral table and associates coincidences with
+  found injections. As a result, it is no longer necessary to run
+  ``lalapps_inspinjfind`` on the output to find injections.
 
 - ``bayestar-realize-coincs`` now prints a running count of the number of
   injections that have been found and saved.

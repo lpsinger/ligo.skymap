@@ -226,7 +226,8 @@ def main(args=None):
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw.lsctables import (
         New, CoincDefTable, CoincInspiralTable, CoincMapTable, CoincTable,
-        SimInspiralTable, SnglInspiralTable, TimeSlideTable)
+        ProcessParamsTable, ProcessTable, SimInspiralTable, SnglInspiralTable,
+        TimeSlideTable)
 
     # glue, LAL and pylal imports.
     from glue import segments
@@ -272,9 +273,9 @@ def main(args=None):
     psds = [psds[ifo] for ifo in opts.detector]
 
     # Extract simulation table from injection file.
-    xmldoc, _ = ligolw_utils.load_fileobj(
+    inj_xmldoc, _ = ligolw_utils.load_fileobj(
         opts.input, contenthandler=ContentHandler)
-    orig_sim_inspiral_table = SimInspiralTable.get_table(xmldoc)
+    orig_sim_inspiral_table = SimInspiralTable.get_table(inj_xmldoc)
 
     # Prune injections that are outside distance limits.
     orig_sim_inspiral_table[:] = [
@@ -285,11 +286,14 @@ def main(args=None):
     xmldoc = ligolw.Document()
     xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
 
-    # Create tables.
+    # Create tables. Process and ProcessParams tables are copied from the
+    # injection file.
     coinc_def_table = xmlroot.appendChild(New(CoincDefTable))
     coinc_inspiral_table = xmlroot.appendChild(New(CoincInspiralTable))
     coinc_map_table = xmlroot.appendChild(New(CoincMapTable))
     coinc_table = xmlroot.appendChild(New(CoincTable))
+    xmlroot.appendChild(ProcessParamsTable.get_table(inj_xmldoc))
+    xmlroot.appendChild(ProcessTable.get_table(inj_xmldoc))
     sim_inspiral_table = xmlroot.appendChild(New(SimInspiralTable))
     sngl_inspiral_table = xmlroot.appendChild(New(SnglInspiralTable))
     time_slide_table = xmlroot.appendChild(New(TimeSlideTable))

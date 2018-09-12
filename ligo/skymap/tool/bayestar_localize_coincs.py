@@ -131,13 +131,13 @@ def main(args=None):
             print('queue cid in', *event_source, file=f)
         sys.exit(proc.returncode)
 
-    # Loop over all coinc_event <-> sim_inspiral coincs.
     if opts.coinc_event_id:
         event_source = OrderedDict(
             (key, event_source[key]) for key in opts.coinc_event_id)
 
     count_sky_maps_failed = 0
 
+    # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
     for int_coinc_event_id, event in event_source.items():
         coinc_event_id = 'coinc_event:coinc_event_id:{}'.format(
             int_coinc_event_id)

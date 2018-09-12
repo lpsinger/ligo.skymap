@@ -5,7 +5,8 @@ Changelog
 0.0.17 (unreleased)
 ===================
 
-- No changes yet.
+- In ``bayestar-mcmc``, correct a mistake in setting fixed parameters that
+  undergo sampling transformations.
 
 0.0.16 (2018-09-11)
 ===================

@@ -181,7 +181,7 @@ def main(args=None):
                 # units in command line arguments and posterior samples
                 value = np.deg2rad(value)
 
-            kwargs[transformed_names[i]] = value
+            kwargs[transformed_names[i]] = forward_transforms[i](value)
             del (xmin[i], xmax[i], names[i], transformed_names[i],
                  forward_transforms[i], reverse_transforms[i])
 

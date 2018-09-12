@@ -100,7 +100,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
 
         sampler = Sampler(nwalkers, ndim, log_prob_fn, logp,
                           ntemps=ntemps, loglargs=args, loglkwargs=kwargs,
-                          logpargs=[lo, hi], **options)
+                          logpargs=[lo, hi], random=np.random, **options)
         pos = np.random.uniform(lo, hi, (ntemps, nwalkers, ndim))
 
         # Burn in

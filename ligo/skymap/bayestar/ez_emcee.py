@@ -124,7 +124,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
             progress.set_description('Checking')
             acl = sampler.get_autocorr_time()[0].max()
             if np.isfinite(acl):
-                acl = int(np.ceil(acl))
+                acl = min(1, int(np.ceil(acl)))
             accept = np.mean(sampler.acceptance_fraction[0])
             progress.set_postfix(acl=acl, accept=accept)
 

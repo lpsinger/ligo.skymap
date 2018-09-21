@@ -200,9 +200,8 @@ def main(args=None):
                 values = np.concatenate(
                     [d.columns.get(colname, []) for d in filtered])
                 if len(values) > 0:
-                    bins = np.logspace(np.log10(np.min(values)),
-                                       np.log10(np.max(values)),
-                                       1000 if opts.cumulative else 20)
+                    bins = np.geomspace(np.min(values), np.max(values),
+                                        1000 if opts.cumulative else 20)
                     ax.hist([d.columns.get(colname, []) for d in filtered],
                             cumulative=opts.cumulative, density=opts.normed,
                             histtype='step', bins=bins)

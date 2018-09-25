@@ -40,6 +40,9 @@ import numpy as np
 from . import (
     ArgumentParser, EnableAction, FileType, random_parser, register_to_xmldoc)
 
+# Squelch annoying and uninformative LAL log messages.
+lal.ClobberDebugLevel(lal.LALNDEBUG)
+
 
 def parser():
     # Determine list of known detectors for command line arguments.

@@ -378,7 +378,7 @@ class InterpolatedPSD(interpolate.interp1d):
     """Create a (linear in log-log) interpolating function for a discretely
     sampled power spectrum S(f)."""
 
-    def __init__(self, f, S, f_high_truncate=1.0):
+    def __init__(self, f, S, f_high_truncate=1.0, fill_value=np.inf):
         assert f_high_truncate <= 1.0
         f = np.asarray(f)
         S = np.asarray(S)
@@ -399,7 +399,7 @@ class InterpolatedPSD(interpolate.interp1d):
             S = S[keep]
         super(InterpolatedPSD, self).__init__(
             np.log(f), np.log(S),
-            kind='linear', bounds_error=False, fill_value=np.inf)
+            kind='linear', bounds_error=False, fill_value=np.log(fill_value))
         self._f_min = min(f)
         self._f_max = max(f)
 
@@ -414,7 +414,8 @@ class InterpolatedPSD(interpolate.interp1d):
                         'only sampled up to %g Hz', f_max, self._f_max)
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),
-            np.exp(super(InterpolatedPSD, self).__call__(np.log(f))), np.inf)
+            np.exp(super(InterpolatedPSD, self).__call__(np.log(f))),
+            self.fill_value)
 
 
 class SignalModel(object):

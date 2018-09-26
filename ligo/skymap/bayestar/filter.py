@@ -415,7 +415,7 @@ class InterpolatedPSD(interpolate.interp1d):
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),
             np.exp(super(InterpolatedPSD, self).__call__(np.log(f))),
-            self.fill_value)
+            np.exp(self.fill_value))
 
 
 class SignalModel(object):

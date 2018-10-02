@@ -8,6 +8,11 @@ Changelog
 - In ``bayestar-mcmc``, correct a mistake in setting fixed parameters that
   undergo sampling transformations.
 
+- By default, ``bayestar-realize-coincs`` will rewrite ``simulation_id`` values
+  so that their integer values match the corresponding events'
+  ``coinc_event_id`` values. The option ``--preserve-ids`` switches back to the
+  old behavior of preserving the original ``simulation_id`` values.
+
 0.0.16 (2018-09-11)
 ===================
 

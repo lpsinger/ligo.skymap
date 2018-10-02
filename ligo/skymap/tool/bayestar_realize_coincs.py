@@ -102,6 +102,9 @@ def parser():
     parser.add_argument(
         '--duty-cycle', type=float, default=1.0,
         help='Single-detector duty cycle')
+    parser.add_argument(
+        '-P', '--preserve-ids', action='store_true',
+        help='Preserve original simulation_ids')
     return parser
 
 
@@ -228,9 +231,9 @@ def main(args=None):
     from glue.ligolw.utils.search_summary import append_search_summary
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw.lsctables import (
-        New, CoincDefTable, CoincInspiralTable, CoincMapTable, CoincTable,
-        ProcessParamsTable, ProcessTable, SimInspiralTable, SnglInspiralTable,
-        TimeSlideTable)
+        New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
+        CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
+        SnglInspiralTable, TimeSlideTable)
 
     # glue, LAL and pylal imports.
     from glue import segments
@@ -459,28 +462,31 @@ def main(args=None):
                     event_id=sngl_inspiral.event_id)
 
             # Record injection
+            if not opts.preserve_ids:
+                sim_inspiral.simulation_id = sim_inspiral_table.get_next_id()
             sim_inspiral_table.append(sim_inspiral)
-
-            # Record coincidence associating the injection with the event
-            found_coinc = coinc_table.appendRow(
-                coinc_event_id=coinc_table.get_next_id(),
-                process_id=process.process_id,
-                coinc_def_id=found_coinc_def.coinc_def_id,
-                time_slide_id=time_slide_id,
-                instruments=None,
-                nevents=None,
-                likelihood=None)
-            coinc_map_table.appendRow(
-                coinc_event_id=found_coinc.coinc_event_id,
-                table_name=sim_inspiral_table.tableName,
-                event_id=sim_inspiral.simulation_id)
-            coinc_map_table.appendRow(
-                coinc_event_id=found_coinc.coinc_event_id,
-                table_name=coinc_table.tableName,
-                event_id=coinc.coinc_event_id)
 
             count_coincs += 1
             progress.set_postfix(saved=count_coincs)
+
+    # Record coincidence associating injections with events.
+    for i, sim_inspiral in enumerate(sim_inspiral_table):
+        coinc = coinc_table.appendRow(
+            coinc_event_id=coinc_table.get_next_id(),
+            process_id=process.process_id,
+            coinc_def_id=found_coinc_def.coinc_def_id,
+            time_slide_id=time_slide_id,
+            instruments=None,
+            nevents=None,
+            likelihood=None)
+        coinc_map_table.appendRow(
+            coinc_event_id=coinc.coinc_event_id,
+            table_name=sim_inspiral_table.tableName,
+            event_id=sim_inspiral.simulation_id)
+        coinc_map_table.appendRow(
+            coinc_event_id=coinc.coinc_event_id,
+            table_name=coinc_table.tableName,
+            event_id=CoincID(i))
 
     # Record process end time.
     ligolw_process.set_process_end_time(process)

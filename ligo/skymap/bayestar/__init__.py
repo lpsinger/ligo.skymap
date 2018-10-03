@@ -289,6 +289,7 @@ def condition_prior(horizons, min_distance=None, max_distance=None,
 
 def localize(
         event, waveform='o2-uberbank', f_low=30.0,
+        min_inclination=0, max_inclination=np.pi/2,
         min_distance=None, max_distance=None, prior_distance_power=None,
         cosmology=False, mcmc=False, chain_dump=None,
         enable_snr_series=True, f_high_truncate=0.95):
@@ -352,8 +353,9 @@ def localize(
 
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')
-    args = (min_distance, max_distance, prior_distance_power, cosmology, gmst,
-            sample_rate, toas, snr_series, responses, locations, horizons)
+    args = (min_inclination, max_inclination, min_distance, max_distance,
+            prior_distance_power, cosmology, gmst, sample_rate, toas,
+            snr_series, responses, locations, horizons)
     if mcmc:
         max_abs_t = 2 * snr_series.data.shape[1] / sample_rate
         skymap = localize_emcee(

@@ -7,6 +7,10 @@ Changelog
 
 - Migrate from glue.segments to ligo.segments.
 
+- Add ``--min-inclination`` and ``max-inclination`` options to
+  ``bayestar-localize-coincs`` and ``bayestar-localize-lvalert`` to control the
+  limits of the isotropic prior over the inclination angle.
+
 0.0.19 (2018-12-13)
 ===================
 

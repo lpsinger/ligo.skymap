@@ -87,6 +87,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     double *out_log_bci,            /* log Bayes factor: coherent vs. incoherent */
     double *out_log_bsn,            /* log Bayes factor: signal vs. noise */
     /* Prior */
+    double min_inclination,
+    double max_inclination,
     double min_distance,            /* Minimum distance */
     double max_distance,            /* Maximum distance */
     int prior_distance_power,       /* Power of distance in prior */

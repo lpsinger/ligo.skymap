@@ -150,6 +150,12 @@ prior_parser = argparse.ArgumentParser(add_help=False)
 group = prior_parser.add_argument_group(
     'prior options', 'Options that affect the BAYESTAR likelihood')
 group.add_argument(
+    '--min-inclination', type=float, metavar='deg', default=0.0,
+    help='Minimum inclination in degrees')
+group.add_argument(
+    '--max-inclination', type=float, metavar='deg', default=90.0,
+    help='Maximum inclination in degrees')
+group.add_argument(
     '--min-distance', type=float, metavar='Mpc',
     help='Minimum distance of prior in megaparsecs')
 group.add_argument(

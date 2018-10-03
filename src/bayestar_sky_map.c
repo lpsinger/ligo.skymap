@@ -892,9 +892,18 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
 
     OMP_BEGIN_INTERRUPTIBLE
 
-    /* At the lowest order, compute both the coherent probability map and the
-     * incoherent evidence. */
-    const double log_norm = -log(2 * (2 * M_PI) * (4 * M_PI) * ntwopsi * nsamples) - log_radial_integrator_eval(integrators[0], 0, 0, -INFINITY, -INFINITY);
+    /* Logarithm of the normalization factor for the prior. */
+    const double log_norm = -log(
+            2                           /* inclination */
+            * (2 * M_PI)                /* coalescence phase? */
+            * (4 * M_PI) * ntwopsi      /* polarization angle */
+            * nsamples                  /* time samples */
+        ) - log_radial_integrator_eval( /* distance */
+            integrators[0], 0, 0, -INFINITY, -INFINITY
+        );
+
+   /* At the lowest order, compute both the coherent probability map and the
+    * incoherent evidence. */
     double log_evidence_coherent, log_evidence_incoherent[nifos];
     {
         double accum[npix0][nifos];

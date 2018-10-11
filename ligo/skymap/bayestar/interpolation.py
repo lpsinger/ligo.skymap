@@ -186,7 +186,7 @@ def interpolate_max_quadratic_fit(imax, y, window_length):
     t = np.arange(-window_length, window_length + 1.)
     y = y[imax - window_length:imax + window_length + 1]
     y_abs = np.abs(y)
-    poly = np.polyfit(t, y_abs, 2)
+    A, B, C = np.polyfit(t, y_abs, 2)
 
     # Find which of the two matched interior points has a greater magnitude
     t_max = -1.
@@ -204,9 +204,8 @@ def interpolate_max_quadratic_fit(imax, y, window_length):
 
     # Determine if the global extremum of the polynomial is a
     # local maximum in (-1, 1)
-    A, B, C = poly
     new_t_max = -0.5 * B / A
-    new_y_max_abs = np.polyval(poly, new_t_max)
+    new_y_max_abs = C - 0.25 * np.square(B) / A
     if -1 < new_t_max < 1 and new_y_max_abs > y_max_abs:
         t_max = new_t_max
         y_max_abs = new_y_max_abs

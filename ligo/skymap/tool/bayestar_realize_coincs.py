@@ -431,10 +431,10 @@ def main(args=None):
                 coinc_event_id=coinc.coinc_event_id,
                 instruments=[
                     sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals],
-                end=lal.LIGOTimeGPS(  # FIXME: should only be detected sngls
-                    sum(sngl_inspiral.end.ns()
-                        for sngl_inspiral in sngl_inspirals)
-                    // len(sngl_inspirals) * 1e-9),
+                end=lal.LIGOTimeGPS(1e-9 * np.mean([
+                    sngl_inspiral.end.ns()
+                    for sngl_inspiral in sngl_inspirals
+                    if sngl_inspiral.end is not None])),
                 mass=sim_inspiral.mass1 + sim_inspiral.mass2,
                 mchirp=sim_inspiral.mchirp,
                 combined_far=0.0,  # Not provided

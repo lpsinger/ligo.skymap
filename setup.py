@@ -6,10 +6,7 @@ import glob
 import os
 import sys
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 # Get some values from the setup.cfg
 conf = ConfigParser()
@@ -27,7 +24,7 @@ __minimum_python_version__ = metadata.get("minimum_python_version", "2.7")
 # Enforce Python version check - this is the same check as in __init__.py but
 # this one has to happen before importing ah_bootstrap.
 if sys.version_info < tuple((int(val) for val in __minimum_python_version__.split('.'))):
-    sys.stderr.write("ERROR: packagename requires Python {} or later\n".format(__minimum_python_version__))
+    sys.stderr.write("ERROR: ligo.skymap requires Python {} or later\n".format(__minimum_python_version__))
     sys.exit(1)
 
 # Import ah_bootstrap after the python version validation
@@ -36,11 +33,7 @@ import ah_bootstrap
 from setuptools import setup
 import pkg_resources
 
-# A dirty hack to get around some early import/configurations ambiguities
-if sys.version_info[0] >= 3:
-    import builtins
-else:
-    import __builtin__ as builtins
+import builtins
 builtins._ASTROPY_SETUP_ = True
 
 from astropy_helpers.setup_helpers import (register_commands, get_debug_option,
@@ -89,7 +82,7 @@ else:
 builtins._ASTROPY_PACKAGE_NAME_ = PACKAGENAME
 
 # VERSION should be PEP440 compatible (http://www.python.org/dev/peps/pep-0440)
-VERSION = metadata.get('version', '0.0.dev0')
+VERSION = metadata.get('version', '0.0.dev')
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION

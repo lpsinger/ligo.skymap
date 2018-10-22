@@ -22,6 +22,11 @@ Changelog
   Astropy by requiring numpy <= 1.15.2. See
   <https://github.com/astropy/astropy/issues/7943>.
 
+- Work around a bug introduced in ligo-segments 1.1.0 by requiring an earlier
+  version of that package: its dependency on ligo-common, which does not
+  correctly implement the namespace package ``ligo``, broke the continuous
+  integration build.
+
 0.0.16 (2018-09-11)
 ===================
 

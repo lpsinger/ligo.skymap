@@ -7,7 +7,7 @@ lscsoft-glue
 ligo-gracedb
 matplotlib>=2.1.0
 networkx
-numpy>=1.14
+numpy>=1.14,<1.15.3  # FIXME: https://github.com/astropy/astropy/issues/7943
 pillow>=2.5.0
 ptemcee
 reproject>=0.3.2

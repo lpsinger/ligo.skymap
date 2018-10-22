@@ -16,6 +16,12 @@ Changelog
 - Track rename of ``ligo.gracedb.rest.GraceDb.service_url`` to
   ``ligo.gracedb.rest.GraceDb._service_url`` in ligo-gracedb >= 2.0.1.
 
+- Update common files and submodules from the Astropy package template.
+
+- Work around a change (possibly a regression?) in Numpy 1.15.3 that broke
+  Astropy by requiring numpy <= 1.15.2. See
+  <https://github.com/astropy/astropy/issues/7943>.
+
 0.0.16 (2018-09-11)
 ===================
 

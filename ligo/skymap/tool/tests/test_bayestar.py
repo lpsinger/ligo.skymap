@@ -104,7 +104,7 @@ def localize_lvalert(coinc_without_inj, psd, tmpdir, monkeypatch):
     class MockGraceDb:
 
         def __init__(self, service_url, *args, **kwargs):
-            self.service_url = service_url
+            self._service_url = service_url
 
         def files(self, graceid, filename):
             assert graceid == 'G1234'

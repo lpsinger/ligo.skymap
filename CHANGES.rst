@@ -13,6 +13,9 @@ Changelog
   ``coinc_event_id`` values. The option ``--preserve-ids`` switches back to the
   old behavior of preserving the original ``simulation_id`` values.
 
+- Track rename of ``ligo.gracedb.rest.GraceDb.service_url`` to
+  ``ligo.gracedb.rest.GraceDb._service_url`` in ligo-gracedb >= 2.0.1.
+
 0.0.16 (2018-09-11)
 ===================
 

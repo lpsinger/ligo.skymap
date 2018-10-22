@@ -95,7 +95,7 @@ def main(args=None):
             'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))
 
     # Determine the base URL for event pages.
-    scheme, netloc, *_ = urllib.parse.urlparse(gracedb.service_url)
+    scheme, netloc, *_ = urllib.parse.urlparse(gracedb._service_url)
     base_url = urllib.parse.urlunparse((scheme, netloc, 'events', '', '', ''))
 
     if opts.chain_dump:

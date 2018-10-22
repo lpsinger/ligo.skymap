@@ -4,7 +4,7 @@ healpy
 h5py
 lalsuite>=6.49
 lscsoft-glue
-ligo-gracedb
+ligo-gracedb>=2.0.1
 matplotlib>=2.1.0
 networkx
 numpy>=1.14,<1.15.3  # FIXME: https://github.com/astropy/astropy/issues/7943

@@ -18,7 +18,7 @@ sdist:
     expire_in: 3 hours
 
 #
-# Build binary wheels Linux and macOS.
+# Build binary wheels for Linux and macOS.
 #
 
 .wheel:manylinux1: &wheel-manylinux1

@@ -1,4 +1,5 @@
 astroplan
+astropy-healpix>=0.3  # https://github.com/astropy/astropy-healpix/pull/106
 astropy>=3.0
 healpy
 h5py

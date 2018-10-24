@@ -27,6 +27,10 @@ Changelog
   correctly implement the namespace package ``ligo``, broke the continuous
   integration build.
 
+- Depend on astropy-healpix >= 0.3 to pick up a bug fix related to HEALPix
+  bilinear interpolation that affected ``ligo-skymap-plot``. See
+  <https://github.com/astropy/astropy-healpix/pull/106>.
+
 0.0.16 (2018-09-11)
 ===================
 

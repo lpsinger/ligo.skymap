@@ -73,7 +73,7 @@ def exp_i(phi):
 
 
 def truncated_ifft(y, nsamples_out=None):
-    """Truncated inverse FFT.
+    r"""Truncated inverse FFT.
 
     See http://www.fftw.org/pruned.html for a discussion of related algorithms.
 

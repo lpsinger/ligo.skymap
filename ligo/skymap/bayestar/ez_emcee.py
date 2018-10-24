@@ -29,7 +29,7 @@ def logp(x, lo, hi):
 def ez_emcee(log_prob_fn, lo, hi, nindep=200,
              ntemps=10, nwalkers=None, nburnin=500,
              args=(), kwargs={}, **options):
-    """Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
+    r"""Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
     automated convergence monitoring, progress tracking, and thinning.
 
     The parameters are bounded in the finite interval described by ``lo`` and

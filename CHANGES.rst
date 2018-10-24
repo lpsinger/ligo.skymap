@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.17 (unreleased)
+0.0.17 (2018-10-24)
 ===================
 
 - In ``bayestar-mcmc``, correct a mistake in setting fixed parameters that

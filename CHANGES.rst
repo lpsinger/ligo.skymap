@@ -27,8 +27,6 @@ Changelog
   correctly implement the namespace package ``ligo``, broke the continuous
   integration build.
 
-- Restore Python 3.5 support.
-
 0.0.16 (2018-09-11)
 ===================
 

@@ -15,7 +15,7 @@ def get_extensions():
 
     include_dirs = ['cextern/lalsuite', 'cextern/numpy', 'numpy']
 
-    if setup_helpers.use_system_library('chealix'):
+    if setup_helpers.use_system_library('chealpix'):
         pkg_config_packages.append('chealpix')
     else:
         include_dirs.append('cextern/chealpix')

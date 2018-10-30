@@ -5,7 +5,8 @@ Changelog
 0.0.18 (unreleased)
 ===================
 
-- No changes yet.
+- Fix a typo that caused ligo.skymap to always compile the bundled copy of
+  chealpix instead of searching for a system version using pkgconfig.
 
 0.0.17 (2018-10-24)
 ===================

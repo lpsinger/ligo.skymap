@@ -8,6 +8,8 @@ Changelog
 - Fix a typo that caused ligo.skymap to always compile the bundled copy of
   chealpix instead of searching for a system version using pkgconfig.
 
+- Un-pin Numpy version now that Numpy 1.15.4 is out.
+
 0.0.17 (2018-10-24)
 ===================
 

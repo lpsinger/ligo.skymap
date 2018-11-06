@@ -10,6 +10,9 @@ Changelog
 
 - Un-pin Numpy version now that Numpy 1.15.4 is out.
 
+- The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will
+  now natively output multi-resolution HEALPix files.
+
 0.0.17 (2018-10-24)
 ===================
 

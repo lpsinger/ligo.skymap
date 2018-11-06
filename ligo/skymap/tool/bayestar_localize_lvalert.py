@@ -49,7 +49,7 @@ def parser():
         '--no-tag', action='store_true',
         help='Do not set lvem tag for GraceDB entry')
     parser.add_argument(
-        '-o', '--output', metavar='FILE.fits[.gz]', default='bayestar.fits.gz',
+        '-o', '--output', metavar='FILE.fits', default='bayestar.fits',
         help='Name for uploaded file')
     parser.add_argument(
         'graceid', metavar='G123456', nargs='*',
@@ -67,7 +67,7 @@ def main(args=None):
     import sys
     import tempfile
     import urllib.parse
-    from ..bayestar import localize, rasterize
+    from ..bayestar import localize
     from ..io import fits
     from ..io import events
     from ..util.file import rename
@@ -133,12 +133,12 @@ def main(args=None):
         try:
             # perform sky localization
             log.info("starting sky localization")
-            sky_map = rasterize(localize(
+            sky_map = localize(
                 event, opts.waveform, opts.f_low, opts.min_distance,
                 opts.max_distance, opts.prior_distance_power, opts.cosmology,
                 mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
-                f_high_truncate=opts.f_high_truncate))
+                f_high_truncate=opts.f_high_truncate)
             sky_map.meta['objid'] = str(graceid)
             sky_map.meta['url'] = '{}/{}'.format(base_url, graceid)
             log.info("sky localization complete")

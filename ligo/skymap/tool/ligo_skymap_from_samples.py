@@ -66,7 +66,6 @@ def main(args=None):
 
     # Late imports
     from .. import io
-    from ..bayestar import rasterize
     from .. import version
     from astropy.table import Table
     from astropy.time import Time
@@ -124,7 +123,7 @@ def main(args=None):
         skypost.multiprocess = args.j
 
     log.info('making skymap')
-    hpmap = rasterize(skypost.as_healpix())
+    hpmap = skypost.as_healpix()
     hpmap.meta.update(io.fits.metadata_for_version_module(version))
     hpmap.meta['creator'] = _parser.prog
     hpmap.meta['origin'] = 'LIGO/Virgo'

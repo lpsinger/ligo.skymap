@@ -31,6 +31,7 @@ from scipy.stats import gaussian_kde
 
 from . import distance
 from . import moc
+from . import omp
 from .coordinates import EigenFrame
 
 log = logging.getLogger()
@@ -203,7 +204,12 @@ def k_means(pts, k):
     return mus, assign
 
 
-def _cluster(cls, pts, trials, i, seed):
+def _cluster(cls, pts, trials, i, seed, multiprocess):
+    # FIXME: This is an inelegant hack to disable OpenMP inside subprocesses.
+    # See https://git.ligo.org/lscsoft/ligo.skymap/issues/7.
+    if multiprocess:
+        omp.num_threads = 1
+
     k = i // trials
     if k == 0:
         raise ValueError('Expected at least one cluster')
@@ -234,7 +240,8 @@ class ClusteredKDE(object):
             # The seed must be an unsigned 32-bit integer, so if there are n
             # threads, then s must be drawn from the interval [0, 2**32 - n).
             seed = np.random.randint(0, 2**32 - max_k * trials)
-            func = partial(_cluster, type(self), pts, trials, seed=seed)
+            func = partial(_cluster, type(self), pts, trials, seed=seed,
+                           multiprocess=multiprocess)
             self.bic, self.k, self.kdes = max(
                 self._map(func, range(trials, (max_k + 1) * trials)),
                 key=lambda items: items[:2])

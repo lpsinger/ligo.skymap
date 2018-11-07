@@ -12,6 +12,10 @@ Changelog
   monkeypatch went upstream. See
   https://github.com/astropy/astropy-healpix/pull/106.
 
+- In the KDE clustering and ``ligo-skymap-from-samples``, disable OpenMP
+  parallelism if Python mulitprocessing parallelism is enabled. This will
+  prevent the program from spawning an excessive number of threads.
+
 0.0.18 (2018-11-19)
 ===================
 

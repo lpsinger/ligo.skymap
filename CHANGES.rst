@@ -17,6 +17,9 @@ Changelog
 - Fix an error in the volume element that resulted in ``ligo-skymap-stats``
   underestimating credible volumes by a factor of 2.
 
+- Add the ``ligo-skymap-flatten`` tool to convert multi-resolution HEALPix
+  files to flat, fixed-resolution, implicitly indexed HEALPix files.
+
 0.0.17 (2018-10-24)
 ===================
 

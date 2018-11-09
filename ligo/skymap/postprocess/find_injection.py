@@ -228,7 +228,8 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
 
         # Calculate volume of frustum-shaped voxels with distance centered on r
         # and extending from (r - d_r) to (r + d_r).
-        dV = (np.square(r) + np.square(d_r) / 12) * d_r * dA.reshape(-1, 1)
+        dV = (2 / 3 * (3 * np.square(r) + np.square(d_r))
+              * d_r * dA.reshape(-1, 1))
 
         # Calculate probability within each voxel.
         dP = probdensity.reshape(-1, 1) * dV * np.exp(

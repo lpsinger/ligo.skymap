@@ -13,6 +13,9 @@ Changelog
 - The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will
   now natively output multi-resolution HEALPix files.
 
+- Fix an error in the volume element that resulted in ``ligo-skymap-stats``
+  underestimating credible volumes by a factor of 2.
+
 0.0.17 (2018-10-24)
 ===================
 

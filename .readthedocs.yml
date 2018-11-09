@@ -1,4 +1,9 @@
+# Note: this part is currently needed to build with Python 3.6
+build:
+  image: latest
+
 python:
   setup_py_install: true
   version: 3.6
+
 requirements_file: docs-requirements.txt

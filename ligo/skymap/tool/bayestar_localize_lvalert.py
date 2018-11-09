@@ -32,8 +32,8 @@ terminal, or redirected from a fifo)::
 """
 
 from . import (
-    ArgumentParser, waveform_parser, prior_parser, mcmc_parser, random_parser,
-    iterlines)
+    ArgumentParser, EnableAction, waveform_parser, prior_parser, mcmc_parser,
+    random_parser, iterlines)
 
 
 def parser():
@@ -52,6 +52,9 @@ def parser():
         '-o', '--output', metavar='FILE.fits', default='bayestar.fits',
         help='Name for uploaded file')
     parser.add_argument(
+        '--enable-multiresolution', action=EnableAction, default=False,
+        help='generate a multiresolution HEALPix map')
+    parser.add_argument(
         'graceid', metavar='G123456', nargs='*',
         help='Run on these GraceDB IDs. If no GraceDB IDs are listed on the '
         'command line, then read newline-separated GraceDB IDs from stdin.')
@@ -67,7 +70,7 @@ def main(args=None):
     import sys
     import tempfile
     import urllib.parse
-    from ..bayestar import localize
+    from ..bayestar import localize, rasterize
     from ..io import fits
     from ..io import events
     from ..util.file import rename
@@ -139,6 +142,8 @@ def main(args=None):
                 mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
                 f_high_truncate=opts.f_high_truncate)
+            if not opts.enable_multiresolution:
+                sky_map = rasterize(sky_map)
             sky_map.meta['objid'] = str(graceid)
             sky_map.meta['url'] = '{}/{}'.format(base_url, graceid)
             log.info("sky localization complete")

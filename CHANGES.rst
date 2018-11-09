@@ -10,8 +10,9 @@ Changelog
 
 - Un-pin Numpy version now that Numpy 1.15.4 is out.
 
-- The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will
-  now natively output multi-resolution HEALPix files.
+- The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools can
+  now natively output multi-resolution HEALPix files, although they still
+  natively output flat, fixed-resolution HEALPix files.
 
 - Fix an error in the volume element that resulted in ``ligo-skymap-stats``
   underestimating credible volumes by a factor of 2.

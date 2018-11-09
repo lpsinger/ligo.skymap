@@ -54,6 +54,9 @@ def parser():
                         help='number of trials at each clustering number')
     parser.add_argument('--enable-distance-map', action=EnableAction,
                         help='generate HEALPix map of distance estimates')
+    parser.add_argument('--enable-multiresolution', action=EnableAction,
+                        default=False,
+                        help='generate a multiresolution HEALPix map')
     parser.add_argument('-j', '--jobs', action='store_true',
                         help='Use multiple threads')
     parser.add_argument('--objid', help='event ID to store in FITS header')
@@ -66,6 +69,7 @@ def main(args=None):
 
     # Late imports
     from .. import io
+    from ..bayestar import rasterize
     from .. import version
     from astropy.table import Table
     from astropy.time import Time
@@ -124,6 +128,8 @@ def main(args=None):
 
     log.info('making skymap')
     hpmap = skypost.as_healpix()
+    if not args.enable_multiresolution:
+        hpmap = rasterize(hpmap)
     hpmap.meta.update(io.fits.metadata_for_version_module(version))
     hpmap.meta['creator'] = _parser.prog
     hpmap.meta['origin'] = 'LIGO/Virgo'

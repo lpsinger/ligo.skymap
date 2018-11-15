@@ -25,6 +25,8 @@ import astropy.units as u
 import numpy as np
 import scipy.misc
 
+from ligo.skymap.postprocess.cosmology import dVC_dVL_for_z, z_for_DL, dVC_dVL_for_DL
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'cosmology', choices=astropy.cosmology.parameters.available,
@@ -33,37 +35,6 @@ args = parser.parse_args()
 
 cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
     args.cosmology)
-
-
-def dVC_dVL_for_z(z):
-    """Ratio between the comoving volume element dVC and a
-    DL**2 prior at redshift z."""
-    Ok0 = cosmo.Ok0
-    DH = cosmo.hubble_distance
-    DM_by_DH = (cosmo.comoving_transverse_distance(z) / DH).value
-    DC_by_DH = (cosmo.comoving_distance(z) / DH).value
-    zplus1 = z + 1.0
-    if Ok0 == 0.0:
-        ret = 1.0
-    elif Ok0 > 0.0:
-        ret = np.cosh(np.sqrt(Ok0) * DC_by_DH)
-    else:  # Ok0 < 0.0 or Ok0 is nan
-        ret = np.cos(np.sqrt(-Ok0) * DC_by_DH)
-    ret *= zplus1
-    ret += DM_by_DH * cosmo.efunc(z)
-    ret *= np.square(zplus1)
-    return 1.0 / ret
-
-
-@np.vectorize
-def z_for_DL(DL):
-    return astropy.cosmology.z_at_value(
-        cosmo.luminosity_distance, DL * u.Mpc)
-
-
-def dVC_dVL_for_DL(DL):
-    return dVC_dVL_for_z(z_for_DL(DL))
-
 
 DL = np.logspace(0, 6, 32)
 log_DL = np.log(DL)

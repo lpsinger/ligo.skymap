@@ -28,6 +28,8 @@ from scipy.interpolate import interp1d
 from .. import distance
 from .. import moc
 
+from .cosmology import dVC_dVL_for_DL
+
 __all__ = ('find_injection_moc', 'FoundInjection')
 
 
@@ -102,7 +104,8 @@ FoundInjection = namedtuple(
 
 
 def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
-                       contours=(), areas=(), modes=False, nest=False):
+                       contours=(), areas=(), modes=False, nest=False,
+                       cosmology=False):
     """
     Given a sky map and the true right ascension and declination (in radians),
     find the smallest area in deg^2 that would have to be searched to find the
@@ -240,6 +243,9 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         dP[np.isnan(dP)] = 0  # Suppress invalid values
 
         # Calculate probability density per unit volume.
+
+        if cosmology:
+            dV *= dVC_dVL_for_DL(r)
         dP_dV = dP / dV
         i = np.flipud(np.argsort(dP_dV.ravel()))
 

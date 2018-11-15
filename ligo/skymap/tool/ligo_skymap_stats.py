@@ -126,11 +126,14 @@ def parser():
     parser.add_argument(
         'fitsfilenames', metavar='GLOB.fits[.gz]', nargs='+', action='glob',
         help='Input FITS filenames and/or globs')
+    parser.add_argument(
+        '--cosmology', action='store_true',
+        help='Report volume localizations as comoving volumes.')
     return parser
 
 
-def startup(dbfilename, opts_contour, opts_modes, opts_area):
-    global db, contours, modes, areas
+def startup(dbfilename, opts_contour, opts_modes, opts_area, opts_cosmology):
+    global db, contours, modes, areas, cosmology
     if dbfilename is None:
         db = None
     else:
@@ -138,6 +141,7 @@ def startup(dbfilename, opts_contour, opts_modes, opts_area):
     contours = opts_contour
     modes = opts_modes
     areas = opts_area
+    cosmology = opts_cosmology
 
 
 def process(fitsfilename):
@@ -180,7 +184,7 @@ def process(fitsfilename):
         searched_vol, searched_prob_vol, contour_vols
     ) = find_injection_moc(
         sky_map, true_ra, true_dec, true_dist,
-        contours=contour_pvalues, areas=areas, modes=modes
+        contours=contour_pvalues, areas=areas, modes=modes, cosmology=cosmology
     )
 
     if snr is None:
@@ -217,7 +221,7 @@ def main(args=None):
         dbfilename = None
     else:
         dbfilename = sqlite.get_filename(opts.database)
-    args = (dbfilename, opts.contour, opts.modes, opts.area)
+    args = (dbfilename, opts.contour, opts.modes, opts.area, opts.cosmology)
     if opts.jobs == 1:
         pool_map = map
     else:

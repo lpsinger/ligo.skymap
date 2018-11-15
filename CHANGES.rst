@@ -21,6 +21,9 @@ Changelog
   ``ligo-skymap-plot-pp-samples``, a tool for making P-P plots to compare a sky
   map with posterior samples.
 
+- Add ``--cosmology`` feature to ``ligo-skymap-stats`` to calculate comoving
+  volumes.
+
 0.0.17 (2018-10-24)
 ===================
 

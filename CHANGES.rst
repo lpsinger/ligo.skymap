@@ -17,6 +17,10 @@ Changelog
 - Add the ``ligo-skymap-flatten`` tool to convert multi-resolution HEALPix
   files to flat, fixed-resolution, implicitly indexed HEALPix files.
 
+- Bring back ``bayestar_samples_ppplot`` from LALInference as
+  ``ligo-skymap-plot-pp-samples``, a tool for making P-P plots to compare a sky
+  map with posterior samples.
+
 0.0.17 (2018-10-24)
 ===================
 

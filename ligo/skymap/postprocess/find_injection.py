@@ -228,9 +228,8 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
 
         # Calculate volume of each voxel, defined as the region within the
         # HEALPix pixel and contained within the two centric spherical shells
-        # with radii (r - d_r) and (r + d_r).
-        dV = (2 / 3 * (3 * np.square(r) + np.square(d_r))
-              * d_r * dA.reshape(-1, 1))
+        # with radii (r - d_r / 2) and (r + d_r / 2).
+        dV = (np.square(r) + np.square(d_r) / 12) * d_r * dA.reshape(-1, 1)
 
         # Calculate probability within each voxel.
         dP = probdensity.reshape(-1, 1) * dV * np.exp(

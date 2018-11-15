@@ -14,9 +14,6 @@ Changelog
   now natively output multi-resolution HEALPix files, although they still
   natively output flat, fixed-resolution HEALPix files.
 
-- Fix an error in the volume element that resulted in ``ligo-skymap-stats``
-  underestimating credible volumes by a factor of 2.
-
 - Add the ``ligo-skymap-flatten`` tool to convert multi-resolution HEALPix
   files to flat, fixed-resolution, implicitly indexed HEALPix files.
 

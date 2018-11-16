@@ -121,7 +121,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     >>> ra, dec, a, b, pa, area = find_ellipse(prob)
     >>> print(*np.around([ra, dec, a, b, pa, area], 5))
-    195.03733 -19.29358 8.66547 1.1793 63.61698 32.07665
+    195.03732 -19.29358 8.66545 1.1793 63.61698 32.07665
     >>> s = 'fk5;ellipse({},{},{},{},{})'.format(ra, dec, a, b, pa)
     >>> open('ds9.reg', 'w').write(s)  # doctest: +SKIP
 

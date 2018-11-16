@@ -33,7 +33,7 @@ def parser():
 def main(args=None):
     args = parser().parse_args(args)
 
-    import sys
+    import warnings
     from astropy.io import fits
     from ..io import read_sky_map, write_sky_map
     from ..bayestar import rasterize
@@ -42,9 +42,7 @@ def main(args=None):
     ordering = hdus[1].header['ORDERING']
     expected_ordering = 'NUNIQ'
     if ordering != expected_ordering:
-        print('error: expected the FITS file',
-              args.input.name, 'to have ordering', expected_ordering,
-              'but it is', ordering, file=sys.stderr)
-        sys.exit(1)
+        msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
+        warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
     table = read_sky_map(hdus, moc=True)
     write_sky_map(args.output, rasterize(table), nest=True)

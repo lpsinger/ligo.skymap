@@ -9,7 +9,7 @@ ligo-gracedb>=2.0.1
 ligo-segments<1.1.0  # FIXME: non-namespace package in ligo-common dependency of ligo-segments>=1.1.0 breaks CI
 matplotlib>=2.1.0
 networkx
-numpy>=1.15.4
+numpy>=1.14,!=1.15.3
 pillow>=2.5.0
 ptemcee
 reproject>=0.3.2

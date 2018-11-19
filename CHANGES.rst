@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.18 (unreleased)
+0.0.18 (2018-11-19)
 ===================
 
 - Fix a typo that caused ligo.skymap to always compile the bundled copy of

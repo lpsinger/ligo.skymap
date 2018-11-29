@@ -21,9 +21,7 @@
 #ifndef BAYESTAR_DISTANCE_H
 #define BAYESTAR_DISTANCE_H
 
-/* exclude from SWIG interface and C++ code */
-/* FIXME: maybe use GSL vector and matrix types that SWIG can wrap easily */
-#if !defined(SWIG) && !defined(__cplusplus)
+#ifndef __cplusplus
 
 double bayestar_distance_conditional_pdf(
     double r, double mu, double sigma, double norm);
@@ -61,6 +59,6 @@ double bayestar_distance_marginal_ppf(
     const double *prob, const double *mu,
     const double *sigma, const double *norm);
 
-#endif /* !defined(SWIG) && !defined(__cplusplus) */
+#endif /* __cplusplus */
 
 #endif /* BAYESTAR_DISTANCE_H */

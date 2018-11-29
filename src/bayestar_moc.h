@@ -21,9 +21,7 @@
 #ifndef BAYESTAR_MOC_H
 #define BAYESTAR_MOC_H
 
-/* exclude from SWIG interface and C++ code */
-/* FIXME: maybe use GSL vector and matrix types that SWIG can wrap easily */
-#if !defined(SWIG) && !defined(__cplusplus)
+#ifndef __cplusplus
 
 #include <stdint.h>
 #include <stddef.h>
@@ -44,6 +42,6 @@ void uniq2ang64(uint64_t uniq, double *theta, double *phi);
 
 void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t len, size_t *npix);
 
-#endif /* !defined(SWIG) && !defined(__cplusplus) */
+#endif /* __cplusplus */
 
 #endif /* BAYESTAR_MOC_H */

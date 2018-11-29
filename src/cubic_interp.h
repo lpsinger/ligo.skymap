@@ -33,8 +33,7 @@
 #ifndef CUBIC_INTERP_H
 #define CUBIC_INTERP_H
 
-/* exclude from SWIG interface and C++ code */
-#if !defined(SWIG) && !defined(__cplusplus)
+#ifndef __cplusplus
 
 typedef struct {
     double f, t0, length;
@@ -63,6 +62,6 @@ double bicubic_interp_eval(const bicubic_interp *interp, double s, double t);
 
 int cubic_interp_test(void);
 
-#endif /* !defined(SWIG) && !defined(__cplusplus) */
+#endif /* __cplusplus */
 
 #endif /* CUBIC_INTEPR_H */

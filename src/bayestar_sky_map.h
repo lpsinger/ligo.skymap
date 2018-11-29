@@ -133,7 +133,7 @@ double bayestar_log_posterior_toa_phoa_snr(
 /* Expression for complex amplitude on arrival (without 1/distance factor).
  * This is more of an internal function, but it's *really* important that
  * it agrees with LAL conventions, so we expose it in the interface in order
- * to be to validate it in Python against the LALSimluation SWIG bindings. */
+ * to be to validate it in Python against the LALSimulation SWIG bindings. */
 double complex bayestar_signal_amplitude_model(
     double complex F,               /* Complex antenna factor */
     double complex exp_i_twopsi,    /* e^(i*2*psi), for polarization angle psi */

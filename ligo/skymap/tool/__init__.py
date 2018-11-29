@@ -323,16 +323,7 @@ class LogLevelAction(argparse._StoreAction):
     def __init__(
             self, option_strings, dest, nargs=None, const=None, default=None,
             type=None, choices=None, required=False, help=None, metavar=None):
-        # FIXME: this broke because of internal changes in the Python standard
-        # library logging module between Python 2.7 and 3.6. We should not rely
-        # on these undocumented module variables in the first place.
-        try:
-            logging._levelNames
-        except AttributeError:
-            metavar = '|'.join(logging._levelToName.values())
-        else:
-            metavar = '|'.join(
-                _ for _ in logging._levelNames.keys() if isinstance(_, str))
+        metavar = '|'.join(logging._levelToName.values())
         type = loglevel_type
         super(LogLevelAction, self).__init__(
             option_strings, dest, nargs=nargs, const=const, default=default,

@@ -5,7 +5,8 @@ Changelog
 0.0.19 (unreleased)
 ===================
 
-- No changes yet.
+- Fix a bug that prevented the output of ligo-skymap-flatten from being
+  gzip-compressed if the output filename ended in .gz.
 
 0.0.18 (2018-11-19)
 ===================

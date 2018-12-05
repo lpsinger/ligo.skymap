@@ -45,4 +45,4 @@ def main(args=None):
         msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
         warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
     table = read_sky_map(hdus, moc=True)
-    write_sky_map(args.output, rasterize(table), nest=True)
+    write_sky_map(args.output.name, rasterize(table), nest=True)

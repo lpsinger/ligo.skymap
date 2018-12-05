@@ -16,6 +16,9 @@ Changelog
   parallelism if Python mulitprocessing parallelism is enabled. This will
   prevent the program from spawning an excessive number of threads.
 
+- ``ligo-skymap-plot`` no longer requires a DATE-OBS entry in the FITS header
+  when plotting in astronomical coordinates.
+
 0.0.18 (2018-11-19)
 ===================
 

@@ -81,9 +81,11 @@ def main(args=None):
     deg2perpix = hp.nside2pixarea(nside, degrees=True)
     probperdeg2 = skymap / deg2perpix
 
-    ax = plt.axes(projection=('geo degrees mollweide' if opts.geo
-                              else 'astro hours mollweide'),
-                  obstime=Time(metadata['gps_time'], format='gps').utc.isot)
+    if opts.geo:
+        obstime = Time(metadata['gps_time'], format='gps').utc.isot
+        ax = plt.axes(projection='geo degrees mollweide', obstime=obstime)
+    else:
+        ax = plt.axes(projection='astro hours mollweide')
     ax.grid()
 
     # Plot sky map.

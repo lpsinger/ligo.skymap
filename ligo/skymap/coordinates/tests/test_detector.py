@@ -14,7 +14,9 @@ def test_detector_frame():
     detector_frame = DetectorFrame(site_1=site_1, site_2=site_2, obstime=t)
     itrs_frame = ITRS(obstime=t)
 
-    itrs_coord = SkyCoord(*(site_1 - site_2).value, frame=itrs_frame)
+    itrs_coord = SkyCoord(*(u.Quantity(site_1.geocentric) -
+                            u.Quantity(site_2.geocentric)).value,
+                          frame=itrs_frame)
     assert itrs_coord.transform_to(detector_frame).lat.deg == 90
 
     detector_coord = SkyCoord(lon=0*u.deg, lat=90*u.deg, frame=detector_frame)

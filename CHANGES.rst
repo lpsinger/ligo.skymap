@@ -8,6 +8,10 @@ Changelog
 - Fix a bug that prevented the output of ligo-skymap-flatten from being
   gzip-compressed if the output filename ended in .gz.
 
+- Require astropy >= 3.1 because some code that we previously had to
+  monkeypatch went upstream. See
+  https://github.com/astropy/astropy-healpix/pull/106.
+
 0.0.18 (2018-11-19)
 ===================
 

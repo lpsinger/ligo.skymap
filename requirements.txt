@@ -1,6 +1,6 @@
 astroplan
 astropy-healpix>=0.3  # https://github.com/astropy/astropy-healpix/pull/106
-astropy>=3.0
+astropy>=3.1
 healpy
 h5py
 lalsuite>=6.49, <= 6.49.1.dev20181201  # FIXME: https://git.ligo.org/lscsoft/lalsuite/issues/121

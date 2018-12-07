@@ -81,7 +81,7 @@ The following example demonstrates most of the features of this module.
         markersize=30,
         markeredgewidth=3)
 """  # noqa: E501
-from astropy.coordinates import ITRS, SkyCoord
+from astropy.coordinates import SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
 from astropy.visualization.wcsaxes import WCSAxes
@@ -89,8 +89,6 @@ from astropy.visualization.wcsaxes.formatter_locator import (
     AngleFormatterLocator)
 from astropy.visualization.wcsaxes.frame import EllipticalFrame
 from astropy.wcs import WCS
-from astropy.wcs.wcs import WCSSUB_CELESTIAL
-from astropy.wcs.utils import custom_frame_mappings
 from astropy import units as u
 from matplotlib import rcParams
 from matplotlib.offsetbox import AnchoredOffsetbox
@@ -115,29 +113,6 @@ __all__ = (
     'GlobeAxes',
     'ScaleBar',
     'ZoomSkyAxes')
-
-
-# FIXME: Remove this once astropy v3.1 is released.
-# See https://github.com/astropy/astropy/pull/6990
-def wcs_to_celestial_frame_itrs(wcs):
-    # Keep only the celestial part of the axes
-    wcs = wcs.sub([WCSSUB_CELESTIAL])
-
-    if wcs.wcs.lng == -1 or wcs.wcs.lat == -1:
-        return None
-
-    xcoord = wcs.wcs.ctype[0][:4]
-    ycoord = wcs.wcs.ctype[1][:4]
-
-    if xcoord == 'TLON' and ycoord == 'TLAT':
-        frame = ITRS(obstime=wcs.wcs.dateobs or None)
-    else:
-        frame = None
-
-    return frame
-
-
-custom_frame_mappings([wcs_to_celestial_frame_itrs])
 
 
 class WCSInsetPatch(PathPatch):

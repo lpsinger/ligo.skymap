@@ -98,7 +98,8 @@ class DetectorFrame(ITRS):
 
 @frame_transform_graph.transform(DynamicMatrixTransform, ITRS, DetectorFrame)
 def itrs_to_detectorframe(from_coo, to_frame):
-    e_z = CartesianRepresentation(to_frame.site_1 - to_frame.site_2)
+    e_z = CartesianRepresentation(u.Quantity(to_frame.site_1.geocentric) -
+                                  u.Quantity(to_frame.site_2.geocentric))
     e_z /= e_z.norm()
     e_x = CartesianRepresentation(0, 0, 1).cross(e_z)
     e_x /= e_x.norm()

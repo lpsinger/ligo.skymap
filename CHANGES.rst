@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.0.19 (unreleased)
+0.0.19 (2018-12-13)
 ===================
 
 - Fix a bug that prevented the output of ligo-skymap-flatten from being

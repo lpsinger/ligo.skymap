@@ -236,7 +236,7 @@ def main(args=None):
         SnglInspiralTable, TimeSlideTable)
 
     # glue, LAL and pylal imports.
-    from glue import segments
+    from ligo import segments
     import glue.lal
     import lal.series
     import lalsimulation

@@ -23,7 +23,7 @@ from itertools import groupby
 import h5py
 import numpy as np
 import lal
-from glue.segments import segment, segmentlist
+from ligo.segments import segment, segmentlist
 
 from .base import Event, EventSource, SingleEvent
 

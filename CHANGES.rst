@@ -11,6 +11,9 @@ Changelog
   ``bayestar-localize-coincs`` and ``bayestar-localize-lvalert`` to control the
   limits of the isotropic prior over the inclination angle.
 
+- Un-pin ligo-segments and require version >= 1.2.0 due to packaging
+  bugfixes.
+
 0.0.19 (2018-12-13)
 ===================
 

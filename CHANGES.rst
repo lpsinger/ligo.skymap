@@ -8,6 +8,10 @@ Changelog
 - Pin lalsuite at <=6.52 and lscsoft-glue at <=1.60.0 due to breaking changes
   in API and behavior for LIGO-LW XML reading.
 
+- Add the ``ligo-skymap-unflatten`` tool to convert flat, fixed resolution,
+  implicitly indexed HEALPix files to multi-resolution HEALPix files. This
+  tools is the inverse of ``ligo-skymap-flatten``.
+
 0.1.0 (2019-02-01)
 ==================
 

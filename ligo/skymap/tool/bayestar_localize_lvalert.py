@@ -145,7 +145,7 @@ def main(args=None):
                 opts.prior_distance_power, opts.cosmology,
                 mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
-                f_high_truncate=opts.f _high_truncate)
+                f_high_truncate=opts.f_high_truncate)
             if not opts.enable_multiresolution:
                 sky_map = rasterize(sky_map)
             sky_map.meta['objid'] = str(graceid)

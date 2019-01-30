@@ -228,8 +228,8 @@ class HDFSingleEvent(SingleEvent):
 
         fseries = lal.CreateREAL8FrequencySeries(
             'psd', 0, kmin * df, df,
-            lal.DimensionlessUnit, len(psd.value) - kmin)
-        fseries.data.data = psd.value[kmin:] / np.square(dyn_range_fac)
+            lal.DimensionlessUnit, len(psd) - kmin)
+        fseries.data.data = psd[kmin:] / np.square(dyn_range_fac)
         return fseries
 
 

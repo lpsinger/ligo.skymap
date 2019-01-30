@@ -98,8 +98,8 @@ def interpolate_max_lanczos(imax, y, window_length):
     yi = y[imax-window_length:imax+window_length+1]
     tmax = optimize.fminbound(
         lanczos_interpolant_utility_func, -1., 1., (yi,), xtol=1e-5)
-    tmax = np.asscalar(tmax)
-    ymax = np.asscalar(lanczos_interpolant(tmax, yi))
+    tmax = tmax.item()
+    ymax = lanczos_interpolant(tmax, yi).item()
     return imax + tmax, ymax
 
 

@@ -94,8 +94,8 @@ def posterior_mean(prob, nest=False):
     nside = hp.npix2nside(npix)
     xyz = hp.pix2vec(nside, np.arange(npix), nest=nest)
     mean_xyz = np.average(xyz, axis=1, weights=prob)
-    pos = SkyCoord(*mean_xyz, representation=CartesianRepresentation)
-    pos.representation = UnitSphericalRepresentation
+    pos = SkyCoord(*mean_xyz, representation_type=CartesianRepresentation)
+    pos.representation_type = UnitSphericalRepresentation
     return pos
 
 

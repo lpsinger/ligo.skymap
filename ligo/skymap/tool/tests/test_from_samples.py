@@ -26,8 +26,8 @@ def samples(seed, tmpdir):
     eigvals *= len(eigvals) / eigvals.sum()
     cov = stats.random_correlation.rvs(eigvals) * 100
     pts = stats.multivariate_normal(mean, cov).rvs(200)
-    pts = SkyCoord(pts, representation=CartesianRepresentation)
-    pts.representation = SphericalRepresentation
+    pts = SkyCoord(pts, representation_type=CartesianRepresentation)
+    pts.representation_type = SphericalRepresentation
     time = stats.uniform(-0.01, 0.01).rvs(200) + 1e9
     table = Table({
         'ra': pts.ra.rad,

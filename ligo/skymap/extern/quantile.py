@@ -34,37 +34,7 @@
 import warnings
 
 import numpy as np
-import numpy.core.numeric as _nx
-
-
-def _ureduce(a, func, **kwargs):
-    a = np.asanyarray(a)
-    axis = kwargs.get('axis', None)
-    if axis is not None:
-        keepdim = list(a.shape)
-        nd = a.ndim
-        axis = _nx.normalize_axis_tuple(axis, nd)
-
-        for ax in axis:
-            keepdim[ax] = 1
-
-        if len(axis) == 1:
-            kwargs['axis'] = axis[0]
-        else:
-            keep = set(range(nd)) - set(axis)
-            nkeep = len(keep)
-            # swap axis that should not be reduced to front
-            for i, s in enumerate(sorted(keep)):
-                a = a.swapaxes(i, s)
-            # merge reduced axis
-            a = a.reshape(a.shape[:nkeep] + (-1,))
-            kwargs['axis'] = -1
-        keepdim = tuple(keepdim)
-    else:
-        keepdim = (1,) * a.ndim
-
-    r = func(a, **kwargs)
-    return r, keepdim
+from numpy.lib.function_base import _ureduce
 
 
 def _percentile_dispatcher(a, q, axis=None, weights=None, out=None,

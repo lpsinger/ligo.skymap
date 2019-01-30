@@ -19,7 +19,7 @@ Base classes for reading events from search pipelines.
 """
 
 from abc import ABCMeta, abstractmethod
-from collections import Mapping
+from collections.abc import Mapping
 
 __all__ = ('EventSource', 'Event', 'SingleEvent')
 

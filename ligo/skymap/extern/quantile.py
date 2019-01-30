@@ -34,6 +34,8 @@
 import warnings
 
 import numpy as np
+from numpy.core.numeric import asarray, asanyarray, concatenate, intp
+from numpy.core.umath import add
 from numpy.lib.function_base import _ureduce, array_function_dispatch
 
 __all__ = ('percentile', 'quantile')

@@ -448,8 +448,10 @@ class AllSkyAxes(AutoScaledWCSAxes):
             header['DATE-OBS'] = Time(obstime).utc.isot
         super(AllSkyAxes, self).__init__(
             header, *args, frame_class=EllipticalFrame, **kwargs)
-        self.coords[0].set_ticks(exclude_overlapping=True, spacing=45 * u.deg)
-        self.coords[1].set_ticks(exclude_overlapping=True, spacing=30 * u.deg)
+        self.coords[0].set_ticks(spacing=45 * u.deg)
+        self.coords[1].set_ticks(spacing=30 * u.deg)
+        self.coords[0].set_ticklabel(exclude_overlapping=True)
+        self.coords[1].set_ticklabel(exclude_overlapping=True)
 
 
 class Astro(object):

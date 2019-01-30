@@ -36,6 +36,8 @@ import warnings
 import numpy as np
 from numpy.lib.function_base import _ureduce, array_function_dispatch
 
+__all__ = ('percentile', 'quantile')
+
 
 def _percentile_dispatcher(a, q, axis=None, weights=None, out=None,
                            overwrite_input=None, interpolation=None,

@@ -596,7 +596,7 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
         r2bar += np.mean(w * r2bar_)
 
     # Normalize moments.
-    with np.errstate(divide='ignore'):
+    with np.errstate(invalid='ignore'):
         r1bar /= r0bar
         r2bar /= r0bar
     var = r2bar - np.square(r1bar)

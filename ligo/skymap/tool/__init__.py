@@ -28,9 +28,11 @@ import itertools
 import logging
 import os
 import sys
+
 import matplotlib
 from matplotlib import cm
 import numpy as np
+
 from ..plot import cmap  # noqa
 from ..util import sqlite
 from .. import version

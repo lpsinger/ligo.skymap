@@ -362,9 +362,6 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))
         keep &= (nsigmas < 3)
 
-    # If each point is n-sigma from the center, find n.
-    nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))
-
     # Find the number of sigma that enclose the cl% credible level.
     i = np.argsort(nsigmas)
     nsigmas = nsigmas[i]

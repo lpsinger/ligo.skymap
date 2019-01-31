@@ -180,7 +180,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     >>> filename = resource_filename(__name__, 'tests/data/test.hdf5')
     >>> table = read_samples(filename)
     >>> table.colnames
-    ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'rst', 'ghi']
+    ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'ghi', 'rst']
     """
     with h5py.File(filename, 'r') as f:
         if path is not None:  # Look for a given path

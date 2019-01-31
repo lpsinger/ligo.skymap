@@ -216,7 +216,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> prob = make_uniform_in_sin_theta(120)
     >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
     >>> print(dec, a, b, area)
-    90.0 107.9745 107.9745 26988.70468
+    90.0 107.9745 107.9745 26988.70467
 
     **Example 4**
 

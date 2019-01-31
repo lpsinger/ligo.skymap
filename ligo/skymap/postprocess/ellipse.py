@@ -112,28 +112,28 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     Next, we download the BAYESTAR sky map for GW170817 from the
     LIGO Document Control Center.
 
-    >>> url = 'https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz'
-    >>> filename = download_file(url, cache=True, show_progress=False)
-    >>> _, healpix_hdu = fits.open(filename)
-    >>> prob = hp.read_map(healpix_hdu, verbose=False)
+    >>> url = 'https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz'  # doctest: +SKIP
+    >>> filename = download_file(url, cache=True, show_progress=False)  # doctest: +SKIP
+    >>> _, healpix_hdu = fits.open(filename)  # doctest: +SKIP
+    >>> prob = hp.read_map(healpix_hdu, verbose=False)  # doctest: +SKIP
 
     Then, we calculate ellipse and write it to a DS9 region file.
 
-    >>> ra, dec, a, b, pa, area = find_ellipse(prob)
-    >>> print(*np.around([ra, dec, a, b, pa, area], 5))
+    >>> ra, dec, a, b, pa, area = find_ellipse(prob)  # doctest: +SKIP
+    >>> print(*np.around([ra, dec, a, b, pa, area], 5))  # doctest: +SKIP
     195.03732 -19.29358 8.66545 1.1793 63.61698 32.07665
-    >>> s = 'fk5;ellipse({},{},{},{},{})'.format(ra, dec, a, b, pa)
+    >>> s = 'fk5;ellipse({},{},{},{},{})'.format(ra, dec, a, b, pa)  # doctest: +SKIP
     >>> open('ds9.reg', 'w').write(s)  # doctest: +SKIP
 
     Then, we reproject a small patch of the HEALPix map, and save it to a file.
 
-    >>> wcs = WCS()
-    >>> wcs.wcs.ctype = ['RA---ARC', 'DEC--ARC']
-    >>> wcs.wcs.crval = [ra, dec]
-    >>> wcs.wcs.crpix = [128, 128]
-    >>> wcs.wcs.cdelt = [-0.1, 0.1]
-    >>> img, _ = reproject_from_healpix(healpix_hdu, wcs, [256, 256])
-    >>> img_hdu = fits.ImageHDU(img, wcs.to_header())
+    >>> wcs = WCS()  # doctest: +SKIP
+    >>> wcs.wcs.ctype = ['RA---ARC', 'DEC--ARC']  # doctest: +SKIP
+    >>> wcs.wcs.crval = [ra, dec]  # doctest: +SKIP
+    >>> wcs.wcs.crpix = [128, 128]  # doctest: +SKIP
+    >>> wcs.wcs.cdelt = [-0.1, 0.1]  # doctest: +SKIP
+    >>> img, _ = reproject_from_healpix(healpix_hdu, wcs, [256, 256])  # doctest: +SKIP
+    >>> img_hdu = fits.ImageHDU(img, wcs.to_header())  # doctest: +SKIP
     >>> img_hdu.writeto('skymap.fits')  # doctest: +SKIP
 
     Now open the image and region file in DS9. You should find that the ellipse
@@ -175,10 +175,10 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     This example shows that we get approximately the same answer for GW171087
     if we read it in as a multi-order map.
 
-    >>> from ..io import read_sky_map
-    >>> skymap_moc = read_sky_map(healpix_hdu, moc=True)
-    >>> ellipse = find_ellipse(skymap_moc)
-    >>> print(*np.around(ellipse, 5))
+    >>> from ..io import read_sky_map  # doctest: +SKIP
+    >>> skymap_moc = read_sky_map(healpix_hdu, moc=True)  # doctest: +SKIP
+    >>> ellipse = find_ellipse(skymap_moc)  # doctest: +SKIP
+    >>> print(*np.around(ellipse, 5))  # doctest: +SKIP
     195.03709 -19.27589 8.67611 1.18167 63.60454 32.08015
 
     **Example 3**

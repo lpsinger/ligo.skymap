@@ -352,7 +352,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     keep = np.logical_and.reduce(np.isfinite(xy), axis=1)
     xy = xy[keep]
     prob = prob[keep]
-    if np.isscalar(area):
+    if not np.isscalar(area):
         area = area[keep]
 
     # Find covariance matrix, performing three rounds of sigma-clipping

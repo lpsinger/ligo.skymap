@@ -125,6 +125,8 @@ docs:
 .test: &test
   variables:
     GIT_STRATEGY: none
+  tags:
+    - highmem
   script:
     - pip install *.whl
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-modules", verbose=True))'
@@ -161,6 +163,8 @@ test/coverage:
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
+  tags:
+    - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   before_script:
     - tar --strip-components 1 -xf *.tar.*

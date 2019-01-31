@@ -34,8 +34,6 @@
 import warnings
 
 import numpy as np
-from numpy.core.numeric import asarray, asanyarray, concatenate, intp
-from numpy.core.umath import add
 from numpy.lib.function_base import _ureduce, array_function_dispatch
 
 __all__ = ('percentile', 'quantile')
@@ -106,7 +104,7 @@ def _validate_weights(a, q, axis, weights):
     if weights is None:
         return None
 
-    a = asanyarray(a)
+    a = np.asanyarray(a)
     wgt = np.asanyarray(weights)
 
     if not np.issubdtype(wgt.dtype, np.number):
@@ -173,7 +171,7 @@ def _validate_weights(a, q, axis, weights):
 def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
                            overwrite_input=False, interpolation='linear',
                            keepdims=False):
-    a = asarray(a)
+    a = np.asarray(a)
 
     if q.ndim == 0:
         # Do not allow 0-d arrays because following code fails for scalar
@@ -208,13 +206,13 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
         ap, indices, Nx = _indices_for_weighted_quantile(ap, q, axis, weights)
 
     if interpolation == 'lower':
-        indices = np.floor(indices).astype(intp)
+        indices = np.floor(indices).astype(np.intp)
     elif interpolation == 'higher':
-        indices = np.ceil(indices).astype(intp)
+        indices = np.ceil(indices).astype(np.intp)
     elif interpolation == 'midpoint':
         indices = 0.5 * (np.floor(indices) + np.ceil(indices))
     elif interpolation == 'nearest':
-        indices = np.around(indices).astype(intp)
+        indices = np.around(indices).astype(np.intp)
     elif interpolation == 'linear':
         pass  # keep index as fraction and interpolate
     else:
@@ -225,10 +223,10 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
     n = np.array(False, dtype=bool)  # check for nan's flag
     inexact = np.issubdtype(a.dtype, np.inexact)  # if array could have nan's
 
-    if indices.dtype == intp:  # take the points along axis
+    if indices.dtype == np.intp:  # take the points along axis
 
         if inexact:
-            indices = concatenate((indices, [-1]))  # to move nan's to end
+            indices = np.concatenate((indices, [-1]))  # to move nan's to end
 
         ap.partition(indices, axis=axis)
         # ensure axis with q-th is first
@@ -245,7 +243,7 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
         r = np.take(ap, indices, axis=axis, out=out)
 
     else:  # weight the points above and below the indices
-        indices_below = np.floor(indices).astype(intp)
+        indices_below = np.floor(indices).astype(np.intp)
         indices_above = indices_below + 1
         indices_above[indices_above > Nx - 1] = Nx - 1
 
@@ -254,14 +252,14 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
 
         if weights is None:
             if inexact:
-                indices_above = concatenate((indices_above, [-1]))
+                indices_above = np.concatenate((indices_above, [-1]))
 
             weights_shape = [1, ] * ap.ndim
             weights_shape[axis] = len(indices)
             weights_below.shape = weights_shape
             weights_above.shape = weights_shape
 
-            ap.partition(concatenate((indices_below, indices_above)),
+            ap.partition(np.concatenate((indices_below, indices_above)),
                          axis=axis)
 
             # ensure axis with qth is first
@@ -295,9 +293,9 @@ def _quantile_ureduce_func(a, q, axis=None, weights=None, out=None,
             x2 = x2.squeeze(0)
 
         if out is not None:
-            r = add(x1, x2, out=out)
+            r = np.add(x1, x2, out=out)
         else:
-            r = add(x1, x2)
+            r = np.add(x1, x2)
 
     if np.any(n):
         warnings.warn("Invalid value encountered in quantile",

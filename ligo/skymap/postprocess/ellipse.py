@@ -321,7 +321,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         npix = len(prob)
         nside = hp.npix2nside(npix)
         ipix = np.arange(npix)
-        area = np.repeat(hp.nside2pixarea(nside, degrees=True), npix)
+        area = hp.nside2pixarea(nside, degrees=True)
     else:
         order, ipix = moc.uniq2nest(prob['UNIQ'])
         nside = 1 << order.astype(int)
@@ -352,7 +352,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     keep = np.logical_and.reduce(np.isfinite(xy), axis=1)
     xy = xy[keep]
     prob = prob[keep]
-    area = area[keep]
+    if np.isscalar(area):
+        area = area[keep]
 
     # Find covariance matrix, performing three rounds of sigma-clipping
     # to reject outliers.
@@ -366,7 +367,10 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     i = np.argsort(nsigmas)
     nsigmas = nsigmas[i]
     cls = np.cumsum(prob[i])
-    careas = np.cumsum(area[i])
+    if np.isscalar(area):
+        careas = np.arange(1, len(i) + 1) * area
+    else:
+        careas = np.cumsum(area[i])
     nsigma = np.interp(1e-2 * cl, cls, nsigmas)
     area = np.interp(1e-2 * cl, cls, careas)
 

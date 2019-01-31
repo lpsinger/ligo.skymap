@@ -320,7 +320,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     except (IndexError, KeyError, ValueError):
         npix = len(prob)
         nside = hp.npix2nside(npix)
-        ipix = np.arange(npix)
+        ipix = range(npix)
         area = hp.nside2pixarea(nside, degrees=True)
     else:
         order, ipix = moc.uniq2nest(prob['UNIQ'])

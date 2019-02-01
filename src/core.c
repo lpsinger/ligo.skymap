@@ -41,6 +41,9 @@
 #include "omp_interruptible.h"
 
 
+#define MIN_OPENMP_ITERATIONS 128
+
+
 typedef struct {
     PyObject_HEAD
 } Omp;
@@ -137,7 +140,7 @@ static void conditional_pdf_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -161,7 +164,7 @@ static void conditional_cdf_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -185,7 +188,7 @@ static void conditional_ppf_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -209,7 +212,7 @@ static void moments_to_parameters_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -234,7 +237,7 @@ static void parameters_to_moments_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -269,7 +272,7 @@ static void volume_render_loop(
     /* FIXME: Check that array arguments are stored contiguously */
 
     OMP_BEGIN_INTERRUPTIBLE
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         if (OMP_WAS_INTERRUPTED)
@@ -312,7 +315,7 @@ static void marginal_pdf_loop(
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -346,7 +349,7 @@ static void marginal_cdf_loop(
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */
@@ -380,7 +383,7 @@ static void marginal_ppf_loop(
     const npy_intp n = dimensions[0];
     const npy_intp npix = dimensions[1];
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(n > MIN_OPENMP_ITERATIONS)
     for (npy_intp i = 0; i < n; i ++)
     {
         /* FIXME: args must be void ** to avoid alignment warnings */

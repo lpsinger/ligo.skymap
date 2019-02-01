@@ -2,8 +2,8 @@
 Changelog
 #########
 
-0.0.20 (unreleased)
-===================
+0.1.0 (2019-02-01)
+==================
 
 - Migrate from glue.segments to ligo.segments.
 

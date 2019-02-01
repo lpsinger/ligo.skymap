@@ -108,6 +108,7 @@ docs:
   stage: test
   variables:
     GIT_STRATEGY: none
+    OMP_NUM_THREADS: 1
   script:
     - tar --strip-components 1 -xf *.tar.*
     - python setup.py build_docs
@@ -125,6 +126,7 @@ docs:
 .test: &test
   variables:
     GIT_STRATEGY: none
+    OMP_NUM_THREADS: 1
   script:
     - pip install *.whl
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="-p no:warnings --doctest-modules", verbose=True))'
@@ -161,6 +163,7 @@ test/coverage:
   variables:
     CFLAGS: -coverage
     GIT_STRATEGY: none
+    OMP_NUM_THREADS: 1
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   before_script:
     - tar --strip-components 1 -xf *.tar.*

@@ -161,7 +161,8 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
-    CFLAGS: -coverage
+    CC: gcc -coverage
+    CXX: g++ -coverage
     GIT_STRATEGY: none
     OMP_NUM_THREADS: 1
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'

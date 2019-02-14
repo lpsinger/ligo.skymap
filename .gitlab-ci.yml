@@ -41,7 +41,7 @@ sdist:
 
 .wheel:macos: &wheel-macos
   tags:
-    - macos_elcapitan
+    - macos_sierra
   stage: dist
   script:
     - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*:cp\(.\)\(.\).*/\1.\2/')

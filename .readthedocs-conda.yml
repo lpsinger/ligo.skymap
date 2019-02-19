@@ -1,7 +1,7 @@
 name: ligo.skymap
 dependencies:
   - python=3.7
-  - astropy-healpix
+  - astropy
   - h5py
   - gsl
   - matplotlib

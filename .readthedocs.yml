@@ -1,9 +1,11 @@
 version: 2
 
+conda:
+  environment: .readthedocs-conda.yml
+
 python:
   version: 3.6
   install:
     - requirements: docs-requirements.txt
-
-conda:
-  environment: .readthedocs-conda.yml
+    - method: pip
+      path: .

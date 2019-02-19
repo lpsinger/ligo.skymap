@@ -29,7 +29,7 @@ sdist:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*/\(.*\)-manylinux1/\1/')
+    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux1/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
     - auditwheel repair dist/*.whl
     - rm dist/*
@@ -44,7 +44,7 @@ sdist:
     - macos_sierra
   stage: dist
   script:
-    - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*/cp\(.\)\(.\).*/\1.\2/')
+    - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*\/cp\(.\)\(.\).*/\1.\2/')
     # Enter virtualenv so that we have a controlled version of Numpy
     - virtualenv-${PYVERS} env
     - source env/bin/activate

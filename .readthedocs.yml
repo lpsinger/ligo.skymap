@@ -4,7 +4,7 @@ conda:
   environment: .readthedocs-conda.yml
 
 python:
-  version: 3.6
+  version: 3.7
   install:
     - requirements: docs-requirements.txt
     - method: pip

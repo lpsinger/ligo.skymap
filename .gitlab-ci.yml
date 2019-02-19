@@ -135,13 +135,13 @@ test/python3.6:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel:cp36-cp36m-manylinux1
+    - wheel/cp36-cp36m-manylinux1
 
 test/python3.7:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel:cp37-cp37m-manylinux1
+    - wheel/cp37-cp37m-manylinux1
 
 #
 # Measure test coverage:

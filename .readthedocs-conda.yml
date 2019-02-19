@@ -14,5 +14,6 @@ dependencies:
   - tqdm
   - pytz
   - pip:
+    - sphinx-argparse
     - sphinx-astropy
     - -r requirements.txt

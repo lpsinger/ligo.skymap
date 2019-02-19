@@ -1,5 +1,15 @@
 name: ligo.skymap
 dependencies:
   - python>=3.6
+  - h5py
   - gsl
+  - matplotlib
+  - networkx
+  - numpy
+  - pillow
   - pkg-config
+  - reproject
+  - scipy
+  - seaborn
+  - tqdm
+  - pytz

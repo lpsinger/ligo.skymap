@@ -16,6 +16,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
+"""
+Cosmology-related utilities.
+
+All functions in this module use the WMAP9 cosmological parameters.
+"""
 
 import numpy as np
 import astropy.cosmology
@@ -26,8 +31,23 @@ cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
 
 
 def dVC_dVL_for_z(z):
-    """Ratio between the comoving volume element dVC and a
-    DL**2 prior at redshift z."""
+    r'''Ratio, :math:`\mathrm{d}V_C / \mathrm{d}V_L`, between the comoving
+    volume element and a naively Euclidean volume element in luminosity
+    distance space; given as a function of redshift.
+
+    Given the differential comoving volume per unit redshift,
+    :math:`\mathrm{d}V_C / \mathrm{d}z`, and the derivative of luminosity
+    distance in terms of redshift, :math:`\mathrm{d}D_L / \mathrm{d}z`, this is
+    expressed as:
+
+    .. math::
+
+       \frac{\mathrm{d}V_C}{\mathrm{d}V_L} =
+       \frac{\mathrm{d}V_C}{\mathrm{d}z}
+       \left(
+       {D_L}^2 \frac{\mathrm{d}D_L}{\mathrm{d}z}
+       \right)^{-1}.
+    '''
     Ok0 = cosmo.Ok0
     DH = cosmo.hubble_distance
     DM_by_DH = (cosmo.comoving_transverse_distance(z) / DH).value
@@ -47,9 +67,12 @@ def dVC_dVL_for_z(z):
 
 @np.vectorize
 def z_for_DL(DL):
+    """Redshift as a function of luminosity distance in Mpc."""
     return astropy.cosmology.z_at_value(
         cosmo.luminosity_distance, DL * u.Mpc)
 
 
 def dVC_dVL_for_DL(DL):
+    """Same as :meth:`dVC_dVL_for_z`, but as a function of luminosity
+    distance."""
     return dVC_dVL_for_z(z_for_DL(DL))

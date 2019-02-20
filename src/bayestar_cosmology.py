@@ -16,7 +16,26 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
-Generate Chebyshev coefficients for BAYESTAR uniform-in-comoving-volume prior.
+This is a lookup table for the BAYESTAR uniform-in-comoving-volume prior. The
+BAYESTAR posterior distribution has a builtin prior that is uniform in naively
+Euclidean luminosity distance space (proportional to DL^2). When we want to
+switch to a prior that is uniform in comoving volume, we have to multiply by
+the factor dVC/dVL, the differential comoving volume per unit Euclidean
+luminosity volume.
+
+The lookup table is in terms of the *natural logarithm* of the luminosity
+distance and provides the *natural logarithm* of dVC/dVL. It consists of the
+following constants:
+
+    dVC_dVL_tmin, dVC_dVL_tmax, dVC_dVL_dt
+        Minimum, maximum, and step size for a uniform grid in t = log(DL),
+        such that t[i] = dVC_dVL_tmin + i * dVC_dVL_dt.
+
+    dVC_dVL_data
+        Tabulated values of y = f(t) = log(dVC/dVL), such that y[i] = f(t[i]).
+
+    dVC_dVL_high_z_slope, dVC_dVL_high_z_intercept
+        Linear fit for extrapolating f(t) for t>dVC_dVL_tmax.
 """
 import argparse
 import os

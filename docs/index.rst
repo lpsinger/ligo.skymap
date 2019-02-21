@@ -96,6 +96,8 @@ Postprocessing
    ligo/skymap/tool/ligo_skymap_from_samples
    ligo/skymap/tool/ligo_skymap_plot_stats
    ligo/skymap/tool/ligo_skymap_stats
+   ligo/skymap/tool/ligo_skymap_flatten
+   ligo/skymap/tool/ligo_skymap_unflatten
 
 **************
 Developer Info

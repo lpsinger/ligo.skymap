@@ -5,7 +5,8 @@ Changelog
 0.1.1 (unreleased)
 ==================
 
-- No changes yet.
+- Pin lalsuite at <=6.52 and lscsoft-glue at <=1.60.0 due to breaking changes
+  in API and behavior for LIGO-LW XML reading.
 
 0.1.0 (2019-02-01)
 ==================

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.1 (unreleased)
+0.1.1 (2019-02-20)
 ==================
 
 - Pin lalsuite at <=6.52 and lscsoft-glue at <=1.60.0 due to breaking changes

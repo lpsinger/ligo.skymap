@@ -132,7 +132,7 @@ Optionally, if you want to generate P-P plots, you need to convert the
 ``coinc.xml`` file to SQLite using the ``ligolw_sqlite`` tool from glue. Run
 the following command::
 
-    ligolw_sqlite --preserve-ids --replace --database coinc.sqlite coinc.xml
+    ligolw_sqlite --ilwdchar-compat --preserve-ids --replace --database coinc.sqlite coinc.xml
 
 The output is saved in SQLite format as ``coinc.sqlite``.
 

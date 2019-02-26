@@ -3,8 +3,8 @@ astropy-healpix>=0.3  # https://github.com/astropy/astropy-healpix/pull/106
 astropy>=3.1
 healpy
 h5py
-lalsuite>=6.49,<=6.52
-lscsoft-glue<=1.60.0
+lalsuite>=6.53
+lscsoft-glue>=2.0.0
 ligo-gracedb>=2.0.1
 ligo-segments>=1.2.0
 matplotlib>=2.1.0
@@ -12,6 +12,7 @@ networkx
 numpy>=1.14,!=1.15.3
 pillow>=2.5.0
 ptemcee
+python-ligo-lw
 reproject>=0.3.2
 scipy>=0.14
 seaborn>=0.8.0

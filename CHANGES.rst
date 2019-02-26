@@ -5,7 +5,8 @@ Changelog
 0.1.2 (unreleased)
 ==================
 
-- No changes yet.
+- Require lalsuite >6.53 and lscsoft-glue >=2.0.0 due to breaking changes in
+  API and behavior for LIGO-LW XML reading.
 
 0.1.1 (2019-02-20)
 ==================

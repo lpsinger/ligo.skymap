@@ -103,7 +103,7 @@ def test_sqlite(tmpdir):
     # Convert the test data to SQLite format in the temporary directory.
     xmlfilename = os.path.join(DATA_PATH, '2016_subset.xml.gz')
     dbfilename = str(tmpdir / '2016_subset.sqlite')
-    subprocess.check_call(['ligolw_sqlite', '-p',
+    subprocess.check_call(['ligolw_sqlite', '--ilwdchar-compat', '-p',
                            xmlfilename, '-d', dbfilename])
 
     # Symbolicly link the PSD directory into the temporary directory.

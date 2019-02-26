@@ -85,7 +85,8 @@ def coinc_without_inj(coinc, tmpdir):
 @pytest.fixture
 def coinc_sqlite(coinc, tmpdir):
     filename = str(tmpdir / 'coinc.sqlite')
-    run_glue('ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
+    run_glue('ligolw_sqlite', coinc, '--ilwdchar-compat',
+             '-p', '-r', '-d', filename)
     return filename
 
 

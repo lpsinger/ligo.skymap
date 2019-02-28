@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.2 (unreleased)
+0.1.2 (2019-02-28)
 ==================
 
 - Require lalsuite >6.53 and lscsoft-glue >=2.0.0 due to breaking changes in

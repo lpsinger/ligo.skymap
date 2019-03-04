@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.3 (unreleased)
+0.1.3 (2019-03-04)
 ==================
 
 - Fix a bug in ``ligo-skymap-plot-airmass`` that caused the airmass chart to be

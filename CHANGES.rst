@@ -5,7 +5,10 @@ Changelog
 0.1.3 (unreleased)
 ==================
 
-- No changes yet.
+- Fix a bug in ``ligo-skymap-plot-airmass`` that caused the airmass chart to be
+  blank if the lower and upper credible levels were always in opposite
+  hemispheres. The root cause was that ``plt.fill_between`` does not clip
+  infinities to the plot's data range.
 
 0.1.2 (2019-02-28)
 ==================

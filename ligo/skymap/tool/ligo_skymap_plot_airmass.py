@@ -44,6 +44,10 @@ def condition_secz(x):
     return np.where(x <= 0, np.inf, x)
 
 
+def clip_verylarge(x, max=1e300):
+    return np.clip(x, -max, max)
+
+
 def main(args=None):
     opts = parser().parse_args(args)
 
@@ -111,7 +115,11 @@ def main(args=None):
 
     cmap = plt.get_cmap()
     for level, lo, hi in zip(levels, airmass[:nlevels], airmass[nlevels:]):
-        ax.fill_between(times.plot_date, lo, hi, color=cmap(level), zorder=2)
+        ax.fill_between(
+            times.plot_date,
+            clip_verylarge(lo),  # Clip infinities to large but finite values
+            clip_verylarge(hi),  # because fill_between cannot handle inf
+            color=cmap(level), zorder=2)
 
     ax.legend(
         [Patch(facecolor=cmap(level)) for level in levels],

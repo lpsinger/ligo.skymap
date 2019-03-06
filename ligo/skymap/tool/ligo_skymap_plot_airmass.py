@@ -52,7 +52,6 @@ def main(args=None):
     opts = parser().parse_args(args)
 
     # Late imports
-    import json
     import operator
     import sys
 
@@ -61,7 +60,6 @@ def main(args=None):
     from astropy.coordinates import SkyCoord
     from astropy.table import Table
     from astropy.time import Time
-    from astropy.utils.data import get_pkg_data_fileobj
     from matplotlib import dates
     from matplotlib.patches import Patch
     from matplotlib import pyplot as plt
@@ -72,15 +70,6 @@ def main(args=None):
     from .. import moc
     from .. import plot  # noqa
     from ..extern.quantile import percentile
-
-    # FIXME: Astropy's site registry provides time zones,
-    # but the Astropy API does not provide access to them.
-    with get_pkg_data_fileobj('coordinates/sites.json',
-                              package='astropy') as f:
-        sites = json.load(f)
-    timezones = {key: value.get('timezone') for key, value in sites.items()}
-    for site in sites.values():
-        timezones.update(dict.fromkeys(site['aliases'], site.get('timezone')))
 
     m = fits.read_sky_map(opts.input.name, moc=True)
 
@@ -160,8 +149,8 @@ def main(args=None):
                        zorder=3, linewidth=0)
 
     # Add local time axis
-    if opts.site in timezones:
-        timezone = timezones[opts.site]
+    timezone = observer.location.info.meta.get('timezone')
+    if timezone:
         tzinfo = pytz.timezone(timezone)
         ax2 = ax.twiny()
         ax2.set_xlim(ax.get_xlim())

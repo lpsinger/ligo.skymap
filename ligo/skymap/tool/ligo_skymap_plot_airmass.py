@@ -28,6 +28,9 @@ def parser():
     from astropy.coordinates import EarthLocation
     parser = ArgumentParser(parents=[figure_parser])
     parser.add_argument(
+        '-v', '--verbose', action='store_true',
+        help='Print airmass table to stdout')
+    parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
@@ -161,17 +164,18 @@ def main(args=None):
             min(times).to_datetime(tzinfo).date(),
             timezone))
 
-    # Write airmass table to stdout.
-    times.format = 'isot'
-    table = Table(masked=True)
-    table['time'] = times
-    table['sun_alt'] = np.ma.masked_greater_equal(
-        observer.sun_altaz(times).alt, 0)
-    table['sun_alt'].format = lambda x: '{}'.format(int(np.round(x)))
-    for p, data in sorted(zip(percentiles, airmass)):
-        table[str(p)] = np.ma.masked_invalid(data)
-        table[str(p)].format = lambda x: '{:.01f}'.format(np.around(x, 1))
-    table.write(sys.stdout, format='ascii.fixed_width')
+    if opts.verbose:
+        # Write airmass table to stdout.
+        times.format = 'isot'
+        table = Table(masked=True)
+        table['time'] = times
+        table['sun_alt'] = np.ma.masked_greater_equal(
+            observer.sun_altaz(times).alt, 0)
+        table['sun_alt'].format = lambda x: '{}'.format(int(np.round(x)))
+        for p, data in sorted(zip(percentiles, airmass)):
+            table[str(p)] = np.ma.masked_invalid(data)
+            table[str(p)].format = lambda x: '{:.01f}'.format(np.around(x, 1))
+        table.write(sys.stdout, format='ascii.fixed_width')
 
     # Show or save output.
     opts.output()

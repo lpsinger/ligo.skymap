@@ -118,7 +118,7 @@ def localize_lvalert(coinc_without_inj, psd, tmpdir, monkeypatch):
 
     monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
 
-    filename = str(tmpdir / 'bayestar.fits.gz')
+    filename = str(tmpdir / 'bayestar.fits')
     run_entry_point('bayestar-localize-lvalert', 'G1234', '-N', '-o', filename)
     return filename
 

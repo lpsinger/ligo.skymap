@@ -5,8 +5,8 @@ Changelog
 0.1.4 (unreleased)
 ==================
 
-- The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` will now
-  generate multiresolution FITS files by default.
+- The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will
+  now generate multiresolution FITS files by default.
 
 0.1.3 (2019-03-04)
 ==================

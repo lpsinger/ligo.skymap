@@ -43,4 +43,8 @@ def samples(seed, tmpdir):
 def test_from_samples(samples, tmpdir):
     """Test ligo-skyamp-from-samples."""
     run_entry_point('ligo-skymap-from-samples', '--seed', '150914',
-                    samples, '-o', str(tmpdir))
+                    samples, '-o', str(tmpdir),
+                    '--instruments', 'H1', 'L1', 'V1', '--objid', 'S1234')
+    table = Table.read(str(tmpdir / 'skymap.fits'), format='fits')
+    assert table.meta['OBJECT'] == 'S1234'
+    assert table.meta['INSTRUME'] == 'H1,L1,V1'

@@ -8,6 +8,9 @@ Changelog
 - The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will
   now generate multiresolution FITS files by default.
 
+- Add ``--instrument`` option to ``ligo-skymap-from-samples`` to support
+  storing metadata about which detectors contributed data.
+
 0.1.3 (2019-03-04)
 ==================
 

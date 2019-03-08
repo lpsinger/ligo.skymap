@@ -59,6 +59,8 @@ def parser():
                         help='generate a multiresolution HEALPix map')
     parser.add_argument('-j', '--jobs', action='store_true',
                         help='Use multiple threads')
+    parser.add_argument('--instruments', metavar='H1|L1|V1|...', nargs='+',
+                        help='instruments to store in FITS header')
     parser.add_argument('--objid', help='event ID to store in FITS header')
     return parser
 
@@ -139,6 +141,8 @@ def main(args=None):
         ' '.join([_parser.prog] + sys.argv[1:])]
     if args.objid is not None:
         hpmap.meta['objid'] = args.objid
+    if args.instruments:
+        hpmap.meta['instruments'] = args.instruments
     if args.enable_distance_map:
         hpmap.meta['distmean'] = np.mean(dist)
         hpmap.meta['diststd'] = np.std(dist)

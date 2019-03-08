@@ -42,7 +42,7 @@ def parser():
                         help=SUPPRESS)
     parser.add_argument('--outdir', '-o', default='.',
                         type=DirType(create=True), help='output directory')
-    parser.add_argument('--fitsoutname', default='skymap.fits.gz',
+    parser.add_argument('--fitsoutname', default='skymap.fits',
                         metavar='SKYMAP.fits[.gz]',
                         help='filename for the FITS file')
     parser.add_argument('--loadpost', type=FileType('rb'),
@@ -55,7 +55,7 @@ def parser():
     parser.add_argument('--enable-distance-map', action=EnableAction,
                         help='generate HEALPix map of distance estimates')
     parser.add_argument('--enable-multiresolution', action=EnableAction,
-                        default=False,
+                        default=True,
                         help='generate a multiresolution HEALPix map')
     parser.add_argument('-j', '--jobs', action='store_true',
                         help='Use multiple threads')

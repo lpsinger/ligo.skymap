@@ -49,10 +49,10 @@ def parser():
         '--no-tag', action='store_true',
         help='Do not set lvem tag for GraceDB entry')
     parser.add_argument(
-        '-o', '--output', metavar='FILE.fits[.gz]', default='bayestar.fits.gz',
+        '-o', '--output', metavar='FILE.fits[.gz]', default='bayestar.fits',
         help='Name for uploaded file')
     parser.add_argument(
-        '--enable-multiresolution', action=EnableAction, default=False,
+        '--enable-multiresolution', action=EnableAction, default=True,
         help='generate a multiresolution HEALPix map')
     parser.add_argument(
         'graceid', metavar='G123456', nargs='*',

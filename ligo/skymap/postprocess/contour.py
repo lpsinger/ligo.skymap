@@ -96,7 +96,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     >>> contour(m, [10, 20, 30], degrees=True)
     [[[[..., ...], ...], ...], ...]
 
-    Output above wa rounded for shorter output.
+    Output above was rounded for shorter output.
     """
     # Determine HEALPix resolution
     npix = len(m)

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.4 (unreleased)
+0.1.4 (2019-03-13)
 ==================
 
 - The ``bayestar-localize-lvalert`` and ``ligo-skymap-from-samples`` tools will

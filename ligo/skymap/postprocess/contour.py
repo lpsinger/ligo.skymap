@@ -98,37 +98,38 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
     Output above was rounded for shorter output.
     """
-    # Determine HEALPix resolution
+    # Determine HEALPix resolution.
     npix = len(m)
     nside = hp.npix2nside(npix)
     min_area = 0.4 * hp.nside2pixarea(nside)
 
-    # Compute faces, vertices, and neighbors.
-    # vertices is an N X 3 array of the distinct vertices of the HEALPix faces.
-    # faces is an npix X 4 array mapping HEALPix faces to their vertices.
-    # neighbors is an npix X 4 array mapping faces to their nearest neighbors.
-    faces = np.ascontiguousarray(
-        np.rollaxis(hp.boundaries(nside, np.arange(npix), nest=nest), 2, 1))
-    dtype = faces.dtype
-    faces = faces.view(np.dtype((np.void, dtype.itemsize * 3)))
-    vertices, faces = np.unique(faces.ravel(), return_inverse=True)
-    faces = faces.reshape(-1, 4)
-    vertices = vertices.view(dtype).reshape(-1, 3)
-    neighbors = hp.get_all_neighbours(nside, np.arange(npix), nest=nest)[::2].T
+    neighbors = hp.get_all_neighbours(nside, np.arange(npix), nest=nest).T
 
     # Loop over the requested contours.
     paths = []
     for level in levels:
 
-        # Find credible region
+        # Find credible region.
         indicator = (m >= level)
+
+        # Find all faces that lie on the boundary.
+        # This speeds up the doubly nested ``for`` loop below by allowing us to
+        # skip the vast majority of faces that are on the interior or the
+        # exterior of the contour.
+        tovisit = np.flatnonzero(
+            np.any(indicator.reshape(-1, 1) !=
+                   indicator[neighbors[:, ::2]], axis=1))
 
         # Construct a graph of the edges of the contour.
         graph = nx.Graph()
         face_pairs = set()
-        for ipix1, ipix2 in enumerate(neighbors):
-            for ipix2 in ipix2:
-                # Determine if we have already considered this pair of faces.
+        for ipix1 in tovisit:
+            neighborhood = neighbors[ipix1]
+            for _ in range(4):
+                neighborhood = np.roll(neighborhood, 2)
+                ipix2 = neighborhood[4]
+
+                # Skip this pair of faces if we have already examined it.
                 new_face_pair = frozenset((ipix1, ipix2))
                 if new_face_pair in face_pairs:
                     continue
@@ -139,30 +140,32 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
                 if indicator[ipix1] == indicator[ipix2]:
                     continue
 
-                # Add all common edges of this pair of faces.
-                i1 = np.concatenate((faces[ipix1], [faces[ipix1][0]]))
-                i2 = np.concatenate((faces[ipix2], [faces[ipix2][0]]))
-                edges1 = frozenset(frozenset(_) for _ in zip(i1[:-1], i1[1:]))
-                edges2 = frozenset(frozenset(_) for _ in zip(i2[:-1], i2[1:]))
-                for edge in edges1 & edges2:
-                    graph.add_edge(*edge)
+                # Add the common edge of this pair of faces.
+                # Label each vertex with the set of faces that they share.
+                graph.add_edge(
+                    frozenset((ipix1, *neighborhood[2:5])),
+                    frozenset((ipix1, *neighborhood[4:7])))
         graph = nx.freeze(graph)
 
-        # Record a closed path for each cycle in the graph.
-        cycles = [
-            np.take(vertices, cycle, axis=0)
-            for cycle in nx.cycle_basis(graph)]
+        # Find contours by detecting cycles in the graph.
+        cycles = nx.cycle_basis(graph)
 
-        # Simplify paths if requested
+        # Construct the coordinates of the vertices by averaging the
+        # coordinates of the connected faces.
+        cycles = [[
+            np.sum(hp.pix2vec(nside, [i for i in v if i != -1], nest=nest), 1)
+            for v in cycle] for cycle in cycles]
+
+        # Simplify paths if requested.
         if simplify:
             cycles = [_simplify(cycle, min_area) for cycle in cycles]
             cycles = [cycle for cycle in cycles if len(cycle) > 2]
 
-        # Convert to lists
+        # Convert to angles.
         cycles = [
             _vec2radec(cycle, degrees=degrees).tolist() for cycle in cycles]
 
-        # Add to output paths
+        # Add to output paths.
         paths.append([cycle + [cycle[0]] for cycle in cycles])
 
     return paths

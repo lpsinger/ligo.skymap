@@ -5,7 +5,13 @@ Changelog
 0.1.5 (unreleased)
 ==================
 
-- No changes yet.
+- Fix a bug caused by improper floating point comparison that caused some
+  contours to be missing from the output of ``ligo-skymap-contour``.
+
+- Speed up ``ligo-skymap-contour`` by skipping pixels that lie completely on
+  the interior or exterior of the contour. For a typical LIGO/Virgo HEALPix map
+  with a resolution of nside=512, the run time has decreased from about 42
+  seconds to 3 seconds.
 
 0.1.4 (2019-03-13)
 ==================

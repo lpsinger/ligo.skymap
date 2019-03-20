@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.5 (unreleased)
+0.1.5 (2019-03-20)
 ==================
 
 - Fix a bug caused by improper floating point comparison that caused some

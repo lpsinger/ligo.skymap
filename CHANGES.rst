@@ -5,7 +5,8 @@ Changelog
 0.1.6 (unreleased)
 ==================
 
-- No changes yet.
+- Add options to ``ligo-skymap-plot-airmass`` to specify site coordinates
+  explicitly rather than by a site nickname.
 
 0.1.5 (2019-03-20)
 ==================

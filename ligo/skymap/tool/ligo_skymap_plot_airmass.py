@@ -34,10 +34,26 @@ def parser():
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     parser.add_argument(
-        '--site', choices=EarthLocation.get_site_names(),
-        help='Observatory site', required=True)
-    parser.add_argument(
         '--time', help='UTC time')
+    parser.add_argument(
+        '--site', choices=EarthLocation.get_site_names(),
+        help='Observatory site')
+    parser.add_argument(
+        '--site-longitude', metavar='DEG', type=float,
+        help='Observatory longitude on the WGS84 ellipsoid. '
+        'Mutually exclusive with --site.')
+    parser.add_argument(
+        '--site-latitude', metavar='DEG', type=float,
+        help='Observatory latitude on the WGS84 ellipsoid. '
+        'Mutually exclusive with --site.')
+    parser.add_argument(
+        '--site-height', metavar='METERS', type=float,
+        help='Observatory height from the WGS84 ellipsoid .'
+        'Mutually exclusive with --site.')
+    parser.add_argument(
+        '--site-timezone',
+        help='Observatory time zone, e.g. "US/Pacific". '
+        'Mutually exclusive with --site.')
     return parser
 
 
@@ -52,7 +68,8 @@ def clip_verylarge(x, max=1e300):
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    p = parser()
+    opts = p.parse_args(args)
 
     # Late imports
     import operator
@@ -60,9 +77,10 @@ def main(args=None):
 
     from astroplan import Observer
     from astroplan.plots import plot_airmass
-    from astropy.coordinates import SkyCoord
+    from astropy.coordinates import EarthLocation, SkyCoord
     from astropy.table import Table
     from astropy.time import Time
+    from astropy import units as u
     from matplotlib import dates
     from matplotlib.patches import Patch
     from matplotlib import pyplot as plt
@@ -74,13 +92,33 @@ def main(args=None):
     from .. import plot  # noqa
     from ..extern.quantile import percentile
 
+    if opts.site is None:
+        if opts.site_longitude is None or opts.site_latitude is None:
+            p.error('must specify either --site or both '
+                    '--site-longitude and --site-latitude')
+        location = EarthLocation(
+            lon=opts.site_longitude * u.deg,
+            lat=opts.site_latitude * u.deg,
+            height=(opts.site_height or 0) * u.m)
+        if opts.site_timezone is not None:
+            location.info.meta = {'timezone': opts.site_timezone}
+        observer = Observer(location)
+    else:
+        if not((opts.site_longitude is None) and
+               (opts.site_latitude is None) and
+               (opts.site_height is None) and
+               (opts.site_timezone is None)):
+            p.error('argument --site not allowed with arguments '
+                    '--site-longitude, --site-latitude, '
+                    '--site-height, or --site-timezone')
+        observer = Observer.at_site(opts.site)
+
     m = fits.read_sky_map(opts.input.name, moc=True)
 
     # Make an empty airmass chart.
     # FIXME: have to add a dummy target until
     # https://github.com/astropy/astroplan/pull/349
     # is in a release of astroplan
-    observer = Observer.at_site(opts.site)
     t0 = Time(opts.time) if opts.time is not None else Time.now()
     t0 = observer.midnight(t0)
     ax = plot_airmass(
@@ -152,7 +190,7 @@ def main(args=None):
                        zorder=3, linewidth=0)
 
     # Add local time axis
-    timezone = observer.location.info.meta.get('timezone')
+    timezone = (observer.location.info.meta or {}).get('timezone')
     if timezone:
         tzinfo = pytz.timezone(timezone)
         ax2 = ax.twiny()

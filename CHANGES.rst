@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.6 (unreleased)
+0.1.6 (2019-03-26)
 ==================
 
 - Add options to ``ligo-skymap-plot-airmass`` to specify site coordinates

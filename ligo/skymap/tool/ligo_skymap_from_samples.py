@@ -108,10 +108,10 @@ def main(args=None):
     if args.loadpost is None:
         if dist is None:
             if args.enable_distance_map:
-                parser.error("The posterior samples file '{0}' does not have "
-                             "a distance column named 'dist' or 'distance'. "
-                             "Cannot generate distance map.".format(
-                                 args.samples.name))
+                _parser.error("The posterior samples file '{0}' does not have "
+                              "a distance column named 'dist' or 'distance'. "
+                              "Cannot generate distance map.".format(
+                                  args.samples.name))
             pts = np.column_stack((data['ra'], data['dec']))
         else:
             pts = np.column_stack((data['ra'], data['dec'], dist))

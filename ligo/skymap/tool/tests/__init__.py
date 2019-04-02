@@ -22,7 +22,8 @@ def run_entry_point(name, *args):
     try:
         main(args)
     except SystemExit as e:
-        assert e.code == 0
+        if e.code != 0:
+            raise subprocess.CalledProcessError(e.code, [name, *args])
 
 
 def exec_glue(name, *args):
@@ -48,7 +49,9 @@ def run_glue(name, *args):
         process = multiprocessing.Process(target=exec_glue, args=[name, *args])
         process.start()
         process.join()
-        assert process.exitcode == 0
+        if process.exitcode != 0:
+            raise subprocess.CalledProcessError(
+                process.exitcode, [name, *args])
 
 
 def run_lalsuite(name, *args):

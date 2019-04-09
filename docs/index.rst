@@ -84,6 +84,7 @@ Sky Map Visualization
    ligo/skymap/tool/ligo_skymap_contour
    ligo/skymap/tool/ligo_skymap_plot
    ligo/skymap/tool/ligo_skymap_plot_airmass
+   ligo/skymap/tool/ligo_skymap_plot_observability
    ligo/skymap/tool/ligo_skymap_plot_volume
 
 Postprocessing

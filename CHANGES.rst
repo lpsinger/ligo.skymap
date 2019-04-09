@@ -5,7 +5,9 @@ Changelog
 0.1.7 (unreleased)
 ==================
 
-- No changes yet.
+- Add the ``ligo-skymap-plot-observability`` tool to plot observability windows
+  for many sites at once. Conceptually, this tool is a variation of
+  ``ligo-skymap-plot-airmass`` in which the sky position is integrated out.
 
 0.1.6 (2019-03-26)
 ==================

@@ -48,7 +48,7 @@ def parser():
         'Mutually exclusive with --site.')
     parser.add_argument(
         '--site-height', metavar='METERS', type=float,
-        help='Observatory height from the WGS84 ellipsoid .'
+        help='Observatory height from the WGS84 ellipsoid. '
         'Mutually exclusive with --site.')
     parser.add_argument(
         '--site-timezone',

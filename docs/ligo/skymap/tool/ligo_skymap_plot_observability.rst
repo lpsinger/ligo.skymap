@@ -3,9 +3,9 @@
 Observability Plots (`ligo-skymap-plot-observability`)
 ======================================================
 
-This is similar to ``ligo-skymap-plot-airmass``, but integrated over the sky in
-order to create a bar chart and show the observability windows for several
-facilities at once.
+This is similar to :doc:`ligo-skymap-plot-airmass <ligo_skymap_plot_airmass>`,
+but integrated over the sky in order to create a bar chart and show the
+observability windows for several facilities at once.
 
 Example
 -------

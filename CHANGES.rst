@@ -9,6 +9,9 @@ Changelog
   for many sites at once. Conceptually, this tool is a variation of
   ``ligo-skymap-plot-airmass`` in which the sky position is integrated out.
 
+- The ``ligo-skymap-plot-airmass`` tool will now use the color map's full
+  dynamic range.
+
 0.1.6 (2019-03-26)
 ==================
 

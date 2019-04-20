@@ -82,6 +82,8 @@ def main(args=None):
     from astropy.time import Time
     from astropy import units as u
     from matplotlib import dates
+    from matplotlib.cm import ScalarMappable
+    from matplotlib.colors import Normalize
     from matplotlib.patches import Patch
     from matplotlib import pyplot as plt
     from tqdm import tqdm
@@ -143,16 +145,16 @@ def main(args=None):
             weights=prob)
         for t in tqdm(times)])
 
-    cmap = plt.get_cmap()
+    cmap = ScalarMappable(Normalize(0, 100), plt.get_cmap())
     for level, lo, hi in zip(levels, airmass[:nlevels], airmass[nlevels:]):
         ax.fill_between(
             times.plot_date,
             clip_verylarge(lo),  # Clip infinities to large but finite values
             clip_verylarge(hi),  # because fill_between cannot handle inf
-            color=cmap(level), zorder=2)
+            color=cmap.to_rgba(level), zorder=2)
 
     ax.legend(
-        [Patch(facecolor=cmap(level)) for level in levels],
+        [Patch(facecolor=cmap.to_rgba(level)) for level in levels],
         ['{}%'.format(level) for level in levels])
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 

@@ -12,6 +12,11 @@ Changelog
 - The ``ligo-skymap-plot-airmass`` tool will now use the color map's full
   dynamic range.
 
+- Add ``order`` option to ``ligo.skymap.moc.rasterize`` and
+  ``ligo.skymap.bayestar.rasterize`` and ``--nside`` option to
+  ``ligo-skymap-flatten`` to support flattening multi-resolution HEALPix
+  datasets to specified resolutions.
+
 0.1.6 (2019-03-26)
 ==================
 

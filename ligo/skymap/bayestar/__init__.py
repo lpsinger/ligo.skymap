@@ -413,8 +413,38 @@ def localize(
     return skymap
 
 
-def rasterize(skymap):
-    skymap = Table(moc.rasterize(skymap), meta=skymap.meta)
+def rasterize(skymap, order=None):
+    orig_order, _ = moc.uniq2nest(skymap['UNIQ'])
+    orig_order = orig_order.max()
+
+    if order is None or order < 0 or order >= orig_order \
+            or 'DISTMU' not in skymap.dtype.fields.keys():
+        skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
+    else:
+        skymap = Table(skymap, copy=True, meta=skymap.meta)
+
+        probdensity = skymap['PROBDENSITY']
+        distmu = skymap.columns.pop('DISTMU')
+        distsigma = skymap.columns.pop('DISTSIGMA')
+
+        bad = ~(np.isfinite(distmu) & np.isfinite(distsigma))
+        distmean, diststd, _ = distance.parameters_to_moments(
+            distmu, distsigma)
+        distmean[bad] = np.nan
+        diststd[bad] = np.nan
+        skymap['DISTMEAN'] = probdensity * distmean
+        skymap['DISTVAR'] = probdensity * (
+            np.square(diststd) + np.square(distmean))
+
+        skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
+        distmean = skymap.columns.pop('DISTMEAN') / skymap['PROBDENSITY']
+        diststd = np.sqrt(
+            skymap.columns.pop('DISTVAR') / skymap['PROBDENSITY']
+            - np.square(distmean))
+        skymap['DISTMU'], skymap['DISTSIGMA'], skymap['DISTNORM'] = \
+            distance.moments_to_parameters(
+                distmean, diststd)
+
     skymap.rename_column('PROBDENSITY', 'PROB')
     skymap['PROB'] *= 4 * np.pi / len(skymap)
     skymap['PROB'].unit = u.pixel ** -1

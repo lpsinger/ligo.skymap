@@ -27,6 +27,7 @@ def parser():
                         type=FileType('rb'), help='Input FITS file')
     parser.add_argument('output', metavar='OUTPUT.fits',
                         type=FileType('wb'), help='Output FITS file')
+    parser.add_argument('--nside', type=int, help='Output HEALPix resolution')
     return parser
 
 
@@ -35,8 +36,14 @@ def main(args=None):
 
     import warnings
     from astropy.io import fits
+    import healpy as hp
     from ..io import read_sky_map, write_sky_map
     from ..bayestar import rasterize
+
+    if args.nside is None:
+        order = None
+    else:
+        order = hp.nside2order(args.nside)
 
     hdus = fits.open(args.input)
     ordering = hdus[1].header['ORDERING']
@@ -45,4 +52,4 @@ def main(args=None):
         msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
         warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
     table = read_sky_map(hdus, moc=True)
-    write_sky_map(args.output.name, rasterize(table), nest=True)
+    write_sky_map(args.output.name, rasterize(table, order=order), nest=True)

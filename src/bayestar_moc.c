@@ -76,15 +76,18 @@ void uniq2ang64(uint64_t uniq, double *theta, double *phi)
 }
 
 
-void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t len, size_t *npix)
+void *moc_rasterize64(
+    const void *pixels, size_t offset, size_t itemsize, size_t len,
+    size_t *npix, int8_t order)
 {
     /* Calculate pixel size. */
     const size_t pixelsize = offset + itemsize;
 
-    /* Find maximum order. Note: normally MOC datasets are stored in order
-     * of ascending MOC index, so the last pixel should have the highest order.
-     * However, our rasterization algorithm doesn't depend on this sorting,
-     * so let's just do a linear search for the maximum order. */
+    /* If the parameter order >= 0, then rasterize at that order.
+     * Otherwise, find maximum order. Note: normally MOC datasets are stored in
+     * order of ascending MOC index, so the last pixel should have the highest
+     * order. However, our rasterization algorithm doesn't depend on this
+     * sorting, so let's just do a linear search for the maximum order. */
     int8_t max_order;
     {
         uint64_t max_uniq = 0;
@@ -98,6 +101,14 @@ void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t
         max_order = uniq2order64(max_uniq);
     }
 
+    /* Don't handle downsampling here, because we don't know how to do
+     * reduction across pixels without more knowledge of the pixel datatype and
+     * contents. */
+    if (order >= max_order)
+        max_order = order;
+    else if (order >= 0)
+        GSL_ERROR_NULL("downsampling not implemented", GSL_EUNIMPL);
+
     /* Allocate output. */
     *npix = 12 * ((size_t) 1 << 2 * max_order);
     void *ret = calloc(*npix, itemsize);
@@ -109,7 +120,7 @@ void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t
     {
         const void *pixel = (const char *) pixels + i * pixelsize;
         uint64_t nest;
-        const int8_t order = uniq2nest64(*(const uint64_t *) pixel, &nest);
+        order = uniq2nest64(*(const uint64_t *) pixel, &nest);
         const size_t reps = (size_t) 1 << 2 * (max_order - order);
         for (size_t j = 0; j < reps; j ++)
             memcpy((char *) ret + (nest * reps + j) * itemsize,

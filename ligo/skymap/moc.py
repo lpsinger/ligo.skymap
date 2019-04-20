@@ -28,6 +28,8 @@ References
        Recommendation <http://ivoa.net/documents/MOC/>.
 """
 
+from astropy import table
+import numpy as np
 
 from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
 from .core import rasterize as _rasterize
@@ -101,7 +103,7 @@ ipix : `numpy.ndarray`
 """)
 
 
-def rasterize(moc_data):
+def rasterize(moc_data, order=None):
     """Convert a multi-order HEALPix dataset to fixed-order NESTED ordering.
 
     Parameters
@@ -111,6 +113,9 @@ def rasterize(moc_data):
         first column is called UNIQ and contains the NUNIQ pixel index. Every
         point on the unit sphere must be contained in exactly one pixel in the
         dataset.
+    order : int, optional
+        The desired output resolution order, or :obj:`None` for the maximum
+        resolution present in the dataset.
 
     Returns
     -------
@@ -118,7 +123,29 @@ def rasterize(moc_data):
         A fixed-order, NESTED-ordering HEALPix dataset with all of the columns
         that were in moc_data, with the exception of the UNIQ column.
     """
-    return _rasterize(moc_data)
+    if order is None or order < 0:
+        order = -1
+    else:
+        orig_order, orig_nest = uniq2nest(moc_data['UNIQ'])
+        to_downsample = order < orig_order
+        if np.any(to_downsample):
+            to_keep = table.Table(moc_data[~to_downsample])
+            orig_order = orig_order[to_downsample]
+            orig_nest = orig_nest[to_downsample]
+            to_downsample = table.Table(moc_data[to_downsample])
+
+            ratio = 1 << (2 * np.uint64(orig_order - order))
+            weights = 1.0 / ratio
+            for colname, column in to_downsample.columns.items():
+                if colname != 'UNIQ':
+                    column *= weights
+            to_downsample['UNIQ'] = nest2uniq(order, orig_nest // ratio)
+            to_downsample = to_downsample.group_by(
+                'UNIQ').groups.aggregate(np.sum)
+
+            moc_data = table.vstack((to_keep, to_downsample))
+
+    return _rasterize(moc_data, order=order)
 
 
 del add_newdoc_ufunc

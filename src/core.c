@@ -409,8 +409,24 @@ static void capsule_free(PyObject *self)
 }
 
 
-static PyObject *rasterize(PyObject *NPY_UNUSED(module), PyObject *arg)
+static PyObject *rasterize(
+    PyObject *NPY_UNUSED(module), PyObject *args, PyObject *kwargs)
 {
+    PyObject *arg;
+    int order = -1;
+
+    /* Names of arguments */
+    static const char *keywords[] = {"array", "order", NULL};
+
+    /* Parse arguments */
+    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i",
+        keywords, &arg, &order))
+        return NULL;
+    #pragma GCC diagnostic pop
+
     PyArrayObject *arr = (PyArrayObject *) PyArray_FromAny(
         arg, NULL, 1, 1, NPY_ARRAY_CARRAY_RO, NULL);
     PyObject *uniq_key = PyUnicode_FromString("UNIQ");
@@ -489,7 +505,7 @@ static PyObject *rasterize(PyObject *NPY_UNUSED(module), PyObject *arg)
 
     void *out;
     Py_BEGIN_ALLOW_THREADS
-    out = moc_rasterize64(pixels, offset, itemsize, len, &npix);
+    out = moc_rasterize64(pixels, offset, itemsize, len, &npix, order);
     Py_END_ALLOW_THREADS
     if (!out)
         goto done;
@@ -1022,7 +1038,8 @@ static void *const no_ufunc_data[] = {NULL};
 static const char modulename[] = "core";
 
 static PyMethodDef methods[] = {
-    {"rasterize", rasterize, METH_O, "fill me in"},
+    {"rasterize", (PyCFunction)rasterize,
+        METH_VARARGS | METH_KEYWORDS, "fill me in"},
     {"toa_phoa_snr", (PyCFunction)sky_map_toa_phoa_snr,
         METH_VARARGS | METH_KEYWORDS, "fill me in"},
     {"test", (PyCFunction)test,

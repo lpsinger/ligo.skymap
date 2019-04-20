@@ -13,7 +13,7 @@ Example
 To make an observability plot for GW170817::
 
     $ curl -O https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz
-    $ ligo-skymap-plot-airmass --site 'Las Campanas Observatory' 'La Palma' 'Palomar' --time 2017-08-17 bayestar.fits.gz -o bayestar.png
+    $ ligo-skymap-plot-observability --site 'Las Campanas Observatory' 'SAAO' 'Siding Spring Observatory' --time 2017-08-17 bayestar.fits.gz -o bayestar.png
 
 .. plot::
    :context: reset

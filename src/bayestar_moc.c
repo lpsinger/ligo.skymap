@@ -112,7 +112,8 @@ void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t
         const int8_t order = uniq2nest64(*(const uint64_t *) pixel, &nest);
         const size_t reps = (size_t) 1 << 2 * (max_order - order);
         for (size_t j = 0; j < reps; j ++)
-            memcpy((char *) ret + (nest * reps + j) * itemsize, (const char *) pixel + offset, itemsize);
+            memcpy((char *) ret + (nest * reps + j) * itemsize,
+                (const char *) pixel + offset, itemsize);
     }
 
     return ret;

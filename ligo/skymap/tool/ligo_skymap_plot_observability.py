@@ -138,7 +138,7 @@ def main(args=None):
             constraints, observer, coords, times))
         ax.contourf(
             times.plot_date, [i - 0.4, i + 0.4], np.tile(observable, (2, 1)),
-            levels=np.arange(10, 110, 10))
+            levels=np.arange(10, 110, 10), cmap=plt.get_cmap().reversed())
 
     plt.tight_layout()
 

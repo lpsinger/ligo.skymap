@@ -173,9 +173,7 @@ def process(fitsfilename):
             AND cem2.table_name = 'coinc_event' AND cem2.event_id = ?
             """, (coinc_event_id,)).fetchone()
         if row is None:
-            raise ValueError(
-                "No database record found for event '{0}' in '{1}'".format(
-                    coinc_event_id, sqlite.get_filename(db)))
+            return None
         simulation_id, true_ra, true_dec, true_dist, far, snr = row
 
     (
@@ -249,5 +247,6 @@ def main(args=None):
 
     with tqdm(total=len(opts.fitsfilenames)) as progress:
         for record in pool_map(process, opts.fitsfilenames):
-            print(*record, sep="\t", file=opts.output)
+            if record is not None:
+                print(*record, sep="\t", file=opts.output)
             progress.update()

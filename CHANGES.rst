@@ -17,6 +17,9 @@ Changelog
   ``ligo-skymap-flatten`` to support flattening multi-resolution HEALPix
   datasets to specified resolutions.
 
+- ``ligo-skymap-stats`` now ignores skymaps with no corresponding entries in
+  the inspinjfind database, instead of failing.
+
 0.1.6 (2019-03-26)
 ==================
 

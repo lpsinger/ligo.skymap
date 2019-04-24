@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.7 (unreleased)
+0.1.7 (2019-04-24)
 ==================
 
 - Add the ``ligo-skymap-plot-observability`` tool to plot observability windows

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2018  Will M. Farr <will.farr@ligo.org>
+# Copyright (C) 2011-2019  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
 #
 # This program is free software; you can redistribute it and/or modify it

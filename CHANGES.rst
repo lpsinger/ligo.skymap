@@ -5,7 +5,9 @@ Changelog
 0.1.8 (unreleased)
 ==================
 
-- No changes yet.
+- Add ``ligo-skymap-constellations``, an easter egg program to list the most
+  probable constellations for a localization, for fun and for public outreach
+  purposes.
 
 0.1.7 (2019-04-24)
 ==================

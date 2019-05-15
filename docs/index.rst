@@ -94,6 +94,7 @@ Postprocessing
    :maxdepth: 1
 
    ligo/skymap/tool/ligo_skymap_combine
+   ligo/skymap/tool/ligo_skymap_constellations
    ligo/skymap/tool/ligo_skymap_from_samples
    ligo/skymap/tool/ligo_skymap_plot_stats
    ligo/skymap/tool/ligo_skymap_stats

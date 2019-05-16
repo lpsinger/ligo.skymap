@@ -18,6 +18,10 @@ Changelog
   ``astro wcs`` so that subclasses can be created using
   ``plt.axes(..., projection='astro wcs', header='...')``.
 
+- Suppress Numpy warnings for HEALPix reprojection operations in WCS plots
+  because it is normal for invalid values to occur when transforming pixels
+  that lie outside of the projection.
+
 0.1.7 (2019-04-24)
 ==================
 

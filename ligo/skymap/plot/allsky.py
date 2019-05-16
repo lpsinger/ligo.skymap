@@ -281,15 +281,24 @@ class AutoScaledWCSAxes(WCSAxes):
                        nested=False, field=0, smooth=None):
         if isinstance(data, np.ndarray):
             data = (data, self.header['RADESYS'])
-        img, mask = reproject_from_healpix(data, self.header, hdu_in=hdu_in,
-                                           order=order, nested=nested,
-                                           field=field)
+
+        # It's normal for reproject_from_healpix to produce some Numpy invalid
+        # value warnings for points that land outside the projection.
+        with np.errstate(invalid='ignore'):
+            img, mask = reproject_from_healpix(
+                data, self.header, hdu_in=hdu_in, order=order, nested=nested,
+                field=field)
         img = np.ma.array(img, mask=~mask.astype(bool))
+
         if smooth is not None:
             pixsize = np.mean(np.abs(self.wcs.wcs.cdelt)) * u.deg
             smooth = (smooth / pixsize).to(u.dimensionless_unscaled).value
             kernel = Gaussian2DKernel(smooth)
-            img = convolve_fft(img, kernel)
+            # Ignore divide by zero warnings for pixels that have no valid
+            # neighbors.
+            with np.errstate(invalid='ignore'):
+                img = convolve_fft(img, kernel)
+
         return img
 
     def contour_hpx(self, data, hdu_in=None, order='bilinear', nested=False,

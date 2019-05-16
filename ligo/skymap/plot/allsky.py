@@ -159,7 +159,9 @@ class AutoScaledWCSAxes(WCSAxes):
     """Axes base class. The pixel scale is adjusted to the DPI of the image,
     and there are a variety of convenience methods."""
 
-    def __init__(self, header, *args, **kwargs):
+    name = 'astro wcs'
+
+    def __init__(self, *args, header, **kwargs):
         super(AutoScaledWCSAxes, self).__init__(*args, aspect=1, **kwargs)
         h = Header(header, copy=True)
         naxis1 = h['NAXIS1']
@@ -382,9 +384,8 @@ class GlobeAxes(AutoScaledWCSAxes):
 
     name = 'astro globe'
 
-    def __init__(self, *args, **kwargs):
-        kwargs = dict(kwargs)
-        center = SkyCoord(kwargs.pop('center', '0d 0d')).icrs
+    def __init__(self, *args, center='0d 0d', **kwargs):
+        center = SkyCoord(center).icrs
         header = {
             'NAXIS': 2,
             'NAXIS1': 180,
@@ -399,17 +400,16 @@ class GlobeAxes(AutoScaledWCSAxes):
             'CTYPE2': 'DEC--SIN',
             'RADESYS': 'ICRS'}
         super(GlobeAxes, self).__init__(
-            header, *args, frame_class=EllipticalFrame, **kwargs)
+            *args, frame_class=EllipticalFrame, header=header, **kwargs)
 
 
 class ZoomSkyAxes(AutoScaledWCSAxes):
 
     name = 'astro zoom'
 
-    def __init__(self, *args, **kwargs):
-        kwargs = dict(kwargs)
-        center = SkyCoord(kwargs.pop('center', '0d 0d')).icrs
-        radius = u.Quantity(kwargs.pop('radius', '1 deg')).to(u.deg).value
+    def __init__(self, *args, center='0d 0d', radius='1 deg', **kwargs):
+        center = SkyCoord(center).icrs
+        radius = u.Quantity(radius).to(u.deg).value
         header = {
             'NAXIS': 2,
             'NAXIS1': 512,
@@ -429,9 +429,7 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
 class AllSkyAxes(AutoScaledWCSAxes):
     """Base class for a multi-purpose all-sky projection"""
 
-    def __init__(self, *args, **kwargs):
-        kwargs = dict(kwargs)
-        obstime = kwargs.pop('obstime', None)
+    def __init__(self, *args, obstime=None, **kwargs):
         header = {
             'NAXIS': 2,
             'NAXIS1': 360,
@@ -448,7 +446,7 @@ class AllSkyAxes(AutoScaledWCSAxes):
         if obstime is not None:
             header['DATE-OBS'] = Time(obstime).utc.isot
         super(AllSkyAxes, self).__init__(
-            header, *args, frame_class=EllipticalFrame, **kwargs)
+            *args, frame_class=EllipticalFrame, header=header, **kwargs)
         self.coords[0].set_ticks(spacing=45 * u.deg)
         self.coords[1].set_ticks(spacing=30 * u.deg)
         self.coords[0].set_ticklabel(exclude_overlapping=True)
@@ -543,6 +541,7 @@ class GeoHoursMollweideAllSkyAxes(Geo, Hours, Mollweide, AllSkyAxes):
 
 
 projection_registry.register(
+    AutoScaledWCSAxes,
     AstroDegreesAitoffAllSkyAxes,
     AstroDegreesMollweideAllSkyAxes,
     AstroHoursAitoffAllSkyAxes,

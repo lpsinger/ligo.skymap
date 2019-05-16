@@ -14,6 +14,10 @@ Changelog
   ``astropy.convolution.convolve_fft`` in order to correctly handle points near
   the projection boundary where invalid values must be masked out.
 
+- Register ``AutoScaledWCSAxes`` as a Matplotlib projection with the name
+  ``astro wcs`` so that subclasses can be created using
+  ``plt.axes(..., projection='astro wcs', header='...')``.
+
 0.1.7 (2019-04-24)
 ==================
 

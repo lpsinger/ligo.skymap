@@ -81,6 +81,7 @@ The following example demonstrates most of the features of this module.
         markersize=30,
         markeredgewidth=3)
 """  # noqa: E501
+from astropy.convolution import convolve_fft, Gaussian2DKernel
 from astropy.coordinates import SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
@@ -96,7 +97,6 @@ from matplotlib.patches import ConnectionPatch, FancyArrowPatch, PathPatch
 from matplotlib.projections import projection_registry
 import numpy as np
 from reproject import reproject_from_healpix
-from scipy.ndimage import gaussian_filter
 from scipy.optimize import minimize_scalar
 from .angle import reference_angle_deg
 
@@ -286,7 +286,8 @@ class AutoScaledWCSAxes(WCSAxes):
         if smooth is not None:
             pixsize = np.mean(np.abs(self.wcs.wcs.cdelt)) * u.deg
             smooth = (smooth / pixsize).to(u.dimensionless_unscaled).value
-            img = gaussian_filter(img, smooth)
+            kernel = Gaussian2DKernel(smooth)
+            img = convolve_fft(img, kernel)
         return img
 
     def contour_hpx(self, data, hdu_in=None, order='bilinear', nested=False,

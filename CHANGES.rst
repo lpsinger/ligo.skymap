@@ -9,6 +9,11 @@ Changelog
   probable constellations for a localization, for fun and for public outreach
   purposes.
 
+- Switch the implementation of the ``smooth`` option of ``imshow_hpx`` and
+  ``contour_hpx`` from ``scipy.ndimage.gaussian_filter`` to
+  ``astropy.convolution.convolve_fft`` in order to correctly handle points near
+  the projection boundary where invalid values must be masked out.
+
 0.1.7 (2019-04-24)
 ==================
 

@@ -22,6 +22,9 @@ Changelog
   because it is normal for invalid values to occur when transforming pixels
   that lie outside of the projection.
 
+- Add ``rotate`` option to ``astro globe`` and ``geo globe`` to rotate the plot
+  in the plane of the screen about the center of the projection.
+
 0.1.7 (2019-04-24)
 ==================
 

@@ -97,7 +97,7 @@ from matplotlib.projections import projection_registry
 import numpy as np
 from reproject import reproject_from_healpix
 from scipy.ndimage import gaussian_filter
-import scipy.optimize
+from scipy.optimize import minimize_scalar
 from .angle import reference_angle_deg
 
 __all__ = (
@@ -568,7 +568,7 @@ class ScaleBar(FancyArrowPatch):
         self._length = length
         self._transAxesToWorld = (
             (ax.transAxes - ax.transData) + ax.coords.frame.transform)
-        dx = scipy.optimize.minimize_scalar(
+        dx = minimize_scalar(
             self._func, args=xy, bounds=[0, 1 - x], method='bounded').x
         super(ScaleBar, self).__init__(
             xy, (x + dx, y),

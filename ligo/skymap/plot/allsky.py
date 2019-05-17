@@ -434,7 +434,7 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
             'CTYPE1': 'RA---TAN',
             'CTYPE2': 'DEC--TAN',
             'RADESYS': 'ICRS'}
-        super(ZoomSkyAxes, self).__init__(header, *args, **kwargs)
+        super(ZoomSkyAxes, self).__init__(*args, header=header, **kwargs)
 
 
 class AllSkyAxes(AutoScaledWCSAxes):

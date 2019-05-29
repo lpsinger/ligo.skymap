@@ -7,7 +7,7 @@ lalsuite>=6.53
 lscsoft-glue>=2.0.0
 ligo-gracedb>=2.0.1
 ligo-segments>=1.2.0
-matplotlib>=2.1.0
+matplotlib>=3.0.2
 networkx
 numpy>=1.14,!=1.15.3
 pillow>=2.5.0

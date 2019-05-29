@@ -25,6 +25,9 @@ Changelog
 - Add ``rotate`` option to ``astro globe`` and ``geo globe`` to rotate the plot
   in the plane of the screen about the center of the projection.
 
+- Bump matplotlib version to >= 3.0.2 because of a bug that affected
+  ``ligo-skymap-plot-stats``.
+
 0.1.7 (2019-04-24)
 ==================
 

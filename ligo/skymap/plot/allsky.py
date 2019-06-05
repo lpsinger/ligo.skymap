@@ -297,7 +297,7 @@ class AutoScaledWCSAxes(WCSAxes):
             # Ignore divide by zero warnings for pixels that have no valid
             # neighbors.
             with np.errstate(invalid='ignore'):
-                img = convolve_fft(img, kernel)
+                img = convolve_fft(img, kernel, fill_value=np.nan)
 
         return img
 

@@ -581,13 +581,17 @@ class ScaleBar(FancyArrowPatch):
             (ax.transAxes - ax.transData) + ax.coords.frame.transform)
         dx = minimize_scalar(
             self._func, args=xy, bounds=[0, 1 - x], method='bounded').x
+        custom_kwargs = kwargs
+        kwargs = dict(
+            capstyle='round',
+            color='black',
+            linewidth=rcParams['lines.linewidth'],
+        )
+        kwargs.update(custom_kwargs)
         super(ScaleBar, self).__init__(
             xy, (x + dx, y),
             *args,
             arrowstyle='-',
-            capstyle='round',
-            color='black',
-            linewidth=rcParams['lines.linewidth'],
             shrinkA=0.0,
             shrinkB=0.0,
             transform=ax.transAxes,

@@ -593,9 +593,9 @@ class ScaleBar(FancyArrowPatch):
             transform=ax.transAxes,
             **kwargs)
 
-    def label(self):
+    def label(self, **kwargs):
         (x0, y), (x1, _) = self._posA_posB
         s = u' {0.value:g}{0.unit:unicode}'.format(self._length)
         return self._ax.text(
             0.5 * (x0 + x1), y, s,
-            ha='center', va='bottom', transform=self._ax.transAxes)
+            ha='center', va='bottom', transform=self._ax.transAxes, **kwargs)

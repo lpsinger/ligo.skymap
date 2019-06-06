@@ -25,6 +25,10 @@ Changelog
 - Add ``rotate`` option to ``astro globe`` and ``geo globe`` to rotate the plot
   in the plane of the screen about the center of the projection.
 
+- Pass through keyword arguments from ``AutoScaledWCSAxes.scalebar()`` and
+  ``AutoScaledWCSAxes.scalebar().label()`` to Matplotlib so that plot styles
+  can be adjusted easily.
+
 - Bump matplotlib version to >= 3.0.2 because of a bug that affected
   ``ligo-skymap-plot-stats``.
 

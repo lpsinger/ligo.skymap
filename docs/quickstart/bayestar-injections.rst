@@ -67,8 +67,8 @@ Create discretely sampled noise PSDs for all of your detectors using
     --V1=AdvVirgo \
     --K1=KAGRA \
     `# Optional: apply scale factor to selected PSDs to increase or` \
-    `# decrease their sensitivity. The horizon distance goes as one` \
-    `# over scale squared.` \
+    `# decrease their sensitivity. The PSD is multiplied by a factor of one ` \
+    `# over scale squared; the horizon distance is multiplied by the scale.` \
     --I1-scale=0.75
 
 The output is saved in LIGO-LW format to ``psd.xml``.

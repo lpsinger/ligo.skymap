@@ -28,7 +28,7 @@ Matplotlib projection registry. The projections are:
 *  ``geo degrees mollweide``
 *  ``geo hours mollweide``
 *  ``astro globe`` with options `center` and `rotate`
-*  ``astro zoom`` with options `center` and `radius`
+*  ``astro zoom`` with options `center`, `radius`, and `rotate`
 
 Example
 -------
@@ -418,7 +418,8 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
 
     name = 'astro zoom'
 
-    def __init__(self, *args, center='0d 0d', radius='1 deg', **kwargs):
+    def __init__(self, *args, center='0d 0d', radius='1 deg', rotate=None,
+                 **kwargs):
         center = SkyCoord(center).icrs
         radius = u.Quantity(radius).to(u.deg).value
         header = {
@@ -434,6 +435,8 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
             'CTYPE1': 'RA---TAN',
             'CTYPE2': 'DEC--TAN',
             'RADESYS': 'ICRS'}
+        if rotate is not None:
+            header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
         super(ZoomSkyAxes, self).__init__(*args, header=header, **kwargs)
 
 

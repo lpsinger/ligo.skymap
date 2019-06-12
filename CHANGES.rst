@@ -22,8 +22,9 @@ Changelog
   because it is normal for invalid values to occur when transforming pixels
   that lie outside of the projection.
 
-- Add ``rotate`` option to ``astro globe`` and ``geo globe`` to rotate the plot
-  in the plane of the screen about the center of the projection.
+- Add ``rotate`` option to ``astro globe``, ``geo globe``, and ``astro zoom``
+  to rotate the plot in the plane of the screen about the center of the
+  projection.
 
 - Pass through keyword arguments from ``AutoScaledWCSAxes.scalebar()`` and
   ``AutoScaledWCSAxes.scalebar().label()`` to Matplotlib so that plot styles

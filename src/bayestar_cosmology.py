@@ -44,7 +44,7 @@ import astropy.units as u
 import numpy as np
 import scipy.misc
 
-from ligo.skymap.postprocess.cosmology import dVC_dVL_for_z, z_for_DL, dVC_dVL_for_DL
+from ligo.skymap.postprocess.cosmology import z_for_DL, dVC_dVL_for_DL
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

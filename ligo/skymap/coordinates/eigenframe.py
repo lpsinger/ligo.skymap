@@ -64,9 +64,9 @@ class EigenFrame(BaseCoordinateFrame):
             A new coordinate frame
         """
         v = coords.icrs.cartesian.xyz.value
-        _, R = np.linalg.eigh(np.dot(v, v.T))
-        R = R[:, ::-1]  # Order by descending eigenvalue
-        e_x, e_y, e_z = CartesianRepresentation(R, unit=dimensionless_unscaled)
+        _, r = np.linalg.eigh(np.dot(v, v.T))
+        r = r[:, ::-1]  # Order by descending eigenvalue
+        e_x, e_y, e_z = CartesianRepresentation(r, unit=dimensionless_unscaled)
         return cls(e_x=e_x, e_y=e_y, e_z=e_z)
 
     @classmethod
@@ -93,9 +93,9 @@ class EigenFrame(BaseCoordinateFrame):
         frame : `EigenFrame`
             A new coordinate frame
         """
-        R = principal_axes(prob, distmu, distsigma, nest=nest)
-        R = R[:, ::-1]  # Order by descending eigenvalue
-        e_x, e_y, e_z = CartesianRepresentation(R, unit=dimensionless_unscaled)
+        r = principal_axes(prob, distmu, distsigma, nest=nest)
+        r = r[:, ::-1]  # Order by descending eigenvalue
+        e_x, e_y, e_z = CartesianRepresentation(r, unit=dimensionless_unscaled)
         return cls(e_x=e_x, e_y=e_y, e_z=e_z)
 
 

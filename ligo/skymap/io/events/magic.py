@@ -55,7 +55,7 @@ def _get_file_type(f):
     return filetype.strip()
 
 
-def MagicEventSource(f, *args, **kwargs):
+def MagicEventSource(f, *args, **kwargs):  # noqa: N802
     """
     Read events from either HDF or LIGO-LW files. The format is determined
     using the POSIX `file` command, which determines the file by looking for

@@ -30,7 +30,7 @@ from .base import Event, EventSource, SingleEvent
 __all__ = ('HDFEventSource',)
 
 
-class _psd_segment(segment):
+class _psd_segment(segment):  # noqa: N801
 
     def __new__(cls, psd, *args):
         return segment.__new__(cls, *args)

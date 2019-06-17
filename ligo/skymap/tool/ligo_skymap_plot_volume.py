@@ -94,11 +94,11 @@ def main(args=None):
         max_distance = mean + 2.5 * std
     else:
         max_distance = opts.max_distance
-    R = np.ascontiguousarray(principal_axes(prob2, mu2, sigma2))
+    rot = np.ascontiguousarray(principal_axes(prob2, mu2, sigma2))
 
     if opts.chain:
         chain = io.read_samples(opts.chain.name)
-        chain = np.dot(R.T, (hp.ang2vec(
+        chain = np.dot(rot.T, (hp.ang2vec(
             0.5 * np.pi - chain['dec'], chain['ra']) *
             np.atleast_2d(chain['dist']).T).T)
 
@@ -130,7 +130,7 @@ def main(args=None):
 
         # Marginalize onto the given face
         density = volume_render(
-            xx.ravel(), yy.ravel(), max_distance, axis0, axis1, R, False,
+            xx.ravel(), yy.ravel(), max_distance, axis0, axis1, rot, False,
             prob, mu, sigma, norm).reshape(xx.shape)
 
         # Plot heat map
@@ -157,7 +157,7 @@ def main(args=None):
         for (ra, dec, dist), color in zip(opts.radecdist, colors[1:]):
             theta = 0.5 * np.pi - np.deg2rad(dec)
             phi = np.deg2rad(ra)
-            xyz = np.dot(R.T, hp.ang2vec(theta, phi) * dist)
+            xyz = np.dot(rot.T, hp.ang2vec(theta, phi) * dist)
             ax.plot(
                 xyz[axis0], xyz[axis1], marker=truth_marker,
                 markeredgecolor=color, markerfacecolor='none',

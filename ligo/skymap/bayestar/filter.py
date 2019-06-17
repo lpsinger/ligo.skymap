@@ -349,7 +349,7 @@ def abs2(y):
     return np.square(y.real) + np.square(y.imag)
 
 
-class vectorize_swig_psd_func(object):
+class vectorize_swig_psd_func(object):  # noqa: N801
     """Create a vectorized Numpy function from a SWIG-wrapped PSD function.
     SWIG does not provide enough information for Numpy to determine the number
     of input arguments, so we can't just use np.vectorize."""

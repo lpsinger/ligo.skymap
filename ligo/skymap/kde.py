@@ -91,12 +91,12 @@ class BoundedKDE(gaussian_kde):
         for i, (low, high, period) in enumerate(zip(self._low, self._high,
                                                     self._periodic)):
             if period:
-                P = high - low
+                p = high - low
 
-                pts[i, :] += P
+                pts[i, :] += p
                 den += super(BoundedKDE, self).evaluate(pts)
 
-                pts[i, :] -= 2.0 * P
+                pts[i, :] -= 2.0 * p
                 den += super(BoundedKDE, self).evaluate(pts)
 
                 pts[i, :] = pts_orig[i, :]
@@ -369,12 +369,12 @@ class SkyKDE(ClusteredKDE):
 # instance objects to be picklable.
 
 
-class _Clustered2DSkyKDEMeta(type):
+class _Clustered2DSkyKDEMeta(type):  # noqa: N802
     """Metaclass to make dynamically created subclasses of Clustered2DSkyKDE
     picklable."""
 
 
-def _Clustered2DSkyKDEMeta_pickle(cls):
+def _Clustered2DSkyKDEMeta_pickle(cls):  # noqa: N802
     """Pickle dynamically created subclasses of Clustered2DSkyKDE."""
     return type, (cls.__name__, cls.__bases__, {'frame': cls.frame})
 
@@ -383,7 +383,7 @@ def _Clustered2DSkyKDEMeta_pickle(cls):
 copyreg.pickle(_Clustered2DSkyKDEMeta, _Clustered2DSkyKDEMeta_pickle)
 
 
-def _Clustered2DSkyKDE_factory(name, frame):
+def _Clustered2DSkyKDE_factory(name, frame):  # noqa: N802
     """Unpickle instances of dynamically created subclasses of
     Clustered2DSkyKDE.
 

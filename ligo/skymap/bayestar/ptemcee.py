@@ -30,8 +30,8 @@ class Sampler(ptemcee.sampler.Sampler):
     """Patched version of :class:`ptemcee.Sampler` that supports the
     `vectorize` option of :class:`emcee.EnsembleSampler`."""
 
-    def __init__(self, nwalkers, dim, logl, logp,
-                 ntemps=None, Tmax=None, betas=None,
+    def __init__(self, nwalkers, dim, logl, logp,  # noqa: N803
+                 ntemps=None, Tmax=None, betas=None,  # noqa: N803
                  threads=1, pool=None, a=2.0,
                  loglargs=[], logpargs=[],
                  loglkwargs={}, logpkwargs={},

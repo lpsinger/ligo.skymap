@@ -1,3 +1,7 @@
+include:
+  - project: emfollow/gitlab-ci-templates
+    file: lint.yml
+
 stages:
   - dist
   - test
@@ -231,9 +235,8 @@ lint:
   stage: test
   variables:
     GIT_STRATEGY: none
-  script:
+  before_script:
     - tar --strip-components 1 -xf *.tar.*
-    - flake8 --show-source .
   dependencies:
     - sdist
 

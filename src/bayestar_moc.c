@@ -29,7 +29,10 @@
 
 int64_t nest2uniq64(uint8_t order, int64_t nest)
 {
-    return nest + ((int64_t) 1 << 2 * (order + 1));
+    if (nest < 0)
+        return -1;
+    else
+        return nest + ((int64_t) 1 << 2 * (order + 1));
 }
 
 
@@ -55,14 +58,21 @@ int8_t uniq2order64(int64_t uniq)
 
 double uniq2pixarea64(int64_t uniq)
 {
-    return ldexp(M_PI / 3, -2 * uniq2order64(uniq));
+    int8_t order = uniq2order64(uniq);
+    if (order < 0)
+        return GSL_NAN;
+    else
+        return ldexp(M_PI / 3, -2 * order);
 }
 
 
 int8_t uniq2nest64(int64_t uniq, int64_t *nest)
 {
     int8_t order = uniq2order64(uniq);
-    *nest = uniq - ((int64_t) 1 << 2 * (order + 1));
+    if (order < 0)
+        *nest = -1;
+    else
+        *nest = uniq - ((int64_t) 1 << 2 * (order + 1));
     return order;
 }
 
@@ -71,8 +81,12 @@ void uniq2ang64(int64_t uniq, double *theta, double *phi)
 {
     int64_t nest;
     int8_t order = uniq2nest64(uniq, &nest);
-    int64_t nside = (int64_t) 1 << order;
-    pix2ang_nest64(nside, nest, theta, phi);
+    if (order < 0) {
+        *theta = *phi = GSL_NAN;
+    } else {
+        int64_t nside = (int64_t) 1 << order;
+        pix2ang_nest64(nside, nest, theta, phi);
+    }
 }
 
 

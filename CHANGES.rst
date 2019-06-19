@@ -33,6 +33,10 @@ Changelog
 - Bump matplotlib version to >= 3.0.2 because of a bug that affected
   ``ligo-skymap-plot-stats``.
 
+- The ``ligo-skymap-unflatten`` tool will now write multiresolution sky maps
+  with pixels supported by the ``UNIQ`` column, as required by the standard
+  multi-order coverage map serialization in FITS.
+
 0.1.7 (2019-04-24)
 ==================
 

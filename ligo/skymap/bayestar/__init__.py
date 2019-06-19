@@ -466,6 +466,7 @@ def derasterize(skymap):
     for old_unit, column in zip(old_units, skymap.columns.values()):
         column.unit = old_unit
     skymap.add_column(Column(uniq, name='UNIQ'), 0)
+    skymap.sort('UNIQ')
     return skymap
 
 

@@ -620,7 +620,7 @@ static bayestar_pixel *bayestar_pixels_refine(
     {
         for (size_t i = 0; i < last_n; i ++)
         {
-            const uint64_t uniq = 4 * pixels[*len - i - 1].uniq;
+            const int64_t uniq = 4 * pixels[*len - i - 1].uniq;
             for (unsigned char j = 0; j < 4; j ++)
                 pixels[new_len - (4 * i + j) - 1].uniq = j + uniq;
         }
@@ -632,8 +632,8 @@ static bayestar_pixel *bayestar_pixels_refine(
 
 static bayestar_pixel *bayestar_pixels_alloc(size_t *len, unsigned char order)
 {
-    const uint64_t nside = (uint64_t)1 << order;
-    const uint64_t npix = nside2npix64(nside);
+    const int64_t nside = (int64_t)1 << order;
+    const int64_t npix = nside2npix64(nside);
     const size_t size = npix * sizeof(bayestar_pixel);
 
     bayestar_pixel *pixels = malloc(size);
@@ -674,7 +674,7 @@ static const double FUDGE = 0.83;
 static void bayestar_sky_map_toa_phoa_snr_pixel(
     log_radial_integrator *integrators[],
     unsigned char nint,
-    uint64_t uniq,
+    int64_t uniq,
     double *const value,
     double gmst,
     unsigned int nifos,
@@ -1342,14 +1342,14 @@ static void test_distance_moments_to_parameters_round_trip(double mean, double s
 }
 
 
-static void test_nest2uniq64(uint8_t order, uint64_t nest, uint64_t uniq)
+static void test_nest2uniq64(uint8_t order, int64_t nest, int64_t uniq)
 {
-    const uint64_t uniq_result = nest2uniq64(order, nest);
+    const int64_t uniq_result = nest2uniq64(order, nest);
     gsl_test(!(uniq_result == uniq),
         "expected nest2uniq64(%u, %llu) = %llu, got %llu",
         (unsigned) order, nest, uniq, uniq_result);
 
-    uint64_t nest_result;
+    int64_t nest_result;
     const uint8_t order_result = uniq2nest64(uniq, &nest_result);
     gsl_test(!(nest_result == nest && order_result == order),
         "expected uniq2nest64(%llu) = (%u, %llu), got (%u, %llu)",

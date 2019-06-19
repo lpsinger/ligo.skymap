@@ -29,16 +29,16 @@
 /* All of these functions should eventually be contributed to HEALPix. */
 
 /* Convert a NESTED pixel index to NUNIQ ordering. */
-uint64_t nest2uniq64(uint8_t order, uint64_t nest);
+int64_t nest2uniq64(uint8_t order, int64_t nest);
 
-int8_t uniq2order64(uint64_t uniq);
+int8_t uniq2order64(int64_t uniq);
 
-double uniq2pixarea64(uint64_t uniq);
+double uniq2pixarea64(int64_t uniq);
 
 /* Convert a NUNIQ pixel index to NESTED ordering. */
-int8_t uniq2nest64(uint64_t uniq, uint64_t *nest);
+int8_t uniq2nest64(int64_t uniq, int64_t *nest);
 
-void uniq2ang64(uint64_t uniq, double *theta, double *phi);
+void uniq2ang64(int64_t uniq, double *theta, double *phi);
 
 void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t len, size_t *npix, int8_t order);
 

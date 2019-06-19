@@ -61,7 +61,7 @@ class HEALPixTree(object):
                 for i in range(nchildren)]
             for ipix, samples in itertools.groupby(
                     samples, self.key_for_order(order)):
-                self.children[np.uint64(ipix % nchildren)] = HEALPixTree(
+                self.children[np.int64(ipix % nchildren)] = HEALPixTree(
                     list(samples), max_samples_per_pixel, max_order,
                     order=order + 1, needs_sort=False)
         else:
@@ -72,7 +72,7 @@ class HEALPixTree(object):
     @staticmethod
     def key_for_order(order):
         """Create a function that downsamples full-resolution pixel indices."""
-        return lambda ipix: ipix >> np.uint64(
+        return lambda ipix: ipix >> np.int64(
             2 * (HEALPIX_MACHINE_ORDER - order))
 
     @property
@@ -146,7 +146,7 @@ class HEALPixTree(object):
         Examples
         --------
 
-        >>> ipix = np.arange(12, dtype=np.uint64) * HEALPIX_MACHINE_NSIDE**2
+        >>> ipix = np.arange(12, dtype=np.int64) * HEALPIX_MACHINE_NSIDE**2
         >>> tree = HEALPixTree(ipix, max_samples_per_pixel=1, max_order=1)
         >>> [tuple(_) for _ in tree.visit(extra=False)]
         [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
@@ -181,9 +181,9 @@ def adaptive_healpix_histogram(
     # we don't have to do any trigonometry (aside from the initial hp.ang2pix
     # call).
     #
-    # FIXME: Cast to uint64 needed because Healpy returns signed indices.
+    # FIXME: Cast to int64 needed because Healpy returns signed indices.
     ipix = hp.ang2pix(
-        HEALPIX_MACHINE_NSIDE, theta, phi, nest=True).astype(np.uint64)
+        HEALPIX_MACHINE_NSIDE, theta, phi, nest=True).astype(np.int64)
 
     # Build tree structure.
     if nside == -1 and max_nside == -1:

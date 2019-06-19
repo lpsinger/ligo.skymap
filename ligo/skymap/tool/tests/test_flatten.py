@@ -44,7 +44,7 @@ def input_skymap(order1, d_order, fraction):
     assert np.all(np.isfinite(distmu))
 
     data1 = table.Table({
-        'UNIQ': moc.nest2uniq(order1, ipix1.astype(np.uint64)),
+        'UNIQ': moc.nest2uniq(order1, ipix1.astype(np.int64)),
         'PROBDENSITY': probdensity,
         'DISTMU': distmu,
         'DISTSIGMA': distsigma,
@@ -53,7 +53,7 @@ def input_skymap(order1, d_order, fraction):
 
     # Add some upsampled pixels.
     data2 = table.Table(np.repeat(data1, npix2 // npix1))
-    data2['UNIQ'] = moc.nest2uniq(order2, ipix2.astype(np.uint64))
+    data2['UNIQ'] = moc.nest2uniq(order2, ipix2.astype(np.int64))
     n = int(npix1 * (1 - fraction))
     result = table.vstack((data1[:n], data2[n * npix2 // npix1:]))
 

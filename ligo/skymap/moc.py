@@ -134,7 +134,7 @@ def rasterize(moc_data, order=None):
             orig_nest = orig_nest[to_downsample]
             to_downsample = table.Table(moc_data[to_downsample])
 
-            ratio = 1 << (2 * np.uint64(orig_order - order))
+            ratio = 1 << (2 * np.int64(orig_order - order))
             weights = 1.0 / ratio
             for colname, column in to_downsample.columns.items():
                 if colname != 'UNIQ':

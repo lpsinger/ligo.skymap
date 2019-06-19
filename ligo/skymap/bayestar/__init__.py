@@ -460,7 +460,7 @@ def derasterize(skymap):
     nside = np.asarray(nside)
     ipix = np.asarray(ipix)
     value = np.stack(value)
-    uniq = (4 * np.square(nside) + ipix).astype(np.uint64)
+    uniq = (4 * np.square(nside) + ipix).astype(np.int64)
     old_units = [column.unit for column in skymap.columns.values()]
     skymap = Table(value, meta=skymap.meta)
     for old_unit, column in zip(old_units, skymap.columns.values()):

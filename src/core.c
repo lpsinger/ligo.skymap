@@ -463,9 +463,9 @@ static PyObject *rasterize(
     }
 
     int uniq_typenum = ((PyArray_Descr *) uniq_dtype)->type_num;
-    if (!PyArray_EquivTypenums(uniq_typenum, NPY_UINT64))
+    if (!PyArray_EquivTypenums(uniq_typenum, NPY_INT64))
     {
-        PyErr_SetString(PyExc_ValueError, "'uniq' field must be uint64");
+        PyErr_SetString(PyExc_ValueError, "'uniq' field must be int64");
         goto done;
     }
 
@@ -552,9 +552,9 @@ static void nest2uniq_loop(
         /* FIXME: args must be void ** to avoid alignment warnings */
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        *(uint64_t *) &args[2][i * steps[2]] = nest2uniq64(
-        *(int8_t *)   &args[0][i * steps[0]],
-        *(uint64_t *) &args[1][i * steps[1]]);
+        *(int64_t *) &args[2][i * steps[2]] = nest2uniq64(
+        *(int8_t *)  &args[0][i * steps[0]],
+        *(int64_t *) &args[1][i * steps[1]]);
         #pragma GCC diagnostic pop
     }
 }
@@ -570,9 +570,9 @@ static void uniq2nest_loop(
         /* FIXME: args must be void ** to avoid alignment warnings */
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        *(int8_t *)   &args[1][i * steps[1]] = uniq2nest64(
-        *(uint64_t *) &args[0][i * steps[0]],
-         (uint64_t *) &args[2][i * steps[2]]);
+        *(int8_t *)  &args[1][i * steps[1]] = uniq2nest64(
+        *(int64_t *) &args[0][i * steps[0]],
+         (int64_t *) &args[2][i * steps[2]]);
         #pragma GCC diagnostic pop
     }
 }
@@ -588,8 +588,8 @@ static void uniq2order_loop(
         /* FIXME: args must be void ** to avoid alignment warnings */
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        *(int8_t *)   &args[1][i * steps[1]] = uniq2order64(
-        *(uint64_t *) &args[0][i * steps[0]]);
+        *(int8_t *)  &args[1][i * steps[1]] = uniq2order64(
+        *(int64_t *) &args[0][i * steps[0]]);
         #pragma GCC diagnostic pop
     }
 }
@@ -623,9 +623,9 @@ static void uniq2ang_loop(
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
         uniq2ang64(
-            *(uint64_t *) &args[0][i * steps[0]],
-             (double *)   &args[1][i * steps[1]],
-             (double *)   &args[2][i * steps[2]]);
+            *(int64_t *) &args[0][i * steps[0]],
+             (double *)  &args[1][i * steps[1]],
+             (double *)  &args[2][i * steps[2]]);
         #pragma GCC diagnostic pop
     }
 }
@@ -688,7 +688,7 @@ static PyArray_Descr *sky_map_create_descr(void)
     PyArray_Descr *dtype = NULL;
     PyObject *dtype_dict = Py_BuildValue("{s(ssss)s(cccc)s(IIII)}",
         "names", "UNIQ", "PROBDENSITY", "DISTMEAN", "DISTSTD",
-        "formats", NPY_ULONGLONGLTR, NPY_DOUBLELTR, NPY_DOUBLELTR, NPY_DOUBLELTR,
+        "formats", NPY_LONGLONGLTR, NPY_DOUBLELTR, NPY_DOUBLELTR, NPY_DOUBLELTR,
         "offsets",
         (unsigned int) offsetof(bayestar_pixel, uniq),
         (unsigned int) offsetof(bayestar_pixel, value[0]),
@@ -1024,11 +1024,11 @@ static const char volume_render_ufunc_types[] = {
 static const char double_ufunc_types[] = {
                       NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
                       NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
-                  nest2uniq_types[] = {NPY_INT8, NPY_UINT64, NPY_UINT64},
-                  uniq2nest_types[] = {NPY_UINT64, NPY_INT8, NPY_UINT64},
-                  uniq2order_types[] = {NPY_UINT64, NPY_INT8},
-                  uniq2pixarea_types[] = {NPY_UINT64, NPY_DOUBLE},
-                  uniq2ang_types[] = {NPY_UINT64, NPY_DOUBLE, NPY_DOUBLE},
+                  nest2uniq_types[] = {NPY_INT8, NPY_INT64, NPY_INT64},
+                  uniq2nest_types[] = {NPY_INT64, NPY_INT8, NPY_INT64},
+                  uniq2order_types[] = {NPY_INT64, NPY_INT8},
+                  uniq2pixarea_types[] = {NPY_INT64, NPY_DOUBLE},
+                  uniq2ang_types[] = {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
                   signal_amplitude_model_ufunc_types[] = {
                       NPY_CDOUBLE, NPY_CDOUBLE, NPY_DOUBLE,
                       NPY_DOUBLE, NPY_CDOUBLE};

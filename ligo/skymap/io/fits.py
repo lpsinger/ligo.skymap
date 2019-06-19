@@ -300,7 +300,7 @@ def write_sky_map(filename, m, **kwargs):
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
-    >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.uint64))
+    >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.int64))
     >>> probdensity = prob / hp.nside2pixarea(nside)
     >>> moc_data = np.rec.fromarrays(
     ...     [uniq, probdensity], names=['UNIQ', 'PROBDENSITY'])
@@ -320,7 +320,6 @@ def write_sky_map(filename, m, **kwargs):
     TFIELDS =                    2 / number of table fields
     TTYPE1  = 'UNIQ    '
     TFORM1  = 'K       '
-    TZERO1  =  9223372036854775808
     TTYPE2  = 'PROBDENSITY'
     TFORM2  = 'D       '
     TUNIT2  = 'sr-1    '

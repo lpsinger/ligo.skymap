@@ -129,7 +129,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
     order, ipix = moc.uniq2nest(sky_map['UNIQ'])
     max_order = np.max(order)
     max_nside = hp.order2nside(max_order)
-    max_ipix = ipix << np.uint64(2 * (max_order - order))
+    max_ipix = ipix << np.int64(2 * (max_order - order))
     ipix = ipix.astype(np.int64)
     max_ipix = max_ipix.astype(np.int64)
     if true_ra is not None:

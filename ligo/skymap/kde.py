@@ -357,7 +357,7 @@ class SkyKDE(ClusteredKDE):
 
         # Convert from NESTED to UNIQ pixel indices
         order = np.log2(nside).astype(int)
-        uniq = moc.nest2uniq(order.astype(np.int8), ipix.astype(np.uint64))
+        uniq = moc.nest2uniq(order.astype(np.int8), ipix.astype(np.int64))
 
         # Done!
         return Table([uniq, post], names=['UNIQ', 'PROBDENSITY'])

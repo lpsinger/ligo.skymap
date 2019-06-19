@@ -27,13 +27,13 @@
 #include <chealpix.h>
 
 
-uint64_t nest2uniq64(uint8_t order, uint64_t nest)
+int64_t nest2uniq64(uint8_t order, int64_t nest)
 {
     return nest + ((int64_t) 1 << 2 * (order + 1));
 }
 
 
-int8_t uniq2order64(uint64_t uniq)
+int8_t uniq2order64(int64_t uniq)
 {
     if (uniq < 4)
         return -1;
@@ -53,23 +53,23 @@ int8_t uniq2order64(uint64_t uniq)
 }
 
 
-double uniq2pixarea64(uint64_t uniq)
+double uniq2pixarea64(int64_t uniq)
 {
     return ldexp(M_PI / 3, -2 * uniq2order64(uniq));
 }
 
 
-int8_t uniq2nest64(uint64_t uniq, uint64_t *nest)
+int8_t uniq2nest64(int64_t uniq, int64_t *nest)
 {
     int8_t order = uniq2order64(uniq);
-    *nest = uniq - ((uint64_t) 1 << 2 * (order + 1));
+    *nest = uniq - ((int64_t) 1 << 2 * (order + 1));
     return order;
 }
 
 
-void uniq2ang64(uint64_t uniq, double *theta, double *phi)
+void uniq2ang64(int64_t uniq, double *theta, double *phi)
 {
-    uint64_t nest;
+    int64_t nest;
     int8_t order = uniq2nest64(uniq, &nest);
     int64_t nside = (int64_t) 1 << order;
     pix2ang_nest64(nside, nest, theta, phi);
@@ -90,11 +90,11 @@ void *moc_rasterize64(
      * sorting, so let's just do a linear search for the maximum order. */
     int8_t max_order;
     {
-        uint64_t max_uniq = 0;
+        int64_t max_uniq = 0;
         for (size_t i = 0; i < len; i ++)
         {
             const void *pixel = (const char *) pixels + i * pixelsize;
-            const uint64_t uniq = *(const uint64_t *) pixel;
+            const int64_t uniq = *(const int64_t *) pixel;
             if (uniq > max_uniq)
                 max_uniq = uniq;
         }
@@ -119,8 +119,8 @@ void *moc_rasterize64(
     for (size_t i = 0; i < len; i ++)
     {
         const void *pixel = (const char *) pixels + i * pixelsize;
-        uint64_t nest;
-        order = uniq2nest64(*(const uint64_t *) pixel, &nest);
+        int64_t nest;
+        order = uniq2nest64(*(const int64_t *) pixel, &nest);
         const size_t reps = (size_t) 1 << 2 * (max_order - order);
         for (size_t j = 0; j < reps; j ++)
             memcpy((char *) ret + (nest * reps + j) * itemsize,

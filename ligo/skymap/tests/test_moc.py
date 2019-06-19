@@ -6,6 +6,41 @@ import pytest
 from .. import moc
 
 
+@pytest.mark.parametrize('order', [0, 1, 2])
+@pytest.mark.parametrize('ipix', [-1, -2, -3])
+def test_nest2uniq_invalid(order, ipix):
+    """Test nest2uniq for invalid values."""
+    assert moc.nest2uniq(order, ipix) == -1
+
+
+@pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
+def test_uniq2order_invalid():
+    """Test uniq2order for invalid values."""
+    assert moc.uniq2order(uniq) == -1
+
+
+@pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
+def test_uniq2pixarea_invalid():
+    """Test uniq2order for invalid values."""
+    assert np.isnan(moc.uniq2pixarea(uniq))
+
+
+@pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
+def test_uniq2nest_invalid():
+    """Test uniq2order for invalid values."""
+    order, nest = moc.uniq2nest(uniq)
+    assert order == -1
+    assert nest == -1
+
+
+@pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
+def test_uniq2ang_invalid():
+    """Test uniq2order for invalid values."""
+    theta, phi = moc.uniq2ang(uniq)
+    assert np.isnan(theta)
+    assert np.isnan(phi)
+
+
 def input_skymap(order1, d_order, fraction):
     """Construct a test multi-resolution sky map, with values that are
     proportional to the NESTED pixel index.
@@ -29,13 +64,13 @@ def input_skymap(order1, d_order, fraction):
     ipix2 = np.arange(npix2)
 
     data1 = table.Table({
-        'UNIQ': moc.nest2uniq(order1, ipix1.astype(np.uint64)),
+        'UNIQ': moc.nest2uniq(order1, ipix1.astype(np.int64)),
         'VALUE': ipix1.astype(float),
         'VALUE2': np.pi * ipix1.astype(float)
     })
 
     data2 = table.Table({
-        'UNIQ': moc.nest2uniq(order2, ipix2.astype(np.uint64)),
+        'UNIQ': moc.nest2uniq(order2, ipix2.astype(np.int64)),
         'VALUE': np.repeat(ipix1, npix2 // npix1).astype(float),
         'VALUE2': np.pi * np.repeat(ipix1, npix2 // npix1).astype(float)
     })

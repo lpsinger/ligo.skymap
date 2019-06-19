@@ -37,6 +37,12 @@ Changelog
   with pixels supported by the ``UNIQ`` column, as required by the standard
   multi-order coverage map serialization in FITS.
 
+- All functions in ``ligo.skymap.moc`` now assume that ``uniq`` is a signed
+  integer. This makes it easier to call these functions with Numpy indexing
+  routines, which work with signed integers. Also, saved multi-order sky maps
+  will now be read correctly by tools such as ``fv`` from HEASOFT, which do not
+  correctly handle unsigned integer columns.
+
 0.1.7 (2019-04-24)
 ==================
 

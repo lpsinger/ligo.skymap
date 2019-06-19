@@ -64,13 +64,13 @@ def input_skymap(order1, d_order, fraction):
     ipix2 = np.arange(npix2)
 
     data1 = table.Table({
-        'UNIQ': moc.nest2uniq(order1, ipix1.astype(np.int64)),
+        'UNIQ': moc.nest2uniq(order1, ipix1),
         'VALUE': ipix1.astype(float),
         'VALUE2': np.pi * ipix1.astype(float)
     })
 
     data2 = table.Table({
-        'UNIQ': moc.nest2uniq(order2, ipix2.astype(np.int64)),
+        'UNIQ': moc.nest2uniq(order2, ipix2),
         'VALUE': np.repeat(ipix1, npix2 // npix1).astype(float),
         'VALUE2': np.pi * np.repeat(ipix1, npix2 // npix1).astype(float)
     })

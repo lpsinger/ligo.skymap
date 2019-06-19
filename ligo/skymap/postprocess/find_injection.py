@@ -130,8 +130,6 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
     max_order = np.max(order)
     max_nside = hp.order2nside(max_order)
     max_ipix = ipix << np.int64(2 * (max_order - order))
-    ipix = ipix.astype(np.int64)
-    max_ipix = max_ipix.astype(np.int64)
     if true_ra is not None:
         true_theta = 0.5 * np.pi - true_dec
         true_phi = true_ra
@@ -141,7 +139,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
 
     # Find the angular offset between the mode and true locations.
     mode_theta, mode_phi = hp.pix2ang(
-        hp.order2nside(order[0]), ipix[0].astype(np.int64), nest=True)
+        hp.order2nside(order[0]), ipix[0], nest=True)
     if true_ra is None:
         offset = np.nan
     else:

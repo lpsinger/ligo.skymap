@@ -180,10 +180,7 @@ def adaptive_healpix_histogram(
     # 64-bit pixel indices as a proxy for the true sample coordinates so that
     # we don't have to do any trigonometry (aside from the initial hp.ang2pix
     # call).
-    #
-    # FIXME: Cast to int64 needed because Healpy returns signed indices.
-    ipix = hp.ang2pix(
-        HEALPIX_MACHINE_NSIDE, theta, phi, nest=True).astype(np.int64)
+    ipix = hp.ang2pix(HEALPIX_MACHINE_NSIDE, theta, phi, nest=True)
 
     # Build tree structure.
     if nside == -1 and max_nside == -1:

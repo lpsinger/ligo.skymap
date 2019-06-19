@@ -357,7 +357,7 @@ class SkyKDE(ClusteredKDE):
 
         # Convert from NESTED to UNIQ pixel indices
         order = np.log2(nside).astype(int)
-        uniq = moc.nest2uniq(order.astype(np.int8), ipix.astype(np.int64))
+        uniq = moc.nest2uniq(order.astype(np.int8), ipix)
 
         # Done!
         return Table([uniq, post], names=['UNIQ', 'PROBDENSITY'])
@@ -482,7 +482,7 @@ class Clustered3DSkyKDE(SkyKDE):
         m = super(Clustered3DSkyKDE, self).as_healpix()
         order, ipix = moc.uniq2nest(m['UNIQ'])
         nside = 2 ** order.astype(int)
-        theta, phi = hp.pix2ang(nside, ipix.astype(np.int64), nest=True)
+        theta, phi = hp.pix2ang(nside, ipix, nest=True)
         p = np.column_stack((phi, 0.5 * np.pi - theta))
         print('evaluating distance layers ...')
         _, m['DISTMU'], m['DISTSIGMA'], m['DISTNORM'] = self(p, distances=True)

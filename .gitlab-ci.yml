@@ -79,6 +79,14 @@ wheel/cp37-cp37m-macosx:
 # and generating the docs.
 #
 
+.in-tmpdir: &in-tmpdir
+  before_script:
+    - WORKING_DIRECTORY="$(mktemp -d)"
+    - cd "${WORKING_DIRECTORY}"
+  after_script:
+    - cd "${CI_PROJECT_DIR}"
+    - rm -rf "${WORKING_DIRECTORY}"
+
 .dependencies: &dependencies
   stage: dist
   variables:
@@ -114,10 +122,10 @@ docs:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
   variables:
-    GIT_STRATEGY: none
     OMP_NUM_THREADS: 1
+  <<: *in-tmpdir
   script:
-    - tar --strip-components 1 -xf *.tar.*
+    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     - python setup.py build_docs
   dependencies:
     - sdist
@@ -132,10 +140,10 @@ docs:
 
 .test: &test
   variables:
-    GIT_STRATEGY: none
     OMP_NUM_THREADS: 1
+  <<: *in-tmpdir
   script:
-    - pip install *.whl
+    - pip install ${CI_PROJECT_DIR}/*.whl
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-modules", verbose=True))'
 
 test/python3.6:
@@ -169,12 +177,11 @@ test/coverage:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
     CFLAGS: -coverage
-    GIT_STRATEGY: none
     OMP_NUM_THREADS: 1
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
+  <<: *in-tmpdir
   script:
+    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
     - python setup.py test --coverage -V
     # Write coverage reports in Cobertura format.
@@ -221,6 +228,7 @@ test/coverage:
     # Write human-readable report.
     - pycobertura show coverage.xml -f html -o coverage.html
     - pycobertura show coverage.xml
+    - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
   dependencies:
     - sdist
   artifacts:
@@ -236,20 +244,13 @@ test/coverage:
 lint:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
-  variables:
-    GIT_STRATEGY: none
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
-  dependencies:
-    - sdist
+  dependencies: []
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.
 #
 
 pages:
-  variables:
-    GIT_STRATEGY: none
   stage: deploy
   script:
     - mv docs/_build/html public
@@ -271,8 +272,6 @@ pages:
 deploy/wheel:
   stage: deploy
   image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
-  variables:
-    GIT_STRATEGY: none
   script:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
     - /opt/python/cp37-cp37m/bin/pip install twine

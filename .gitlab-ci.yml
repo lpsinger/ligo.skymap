@@ -127,11 +127,12 @@ docs:
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     - python setup.py build_docs
+    - mv docs/_build/html ${CI_PROJECT_DIR}/
   dependencies:
     - sdist
   artifacts:
     paths:
-      - docs/_build/html/
+      - html/
     expire_in: 3 hours
 
 #
@@ -253,7 +254,7 @@ lint:
 pages:
   stage: deploy
   script:
-    - mv docs/_build/html public
+    - mv html public
     - mv coverage.html public/coverage.html
   dependencies:
     - docs

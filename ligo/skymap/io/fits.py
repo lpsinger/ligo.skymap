@@ -300,7 +300,7 @@ def write_sky_map(filename, m, **kwargs):
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
-    >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix, dtype=np.int64))
+    >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix))
     >>> probdensity = prob / hp.nside2pixarea(nside)
     >>> moc_data = np.rec.fromarrays(
     ...     [uniq, probdensity], names=['UNIQ', 'PROBDENSITY'])

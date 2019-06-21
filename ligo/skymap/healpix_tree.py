@@ -61,7 +61,7 @@ class HEALPixTree(object):
                 for i in range(nchildren)]
             for ipix, samples in itertools.groupby(
                     samples, self.key_for_order(order)):
-                self.children[np.int64(ipix % nchildren)] = HEALPixTree(
+                self.children[ipix % nchildren] = HEALPixTree(
                     list(samples), max_samples_per_pixel, max_order,
                     order=order + 1, needs_sort=False)
         else:
@@ -146,7 +146,7 @@ class HEALPixTree(object):
         Examples
         --------
 
-        >>> ipix = np.arange(12, dtype=np.int64) * HEALPIX_MACHINE_NSIDE**2
+        >>> ipix = np.arange(12) * HEALPIX_MACHINE_NSIDE**2
         >>> tree = HEALPixTree(ipix, max_samples_per_pixel=1, max_order=1)
         >>> [tuple(_) for _ in tree.visit(extra=False)]
         [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]

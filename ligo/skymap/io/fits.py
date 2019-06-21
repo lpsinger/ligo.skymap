@@ -356,6 +356,8 @@ def write_sky_map(filename, m, **kwargs):
              'MOC resolution (best order)'),
             ('INDXSCHM', 'EXPLICIT',
              'Indexing: IMPLICIT or EXPLICIT')]
+        # Ignore nest keyword argument if present
+        m.meta.pop('nest', False)
     else:
         default_names = DEFAULT_NESTED_NAMES
         default_units = DEFAULT_NESTED_UNITS

@@ -45,4 +45,4 @@ def main(args=None):
         warnings.warn(msg.format(
             args.input.name, ' or '.join(expected_orderings), ordering))
     table = read_sky_map(hdus, moc=True)
-    write_sky_map(args.output.name, table, moc=True)
+    write_sky_map(args.output.name, table)

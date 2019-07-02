@@ -494,6 +494,12 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     if 'PROBABILITY' in m.colnames:
         m.rename_column('PROBABILITY', 'PROB')
 
+    # For a long time, we produced files with a UNIQ column that was an
+    # unsigned integer. Cast it here to a signed integer so that the user
+    # can handle old or new sky maps the same way.
+    if 'UNIQ' in m.colnames:
+        m['UNIQ'] = m['UNIQ'].astype(np.int64)
+
     if 'UNIQ' not in m.colnames:
         m = Table([col.ravel() for col in m.columns.values()], meta=m.meta)
 
@@ -522,10 +528,6 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
             m = m[hp.nest2ring(nside, np.arange(npix))]
 
     if moc:
-        # For a long time, we produced files with a UNIQ column that was an
-        # unsigned integer. Cast it here to a signed integer so that the user
-        # can handle old or new sky maps the same way.
-        m['UNIQ'] = m['UNIQ'].astype(np.int64)
         return m
     elif distances:
         return tuple(

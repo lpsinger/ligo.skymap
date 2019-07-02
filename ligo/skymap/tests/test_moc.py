@@ -10,23 +10,23 @@ from .. import moc
 @pytest.mark.parametrize('ipix', [-1, -2, -3])
 def test_nest2uniq_invalid(order, ipix):
     """Test nest2uniq for invalid values."""
-    assert moc.nest2uniq(order, ipix) == -1
+    assert moc.nest2uniq(np.int8(order), ipix) == -1
 
 
 @pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
-def test_uniq2order_invalid():
+def test_uniq2order_invalid(uniq):
     """Test uniq2order for invalid values."""
     assert moc.uniq2order(uniq) == -1
 
 
 @pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
-def test_uniq2pixarea_invalid():
+def test_uniq2pixarea_invalid(uniq):
     """Test uniq2order for invalid values."""
     assert np.isnan(moc.uniq2pixarea(uniq))
 
 
 @pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
-def test_uniq2nest_invalid():
+def test_uniq2nest_invalid(uniq):
     """Test uniq2order for invalid values."""
     order, nest = moc.uniq2nest(uniq)
     assert order == -1
@@ -34,7 +34,7 @@ def test_uniq2nest_invalid():
 
 
 @pytest.mark.parametrize('uniq', [-1, 0, 2, 3])
-def test_uniq2ang_invalid():
+def test_uniq2ang_invalid(uniq):
     """Test uniq2order for invalid values."""
     theta, phi = moc.uniq2ang(uniq)
     assert np.isnan(theta)

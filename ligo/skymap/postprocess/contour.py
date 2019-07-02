@@ -23,12 +23,12 @@ import numpy as np
 __all__ = ('contour',)
 
 
-def _norm(vertices):
-    return np.sqrt(np.sum(np.square(vertices), -1))
+def _norm_squared(vertices):
+    return np.sum(np.square(vertices), -1)
 
 
-def _adjacent_triangle_areas(vertices):
-    return 0.5 * _norm(np.cross(
+def _adjacent_triangle_area_squared(vertices):
+    return 0.25 * _norm_squared(np.cross(
         np.roll(vertices, -1, axis=0) - vertices,
         np.roll(vertices, +1, axis=0) - vertices))
 
@@ -36,17 +36,18 @@ def _adjacent_triangle_areas(vertices):
 def _simplify(vertices, min_area):
     """Visvalingam's algorithm (see http://bost.ocks.org/mike/simplify/)
     for linear rings on a sphere. This is a naive, slow implementation."""
-    area = _adjacent_triangle_areas(vertices)
+    area_squared = _adjacent_triangle_area_squared(vertices)
+    min_area_squared = np.square(min_area)
 
     while True:
-        i_min_area = np.argmin(area)
-        if area[i_min_area] > min_area:
+        i_min_area = np.argmin(area_squared)
+        if area_squared[i_min_area] > min_area_squared:
             break
 
         vertices = np.delete(vertices, i_min_area, axis=0)
-        area = np.delete(area, i_min_area)
-        new_area = _adjacent_triangle_areas(vertices)
-        area = np.maximum(area, new_area)
+        area_squared = np.delete(area_squared, i_min_area)
+        new_area_squared = _adjacent_triangle_area_squared(vertices)
+        area_squared = np.maximum(area_squared, new_area_squared)
 
     return vertices
 

@@ -20,7 +20,7 @@ import healpy as hp
 import networkx as nx
 import numpy as np
 
-__all__ = ('contour',)
+__all__ = ('contour', 'simplify')
 
 
 def _norm_squared(vertices):
@@ -33,9 +33,35 @@ def _adjacent_triangle_area_squared(vertices):
         np.roll(vertices, +1, axis=0) - vertices))
 
 
-def _simplify(vertices, min_area):
-    """Visvalingam's algorithm (see http://bost.ocks.org/mike/simplify/)
-    for linear rings on a sphere. This is a naive, slow implementation."""
+def _vec2radec(vertices, degrees=False):
+    theta, phi = hp.vec2ang(np.asarray(vertices))
+    ret = np.column_stack((phi % (2 * np.pi), 0.5 * np.pi - theta))
+    if degrees:
+        ret = np.rad2deg(ret)
+    return ret
+
+
+def simplify(vertices, min_area):
+    """Simplify a polygon on the unit sphere.
+
+    This is a naive, slow implementation of Visvalingam's algorithm (see
+    http://bost.ocks.org/mike/simplify/), adapted for for linear rings on a
+    sphere.
+
+    Parameters
+    ----------
+    vertices : `np.ndarray`
+        An Nx3 array of Cartesian vertex coordinates. Each vertex should be a
+        unit vector.
+
+    min_area : float
+        The minimum area of triangles formed by adjacent triplets of vertices.
+
+    Returns
+    -------
+    vertices : `np.ndarray`
+
+    """
     area_squared = _adjacent_triangle_area_squared(vertices)
     min_area_squared = np.square(min_area)
 
@@ -50,14 +76,6 @@ def _simplify(vertices, min_area):
         area_squared = np.maximum(area_squared, new_area_squared)
 
     return vertices
-
-
-def _vec2radec(vertices, degrees=False):
-    theta, phi = hp.vec2ang(np.asarray(vertices))
-    ret = np.column_stack((phi % (2 * np.pi), 0.5 * np.pi - theta))
-    if degrees:
-        ret = np.rad2deg(ret)
-    return ret
 
 
 def contour(m, levels, nest=False, degrees=False, simplify=True):
@@ -159,7 +177,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
         # Simplify paths if requested.
         if simplify:
-            cycles = [_simplify(cycle, min_area) for cycle in cycles]
+            cycles = [simplify(cycle, min_area) for cycle in cycles]
             cycles = [cycle for cycle in cycles if len(cycle) > 2]
 
         # Convert to angles.

@@ -78,6 +78,11 @@ def simplify(vertices, min_area):
     return vertices
 
 
+# A synonym for ``simplify`` to avoid aliasing by the keyword argument of the
+# same name below.
+_simplify = simplify
+
+
 def contour(m, levels, nest=False, degrees=False, simplify=True):
     """Calculate contours from a HEALPix dataset.
 
@@ -177,7 +182,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
         # Simplify paths if requested.
         if simplify:
-            cycles = [simplify(cycle, min_area) for cycle in cycles]
+            cycles = [_simplify(cycle, min_area) for cycle in cycles]
             cycles = [cycle for cycle in cycles if len(cycle) > 2]
 
         # Convert to angles.

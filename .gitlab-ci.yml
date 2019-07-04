@@ -238,6 +238,40 @@ test/coverage:
       - coverage.html
     expire_in: 3 hours
 
+.test/acceptance/first2years: &test-acceptance-first2years
+  stage: test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
+  variables:
+    OMP_NUM_THREADS: 1
+  parallel: 50
+  <<: *in-tmpdir
+  script:
+    - apt-get update
+    - apt-get install sqlite3
+    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
+    - COINC_EVENT_IDS=$(sqlite3 first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite "select substr(coinc_event_id, length('coinc_event:coinc_event_id:') + 1) from coinc_inspiral limit 5 offset 5 * (${CI_NODE_INDEX} - 1)")
+    - pip install ${CI_PROJECT_DIR}/*.whl
+    - bayestar-localize-coincs first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite --f-low ${F_LOW} -o ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN} --coinc-event-id ${COINC_EVENT_IDS}
+  dependencies:
+    - wheel/cp37-cp37m-manylinux1
+  only:
+    - schedules
+    - web
+  artifacts:
+    paths:
+      - first2years/${OBSERVING_RUN}/*.fits
+    expire_in: 3 hours
+test/acceptance/first2years/2015:
+  <<: *test-acceptance-first2years
+  variables:
+    F_LOW: '40'
+    OBSERVING_RUN: '2015'
+test/acceptance/first2years/2016:
+  <<: *test-acceptance-first2years
+  variables:
+    F_LOW: '25'
+    OBSERVING_RUN: '2016'
+
 #
 # Run flake8 linter to enforce code style.
 #
@@ -285,3 +319,30 @@ deploy/wheel:
     - wheel/cp37-cp37m-macosx
   only:
     - tags
+
+deploy/acceptance/first2years:
+  stage: deploy
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
+  <<: *in-tmpdir
+  script:
+    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
+    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-bayestar-skymaps
+    - pip install ${CI_PROJECT_DIR}/*.whl
+    - PACKAGE_VERSION=$(python -c 'from ligo.skymap import __version__; print(__version__)')
+    - |
+      for OBSERVING_RUN in 2015 2016; do
+        ligo-skymap-stats -j 4 -d first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite first2years-bayestar-skymaps/${OBSERVING_RUN}/*.fits -o first2years-bayestar-skymaps/${OBSERVING_RUN}/baseline.dat
+        ligo-skymap-stats -j 4 -d first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN}/*.fits -o ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN}/${PACKAGE_VERSION}.dat
+        ligo-skymap-plot-stats first2years-bayestar-skymaps/${OBSERVING_RUN}/baseline.dat ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN}/${PACKAGE_VERSION}.dat -o ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN}
+      done
+  dependencies:
+    - wheel/cp37-cp37m-manylinux1
+    - test/acceptance/first2years/2015
+    - test/acceptance/first2years/2016
+  only:
+    - schedules
+    - web
+  artifacts:
+    paths:
+      - first2years/2015/*.pdf
+      - first2years/2016/*.pdf

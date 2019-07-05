@@ -82,7 +82,6 @@ def main(args=None):
     import lal
     lal.ClobberDebugLevel(lal.LALNDEBUG)
 
-    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s')
     log = logging.getLogger('BAYESTAR')
 
     # If no GraceDB IDs were specified on the command line, then read them

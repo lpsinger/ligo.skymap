@@ -323,7 +323,8 @@ def loglevel_type(value):
         value = int(value)
     except ValueError:
         value = value.upper()
-    logging.basicConfig(level=value)
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+                        level=value)
 
 
 class LogLevelAction(argparse._StoreAction):

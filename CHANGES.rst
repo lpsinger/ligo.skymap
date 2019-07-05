@@ -43,6 +43,9 @@ Changelog
   will now be read correctly by tools such as ``fv`` from HEASOFT, which do not
   correctly handle unsigned integer columns.
 
+- Add timestamps to the command line tools' default logging configuration in
+  order to start characterizing the latency of BAYESTAR's data handling stages.
+
 0.1.7 (2019-04-24)
 ==================
 

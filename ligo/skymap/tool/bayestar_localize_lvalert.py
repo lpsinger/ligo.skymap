@@ -73,6 +73,7 @@ def main(args=None):
     from ..bayestar import localize, rasterize
     from ..io import fits
     from ..io import events
+    from .. import omp
     from ..util.file import rename
     import ligo.gracedb.logging
     import ligo.gracedb.rest
@@ -83,6 +84,8 @@ def main(args=None):
     lal.ClobberDebugLevel(lal.LALNDEBUG)
 
     log = logging.getLogger('BAYESTAR')
+
+    log.info('Using %d OpenMP thread(s)', omp.num_threads)
 
     # If no GraceDB IDs were specified on the command line, then read them
     # from stdin line-by-line.

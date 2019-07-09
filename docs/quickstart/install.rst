@@ -22,7 +22,7 @@ Required Python Dependencies
 When you use pip to install `ligo.skymap` with pip, it will automatically
 install the following required Python packages:
 
-*  `Astroplan <http://astroplan.readthedocs.io>`_
+*  `Astroplan <http://astroplan.readthedocs.io>`_ ≥ 0.5
 *  Astropy_ ≥ 3.1
 *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
 *  `Healpy <http://healpy.readthedocs.io>`_

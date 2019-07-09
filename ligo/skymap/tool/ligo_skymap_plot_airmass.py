@@ -118,13 +118,9 @@ def main(args=None):
     m = fits.read_sky_map(opts.input.name, moc=True)
 
     # Make an empty airmass chart.
-    # FIXME: have to add a dummy target until
-    # https://github.com/astropy/astroplan/pull/349
-    # is in a release of astroplan
     t0 = Time(opts.time) if opts.time is not None else Time.now()
     t0 = observer.midnight(t0)
-    ax = plot_airmass(
-        [SkyCoord(0, 0, unit='rad')], observer, t0, altitude_yaxis=True)
+    ax = plot_airmass([], observer, t0, altitude_yaxis=True)
 
     # Remove the fake source and determine times that were used for the plot.
     del ax.lines[:]

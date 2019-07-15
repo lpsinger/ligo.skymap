@@ -343,6 +343,7 @@ deploy/acceptance/first2years:
     - schedules
     - web
   artifacts:
+    expire_in: 7 days
     paths:
       - first2years/2015/*.pdf
       - first2years/2016/*.pdf

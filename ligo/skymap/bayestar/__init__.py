@@ -29,6 +29,7 @@ References
 import inspect
 import logging
 import os
+import time
 import sys
 
 from astropy.table import Column, Table
@@ -338,7 +339,7 @@ def localize(
     frame = inspect.currentframe()
     argstr = inspect.formatargvalues(*inspect.getargvalues(frame),
                                      formatvalue=formatvalue)
-    start_time = lal.GPSTimeNow()
+    run_time = time.perf_counter()
 
     epoch, sample_rate, toas, snr_series, responses, locations, horizons = \
         condition(event, waveform=waveform, f_low=f_low,
@@ -391,6 +392,7 @@ def localize(
     skymap.meta['diststd'] = np.sqrt(r2bar - np.square(rbar))
 
     log.debug('finished computationally-intensive section')
+    run_time = time.perf_counter() - run_time
     end_time = lal.GPSTimeNow()
 
     # Fill in metadata and return.
@@ -399,7 +401,7 @@ def localize(
     skymap.meta['creator'] = 'BAYESTAR'
     skymap.meta['origin'] = 'LIGO/Virgo'
     skymap.meta['gps_time'] = float(epoch)
-    skymap.meta['runtime'] = float(end_time - start_time)
+    skymap.meta['runtime'] = float(run_time)
     skymap.meta['instruments'] = {single.detector for single in event.singles}
     skymap.meta['gps_creation_time'] = end_time
     skymap.meta['history'] = [

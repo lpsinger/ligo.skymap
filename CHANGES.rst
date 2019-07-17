@@ -46,6 +46,8 @@ Changelog
 - Add timestamps to the command line tools' default logging configuration in
   order to start characterizing the latency of BAYESTAR's data handling stages.
 
+- Increase precision of BAYESTAR's run time measurement for the FITS headers.
+
 0.1.7 (2019-04-24)
 ==================
 

@@ -248,7 +248,9 @@ test/coverage:
   script:
     - apt-get update
     - apt-get install sqlite3
-    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
+    - curl -OL https://github.com/kadwanev/retry/raw/a14857e1db471e62f51b5237daa18ed0e8739006/retry
+    - chmod +x retry
+    - ./retry -- git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
     - COINC_EVENT_IDS=$(sqlite3 first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite "select substr(coinc_event_id, length('coinc_event:coinc_event_id:') + 1) from coinc_inspiral limit 5 offset 5 * (${CI_NODE_INDEX} - 1)")
     - pip install ${CI_PROJECT_DIR}/*.whl
     - bayestar-localize-coincs first2years-gstlal-subset-data/${OBSERVING_RUN}/subset.sqlite --f-low ${F_LOW} -o ${CI_PROJECT_DIR}/first2years/${OBSERVING_RUN} --coinc-event-id ${COINC_EVENT_IDS}
@@ -325,8 +327,10 @@ deploy/acceptance/first2years:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   <<: *in-tmpdir
   script:
-    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
-    - git clone --depth 1 http://git.ligo.org/leo-singer/first2years-bayestar-skymaps
+    - curl -OL https://github.com/kadwanev/retry/raw/a14857e1db471e62f51b5237daa18ed0e8739006/retry
+    - chmod +x retry
+    - ./retry -- git clone --depth 1 http://git.ligo.org/leo-singer/first2years-gstlal-subset-data
+    - ./retry -- git clone --depth 1 http://git.ligo.org/leo-singer/first2years-bayestar-skymaps
     - pip install ${CI_PROJECT_DIR}/*.whl
     - PACKAGE_VERSION=$(python -c 'from ligo.skymap import __version__; print(__version__)')
     - |

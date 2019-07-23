@@ -248,6 +248,19 @@ lint:
   dependencies: []
 
 #
+# Trigger acceptance tests.
+#
+
+tests/acceptance:
+  only:
+    - schedules
+    - web
+  variables:
+    TRIGGERED_PROJECT_ID: ${CI_PROJECT_ID}
+    TRIGGERED_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}
+  trigger: leo-singer/ligo.skymap-acceptance-tests
+
+#
 # Gather coverage reports and docs for GitLab pages and build badges.
 #
 

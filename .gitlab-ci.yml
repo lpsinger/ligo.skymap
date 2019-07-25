@@ -19,7 +19,7 @@ sdist:
   artifacts:
     paths:
       - '*.tar.*'
-    expire_in: 3 hours
+    expire_in: 1 day
 
 #
 # Build binary wheels for Linux and macOS.
@@ -41,7 +41,7 @@ sdist:
   artifacts:
     paths:
       - '*.whl'
-    expire_in: 3 hours
+    expire_in: 1 day
 
 .wheel/macos: &wheel-macos
   tags:
@@ -62,7 +62,7 @@ sdist:
   artifacts:
     paths:
       - '*.whl'
-    expire_in: 3 hours
+    expire_in: 1 day
 
 wheel/cp36-cp36m-manylinux1:
   <<: *wheel-manylinux1
@@ -133,7 +133,7 @@ docs:
   artifacts:
     paths:
       - html/
-    expire_in: 3 hours
+    expire_in: 1 day
 
 #
 # Test the wheels.
@@ -236,7 +236,7 @@ test/coverage:
     paths:
       - coverage.xml
       - coverage.html
-    expire_in: 3 hours
+    expire_in: 1 day
 
 #
 # Run flake8 linter to enforce code style.
@@ -256,7 +256,7 @@ tests/acceptance:
     - schedules
     - web
   variables:
-    TRIGGERED_PROJECT_ID: ${CI_PROJECT_ID}
+    TRIGGERED_PROJECT_URL: ${CI_PROJECT_URL}
     TRIGGERED_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}
   trigger: leo-singer/ligo.skymap-acceptance-tests
 

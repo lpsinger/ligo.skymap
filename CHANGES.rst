@@ -34,7 +34,7 @@ Changelog
   ``ligo-skymap-plot-stats``.
 
 - The ``ligo-skymap-unflatten`` tool will now write multiresolution sky maps
-  with pixels supported by the ``UNIQ`` column, as required by the standard
+  with pixels sorted by the ``UNIQ`` column, as required by the standard
   multi-order coverage map serialization in FITS.
 
 - All functions in ``ligo.skymap.moc`` now assume that ``uniq`` is a signed

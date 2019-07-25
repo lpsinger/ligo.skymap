@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.8 (unreleased)
+0.1.8 (2019-07-25)
 ==================
 
 - Add ``ligo-skymap-constellations``, an easter egg program to list the most

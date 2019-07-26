@@ -5,7 +5,12 @@ Changelog
 0.1.9 (unreleased)
 ==================
 
-- No changes yet.
+- Switch from using the GNU Compiler Collection (gcc) to the Intel C Compiler
+  (icc) for building optimized Linux binaries. On Intel Skylake machines, this
+  can speed up BAYESTAR by 1.3x or more.
+
+  Due to icc's C ABI requirements, Linux wheels now target the `manylinux2010
+  <https://www.python.org/dev/peps/pep-0571/>`_ platform tag.
 
 0.1.8 (2019-07-25)
 ==================

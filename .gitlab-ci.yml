@@ -285,11 +285,11 @@ pages:
 
 deploy/wheel:
   stage: deploy
-  image: containers.ligo.org/lscsoft/lalsuite-manylinux:master
+  image: python:slim
   script:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
-    - /opt/python/cp37-cp37m/bin/pip install twine
-    - /opt/python/cp37-cp37m/bin/twine upload *
+    - pip install twine
+    - twine upload *
   dependencies:
     - sdist
     - wheel/cp36-cp36m-manylinux1

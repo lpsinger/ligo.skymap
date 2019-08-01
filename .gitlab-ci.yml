@@ -25,7 +25,7 @@ sdist:
 # Build binary wheels for Linux and macOS.
 #
 
-.wheel/manylinux1: &wheel-manylinux1
+.wheel/manylinux2010: &wheel-manylinux2010
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
@@ -39,7 +39,7 @@ sdist:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux1/\1/')
+    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux2010/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
     - auditwheel repair dist/*.whl
     - rm dist/*
@@ -70,10 +70,10 @@ sdist:
       - '*.whl'
     expire_in: 1 day
 
-wheel/cp36-cp36m-manylinux1:
-  <<: *wheel-manylinux1
-wheel/cp37-cp37m-manylinux1:
-  <<: *wheel-manylinux1
+wheel/cp36-cp36m-manylinux2010:
+  <<: *wheel-manylinux2010
+wheel/cp37-cp37m-manylinux2010:
+  <<: *wheel-manylinux2010
 wheel/cp36-cp36m-macosx:
   <<: *wheel-macos
 wheel/cp37-cp37m-macosx:
@@ -157,13 +157,13 @@ test/python3.6:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel/cp36-cp36m-manylinux1
+    - wheel/cp36-cp36m-manylinux2010
 
 test/python3.7:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel/cp37-cp37m-manylinux1
+    - wheel/cp37-cp37m-manylinux2010
 
 #
 # Measure test coverage:
@@ -298,8 +298,8 @@ deploy/wheel:
     - twine upload *
   dependencies:
     - sdist
-    - wheel/cp36-cp36m-manylinux1
-    - wheel/cp37-cp37m-manylinux1
+    - wheel/cp36-cp36m-manylinux2010
+    - wheel/cp37-cp37m-manylinux2010
     - wheel/cp36-cp36m-macosx
     - wheel/cp37-cp37m-macosx
   only:

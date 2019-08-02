@@ -374,7 +374,7 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
     OMP_BEGIN_INTERRUPTIBLE
     integrator = malloc(sizeof(*integrator));
 
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(guided)
     for (size_t i = 0; i < size * size; i ++)
     {
         if (OMP_WAS_INTERRUPTED)
@@ -977,7 +977,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     {
         double accum[npix0][nifos];
 
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(guided)
         for (unsigned long i = 0; i < npix0; i ++)
         {
             if (OMP_WAS_INTERRUPTED)
@@ -1017,7 +1017,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         if (!pixels)
             goto done;
 
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(guided)
         for (unsigned long i = len - npix0; i < len; i ++)
         {
             if (OMP_WAS_INTERRUPTED)
@@ -1037,7 +1037,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     }
 
     /* Evaluate distance layers. */
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(guided)
     for (unsigned long i = 0; i < len; i ++)
     {
         if (OMP_WAS_INTERRUPTED)

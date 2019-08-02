@@ -12,6 +12,10 @@ Changelog
   Due to icc's C ABI requirements, Linux wheels now target the `manylinux2010
   <https://www.python.org/dev/peps/pep-0571/>`_ platform tag.
 
+- In BAYESTAR, change the OpenMP scheduling kind from ``static`` (the default)
+  to ``guided``. This improves CPU utilization by load-balancing work across
+  threads more efficiently.
+
 0.1.8 (2019-07-25)
 ==================
 

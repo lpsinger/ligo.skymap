@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.9 (unreleased)
+0.1.9 (2019-08-02)
 ==================
 
 - Switch from using the GNU Compiler Collection (gcc) to the Intel C Compiler

@@ -391,9 +391,9 @@ def localize(
     skymap.meta['distmean'] = rbar
     skymap.meta['diststd'] = np.sqrt(r2bar - np.square(rbar))
 
-    log.debug('finished computationally-intensive section')
     run_time = time.perf_counter() - run_time
     end_time = lal.GPSTimeNow()
+    log.info('finished computationally-intensive section in %.3f s', run_time)
 
     # Fill in metadata and return.
     program, _ = os.path.splitext(os.path.basename(sys.argv[0]))

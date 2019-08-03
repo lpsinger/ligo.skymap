@@ -29,8 +29,6 @@ sdist:
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
-  variables:
-    CFLAGS: -O3 -ipo -mtune=skylake-avx512 -static -qopenmp-link=static
   image: containers.ligo.org/leo-singer/lalsuite-manylinux/manylinux2010_x86_64:icc
   stage: dist
   script:

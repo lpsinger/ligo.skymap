@@ -375,7 +375,7 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
     OMP_BEGIN_INTERRUPTIBLE
     integrator = malloc(sizeof(*integrator));
 
-    #pragma omp parallel for schedule(guided)
+    #pragma omp taskloop
     for (size_t i = 0; i < size * size; i ++)
     {
         if (OMP_WAS_INTERRUPTED)
@@ -935,17 +935,22 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         }
         pmax = sqrt(0.5 * pmax);
         pmax *= FUDGE;
+
+        #pragma omp parallel for
         for (unsigned char k = 0; k < 3; k ++)
         {
             integrators[k] = log_radial_integrator_init(
                 min_distance, max_distance, prior_distance_power + k, cosmology,
                 pmax, default_log_radial_integrator_size);
-            if (!integrators[k])
-            {
-                for (unsigned char kk = 0; kk < k; kk ++)
-                    log_radial_integrator_free(integrators[kk]);
-                return NULL;
-            }
+        }
+    }
+    for (unsigned char k = 0; k < 3; k ++)
+    {
+        if (!integrators[k])
+        {
+            for (unsigned char kk = 0; kk < k; kk ++)
+                log_radial_integrator_free(integrators[kk]);
+            return NULL;
         }
     }
 

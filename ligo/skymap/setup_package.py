@@ -13,7 +13,7 @@ def get_extensions():
         'src/cubic_interp_test.c',
     ]
 
-    include_dirs = ['cextern/lalsuite', 'cextern/numpy', 'numpy']
+    include_dirs = ['cextern/numpy', 'numpy']
 
     if setup_helpers.use_system_library('chealpix'):
         pkg_config_packages.append('chealpix')

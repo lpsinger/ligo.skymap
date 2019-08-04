@@ -97,13 +97,11 @@ def test_bayestar_signal_amplitude_model(ra, dec, inclination, polarization,
     # Work out complex amplitude by comparing with "template" waveform
     expected = np.sum(Htemplate.data.data.conj() * Hsignal.data.data)
 
-    # Test to nearly float (32-bit) precision because
-    # lalinspiral.InspiralSiteTimeAndDist returns result as float.
     assert abs(expected) == approx(
         abs_expected, abs=1.5 * np.finfo(np.float32).eps)
     assert abs(result) == approx(
         abs_expected, abs=1.5 * np.finfo(np.float32).eps)
     assert result.real == approx(
-        expected.real, abs=4 * np.finfo(np.float64).eps)
+        expected.real, abs=4 * np.finfo(np.float32).eps)
     assert result.imag == approx(
-        expected.imag, abs=4 * np.finfo(np.float64).eps)
+        expected.imag, abs=4 * np.finfo(np.float32).eps)

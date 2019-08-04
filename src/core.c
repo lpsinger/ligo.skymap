@@ -718,7 +718,7 @@ static PyObject *sky_map_toa_phoa_snr(
     double gmst;
     unsigned int nifos;
     unsigned long nsamples = 0;
-    double sample_rate;
+    float sample_rate;
     PyObject *epochs_obj;
     PyObject *snrs_obj;
     PyObject *responses_obj;
@@ -735,7 +735,7 @@ static PyObject *sky_map_toa_phoa_snr(
     /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiiddOOOOO",
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiidfOOOOO",
         keywords, &min_inclination, &max_inclination, &min_distance,
         &max_distance, &prior_distance_power, &cosmology, &gmst, &sample_rate,
         &epochs_obj, &snrs_obj, &responses_obj, &locations_obj, &horizons_obj))

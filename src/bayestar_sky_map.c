@@ -79,7 +79,6 @@
 #include <pthread.h>
 
 #include "cubic_interp.h"
-#include "detresponse.h"
 
 #include <chealpix.h>
 
@@ -101,8 +100,9 @@
 
 /* Compute |z|^2. Hopefully a little faster than gsl_pow_2(cabs(z)), because no
  * square roots are necessary. */
-static double cabs2(double complex z) {
-    return gsl_pow_2(creal(z)) + gsl_pow_2(cimag(z));
+static float cabs2(float complex z) {
+    const float realpart = crealf(z), imagpart = cimagf(z);
+    return realpart * realpart + imagpart * imagpart;
 }
 
 
@@ -115,36 +115,36 @@ static double cabs2(double complex z) {
  *     t_2 = 1,  x_2 = x[2],
  *     t_3 = 2,  x_3 = x[3].
  */
-static double complex complex_catrom(
+static float complex complex_catrom(
     float complex x0,
     float complex x1,
     float complex x2,
     float complex x3,
-    double t
+    float t
 ) {
     return x1
-        + t*(-0.5*x0 + 0.5*x2
-        + t*(x0 - 2.5*x1 + 2.*x2 - 0.5*x3
-        + t*(-0.5*x0 + 1.5*x1 - 1.5*x2 + 0.5*x3)));
+        + t*(-0.5f*x0 + 0.5f*x2
+        + t*(x0 - 2.5f*x1 + 2.0f*x2 - 0.5f*x3
+        + t*(-0.5f*x0 + 1.5f*x1 - 1.5f*x2 + 0.5f*x3)));
 }
 
 
 /* Evaluate a complex time series using cubic spline interpolation, assuming
  * that the vector x gives the samples of the time series at times
  * 0, 1, ..., nsamples-1. */
-static double complex eval_snr(
+static float complex eval_snr(
     const float complex *x,
     size_t nsamples,
-    double t
+    float t
 ) {
     ssize_t i;
-    double f;
-    double complex y;
+    float f;
+    float complex y;
 
     /* Break |t| into integer and fractional parts. */
     {
-        double dbl_i;
-        f = modf(t, &dbl_i);
+        float dbl_i;
+        f = modff(t, &dbl_i);
         i = dbl_i;
     }
 
@@ -512,38 +512,51 @@ static void toa_errors(
 
 /* Compute antenna factors from the detector response tensor and source
  * sky location, and return as a complex number F_plus + i F_cross. */
-static double complex complex_antenna_factor(
-    const float response[3][3],
-    double ra,
-    double dec,
-    double gmst
+static float complex complex_antenna_factor(
+    const float D[3][3],
+    float ra,
+    float dec,
+    float gmst
 ) {
-    double complex F;
-    XLALComputeDetAMResponse(
-        (double *)&F,     /* Type-punned real part */
-        1 + (double *)&F, /* Type-punned imag part */
-        response, ra, dec, 0, gmst);
+    /* Adapted from LAL's XLALComputeDetAMResponse with the following changes:
+     * - All operations are single-precision rather than double-precision.
+     * - psi is assumed to be 0.
+     * - fplus and fcross are packed into a complex number.
+     */
+    const float gha = gmst - ra;
+    const float cosgha = cosf(gha);
+    const float singha = sinf(gha);
+    const float cosdec = cosf(dec);
+    const float sindec = sinf(dec);
+    const float X[] = {-singha, -cosgha, 0};
+    const float Y[] = {-cosgha * sindec, singha * sindec, cosdec};
+    float complex F = 0;
+    for(int i = 0; i < 3; i++) {
+        const float DX = D[i][0] * X[0] + D[i][1] * X[1] + D[i][2] * X[2];
+        const float DY = D[i][0] * Y[0] + D[i][1] * Y[1] + D[i][2] * Y[2];
+        F += (X[i] * DX - Y[i] * DY) + (X[i] * DY + Y[i] * DX) * I;
+    }
     return F;
 }
 
 
 /* Expression for complex amplitude on arrival (without 1/distance factor) */
-double complex bayestar_signal_amplitude_model(
-    double complex F,               /* Complex antenna factor */
-    double complex exp_i_twopsi,    /* e^(i*2*psi), for polarization angle psi */
-    double u,                       /* cos(inclination) */
-    double u2                       /* cos^2(inclination */
+float complex bayestar_signal_amplitude_model(
+    float complex F,               /* Complex antenna factor */
+    float complex exp_i_twopsi,    /* e^(i*2*psi), for polarization angle psi */
+    float u,                       /* cos(inclination) */
+    float u2                       /* cos^2(inclination */
 ) {
-    const double complex tmp = F * conj(exp_i_twopsi);
-    return 0.5 * (1 + u2) * creal(tmp) - I * u * cimag(tmp);
+    const float complex tmp = F * conjf(exp_i_twopsi);
+    return 0.5f * (1 + u2) * crealf(tmp) - I * u * cimagf(tmp);
 }
 
 
 static const unsigned int ntwopsi = 10;
 
 
-static double complex exp_i(double phi) {
-    return cos(phi) + I * sin(phi);
+static float complex exp_i(double phi) {
+    return cosf(phi) + I * sinf(phi);
 }
 
 
@@ -681,15 +694,15 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     unsigned int nifos,
     unsigned long nsamples,
     unsigned int n_u_points,
-    double sample_rate,
+    float sample_rate,
     const double *epochs,
     const float complex **snrs,
     const float (**responses)[3],
     const double **locations,
     const double *horizons,
-    const double (*u_points_weights)[2]
+    const float (*u_points_weights)[2]
 ) {
-    double complex F[nifos];
+    float complex F[nifos];
     double dt[nifos];
     double accum[nint];
     for (unsigned char k = 0; k < nint; k ++)
@@ -710,8 +723,8 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     /* Integrate over 2*psi */
     for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
     {
-        const double twopsi = (2 * M_PI / ntwopsi) * itwopsi;
-        const double complex exp_i_twopsi = exp_i(twopsi);
+        const float twopsi = (2 * M_PI / ntwopsi) * itwopsi;
+        const float complex exp_i_twopsi = exp_i(twopsi);
         double accum1[nint];
         for (unsigned char k = 0; k < nint; k ++)
             accum1[k] = -INFINITY;
@@ -719,13 +732,13 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         /* Integrate over u from -1 to 1. */
         for (unsigned int iu = 0; iu < n_u_points; iu++)
         {
-            const double u = u_points_weights[iu][0];
-            const double log_weight = u_points_weights[iu][1];
+            const float u = u_points_weights[iu][0];
+            const float log_weight = u_points_weights[iu][1];
             double accum2[nsamples][nint];
 
-            const double u2 = gsl_pow_2(u);
-            double complex z_times_r[nifos];
-            double p2 = 0;
+            const float u2 = u * u;
+            float complex z_times_r[nifos];
+            float p2 = 0;
 
             for (unsigned int iifo = 0; iifo < nifos; iifo ++)
             {
@@ -733,26 +746,26 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                     z_times_r[iifo] = bayestar_signal_amplitude_model(
                         F[iifo], exp_i_twopsi, u, u2));
             }
-            p2 *= 0.5;
-            p2 *= gsl_pow_2(FUDGE);
-            const double p = sqrt(p2);
-            const double log_p = log(p);
+            p2 *= 0.5f;
+            p2 *= FUDGE * FUDGE;
+            const float p = sqrtf(p2);
+            const float log_p = logf(p);
 
             for (unsigned long isample = 0; isample < nsamples; isample++)
             {
-                double b;
+                float b;
                 {
-                    double complex I0arg_complex_times_r = 0;
+                    float complex I0arg_complex_times_r = 0;
                     for (unsigned int iifo = 0; iifo < nifos; iifo ++)
                     {
-                        I0arg_complex_times_r += conj(z_times_r[iifo])
+                        I0arg_complex_times_r += conjf(z_times_r[iifo])
                             * eval_snr(snrs[iifo], nsamples,
                                 isample - dt[iifo] * sample_rate - 0.5 * (nsamples - 1));
                     }
-                    b = cabs(I0arg_complex_times_r);
-                    b *= gsl_pow_2(FUDGE);
+                    b = cabsf(I0arg_complex_times_r);
+                    b *= FUDGE * FUDGE;
                 }
-                const double log_b = log(b);
+                const float log_b = logf(b);
 
                 for (unsigned char k = 0; k < nint; k ++)
                 {
@@ -809,7 +822,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     double gmst,                    /* GMST (rad) */
     unsigned int nifos,             /* Number of detectors */
     unsigned long nsamples,         /* Length of SNR series */
-    double sample_rate,             /* Sample rate in seconds */
+    float sample_rate,              /* Sample rate in seconds */
     const double *epochs,           /* Timestamps of SNR time series */
     const float complex **snrs,     /* Complex SNR series */
     const float (**responses)[3],   /* Detector responses */
@@ -844,12 +857,12 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     {
         n_u_points = 2 * n_gauss_quad_points;
     }
-    const double umin = cos(max_inclination);
-    const double umax = cos(min_inclination);
-    double u_points_weights[n_u_points][2];
-    double (*u_points_weights1)[2] = &u_points_weights[0];
-    double (*u_points_weights2)[2] = &u_points_weights[n_u_points / 2];
-    double u_norm;
+    const float umin = cosf(max_inclination);
+    const float umax = cosf(min_inclination);
+    float u_points_weights[n_u_points][2];
+    float (*u_points_weights1)[2] = &u_points_weights[0];
+    float (*u_points_weights2)[2] = &u_points_weights[n_u_points / 2];
+    float u_norm;
 
     /* Look up Gauss-Legendre quadrature rule for integral over cos(i). */
     gsl_integration_glfixed_table *gltable
@@ -874,7 +887,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         /* perform integral over single value inclination at +,- the
          * inclination */
     {
-        u_points_weights1[0][0] = -(u_points_weights2[0][0] = cos(max_inclination));
+        u_points_weights1[0][0] = -(u_points_weights2[0][0] = cosf(max_inclination));
         u_points_weights1[0][1] = u_points_weights2[0][1] = 0;
         u_norm = 2;
     }
@@ -896,7 +909,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             (void)ret; /* Silence unused variable warning */
 
             u_points_weights[iu][0] = point;
-            u_points_weights[iu][1] = log(weight);
+            u_points_weights[iu][1] = logf(weight);
         }
 
         u_norm = 2 * umax;
@@ -920,7 +933,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             (void)ret; /* Silence unused variable warning */
 
             u_points_weights1[iu][0] = -(u_points_weights2[iu][0] = point);
-            u_points_weights1[iu][1] = u_points_weights2[iu][1] = log(weight);
+            u_points_weights1[iu][1] = u_points_weights2[iu][1] = logf(weight);
         }
 
         u_norm = 2 * (umax - umin);
@@ -1199,64 +1212,65 @@ double bayestar_log_posterior_toa_phoa_snr(
  */
 
 
-static void test_cabs2(double complex z)
+static void test_cabs2(float complex z)
 {
-    const double result = cabs2(z);
-    const double expected = gsl_pow_2(cabs(z));
-    gsl_test_abs(result, expected, 2 * GSL_DBL_EPSILON,
-        "testing cabs2(%g + %g j)", creal(z), cimag(z));
+    double result = cabs2(z);
+    double expected = cabsf(z);
+    expected *= expected;
+    gsl_test_abs(result, expected, 2 * GSL_FLT_EPSILON,
+        "testing cabs2(%g + %g j)", crealf(z), cimagf(z));
 }
 
 
 static void test_complex_catrom(void)
 {
-    for (double t = 0; t <= 1; t += 0.01)
+    for (float t = 0; t <= 1; t += 0.01f)
     {
-        const double complex result = complex_catrom(0, 0, 0, 0, t);
-        const double complex expected = 0;
-        gsl_test_abs(creal(result), creal(expected), 0,
+        const float complex result = complex_catrom(0, 0, 0, 0, t);
+        const float complex expected = 0;
+        gsl_test_abs(crealf(result), crealf(expected), 0,
             "testing complex Catmull-rom interpolant for zero input");
-        gsl_test_abs(cimag(result), cimag(expected), 0,
+        gsl_test_abs(cimagf(result), cimagf(expected), 0,
             "testing complex Catmull-rom interpolant for zero input");
     }
 
-    for (double t = 0; t <= 1; t += 0.01)
+    for (float t = 0; t <= 1; t += 0.01f)
     {
-        const double complex result = complex_catrom(1, 1, 1, 1, t);
-        const double complex expected = 1;
-        gsl_test_abs(creal(result), creal(expected), 0,
+        const float complex result = complex_catrom(1, 1, 1, 1, t);
+        const float complex expected = 1;
+        gsl_test_abs(crealf(result), crealf(expected), 0,
             "testing complex Catmull-rom interpolant for unit input");
-        gsl_test_abs(cimag(result), cimag(expected), 0,
+        gsl_test_abs(cimagf(result), cimagf(expected), 0,
             "testing complex Catmull-rom interpolant for unit input");
     }
 
-    for (double t = 0; t <= 1; t += 0.01)
+    for (float t = 0; t <= 1; t += 0.01f)
     {
-        const double complex result = complex_catrom(1.0j, 1.0j, 1.0j, 1.0j, t);
-        const double complex expected = 1.0j;
-        gsl_test_abs(creal(result), creal(expected), 0,
+        const float complex result = complex_catrom(1.0j, 1.0j, 1.0j, 1.0j, t);
+        const float complex expected = 1.0j;
+        gsl_test_abs(crealf(result), crealf(expected), 0,
             "testing complex Catmull-rom interpolant for unit imaginary input");
-        gsl_test_abs(cimag(result), cimag(expected), 1,
+        gsl_test_abs(cimagf(result), cimagf(expected), 1,
             "testing complex Catmull-rom interpolant for unit imaginary input");
     }
 
-    for (double t = 0; t <= 1; t += 0.01)
+    for (float t = 0; t <= 1; t += 0.01f)
     {
-        const double complex result = complex_catrom(1.0+1.0j, 1.0+1.0j, 1.0+1.0j, 1.0+1.0j, t);
-        const double complex expected = 1.0+1.0j;
-        gsl_test_abs(creal(result), creal(expected), 0,
+        const float complex result = complex_catrom(1.0+1.0j, 1.0+1.0j, 1.0+1.0j, 1.0+1.0j, t);
+        const float complex expected = 1.0+1.0j;
+        gsl_test_abs(crealf(result), crealf(expected), 0,
             "testing complex Catmull-rom interpolant for unit real + imaginary input");
-        gsl_test_abs(cimag(result), cimag(expected), 0,
+        gsl_test_abs(cimagf(result), cimagf(expected), 0,
             "testing complex Catmull-rom interpolant for unit real + imaginary input");
     }
 
-    for (double t = 0; t <= 1; t += 0.01)
+    for (float t = 0; t <= 1; t += 0.01f)
     {
-        const double complex result = complex_catrom(1, 0, 1, 4, t);
-        const double complex expected = gsl_pow_2(t);
-        gsl_test_abs(creal(result), creal(expected), 0,
+        const float complex result = complex_catrom(1, 0, 1, 4, t);
+        const float complex expected = gsl_pow_2(t);
+        gsl_test_abs(crealf(result), crealf(expected), 0,
             "testing complex Catmull-rom interpolant for quadratic real input");
-        gsl_test_abs(cimag(result), cimag(expected), 0,
+        gsl_test_abs(cimagf(result), cimagf(expected), 0,
             "testing complex Catmull-rom interpolant for quadratic real input");
     }
 }
@@ -1271,13 +1285,13 @@ static void test_eval_snr(void)
     for (size_t i = 0; i < nsamples; i ++)
         x[i] = gsl_pow_2(i) + i * 1.0j;
 
-    for (double t = 0; t <= nsamples; t += 0.1)
+    for (float t = 0; t <= nsamples; t += 0.1)
     {
-        const double result = eval_snr(x, nsamples, t);
-        const double expected = (t > 1 && t < nsamples - 2) ? (gsl_pow_2(t) + t*1.0j) : 0;
-        gsl_test_abs(creal(result), creal(expected), 1e4 * GSL_DBL_EPSILON,
+        const float result = eval_snr(x, nsamples, t);
+        const float expected = (t > 1 && t < nsamples - 2) ? (gsl_pow_2(t) + t*1.0j) : 0;
+        gsl_test_abs(crealf(result), crealf(expected), 1e4 * GSL_FLT_EPSILON,
             "testing real part of eval_snr(%g) for x(t) = t^2 + t j", t);
-        gsl_test_abs(cimag(result), cimag(expected), 1e4 * GSL_DBL_EPSILON,
+        gsl_test_abs(cimagf(result), cimagf(expected), 1e4 * GSL_FLT_EPSILON,
             "testing imaginary part of eval_snr(%g) for x(t) = t^2 + t j", t);
     }
 }

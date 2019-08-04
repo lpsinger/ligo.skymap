@@ -11,6 +11,9 @@ Changelog
 
   - Exploit nested parallelism in radial integrator lookup table generation.
 
+  - Calculate signal amplitudes using single-precision floating point
+    arithmetic to speed up BAYESTAR's inner loop.
+
 0.1.9 (2019-08-02)
 ==================
 

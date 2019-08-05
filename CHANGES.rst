@@ -5,7 +5,7 @@ Changelog
 0.1.10 (unreleased)
 ===================
 
-- No changes yet.
+- Add GCC branch prediction hints to BAYESTAR.
 
 0.1.9 (2019-08-02)
 ==================

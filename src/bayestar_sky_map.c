@@ -95,6 +95,7 @@
 #include <gsl/gsl_spline.h>
 #include <gsl/gsl_test.h>
 
+#include "branch_prediction.h"
 #include "logaddexp.h"
 
 
@@ -251,7 +252,7 @@ static double log_radial_integral(double r1, double r2, double p, double b, int 
     double result = 0, abserr, log_offset = -INFINITY;
     int ret;
 
-    if (b != 0) {
+    if (LIKELY(b != 0)) {
         /* Calculate the approximate distance at which the integrand attains a
          * maximum (middle) and a fraction eta of the maximum (left and right).
          * This neglects the scaled Bessel function factors and the power-law
@@ -408,7 +409,7 @@ done:
     interrupted = OMP_WAS_INTERRUPTED;
     OMP_END_INTERRUPTIBLE
 
-    if (interrupted || !(integrator && region0 && region1 && region2))
+    if (UNLIKELY(interrupted || !(integrator && region0 && region1 && region2)))
     {
         free(integrator);
         free(region0);
@@ -432,7 +433,7 @@ done:
 
 static void log_radial_integrator_free(log_radial_integrator *integrator)
 {
-    if (integrator)
+    if (LIKELY(integrator))
     {
         bicubic_interp_free(integrator->region0);
         integrator->region0 = NULL;
@@ -452,12 +453,12 @@ static double log_radial_integrator_eval(const log_radial_integrator *integrator
     double result;
     assert(x <= integrator->xmax);
 
-    if (p == 0) {
+    if (UNLIKELY(p == 0)) {
         /* note: p2 == 0 implies b == 0 */
         assert(b == 0);
         int k1 = integrator->k + 1;
 
-        if (k1 == 0)
+        if (UNLIKELY(k1 == 0))
         {
             result = log(log(integrator->r2 / integrator->r1));
         } else {
@@ -596,7 +597,7 @@ static void bayestar_pixels_sort_uniq(bayestar_pixel *pixels, size_t len)
 static void *realloc_or_free(void *ptr, size_t size)
 {
     void *new_ptr = realloc(ptr, size);
-    if (!new_ptr)
+    if (UNLIKELY(!new_ptr))
     {
         free(ptr);
         GSL_ERROR_NULL("not enough memory to resize array", GSL_ENOMEM);
@@ -616,7 +617,7 @@ static bayestar_pixel *bayestar_pixels_refine(
     const size_t new_size = new_len * sizeof(bayestar_pixel);
 
     pixels = realloc_or_free(pixels, new_size);
-    if (pixels)
+    if (LIKELY(pixels))
     {
         for (size_t i = 0; i < last_n; i ++)
         {
@@ -637,7 +638,7 @@ static bayestar_pixel *bayestar_pixels_alloc(size_t *len, unsigned char order)
     const size_t size = npix * sizeof(bayestar_pixel);
 
     bayestar_pixel *pixels = malloc(size);
-    if (!pixels)
+    if (UNLIKELY(!pixels))
         GSL_ERROR_NULL("not enough memory to allocate sky map", GSL_ENOMEM);
 
     *len = npix;

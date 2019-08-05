@@ -19,6 +19,7 @@
 
 
 #include "cubic_interp.h"
+#include "branch_prediction.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,7 +54,7 @@ static double clip_double(double t, double min, double max)
 static void cubic_interp_init_coefficients(
     double *a, const double *z, const double *z1)
 {
-    if (!isfinite(z1[1] + z1[2]))
+    if (UNLIKELY(!isfinite(z1[1] + z1[2])))
     {
         /* If either of the inner grid points are NaN or infinite,
          * then fall back to nearest-neighbor interpolation. */
@@ -61,7 +62,7 @@ static void cubic_interp_init_coefficients(
         a[1] = 0;
         a[2] = 0;
         a[3] = z[1];
-    } else if (!isfinite(z1[0] + z1[3])) {
+    } else if (UNLIKELY(!isfinite(z1[0] + z1[3]))) {
         /* If either of the outer grid points are NaN or infinite,
          * then fall back to linear interpolation. */
         a[0] = 0;
@@ -98,7 +99,7 @@ cubic_interp *cubic_interp_init(
     cubic_interp *interp;
     const int length = n + 6;
     interp = malloc(sizeof(*interp) + length * sizeof(*interp->a));
-    if (interp)
+    if (LIKELY(interp))
     {
         interp->f = 1 / dt;
         interp->t0 = 3 - interp->f * tmin;
@@ -126,7 +127,7 @@ void cubic_interp_free(cubic_interp *interp)
 double cubic_interp_eval(const cubic_interp *interp, double t)
 {
     double i;
-    if (isnan(t))
+    if (UNLIKELY(isnan(t)))
         return t;
     cubic_interp_index(interp->f, interp->t0, interp->length, &t, &i);
     return cubic_eval(interp->a[(int) i], t);
@@ -196,7 +197,7 @@ double bicubic_interp_eval(const bicubic_interp *interp, double s, double t)
     double b[4];
     double is, it;
 
-    if (isnan(s) || isnan(t))
+    if (UNLIKELY(isnan(s) || isnan(t)))
         return s + t;
     cubic_interp_index(interp->fs, interp->s0, interp->slength, &s, &is);
     cubic_interp_index(interp->ft, interp->t0, interp->tlength, &t, &it);

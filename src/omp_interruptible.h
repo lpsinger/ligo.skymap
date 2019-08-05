@@ -129,6 +129,8 @@
 #ifndef OMP_INTERRUPTIBLE_H
 #define OMP_INTERRUPTIBLE_H
 
+#include "branch_prediction.h"
+
 #include <signal.h>
 #include <stdlib.h>
 
@@ -188,7 +190,7 @@ static void omp_interruptible_set_handler(int sig, int *flag_ptr)
 }
 
 
-#define OMP_WAS_INTERRUPTED omp_was_interrupted
+#define OMP_WAS_INTERRUPTED UNLIKELY(omp_was_interrupted)
 
 
 #if _OPENMP

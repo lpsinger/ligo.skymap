@@ -34,22 +34,31 @@ def parser():
 def main(args=None):
     args = parser().parse_args(args)
 
+    import logging
     import warnings
     from astropy.io import fits
     import healpy as hp
     from ..io import read_sky_map, write_sky_map
     from ..bayestar import rasterize
 
+    log = logging.getLogger()
+
     if args.nside is None:
         order = None
     else:
         order = hp.nside2order(args.nside)
 
+    log.info('reading FITS file %s', args.input.name)
     hdus = fits.open(args.input)
     ordering = hdus[1].header['ORDERING']
     expected_ordering = 'NUNIQ'
     if ordering != expected_ordering:
         msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
         warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
+    log.debug('converting original FITS file to Astropy table')
     table = read_sky_map(hdus, moc=True)
-    write_sky_map(args.output.name, rasterize(table, order=order), nest=True)
+    log.debug('flattening HEALPix tree')
+    table = rasterize(table, order=order)
+    log.info('writing FITS file %s', args.output.name)
+    write_sky_map(args.output.name, table, nest=True)
+    log.debug('done')

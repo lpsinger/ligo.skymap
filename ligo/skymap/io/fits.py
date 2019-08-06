@@ -59,6 +59,7 @@ this:
     RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
 """  # noqa: E501
 
+import logging
 import math
 import healpy as hp
 import numpy as np
@@ -70,6 +71,8 @@ import time
 import lal
 from astropy.table import Table
 from .. import moc
+
+log = logging.getLogger()
 
 __all__ = ("read_sky_map", "write_sky_map")
 
@@ -333,6 +336,7 @@ def write_sky_map(filename, m, **kwargs):
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
     """  # noqa: E501
 
+    log.debug('normalizing metadata')
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
         m = Table(m)
     else:
@@ -394,9 +398,11 @@ def write_sky_map(filename, m, **kwargs):
             if not col.unit:
                 col.unit = default_unit
 
+    log.debug('converting from Astropy table to FITS HDU list')
     hdu = fits.table_to_hdu(m)
     hdu.header.extend(extra_header)
     hdulist = fits.HDUList([fits.PrimaryHDU(), hdu])
+    log.debug('saving')
     hdulist.writeto(filename, overwrite=True)
 
 

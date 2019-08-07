@@ -5,7 +5,11 @@ Changelog
 0.1.10 (unreleased)
 ===================
 
-- Add GCC branch prediction hints to BAYESTAR.
+- Several performance improvements for BAYESTAR:
+
+  - Add GCC branch prediction hints.
+
+  - Exploit nested parallelism in radial integrator lookup table generation.
 
 0.1.9 (2019-08-02)
 ==================

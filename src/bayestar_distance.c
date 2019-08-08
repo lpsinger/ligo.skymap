@@ -459,26 +459,26 @@ static double marginal_ppf_initial_guess(
     const double *prob, const double *mu,
     const double *sigma, const double *norm)
 {
-	/* Find the most probable pixel that has valid distance information. */
-	long long max_ipix = -1;
-	double max_prob = -INFINITY;
-	for (long long ipix = 0; ipix < npix; ipix ++)
-	{
-		if (isfinite(mu[ipix]) && prob[ipix] > max_prob)
-		{
-			max_ipix = ipix;
-			max_prob = prob[ipix];
-		}
-	}
+    /* Find the most probable pixel that has valid distance information. */
+    long long max_ipix = -1;
+    double max_prob = -INFINITY;
+    for (long long ipix = 0; ipix < npix; ipix ++)
+    {
+        if (isfinite(mu[ipix]) && prob[ipix] > max_prob)
+        {
+            max_ipix = ipix;
+            max_prob = prob[ipix];
+        }
+    }
 
-	if (max_ipix >= 0)
-	{
-		return bayestar_distance_conditional_ppf(
-			p, mu[max_ipix], sigma[max_ipix], norm[max_ipix]);
-	} else {
-		/* No pixels with valid distance info found: just guess 100 Mpc. */
-		return 100;
-	}
+    if (max_ipix >= 0)
+    {
+        return bayestar_distance_conditional_ppf(
+            p, mu[max_ipix], sigma[max_ipix], norm[max_ipix]);
+    } else {
+        /* No pixels with valid distance info found: just guess 100 Mpc. */
+        return 100;
+    }
 }
 
 

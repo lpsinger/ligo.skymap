@@ -196,7 +196,7 @@ static void dVC_dVL_init(void)
         x[i] = dVC_dVL_tmin + i * dVC_dVL_dt;
     int ret = gsl_spline_init(dVC_dVL_interp, x, dVC_dVL_data, len);
     assert(ret == GSL_SUCCESS);
-	(void)ret; /* Silence unused variable warning */
+    (void)ret; /* Silence unused variable warning */
 }
 
 
@@ -790,7 +790,7 @@ static void bayestar_init(void)
 {
     int ret = pthread_once(&bayestar_init_once, bayestar_init_func);
     assert(ret == 0);
-	(void)ret; /* Silence unsigned variable warning */
+    (void)ret; /* Silence unsigned variable warning */
 }
 
 
@@ -1146,10 +1146,10 @@ double bayestar_log_posterior_toa_phoa_snr(
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
 ) {
-	bayestar_init();
+    bayestar_init();
 
-	if (distance < min_distance || distance > max_distance)
-		return -INFINITY;
+    if (distance < min_distance || distance > max_distance)
+        return -INFINITY;
 
     const double dec = asin(sin_dec);
     const double u2 = gsl_pow_2(u);
@@ -1185,12 +1185,12 @@ double bayestar_log_posterior_toa_phoa_snr(
 
     double result = (A * one_by_r + i0arg_times_r) * one_by_r
         + log(gsl_sf_bessel_I0_scaled(i0arg_times_r * one_by_r)
-				* gsl_pow_int(distance, prior_distance_power));
+                * gsl_pow_int(distance, prior_distance_power));
 
-	if (cosmology)
-		result += log_dVC_dVL(distance);
+    if (cosmology)
+        result += log_dVC_dVL(distance);
 
-	return result;
+    return result;
 }
 
 

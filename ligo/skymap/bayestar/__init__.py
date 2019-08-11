@@ -341,6 +341,7 @@ def localize(
                                      formatvalue=formatvalue)
     run_time = time.perf_counter()
 
+    log.debug('conditioning inputs')
     epoch, sample_rate, toas, snr_series, responses, locations, horizons = \
         condition(event, waveform=waveform, f_low=f_low,
                   enable_snr_series=enable_snr_series,
@@ -366,11 +367,13 @@ def localize(
             chain_dump=chain_dump)
     else:
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
+        log.debug('converting output to Astropy table')
         skymap = Table(skymap)
         skymap.meta['log_bci'] = log_bci
         skymap.meta['log_bsn'] = log_bsn
 
     # Convert distance moments to parameters
+    log.debug('evaluating distance layers')
     try:
         distmean = skymap.columns.pop('DISTMEAN')
         diststd = skymap.columns.pop('DISTSTD')

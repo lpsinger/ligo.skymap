@@ -150,6 +150,8 @@ bicubic_interp *bicubic_interp_init(
         interp->t0 = 3 - interp->ft * tmin;
         interp->slength = slength;
         interp->tlength = tlength;
+
+        #pragma omp taskloop collapse(2)
         for (int is = 0; is < slength; is ++)
         {
             for (int it = 0; it < tlength; it ++)

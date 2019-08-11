@@ -142,7 +142,7 @@ bicubic_interp *bicubic_interp_init(
     const int slength = ns + 6;
     const int tlength = nt + 6;
     interp = malloc(sizeof(*interp) + slength * tlength * sizeof(*interp->a));
-    if (interp)
+    if (LIKELY(interp))
     {
         interp->fs = 1 / ds;
         interp->ft = 1 / dt;

@@ -579,7 +579,7 @@ class ScaleBar(FancyArrowPatch):
     def __init__(self, ax, xy, length, *args, **kwargs):
         x, y = xy
         self._ax = ax
-        self._length = length
+        self._length = u.Quantity(length)
         self._transAxesToWorld = (
             (ax.transAxes - ax.transData) + ax.coords.frame.transform)
         dx = minimize_scalar(

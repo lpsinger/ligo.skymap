@@ -29,7 +29,23 @@ verts = np.concatenate([earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]]])
 codes = np.concatenate([earth.codes, [Path.MOVETO, Path.LINETO] * 2])
 earth = Path(verts, codes)
 del verts, codes
-earth.__doc__ = """The Earth symbol (circle and cross)."""
+earth.__doc__ = """
+The Earth symbol (circle and cross).
+
+Examples
+--------
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    from matplotlib import pyplot as plt
+    from ligo.skymap.plot.marker import earth
+
+    plt.plot(0, 0, markersize=20, markeredgewidth=2,
+             markerfacecolor='none', marker=earth)
+"""
 
 
 def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):

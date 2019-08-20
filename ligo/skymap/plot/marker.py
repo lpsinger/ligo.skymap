@@ -54,6 +54,27 @@ def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
     path : `matplotlib.path.Path`
         The new marker path, suitable for passing to Matplotlib functions
         (e.g., `plt.plot(..., marker=reticle())`)
+
+    Examples
+    --------
+
+    .. plot::
+       :context: reset
+       :include-source:
+       :align: center
+
+        from matplotlib import pyplot as plt
+        from ligo.skymap.plot.marker import reticle
+
+        markers = [reticle(inner=0),
+                   reticle(which='lt'),
+                   reticle(which='lt', angle=45)]
+
+        fig, ax = plt.subplots(figsize=(6, 2))
+        ax.set_xlim(-0.5, 2.5)
+        ax.set_ylim(-0.5, 0.5)
+        for x, marker in enumerate(markers):
+            ax.plot(x, 0, markersize=20, markeredgewidth=2, marker=marker)
     """
     angle = np.deg2rad(angle)
     x = np.cos(angle)

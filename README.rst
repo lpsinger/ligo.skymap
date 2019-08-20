@@ -10,11 +10,8 @@ ligo.skymap
    *LIGO's stellar cartography department.*
 
 The `ligo.skymap` package provides tools for reading, writing, generating, and
-visualizing gravitational-wave probability maps from LIGO and Virgo. It
-provides several tools that used to live in `LALSuite
-<http://git.ligo.org/lscsoft/lalsuite>`_ and elsewhere, but in the form of a
-tiny Python package that is easier to install. Some of the key features of this
-package are:
+visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
+the key features of this package are:
 
 *  `Script bayestar-localize-coincs`_: BAYESTAR, providing rapid,
    coherent, Bayesian, 3D position reconstruction for compact binary

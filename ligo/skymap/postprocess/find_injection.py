@@ -197,7 +197,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
 
     # Distance stats now...
     if 'DISTMU' in sky_map.dtype.names:
-        probdensity = sky_map['PROBDENSITY']
+        dP_dA = sky_map['PROBDENSITY']
         mu = sky_map['DISTMU']
         sigma = sky_map['DISTSIGMA']
         norm = sky_map['DISTNORM']
@@ -235,7 +235,7 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         dV = (np.square(r) + np.square(d_r) / 12) * d_r * dA.reshape(-1, 1)
 
         # Calculate probability within each voxel.
-        dP = probdensity.reshape(-1, 1) * dV * np.exp(
+        dP = dP_dA.reshape(-1, 1) * dV * np.exp(
             -0.5 * np.square(
                 (r.reshape(1, -1) - mu.reshape(-1, 1)) / sigma.reshape(-1, 1)
             )

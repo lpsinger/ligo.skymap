@@ -23,7 +23,6 @@ from collections import namedtuple
 
 import healpy as hp
 import numpy as np
-from scipy.interpolate import interp1d
 
 from .. import distance
 from .. import moc
@@ -152,15 +151,6 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
     prob = np.cumsum(dP)
     area = np.cumsum(dA) * np.square(180 / np.pi)
 
-    # Construct linear interpolants to map between probability and area.
-    # This allows us to compute more accurate contour areas and probabilities
-    # under the approximation that the pixels have constant probability
-    # density.
-    prob_padded = np.concatenate(([0], prob))
-    area_padded = np.concatenate(([0], area))
-    prob_for_area = interp1d(area_padded, prob_padded, assume_sorted=True)
-    area_for_prob = interp1d(prob_padded, area_padded, assume_sorted=True)
-
     if true_ra is None:
         searched_area = searched_prob = np.nan
     else:
@@ -177,11 +167,12 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
 
     # For each of the given confidence levels, compute the area of the
     # smallest region containing that probability.
-    contour_areas = area_for_prob(contours).tolist()
+    contour_areas = np.interp(
+        contours, prob, area, left=0, right=4*180**2/np.pi).tolist()
 
     # For each listed area, find the probability contained within the
     # smallest credible region of that area.
-    area_probs = prob_for_area(areas).tolist()
+    area_probs = np.interp(areas, area, prob, left=0, right=1).tolist()
 
     if modes:
         if true_ra is None:
@@ -210,24 +201,21 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         d_r = max_r / n_r
 
         # Calculate searched_prob_dist and contour_dists.
-        r = d_r * np.arange(n_r)
+        r = d_r * np.arange(1, n_r)
         P_r = distance.marginal_cdf(r, dP, mu, sigma, norm)
         if true_dist is None:
             searched_prob_dist = np.nan
         else:
-            searched_prob_dist = interp1d(
-                r, P_r, bounds_error=False, assume_sorted=True)(true_dist)
+            searched_prob_dist = np.interp(true_dist, r, P_r, left=0, right=1)
         if len(contours) == 0:
             contour_dists = []
         else:
-            lo, hi = interp1d(P_r, r, bounds_error=False, assume_sorted=True)(
+            lo, hi = np.interp(
                 np.row_stack((
                     0.5 * (1 - contours),
-                    0.5 * (1 + contours))))
+                    0.5 * (1 + contours)
+                )), P_r, r, left=0, right=np.inf)
             contour_dists = (hi - lo).tolist()
-
-        # Discard r=0 point for the rest.
-        r = r[1:]
 
         # Calculate volume of each voxel, defined as the region within the
         # HEALPix pixel and contained within the two centric spherical shells
@@ -256,9 +244,8 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         P_flat = np.cumsum(dP.ravel()[i])
         V_flat = np.cumsum(dV.ravel()[i])
 
-        contour_vols = interp1d(
-            P_flat, V_flat, bounds_error=False,
-            assume_sorted=True)(contours).tolist()
+        contour_vols = np.interp(
+            contours, P_flat, V_flat, left=0, right=np.inf).tolist()
         P = np.empty_like(P_flat)
         V = np.empty_like(V_flat)
         P[i] = P_flat

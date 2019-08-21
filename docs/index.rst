@@ -36,25 +36,75 @@ Quick Start, Tutorials
    quickstart/install
    quickstart/bayestar-injections
 
-*****************
-API Documentation
-*****************
+*******
+Modules
+*******
+
+Coordinate Frames (`ligo.skymap.coordinates`)
+---------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/coordinates/detector
+   ligo/skymap/coordinates/eigenframe
+
+I/O and Data Format Support (`ligo.skymap.io`)
+----------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/io/events
+   ligo/skymap/io/fits
+   ligo/skymap/io/hdf5
+
+Plotting and Visualization (`ligo.skymap.plot`)
+-----------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/plot/allsky
+   ligo/skymap/plot/backdrop
+   ligo/skymap/plot/marker
+   ligo/skymap/plot/pp
+
+Sky Map Postprocessing (`ligo.skymap.postprocess`)
+--------------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/postprocess/contour
+   ligo/skymap/postprocess/cosmology
+   ligo/skymap/postprocess/ellipse
+   ligo/skymap/postprocess/find_injection
+   ligo/skymap/postprocess/util
+
+Localization
+------------
 
 .. toctree::
    :maxdepth: 1
 
    ligo/skymap/bayestar
    ligo/skymap/bayestar/ez_emcee
-   ligo/skymap/coordinates/index
    ligo/skymap/distance
    ligo/skymap/healpix_tree
-   ligo/skymap/io/index
    ligo/skymap/kde
    ligo/skymap/moc
-   ligo/skymap/plot/index
-   ligo/skymap/postprocess/index
+
+Utilities
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   ligo/skymap/util/file
+   ligo/skymap/util/numpy
+   ligo/skymap/util/sqlite
    ligo/skymap/tool/index
-   ligo/skymap/util/index
 
 ******************
 Command Line Tools

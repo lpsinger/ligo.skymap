@@ -251,7 +251,8 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         V_flat = np.cumsum(dV.ravel()[i])
 
         contour_vols = interp1d(
-            P_flat, V_flat, bounds_error=False)(contours).tolist()
+            P_flat, V_flat, bounds_error=False,
+            assume_sorted=True)(contours).tolist()
         P = np.empty_like(P_flat)
         V = np.empty_like(V_flat)
         P[i] = P_flat

@@ -78,6 +78,7 @@ Sky Map Postprocessing (`ligo.skymap.postprocess`)
 
    ligo/skymap/postprocess/contour
    ligo/skymap/postprocess/cosmology
+   ligo/skymap/postprocess/crossmatch
    ligo/skymap/postprocess/ellipse
    ligo/skymap/postprocess/find_injection
    ligo/skymap/postprocess/util

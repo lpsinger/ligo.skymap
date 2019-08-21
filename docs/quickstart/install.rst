@@ -25,6 +25,7 @@ install the following required Python packages:
 *  `Astroplan <http://astroplan.readthedocs.io>`_ ≥ 0.5
 *  Astropy_ ≥ 3.1
 *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
+*  `Astroquery <https://astroquery.readthedocs.io>`_
 *  `Healpy <http://healpy.readthedocs.io>`_
 *  `h5py <https://www.h5py.org>`_
 *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53

@@ -14,6 +14,24 @@ Changelog
   - Calculate signal amplitudes using single-precision floating point
     arithmetic to speed up BAYESTAR's inner loop.
 
+- Introduce the :mod:`ligo.skymap.postprocess.crossmatch` module for fast
+  cross-matching of sky maps with galaxy redshift catalogs.
+
+  This module used to be named :mod:`ligo.skymap.postprocess.find_injection`
+  because it was originally designed for recovering injections (simulated
+  signals) from sky localization simulations. We changed the name because
+  galaxy cross matching is probably a more common use case than injection
+  finding.
+
+  The :func:`~ligo.skymap.postprocess.crossmatch.crossmatch` method also got
+  some performance improvements for cross matching of large numbers of targets.
+  Previously, to process :math:`n` targets, it took about :math:`(4 + 0.008 n)`
+  seconds --- for a catalog of 300k targets, about 40 minutes. Now, it takes
+  about 4 seconds total regardless of the number of targets.
+
+  Note that the :mod:`ligo.skymap.postprocess.crossmatch` API is likely to
+  change as documentation for it improves.
+
 0.1.9 (2019-08-02)
 ==================
 

@@ -18,6 +18,9 @@
 """
 Calculate summary statistics for a batch of sky maps.
 
+Under the hood, this script is little more than a command-line interface for
+the :mod:`ligo.skymap.postprocess.crossmatch` module.
+
 The filenames of the sky maps may be provided as positional command line
 arguments, and may also be provided as globs (such as ``*.fits.gz``). If
 supplied with the optional ``--database`` argument, then also match sky maps

@@ -201,23 +201,6 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         mu = sky_map['DISTMU']
         sigma = sky_map['DISTSIGMA']
         norm = sky_map['DISTNORM']
-        args = (dP, mu, sigma, norm)
-        if true_dist is None:
-            searched_prob_dist = np.nan
-        else:
-            searched_prob_dist = distance.marginal_cdf(true_dist, *args)
-        # FIXME: old verisons of Numpy can't handle passing zero-length
-        # arrays to generalized ufuncs. Remove this workaround once LIGO
-        # Data Grid clusters provide a more modern version of Numpy.
-        if len(contours) == 0:
-            contour_dists = []
-        else:
-            lo, hi = distance.marginal_ppf(
-                np.row_stack((
-                    0.5 * (1 - contours),
-                    0.5 * (1 + contours)
-                )), *args)
-            contour_dists = (hi - lo).tolist()
 
         # Set up distance grid.
         n_r = 1000
@@ -225,7 +208,26 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         if true_dist is not None and np.max(true_dist) > max_r:
             max_r = np.max(true_dist)
         d_r = max_r / n_r
-        r = d_r * np.arange(1, n_r)
+
+        # Calculate searched_prob_dist and contour_dists.
+        r = d_r * np.arange(n_r)
+        P_r = distance.marginal_cdf(r, dP, mu, sigma, norm)
+        if true_dist is None:
+            searched_prob_dist = np.nan
+        else:
+            searched_prob_dist = interp1d(
+                r, P_r, bounds_error=False, assume_sorted=True)(true_dist)
+        if len(contours) == 0:
+            contour_dists = []
+        else:
+            lo, hi = interp1d(P_r, r, bounds_error=False, assume_sorted=True)(
+                np.row_stack((
+                    0.5 * (1 - contours),
+                    0.5 * (1 + contours))))
+            contour_dists = (hi - lo).tolist()
+
+        # Discard r=0 point for the rest.
+        r = r[1:]
 
         # Calculate volume of each voxel, defined as the region within the
         # HEALPix pixel and contained within the two centric spherical shells

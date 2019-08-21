@@ -103,8 +103,7 @@ FoundInjection = namedtuple(
 
 
 def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
-                       contours=(), areas=(), modes=False, nest=False,
-                       cosmology=False):
+                       contours=(), areas=(), modes=False, cosmology=False):
     """
     Given a sky map and the true right ascension and declination (in radians),
     find the smallest area in deg^2 that would have to be searched to find the

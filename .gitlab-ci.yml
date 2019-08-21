@@ -184,7 +184,7 @@ test/coverage:
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
-    - python setup.py test --coverage -V
+    - python setup.py test --coverage -V --junit-xml=${CI_PROJECT_DIR}/junit.xml
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
@@ -236,6 +236,8 @@ test/coverage:
     paths:
       - coverage.xml
       - coverage.html
+    reports:
+      junit: junit.xml
     expire_in: 1 day
 
 #

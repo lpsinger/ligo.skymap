@@ -223,15 +223,11 @@ def find_injection_moc(sky_map, true_ra=None, true_dec=None, true_dist=None,
         dV = (np.square(r) + np.square(d_r) / 12) * d_r * dA.reshape(-1, 1)
 
         # Calculate probability within each voxel.
-        dP = (
-            (dP_dA * norm / (sigma * np.sqrt(2 * np.pi))).reshape(-1, 1) * dV
-                * np.exp(
-                    -0.5 * np.square(
-                        (r.reshape(1, -1) - mu.reshape(-1, 1))
-                        / sigma.reshape(-1, 1)
-                    )
-                )
+        dP = np.exp(
+            -0.5 * np.square(
+                (r.reshape(1, -1) - mu.reshape(-1, 1)) / sigma.reshape(-1, 1)
             )
+        ) * (dP_dA * norm / (sigma * np.sqrt(2 * np.pi))).reshape(-1, 1) * dV
         dP[np.isnan(dP)] = 0  # Suppress invalid values
 
         # Calculate probability density per unit volume.

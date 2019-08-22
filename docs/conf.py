@@ -206,3 +206,7 @@ extensions += ['sphinxarg.ext']
 # -- Options for the sphinx-doctest extension ---------------------------------
 
 extensions += ['sphinx.ext.doctest']
+
+# -- Options for the module index ---------------------------------------------
+
+modindex_common_prefix = [package.__name__ + '.']

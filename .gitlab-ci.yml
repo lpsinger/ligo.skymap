@@ -98,7 +98,7 @@ wheel/cp37-cp37m-macosx:
       FROM python:${CI_JOB_NAME#*python}
       COPY requirements.txt .
       RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-astropy pytest-xdist pytest-cov gcovr pycobertura sphinx sphinx-argparse sphinx-astropy flake8
+      RUN pip --no-cache-dir install pytest-astropy pytest-cov gcovr pycobertura sphinx sphinx-argparse sphinx-astropy flake8
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
       EOF

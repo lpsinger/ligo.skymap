@@ -31,7 +31,7 @@ builtins._ASTROPY_PACKAGE_NAME_ = read_configuration('setup.cfg')['metadata']['n
 
 # Create a dictionary with setup command overrides. Note that this gets
 # information about the package (name and version) from the setup.cfg file.
-cmdclassd = register_commands()
+cmdclass = register_commands()
 
 # Freeze build information in version.py. Note that this gets information
 # about the package (name and version) from the setup.cfg file.
@@ -49,5 +49,5 @@ package_info = get_package_info()
 with open('requirements.txt', 'r') as f:
     install_requires = [str(r) for r in pkg_resources.parse_requirements(f)]
 
-setup(version=version, cmdclass=cmdclassd, install_requires=install_requires,
+setup(version=version, cmdclass=cmdclass, install_requires=install_requires,
       **package_info)

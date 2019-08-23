@@ -375,7 +375,7 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
     OMP_BEGIN_INTERRUPTIBLE
     integrator = malloc(sizeof(*integrator));
 
-    #pragma omp taskloop collapse(2)
+    #pragma omp taskloop collapse(2) shared(z0)
     for (size_t ix = 0; ix < size; ix ++)
     {
         for (size_t iy = 0; iy < size; iy ++)

@@ -182,7 +182,8 @@ def process(fitsfilename):
     (
         searched_area, searched_prob, offset, searched_modes, contour_areas,
         area_probs, contour_modes, searched_prob_dist, contour_dists,
-        searched_vol, searched_prob_vol, contour_vols
+        searched_vol, searched_prob_vol, contour_vols, probdensity,
+        probdensity_vol
     ) = find_injection_moc(
         sky_map, true_ra, true_dec, true_dist,
         contours=contour_pvalues, areas=areas, modes=modes, cosmology=cosmology

@@ -100,7 +100,7 @@ CrossmatchResult = namedtuple(
     'CrossmatchResult',
     'searched_area searched_prob offset searched_modes contour_areas '
     'area_probs contour_modes searched_prob_dist contour_dists '
-    'searched_vol searched_prob_vol contour_vols')
+    'searched_vol searched_prob_vol contour_vols probdensity probdensity_vol')
 """
 Cross match result as returned by
 :func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.
@@ -155,6 +155,12 @@ Probability within the 3D credible region containing each target \
 position.''' + _same_length_as_coordinates
 CrossmatchResult.contour_vols.__doc__ = '''\
 Volume within the 3D credible regions''' + _same_length_as_contours
+CrossmatchResult.probdensity.__doc__ = '''\
+2D probability density per steradian at the positions of each of the \
+targets.''' + _same_length_as_coordinates
+CrossmatchResult.probdensity_vol.__doc__ = '''\
+3D probability density per cubic megaparsec at the positions of each of the \
+targets.''' + _same_length_as_coordinates
 
 
 def crossmatch(sky_map, coordinates=None,
@@ -315,7 +321,7 @@ def crossmatch(sky_map, coordinates=None,
     area = np.cumsum(dA) * np.square(180 / np.pi)
 
     if true_ra is None:
-        searched_area = searched_prob = np.nan
+        searched_area = searched_prob = probdensity = np.nan
     else:
         # Find the smallest area that would have to be searched to find
         # the true location.
@@ -324,6 +330,9 @@ def crossmatch(sky_map, coordinates=None,
         # Find the smallest posterior mass that would have to be searched to
         # find the true location.
         searched_prob = prob[true_idx]
+
+        # Find the probability density.
+        probdensity = sky_map['PROBDENSITY'][true_idx]
 
     # Find the contours of the given credible levels.
     contour_idxs = np.digitize(contours, prob) - 1
@@ -412,14 +421,16 @@ def crossmatch(sky_map, coordinates=None,
         P = P.reshape(dP.shape)
         V = V.reshape(dV.shape)
         if true_dist is None:
-            searched_vol = searched_prob_vol = np.nan
+            searched_vol = searched_prob_vol = probdensity_vol = np.nan
         else:
             i_radec = true_idx
             i_dist = np.digitize(true_dist, r) - 1
+            probdensity_vol = dP_dV[i_radec, i_dist]
             searched_prob_vol = P[i_radec, i_dist]
             searched_vol = V[i_radec, i_dist]
     else:
-        searched_vol = searched_prob_vol = searched_prob_dist = np.nan
+        searched_vol = searched_prob_vol = searched_prob_dist \
+            = probdensity_vol = np.nan
         contour_dists = [np.nan] * len(contours)
         contour_vols = [np.nan] * len(contours)
 
@@ -427,4 +438,5 @@ def crossmatch(sky_map, coordinates=None,
     return CrossmatchResult(
         searched_area, searched_prob, offset, searched_modes, contour_areas,
         area_probs, contour_modes, searched_prob_dist, contour_dists,
-        searched_vol, searched_prob_vol, contour_vols)
+        searched_vol, searched_prob_vol, contour_vols, probdensity,
+        probdensity_vol)

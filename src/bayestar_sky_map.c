@@ -655,7 +655,7 @@ static bayestar_pixel *bayestar_pixels_alloc(size_t *len, unsigned char order)
         GSL_ERROR_NULL("not enough memory to allocate sky map", GSL_ENOMEM);
 
     *len = npix;
-    for (unsigned long long ipix = 0; ipix < npix; ipix ++)
+    for (long long ipix = 0; ipix < npix; ipix ++)
         pixels[ipix].uniq = nest2uniq64(order, ipix);
     return pixels;
 }

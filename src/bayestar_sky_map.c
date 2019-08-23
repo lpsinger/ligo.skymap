@@ -375,21 +375,22 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
     OMP_BEGIN_INTERRUPTIBLE
     integrator = malloc(sizeof(*integrator));
 
-    #pragma omp taskloop
-    for (size_t i = 0; i < size * size; i ++)
+    #pragma omp taskloop collapse(2)
+    for (size_t ix = 0; ix < size; ix ++)
     {
-        if (OMP_WAS_INTERRUPTED)
-            OMP_EXIT_LOOP_EARLY;
+        for (size_t iy = 0; iy < size; iy ++)
+        {
+            if (OMP_WAS_INTERRUPTED)
+                OMP_EXIT_LOOP_EARLY;
 
-        const size_t ix = i / size;
-        const size_t iy = i % size;
-        const double x = xmin + ix * d;
-        const double y = ymin + iy * d;
-        const double p = exp(x);
-        const double r0 = exp(y);
-        const double b = 2 * gsl_pow_2(p) / r0;
-        /* Note: using this where p > r0; could reduce evaluations by half */
-        z0[ix][iy] = log_radial_integral(r1, r2, p, b, k, cosmology);
+            const double x = xmin + ix * d;
+            const double y = ymin + iy * d;
+            const double p = exp(x);
+            const double r0 = exp(y);
+            const double b = 2 * gsl_pow_2(p) / r0;
+            /* Note: using this where p > r0; could reduce evaluations by half */
+            z0[ix][iy] = log_radial_integral(r1, r2, p, b, k, cosmology);
+        }
     }
 
     if (OMP_WAS_INTERRUPTED)

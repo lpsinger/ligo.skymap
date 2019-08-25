@@ -22,7 +22,7 @@ the key features of this package are:
 To get started, see the `installation instructions`_ or the `full
 documentation`_.
 
-.. figure:: https://lscsoft.docs.ligo.org/ligo.skymap/_static/localization.svg
+.. figure:: https://lscsoft.docs.ligo.org/ligo.skymap/_images/localization.svg
    :alt: GW170817 localization
 
    This illustration of the position of GW170817, prepared using `ligo.skymap`,

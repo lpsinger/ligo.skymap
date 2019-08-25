@@ -86,6 +86,8 @@ version = package.__version__.split('-', 1)[0]
 # The full version, including alpha/beta/rc tags.
 release = package.__version__
 
+extensions.extend(['sphinx.ext.extlinks'])
+
 
 # -- Options for HTML output --------------------------------------------------
 
@@ -206,6 +208,13 @@ extensions += ['sphinxarg.ext']
 # -- Options for the sphinx-doctest extension ---------------------------------
 
 extensions += ['sphinx.ext.doctest']
+
+# -- Options for extlinks extension ------------------------------------------
+
+extlinks = {
+    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:'),
+    'doi': ('https://doi.org/%s', 'doi:')
+}
 
 # -- Options for the module index ---------------------------------------------
 

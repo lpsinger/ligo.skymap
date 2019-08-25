@@ -2,13 +2,6 @@
 ligo.skymap
 ###########
 
-.. figure:: https://vignette.wikia.nocookie.net/memoryalpha/images/c/cf/Picard_and_Data_in_stellar_cartography.jpg/revision/latest/scale-to-width-down/640?cb=20100527083827&path-prefix=en
-   :alt: Picard and Data in stellar cartography
-   :width: 640px
-   :height: 269px
-
-   *LIGO's stellar cartography department.*
-
 The `ligo.skymap` package provides tools for reading, writing, generating, and
 visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
 the key features of this package are:
@@ -26,7 +19,34 @@ the key features of this package are:
 *  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
-See the `installation instructions`_ or the `full documentation`_.
+To get started, see the `installation instructions`_ or the `full
+documentation`_.
+
+.. figure:: https://lscsoft.docs.ligo.org/ligo.skymap/_static/localization.svg
+   :alt: GW170817 localization
+
+   This illustration of the position of GW170817, prepared using `ligo.skymap`,
+   illustrates the main features of this package: rapid localization of compact
+   binaries with BAYESTAR [#BAYESTAR]_, three-dimensional density estimation
+   [#GoingTheDistance]_ [#GoingTheDistanceSupplement]_, cross-matching with
+   galaxy catalogs, and visualization of gravitational-wave sky maps.
+   Reproduced from [#GROWTH-GW170817]_.
+
+.. [#BAYESTAR]
+   Singer, L. P., & Price, L. R. 2016, |prd|, 93, 024013.
+   :doi:`10.1103/PhysRevD.93.024013`
+
+.. [#GoingTheDistance]
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJL|, 829, L15.
+   :doi:`10.3847/2041-8205/829/1/L15`
+
+.. [#GoingTheDistanceSupplement]
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJS|, 226, 10.
+   :doi:`10.3847/0067-0049/226/1/10`
+
+.. [#GROWTH-GW170817]
+   Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
+   :doi:`.1126/science.aap9455`.
 
 .. _`Script bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
 .. _`Script ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html

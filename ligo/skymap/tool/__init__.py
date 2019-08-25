@@ -473,7 +473,6 @@ class SQLiteType(FileType):
     NOT overwrite the file if it exists. If the file was not an SQLite database
     beforehand, this should raise an exception.
 
-    >>> import pytest
     >>> filetype = SQLiteType('a')
     >>> with tempfile.NamedTemporaryFile(mode='w') as f:
     ...     print('This is definitely not an SQLite file.', file=f)

@@ -1,8 +1,6 @@
-from astropy_helpers.setup_helpers import get_distutils_build_option
-
-
 def get_extensions():
-    from astropy_helpers import openmp_helpers, setup_helpers
+    from astropy_helpers import (
+        get_distutils_build_option, openmp_helpers, setup_helpers)
     from distutils.core import Extension
 
     pkg_config_packages = ['gsl']

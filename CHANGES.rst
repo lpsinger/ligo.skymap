@@ -33,6 +33,10 @@ Changelog
 
   - Calculate signal amplitudes using single-precision floating point.
 
+  - Add tracepoints for Intel's Instrumentation and Tracing Technology (ITT)
+    API, which can be enabled at build time by passing the ``--with-ittnotify``
+    option to ``python setup.py build``.
+
 0.1.9 (2019-08-02)
 ==================
 

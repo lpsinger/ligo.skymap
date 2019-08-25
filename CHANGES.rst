@@ -5,6 +5,8 @@ Changelog
 0.1.10 (unreleased)
 ===================
 
+- Add installation instructions for both pip and conda.
+
 - Several performance improvements for BAYESTAR:
 
   - Add GCC branch prediction hints.

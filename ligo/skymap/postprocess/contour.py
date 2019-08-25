@@ -117,10 +117,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     >>> npix = hp.nside2npix(nside)
     >>> ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     >>> m = dec
-    >>> contour(m, [10, 20, 30], degrees=True)
-    [[[[..., ...], ...], ...], ...]
-
-    Output above was rounded for shorter output.
+    >>> result = contour(m, [10, 20, 30], degrees=True)
     """
     # Determine HEALPix resolution.
     npix = len(m)

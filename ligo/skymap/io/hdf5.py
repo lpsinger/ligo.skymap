@@ -236,7 +236,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     >>> table = Table([
     ...     Column(np.arange(10), name='foo', meta={'vary': FIXED})
     ... ])
-    >>> write_samples(table, 'bar.hdf5', 'bat/baz') # doctest: +ELLIPSIS
+    >>> write_samples(table, 'bar.hdf5', 'bat/baz')  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     AssertionError: 
@@ -260,7 +260,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...     write_samples(
     ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
     ...         metadata={'bat/baz': {'widget': 'shoephone'}})
-    """  # noqa: W291
+    """  # noqa: W291, E501
     # Copy the table so that we do not modify the original.
     table = table.copy()
 

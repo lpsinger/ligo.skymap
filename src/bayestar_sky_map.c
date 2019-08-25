@@ -820,8 +820,8 @@ static void bayestar_init_func(void)
     itt_domain = __itt_domain_create("ligo.skymap.bayestar");
     itt_task_lookup_table = __itt_string_handle_create("generating lookup table");
     itt_task_initial_step = __itt_string_handle_create("initial resolution step");
-    itt_task_initial_step = __itt_string_handle_create("resolution refinement step");
-    itt_task_initial_step = __itt_string_handle_create("final resolution step");
+    itt_task_refinement_step = __itt_string_handle_create("resolution refinement step");
+    itt_task_final_step = __itt_string_handle_create("final resolution step");
 #endif
 }
 static void bayestar_init(void)

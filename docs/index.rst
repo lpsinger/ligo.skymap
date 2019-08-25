@@ -194,4 +194,4 @@ References
 
 .. [#GROWTH-GW170817]
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
-   :doi:`.1126/science.aap9455`.
+   :doi:`10.1126/science.aap9455`

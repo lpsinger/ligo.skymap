@@ -7,14 +7,6 @@ Changelog
 
 - Add installation instructions for both pip and conda.
 
-- Several performance improvements for BAYESTAR:
-
-  - Add GCC branch prediction hints.
-
-  - Exploit nested parallelism in radial integrator lookup table generation.
-
-  - Calculate signal amplitudes using single-precision floating point.
-
 - Introduce the :mod:`ligo.skymap.postprocess.crossmatch` module for fast
   cross-matching of sky maps with galaxy redshift catalogs.
 
@@ -32,6 +24,14 @@ Changelog
 
   Note that the :mod:`ligo.skymap.postprocess.crossmatch` API is likely to
   change as documentation for it improves.
+
+- Several performance improvements for BAYESTAR:
+
+  - Add GCC branch prediction hints.
+
+  - Exploit nested parallelism in radial integrator lookup table generation.
+
+  - Calculate signal amplitudes using single-precision floating point.
 
 0.1.9 (2019-08-02)
 ==================

@@ -29,7 +29,7 @@ def get_extensions():
     kwargs['extra_compile_args'].extend(['-std=gnu99',
                                          '-DGSL_RANGE_CHECK_OFF'])
 
-    if get_distutils_build_option('with-ittnotify'):
+    if get_distutils_build_option('with_ittnotify'):
         kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
         kwargs.setdefault('libraries', []).append('ittnotify')
 

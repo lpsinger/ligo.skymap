@@ -65,7 +65,8 @@ def mellinger():
        :include-source:
        :align: center
 
-        from astropy.visualization import ImageNormalize, AsymmetricPercentileInterval
+        from astropy.visualization import (ImageNormalize,
+                                           AsymmetricPercentileInterval)
         from astropy.wcs import WCS
         from matplotlib import pyplot as plt
         from ligo.skymap.plot import mellinger

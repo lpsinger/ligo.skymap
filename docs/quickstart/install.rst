@@ -14,7 +14,7 @@ Basic Requirements
 ------------------
 
 *  `Python <https://www.python.org>`_ ≥ 3.6
-*  `pip <https://pip.pypa.io>`_
+*  `pip <https://pip.pypa.io>`_ ≥ 19.0
 
 Required Python Dependencies
 ----------------------------

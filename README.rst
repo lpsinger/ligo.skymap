@@ -34,19 +34,19 @@ documentation`_.
 
 .. [#BAYESTAR]
    Singer, L. P., & Price, L. R. 2016, |prd|, 93, 024013.
-   :doi:`10.1103/PhysRevD.93.024013`
+   https://doi.org/10.1103/PhysRevD.93.024013
 
 .. [#GoingTheDistance]
    Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJL|, 829, L15.
-   :doi:`10.3847/2041-8205/829/1/L15`
+   https://doi.org/10.3847/2041-8205/829/1/L15
 
 .. [#GoingTheDistanceSupplement]
    Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJS|, 226, 10.
-   :doi:`10.3847/0067-0049/226/1/10`
+   https://doi.org/10.3847/0067-0049/226/1/10
 
 .. [#GROWTH-GW170817]
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
-   :doi:`.1126/science.aap9455`.
+   https://10.1126/science.aap9455
 
 .. _`Script bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
 .. _`Script ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html

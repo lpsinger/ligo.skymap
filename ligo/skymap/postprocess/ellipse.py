@@ -204,19 +204,16 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
 
     >>> prob = make_uniform_in_sin_theta(1)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, area)
-    89.90863 0.87034 0.87034 2.37888
+    >>> find_ellipse(prob)
+    (225.0, 89.90862520480792, 0.8703361458208101, 0.8703357768874356, 0.0, 2.3788811576269793)
 
     >>> prob = make_uniform_in_sin_theta(10)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, area)
-    89.90828 9.02485 9.02484 255.11972
+    >>> find_ellipse(prob)
+    (225.0, 89.90827657529562, 9.024846562072119, 9.024842703023802, 0.0, 255.11972196535515)
 
     >>> prob = make_uniform_in_sin_theta(120)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, area)
-    90.0 107.9745 107.9745 26988.70467
+    >>> find_ellipse(prob)
+    (179.99995257991023, 90.0, 107.9745037610576, 107.97450376105758, 0.0, 26988.70467497216)
 
     **Example 4**
 
@@ -237,9 +234,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.square(np.deg2rad(1)))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(ra, dec, a, b, area)
-    45.0 0.0 2.14241 2.14208 14.4677
+    >>> find_ellipse(prob)
+    (45.0, 0.0, 2.1424077148886744, 2.1420790721225518, 90.0, 14.467701995920123)
 
     This one is centered at RA=45°, Dec=0°, and is elongated in the north-south
     direction.
@@ -248,9 +244,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.diag(np.square(np.deg2rad([1, 1, 10]))))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(ra, dec, a, b, pa, area)
-    45.0 0.0 13.58769 2.08298 90.0 88.57797
+    >>> find_ellipse(prob)
+    (44.99999999999999, 0.0, 13.58768882719899, 2.0829846178241853, 90.0, 88.57796576937031)
 
     This one is centered at RA=0°, Dec=0°, and is elongated in the east-west
     direction.
@@ -259,9 +254,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1, 0, 0],
     ...     np.diag(np.square(np.deg2rad([1, 10, 1]))))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, pa, area)
-    0.0 13.58392 2.08238 0.0 88.54623
+    >>> find_ellipse(prob)
+    (0.0, 0.0, 13.583918022027149, 2.0823769912401433, 0.0, 88.54622940628761)
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     10° to the west of north.
@@ -272,9 +266,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, -0.15],
     ...      [0, -0.15, 1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, pa, area)
-    0.0 64.77133 33.50754 80.78231 6372.34466
+    >>> find_ellipse(prob)
+    (0.0, 0.0, 64.7713312709293, 33.50754131182681, 80.78231196786838, 6372.344658663038)
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     10° to the east of north.
@@ -285,9 +278,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, 0.15],
     ...      [0, 0.15, 1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, pa, area)
-    0.0 64.77133 33.50754 99.21769 6372.34466
+    >>> find_ellipse(prob)
+    (0.0, 0.0, 64.77133127093047, 33.50754131182745, 99.21768803213159, 6372.344658663096)
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     80° to the east of north.
@@ -298,9 +290,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, 0.15],
     ...      [0, 0.15, 0.1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, pa, area)
-    0.0 64.77564 33.50986 170.78252 6372.42573
+    >>> find_ellipse(prob)
+    (0.0, 0.0, 64.7756448603915, 33.509863018519894, 170.78252287327365, 6372.425731592412)
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     80° to the west of north.
@@ -311,9 +302,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, -0.15],
     ...      [0, -0.15, 0.1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
-    >>> print(dec, a, b, pa, area)
-    0.0 64.77564 33.50986 9.21748 6372.42573
+    >>> find_ellipse(prob)
+    (0.0, 0.0, 64.77564486039148, 33.50986301851987, 9.217477126726322, 6372.42573159241)
     """  # noqa: E501
     try:
         prob['UNIQ']

@@ -204,17 +204,17 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
 
     >>> prob = make_uniform_in_sin_theta(1)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, area)
     89.90863 0.87034 0.87034 2.37888
 
     >>> prob = make_uniform_in_sin_theta(10)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, area)
     89.90828 9.02485 9.02484 255.11972
 
     >>> prob = make_uniform_in_sin_theta(120)
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, area)
     90.0 107.9745 107.9745 26988.70467
 
@@ -237,7 +237,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.square(np.deg2rad(1)))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(ra, dec, a, b, area)
     45.0 0.0 2.14241 2.14208 14.4677
 
@@ -248,7 +248,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.diag(np.square(np.deg2rad([1, 1, 10]))))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(ra, dec, a, b, pa, area)
     45.0 0.0 13.58769 2.08298 90.0 88.57797
 
@@ -259,7 +259,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1, 0, 0],
     ...     np.diag(np.square(np.deg2rad([1, 10, 1]))))
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, pa, area)
     0.0 13.58392 2.08238 0.0 88.54623
 
@@ -272,7 +272,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, -0.15],
     ...      [0, -0.15, 1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, pa, area)
     0.0 64.77133 33.50754 80.78231 6372.34466
 
@@ -285,7 +285,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, 0.15],
     ...      [0, 0.15, 1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, pa, area)
     0.0 64.77133 33.50754 99.21769 6372.34466
 
@@ -298,7 +298,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, 0.15],
     ...      [0, 0.15, 0.1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, pa, area)
     0.0 64.77564 33.50986 170.78252 6372.42573
 
@@ -311,7 +311,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, -0.15],
     ...      [0, -0.15, 0.1]])
     ...
-    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5) + 0
+    >>> ra, dec, a, b, pa, area = np.around(find_ellipse(prob), 5)
     >>> print(dec, a, b, pa, area)
     0.0 64.77564 33.50986 9.21748 6372.42573
     """  # noqa: E501

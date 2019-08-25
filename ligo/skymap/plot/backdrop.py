@@ -16,22 +16,6 @@
 #
 """
 Backdrops for astronomical plots.
-
-Example
--------
-
-.. plot::
-   :context: reset
-   :include-source:
-   :align: center
-
-    from ligo.skymap.plot import blackmarble, reproject_interp_rgb
-    from matplotlib import pyplot as plt
-    import numpy as np
-
-    ax = plt.axes(projection='geo degrees aitoff',
-                  obstime='2017-08-17 12:41:04')
-    ax.imshow(reproject_interp_rgb(blackmarble(ax.wcs.wcs.dateobs), ax.header))
 """
 
 import warnings
@@ -63,7 +47,41 @@ def big_imread(*args, **kwargs):
 
 
 def mellinger():
-    """Mellinger Milky Way panorama. See http://www.milkywaysky.com"""
+    """Get the Mellinger Milky Way panorama.
+
+    Retrieve, cache, and return the Mellinger Milky Way panorama. See
+    http://www.milkywaysky.com.
+
+    Returns
+    -------
+    `astropy.io.fits.ImageHDU`
+        A FITS WCS image in ICRS coordinates.
+
+    Examples
+    --------
+
+    .. plot::
+       :context: reset
+       :include-source:
+       :align: center
+
+        from astropy.visualization import ImageNormalize, AsymmetricPercentileInterval
+        from astropy.wcs import WCS
+        from matplotlib import pyplot as plt
+        from ligo.skymap.plot import mellinger
+        from reproject import reproject_interp
+
+        ax = plt.axes(projection='astro hours aitoff')
+        backdrop = mellinger()
+        backdrop_wcs = WCS(backdrop.header).dropaxis(-1)
+        interval = AsymmetricPercentileInterval(45, 98)
+        norm = ImageNormalize(backdrop.data, interval)
+        backdrop_reprojected = np.asarray([
+            reproject_interp((layer, backdrop_wcs), ax.header)[0]
+            for layer in norm(backdrop.data)])
+        backdrop_reprojected = np.rollaxis(backdrop_reprojected, 0, 3)
+        ax.imshow(backdrop_reprojected)
+    """
 
     url = 'http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits'
     hdu, = fits.open(url, cache=True)
@@ -71,8 +89,42 @@ def mellinger():
 
 
 def bluemarble(t, resolution='low'):
-    """NASA/NOAO/NPP image showing city lights, at the sidereal time given by t.
-    See https://visibleearth.nasa.gov/view.php?id=74117"""
+    """Get the "Blue Marble" image.
+
+    Retrieve, cache, and return the NASA/NOAO/NPP "Blue Marble" image showing
+    landforms and oceans.
+
+    See https://visibleearth.nasa.gov/view.php?id=74117.
+
+    Parameters
+    ----------
+    t : `astropy.time.Time`
+        Time to embed in the WCS header.
+    resolution : {'low', 'high'}
+        Specify which version to use: the "low" resolution version (5400x2700
+        pixels, the default) or the "high" resolution version (21600x10800
+        pixels).
+
+    Returns
+    -------
+    `astropy.io.fits.ImageHDU`
+        A FITS WCS image in ICRS coordinates.
+
+    Examples
+    --------
+
+    .. plot::
+       :context: reset
+       :include-source:
+       :align: center
+
+        from matplotlib import pyplot as plt
+        from ligo.skymap.plot import bluemarble, reproject_interp_rgb
+
+        obstime = '2017-08-17 12:41:04'
+        ax = plt.axes(projection='geo degrees aitoff', obstime=obstime)
+        ax.imshow(reproject_interp_rgb(bluemarble(obstime), ax.header))
+    """
 
     variants = {
         'low': '5400x2700',
@@ -98,8 +150,40 @@ def bluemarble(t, resolution='low'):
 
 
 def blackmarble(t, resolution='low'):
-    """NASA/NOAO/NPP image showing city lights, at the sidereal time given by t.
-    See https://visibleearth.nasa.gov/view.php?id=79765"""
+    """Get the "Black Marble" image.
+
+    Get the NASA/NOAO/NPP image showing city lights, at the sidereal time given
+    by t. See https://visibleearth.nasa.gov/view.php?id=79765.
+
+    Parameters
+    ----------
+    t : `astropy.time.Time`
+        Time to embed in the WCS header.
+    resolution : {'low', 'mid', 'high'}
+        Specify which version to use: the "low" resolution version (3600x1800
+        pixels, the default), the "mid" resolution version (13500x6750 pixels),
+        or the "high" resolution version (54000x27000 pixels).
+
+    Returns
+    -------
+    `astropy.io.fits.ImageHDU`
+        A FITS WCS image in ICRS coordinates.
+
+    Examples
+    --------
+
+    .. plot::
+       :context: reset
+       :include-source:
+       :align: center
+
+        from matplotlib import pyplot as plt
+        from ligo.skymap.plot import blackmarble, reproject_interp_rgb
+
+        obstime = '2017-08-17 12:41:04'
+        ax = plt.axes(projection='geo degrees aitoff', obstime=obstime)
+        ax.imshow(reproject_interp_rgb(blackmarble(obstime), ax.header))
+    """
 
     variants = {
         'low': '3600x1800',

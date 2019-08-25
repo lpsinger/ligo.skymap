@@ -107,7 +107,7 @@ static __itt_string_handle
     *itt_task_final_step;
 
 #define ITT_TASK_BEGIN(domain, task) __itt_task_begin((domain), __itt_null, __itt_null, (task))
-#define ITT_TASK_END(domain, task) __itt_task_end((domain))
+#define ITT_TASK_END(domain) __itt_task_end((domain))
 #else
 #define ITT_TASK_BEGIN(domain, task)
 #define ITT_TASK_END(domain)
@@ -1077,7 +1077,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 sample_rate, epochs, snrs, responses, locations, horizons,
                 u_points_weights);
         }
-        ITT_TASK_END(itt_domain)
+        ITT_TASK_END(itt_domain);
 
         if (OMP_WAS_INTERRUPTED)
             goto done;

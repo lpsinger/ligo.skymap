@@ -13,8 +13,7 @@ Changelog
 
   - Exploit nested parallelism in radial integrator lookup table generation.
 
-  - Calculate signal amplitudes using single-precision floating point
-    arithmetic to speed up BAYESTAR's inner loop.
+  - Calculate signal amplitudes using single-precision floating point.
 
 - Introduce the :mod:`ligo.skymap.postprocess.crossmatch` module for fast
   cross-matching of sky maps with galaxy redshift catalogs.

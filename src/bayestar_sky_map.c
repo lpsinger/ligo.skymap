@@ -97,6 +97,22 @@
 #include "branch_prediction.h"
 #include "logaddexp.h"
 
+#ifdef WITH_ITTNOTIFY
+#include <ittnotify.h>
+static __itt_domain *itt_domain;
+static __itt_string_handle
+    *itt_task_lookup_table,
+    *itt_task_initial_step,
+    *itt_task_refinement_step,
+    *itt_task_final_step;
+
+#define ITT_TASK_BEGIN(domain, task) __itt_task_begin((domain), __itt_null, __itt_null, (task))
+#define ITT_TASK_END(domain, task) __itt_task_end((domain))
+#else
+#define ITT_TASK_BEGIN(domain, task)
+#define ITT_TASK_END(domain)
+#endif
+
 
 /* Compute |z|^2. Hopefully a little faster than gsl_pow_2(cabs(z)), because no
  * square roots are necessary. */
@@ -799,6 +815,14 @@ static pthread_once_t bayestar_init_once = PTHREAD_ONCE_INIT;
 static void bayestar_init_func(void)
 {
     dVC_dVL_init();
+
+#ifdef WITH_ITTNOTIFY
+    itt_domain = __itt_domain_create("ligo.skymap.bayestar");
+    itt_task_lookup_table = __itt_string_handle_create("generating lookup table");
+    itt_task_initial_step = __itt_string_handle_create("initial resolution step");
+    itt_task_initial_step = __itt_string_handle_create("resolution refinement step");
+    itt_task_initial_step = __itt_string_handle_create("final resolution step");
+#endif
 }
 static void bayestar_init(void)
 {
@@ -941,6 +965,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     }
 
     log_radial_integrator *integrators[] = {NULL, NULL, NULL};
+    ITT_TASK_BEGIN(itt_domain, itt_task_lookup_table);
     {
         double pmax = 0;
         for (unsigned int iifo = 0; iifo < nifos; iifo ++)
@@ -958,6 +983,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 pmax, default_log_radial_integrator_size);
         }
     }
+    ITT_TASK_END(itt_domain);
     for (unsigned char k = 0; k < 3; k ++)
     {
         if (!integrators[k])
@@ -997,6 +1023,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     {
         double accum[npix0][nifos];
 
+        ITT_TASK_BEGIN(itt_domain, itt_task_initial_step);
         #pragma omp parallel for schedule(guided)
         for (unsigned long i = 0; i < npix0; i ++)
         {
@@ -1017,6 +1044,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                     u_points_weights);
             }
         }
+        ITT_TASK_END(itt_domain);
 
         if (OMP_WAS_INTERRUPTED)
             goto done;
@@ -1037,6 +1065,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         if (!pixels)
             goto done;
 
+        ITT_TASK_BEGIN(itt_domain, itt_task_refinement_step);
         #pragma omp parallel for schedule(guided)
         for (unsigned long i = len - npix0; i < len; i ++)
         {
@@ -1048,6 +1077,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 sample_rate, epochs, snrs, responses, locations, horizons,
                 u_points_weights);
         }
+        ITT_TASK_END(itt_domain)
 
         if (OMP_WAS_INTERRUPTED)
             goto done;
@@ -1057,6 +1087,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     }
 
     /* Evaluate distance layers. */
+    ITT_TASK_BEGIN(itt_domain, itt_task_final_step);
     #pragma omp parallel for schedule(guided)
     for (unsigned long i = 0; i < len; i ++)
     {
@@ -1068,6 +1099,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             sample_rate, epochs, snrs, responses, locations, horizons,
             u_points_weights);
     }
+    ITT_TASK_END(itt_domain);
 
 done:
     for (unsigned char k = 0; k < 3; k ++)

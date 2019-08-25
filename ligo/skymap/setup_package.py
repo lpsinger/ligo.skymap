@@ -1,3 +1,6 @@
+from astropy_helpers.setup_helpers import get_distutils_build_option
+
+
 def get_extensions():
     from astropy_helpers import openmp_helpers, setup_helpers
     from distutils.core import Extension
@@ -26,6 +29,10 @@ def get_extensions():
     kwargs['extra_compile_args'].extend(['-std=gnu99',
                                          '-DGSL_RANGE_CHECK_OFF'])
 
+    if get_distutils_build_option('with-ittnotify'):
+        kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
+        kwargs.setdefault('libraries', []).append('ittnotify')
+
     extension = Extension(
         name='ligo.skymap.core', language='c', sources=sources, **kwargs)
 
@@ -36,3 +43,9 @@ def get_extensions():
 
 def get_external_libraries():
     return ['chealpix']
+
+
+def get_build_options():
+    return [
+        ('with-ittnotify', "Instrument code with Intel's ittnotify API.", True)
+     ]

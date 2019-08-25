@@ -1,6 +1,6 @@
 def get_extensions():
-    from astropy_helpers import (
-        get_distutils_build_option, openmp_helpers, setup_helpers)
+    from astropy_helpers import (distutils_helpers, openmp_helpers,
+                                 setup_helpers)
     from distutils.core import Extension
 
     pkg_config_packages = ['gsl']
@@ -27,7 +27,7 @@ def get_extensions():
     kwargs['extra_compile_args'].extend(['-std=gnu99',
                                          '-DGSL_RANGE_CHECK_OFF'])
 
-    if get_distutils_build_option('with_ittnotify'):
+    if distutils_helpers.get_distutils_build_option('with_ittnotify'):
         kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
         kwargs.setdefault('libraries', []).append('ittnotify')
 

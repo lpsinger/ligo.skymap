@@ -1247,8 +1247,8 @@ double bayestar_log_posterior_toa_phoa_snr(
 
 static void test_cabs2(float complex z)
 {
-    double result = cabs2(z);
-    double expected = cabsf(z);
+    float result = cabs2(z);
+    float expected = cabsf(z);
     expected *= expected;
     gsl_test_abs(result, expected, 2 * GSL_FLT_EPSILON,
         "testing cabs2(%g + %g j)", crealf(z), cimagf(z));

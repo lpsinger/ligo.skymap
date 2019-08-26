@@ -53,7 +53,7 @@ def test_combine(tmpdir):
     d_mu = np.zeros_like(m1)
     d_sigma = np.ones_like(m1)
     d_norm = np.ones_like(m1)
-    io.write_sky_map(fn1, np.vstack((m1, d_mu, d_sigma, d_norm)).T)
+    io.write_sky_map(fn1, [m1, d_mu, d_sigma, d_norm])
 
     run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
 

@@ -30,21 +30,21 @@ documentation`_.
    binaries with BAYESTAR [#BAYESTAR]_, three-dimensional density estimation
    [#GoingTheDistance]_ [#GoingTheDistanceSupplement]_, cross-matching with
    galaxy catalogs, and visualization of gravitational-wave sky maps.
-   Reproduced from [#GROWTH-GW170817]_.
+   Reproduced from [#IlluminatingGravitationalWaves]_.
 
 .. [#BAYESTAR]
-   Singer, L. P., & Price, L. R. 2016, |prd|, 93, 024013.
+   Singer, L. P., & Price, L. R. 2016, *Phys. Rev. D*, 93, 024013.
    https://doi.org/10.1103/PhysRevD.93.024013
 
 .. [#GoingTheDistance]
-   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJL|, 829, L15.
-   https://doi.org/10.3847/2041-8205/829/1/L15
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, *Astropys. J. Lett.*,
+   829, L15. https://doi.org/10.3847/2041-8205/829/1/L15
 
 .. [#GoingTheDistanceSupplement]
-   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, |ApJS|, 226, 10.
-   https://doi.org/10.3847/0067-0049/226/1/10
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, *Astropys. J. Supp.*,
+   226, 10. https://doi.org/10.3847/0067-0049/226/1/10
 
-.. [#GROWTH-GW170817]
+.. [#IlluminatingGravitationalWaves]
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
    https://10.1126/science.aap9455
 

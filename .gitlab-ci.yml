@@ -104,6 +104,9 @@ wheel/cp37-cp37m-macosx:
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
+  only:
+    changes:
+      - requirements.txt
 
 dependencies/python3.6:
   <<: *dependencies

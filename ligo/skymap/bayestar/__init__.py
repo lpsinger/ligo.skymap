@@ -419,10 +419,13 @@ def rasterize(skymap, order=None):
     orig_order, _ = moc.uniq2nest(skymap['UNIQ'])
     orig_order = orig_order.max()
 
-    if order is None or order < 0 or order >= orig_order \
-            or 'DISTMU' not in skymap.dtype.fields.keys():
-        skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
-    else:
+    downsampling = (order is not None and 0 <= order < orig_order)
+
+    # If we are downsampling, then convert from distance parameters to
+    # distance moments times probability density so that the averaging
+    # that is automatically done by moc.rasterize() correctly marginalizes
+    # the moments.
+    if downsampling:
         skymap = Table(skymap, copy=True, meta=skymap.meta)
 
         probdensity = skymap['PROBDENSITY']
@@ -438,7 +441,10 @@ def rasterize(skymap, order=None):
         skymap['DISTVAR'] = probdensity * (
             np.square(diststd) + np.square(distmean))
 
-        skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
+    skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
+
+    # If we are downsampling, then convert back to distance parameters.
+    if downsampling:
         distmean = skymap.columns.pop('DISTMEAN') / skymap['PROBDENSITY']
         diststd = np.sqrt(
             skymap.columns.pop('DISTVAR') / skymap['PROBDENSITY']

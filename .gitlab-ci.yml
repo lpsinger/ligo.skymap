@@ -145,7 +145,7 @@ docs:
   <<: *in-tmpdir
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus", verbose=True))'
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --mpl", verbose=True))'
 
 test/python3.6:
   <<: *test
@@ -184,7 +184,7 @@ test/coverage:
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
-    - python setup.py test --coverage -V --args="--junit-xml=${CI_PROJECT_DIR}/junit.xml"
+    - python setup.py test --coverage -V --args="--mpl --junit-xml=${CI_PROJECT_DIR}/junit.xml"
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml

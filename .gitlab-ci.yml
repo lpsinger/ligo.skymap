@@ -145,7 +145,7 @@ docs:
   <<: *in-tmpdir
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args='--doctest-plus', verbose=True))'
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(verbose=True))'
 
 test/python3.6:
   <<: *test

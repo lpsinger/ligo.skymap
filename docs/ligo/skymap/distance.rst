@@ -3,36 +3,36 @@ Posterior Distance Distributions (`ligo.skymap.distance`)
 
 .. automodule:: ligo.skymap.distance
 
-    Conditional Distributions
-    -------------------------
+Conditional Distributions
+-------------------------
 
-    .. autofunction:: conditional_pdf
-    .. autofunction:: conditional_cdf
-    .. autofunction:: conditional_ppf
+.. autofunction:: conditional_pdf
+.. autofunction:: conditional_cdf
+.. autofunction:: conditional_ppf
 
-    Moments
-    -------
+Moments
+-------
 
-    .. autofunction:: moments_to_parameters
-    .. autofunction:: parameters_to_moments
-    .. autofunction:: parameters_to_marginal_moments
+.. autofunction:: moments_to_parameters
+.. autofunction:: parameters_to_moments
+.. autofunction:: parameters_to_marginal_moments
 
-    Marginal Distributions
-    ----------------------
+Marginal Distributions
+----------------------
 
-    .. autofunction:: marginal_pdf
-    .. autofunction:: marginal_cdf
-    .. autofunction:: marginal_ppf
+.. autofunction:: marginal_pdf
+.. autofunction:: marginal_cdf
+.. autofunction:: marginal_ppf
 
-    Kernel Density Estimation
-    -------------------------
+Kernel Density Estimation
+-------------------------
 
-    .. autofunction:: conditional_kde
-    .. autofunction:: cartesian_kde_to_moments
+.. autofunction:: conditional_kde
+.. autofunction:: cartesian_kde_to_moments
 
-    Miscellaneous
-    -------------
+Miscellaneous
+-------------
 
-    .. autofunction:: ud_grade
-    .. autofunction:: volume_render
-    .. autofunction:: principal_axes
+.. autofunction:: ud_grade
+.. autofunction:: volume_render
+.. autofunction:: principal_axes

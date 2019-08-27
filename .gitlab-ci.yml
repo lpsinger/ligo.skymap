@@ -181,8 +181,8 @@ test/coverage:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:
-    - export CC="$CC -coverage"
-    - export CXX="$CXX -coverage"
+    - export CC="gcc -coverage"
+    - export CXX="g++ -coverage"
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
     - python setup.py test --coverage -V --args="--mpl --junit-xml=${CI_PROJECT_DIR}/junit.xml"

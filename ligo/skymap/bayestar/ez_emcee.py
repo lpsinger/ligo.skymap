@@ -80,7 +80,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
     Notes
     -----
     The autocorrelation length, which has a complexity of :math:`O(N \log N)`
-    in the number of samples, is recalulated at geometrically progressing
+    in the number of samples, is recalculated at geometrically progressing
     intervals so that its amortized complexity per sample is constant. (In
     simpler terms, as the chains grow longer and the autocorrelation length
     takes longer to compute, we update it less frequently so that it is never

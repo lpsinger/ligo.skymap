@@ -177,11 +177,12 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
-    CFLAGS: -coverage
     OMP_NUM_THREADS: 1
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:
+    - export CC="$CC -coverage"
+    - export CXX="$CXX -coverage"
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
     - python setup.py test --coverage -V --args="--mpl --junit-xml=${CI_PROJECT_DIR}/junit.xml"

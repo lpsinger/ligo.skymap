@@ -106,7 +106,7 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
         >>> plt.plot(chain[:, 0], chain[:, 1], '.')
 
     .. image:: eggbox.png
-    '''
+    '''  # noqa: E501
 
     lo = np.asarray(lo)
     hi = np.asarray(hi)

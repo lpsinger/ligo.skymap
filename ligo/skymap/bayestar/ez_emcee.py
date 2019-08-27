@@ -29,7 +29,7 @@ def logp(x, lo, hi):
 def ez_emcee(log_prob_fn, lo, hi, nindep=200,
              ntemps=10, nwalkers=None, nburnin=500,
              args=(), kwargs={}, **options):
-    r"""Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
+    r'''Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
     automated convergence monitoring, progress tracking, and thinning.
 
     The parameters are bounded in the finite interval described by ``lo`` and
@@ -85,7 +85,28 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
     simpler terms, as the chains grow longer and the autocorrelation length
     takes longer to compute, we update it less frequently so that it is never
     more expensive than sampling the chain in the first place.)
-    """
+
+    Examples
+    --------
+
+    .. code-block:: pycon
+
+        >>> from ligo.skymap.bayestar.ez_emcee import ez_emcee
+        >>> from matplotlib import pyplot as plt
+        >>> import numpy as np
+        >>>
+        >>> def log_prob(params):
+        ...     """Eggbox function"""
+        ...     return 5 * np.log((2 + np.cos(0.5 * params).prod(-1)))
+        ...
+        >>> lo = [-3*np.pi, -3*np.pi]
+        >>> hi = [+3*np.pi, +3*np.pi]
+        >>> chain = ez_emcee(log_prob, lo, hi, vectorize=True)
+        Sampling:  51%|██  | 8628/16820 [00:04<00:04, 1966.74it/s, accept=0.535, acl=62]
+        >>> plt.plot(chain[:, 0], chain[:, 1], '.')
+
+    .. image:: eggbox.png
+    '''
 
     lo = np.asarray(lo)
     hi = np.asarray(hi)

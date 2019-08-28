@@ -180,8 +180,7 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
-    CC: gcc --coverage
-    CXX: g++ --coverage
+    CFLAGS: -coverage
     OMP_NUM_THREADS: 1
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir

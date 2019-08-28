@@ -23,17 +23,17 @@ at any point:
     >>> from matplotlib import pyplot as plt
     >>> import numpy as np
     >>> import pickle
-    >>> with open('skypost.obj', 'rb') as f:
-    ...     skypost = pickle.load(f)
+    >>> with open('skypost.obj', 'rb') as f:  # doctest: +SKIP
+    ...     skypost = pickle.load(f)  # doctest: +SKIP
     ...
     >>> coord = SkyCoord.from_name('NGC 4993')
     >>> distance = np.arange(1, 100)
     >>> coords = np.column_stack((np.tile(coord.ra.rad, len(distance)),
     ...                           np.tile(coord.dec.rad, len(distance)),
-    ...                           distance))
-    >>> post = skypost.posterior_spherical(coords)
-    >>> plt.plot(distance, post)
-    >>> plt.show()
+    ...                           distance))  # doctest: +SKIP
+    >>> post = skypost.posterior_spherical(coords)  # doctest: +SKIP
+    >>> plt.plot(distance, post)  # doctest: +SKIP
+    >>> plt.show()  # doctest: +SKIP
 
 .. argparse::
     :module: ligo.skymap.tool.ligo_skymap_from_samples

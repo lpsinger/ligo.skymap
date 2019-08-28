@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.10 (unreleased)
+0.1.10 (2019-08-28)
 ===================
 
 - Add installation instructions for both pip and conda.

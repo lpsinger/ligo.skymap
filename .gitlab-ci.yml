@@ -104,7 +104,7 @@ wheel/cp37-cp37m-macosx:
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
       EOF
-    - docker build --pull -t $IMAGE_TAG .
+    - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
   only:
     changes:

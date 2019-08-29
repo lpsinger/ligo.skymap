@@ -419,7 +419,9 @@ def rasterize(skymap, order=None):
     orig_order, _ = moc.uniq2nest(skymap['UNIQ'])
     orig_order = orig_order.max()
 
-    downsampling = (order is not None and 0 <= order < orig_order)
+    # Determine whether we need to do nontrivial downsampling.
+    downsampling = (order is not None and 0 <= order < orig_order
+                    and 'DISTMU' in skymap.dtype.fields.keys())
 
     # If we are downsampling, then convert from distance parameters to
     # distance moments times probability density so that the averaging

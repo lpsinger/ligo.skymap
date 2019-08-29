@@ -96,3 +96,17 @@ def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
     assert prob.sum() == pytest.approx(1)
     assert distmean == pytest.approx(expected_distmean)
     assert diststd == pytest.approx(expected_diststd)
+
+    # Now try removing the distance information.
+    skymap_2d = skymap['UNIQ', 'PROBDENSITY']
+    del skymap_2d.meta['distmean']
+    del skymap_2d.meta['diststd']
+    write_sky_map(input_filename, skymap_2d, moc=True, ovewrite=True)
+
+    args = ['ligo-skymap-flatten', input_filename, output_filename]
+    if nside_out is not None:
+        args.extend(['--nside', str(nside_out)])
+    run_entry_point(*args)
+
+    prob_2d, _ = read_sky_map(output_filename)
+    assert np.all(prob == prob_2d)

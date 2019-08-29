@@ -5,7 +5,7 @@ Changelog
 0.1.11 (unreleased)
 ===================
 
-- No changes yet.
+- Fix a bug that caused ``ligo-skymap-flatten`` to fail for 2D sky maps.
 
 0.1.10 (2019-08-28)
 ===================

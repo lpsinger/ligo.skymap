@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.11 (unreleased)
+0.1.11 (2019-08-28)
 ===================
 
 - Fix a regression that caused ``ligo-skymap-flatten`` to fail for 2D sky maps.

@@ -23,16 +23,20 @@ not reject an excessive number of events. We divide the intrinsic parameter
 space into a very coarse grid and we calculate the maximum horizon distance in
 each grid cell."""
 
-from . import ArgumentParser
+import functools
 
 from astropy import cosmology
 from astropy import units
+import lal
+import numpy as np
 
 from ..bayestar.filter import (
     InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd,
     SignalModel)
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc)
+
+lal.ClobberDebugLevel(lal.LALNDEBUG)
 
 
 def get_snr_at_z(cosmo, psds, H, z):
@@ -99,14 +103,14 @@ def main(args=None):
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw import ligolw
     import lal.series
-    import numpy as np
     from scipy import stats
 
-    args = parser().parse_args(args)
+    p = parser()
+    args = p.parse_args(args)
 
     xmldoc = ligolw.Document()
     xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
-    process = register_to_xmldoc(xmldoc, parser, args)
+    process = register_to_xmldoc(xmldoc, p, args)
 
     cosmo = cosmology.default_cosmology.get_cosmology_from_string(
         args.cosmology)

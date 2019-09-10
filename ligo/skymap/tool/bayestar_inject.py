@@ -31,8 +31,7 @@ import lal
 import numpy as np
 
 from ..bayestar.filter import (
-    InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd,
-    SignalModel)
+    InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd)
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc)
 
@@ -65,7 +64,8 @@ def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):
     nonzero = np.flatnonzero(H.data.data)
     if len(nonzero) == 0:
         return 0.0
-    H = lal.CutREAL8FrequencySeries(H, int(nonzero[0]), int(nonzero[-1] - nonzero[0] + 1))
+    H = lal.CutREAL8FrequencySeries(
+        H, int(nonzero[0]), int(nonzero[-1] - nonzero[0] + 1))
     func = functools.partial(get_snr_at_z, cosmo, psds, H)
     z = cosmology.z_at_value(func, min_snr, zmax=100)
     return cosmo.comoving_distance(z).value
@@ -83,7 +83,10 @@ def parser():
     parser.add_argument(
         '--cosmology', choices=cosmology.parameters.available,
         default='WMAP9', help='Cosmological model')
-    parser.add_argument('--distribution', choices=('bns_astro', 'bns_broad', 'nsbh_astro', 'nsbh_broad', 'bbh_astro', 'bbh_broad'), required=True)
+    parser.add_argument(
+        '--distribution', required=True, choices=(
+            'bns_astro', 'bns_broad', 'nsbh_astro', 'nsbh_broad',
+            'bbh_astro', 'bbh_broad'))
     parser.add_argument('--reference-psd', type=FileType('rb'), required=True)
     parser.add_argument('--f-low', type=float, default=25.0)
     parser.add_argument('--min-snr', type=float, default=4)
@@ -207,7 +210,8 @@ def main(args=None):
     # Read PSDs
     psds = list(
         lal.series.read_psd_xmldoc(
-            ligolw_utils.load_fileobj(args.reference_psd,
+            ligolw_utils.load_fileobj(
+                args.reference_psd,
                 contenthandler=lal.series.PSDContentHandler)[0]).values())
     psds = tuple(InterpolatedPSD(abscissa(psd), psd.data.data) for psd in psds)
 
@@ -222,7 +226,8 @@ def main(args=None):
     shape = tuple(len(param) for param in params)
     max_distance = np.reshape(
         ProgressBar.map(
-            functools.partial(get_max_comoving_distance, cosmo, psds,
+            functools.partial(
+                get_max_comoving_distance, cosmo, psds,
                 args.waveform, args.f_low, args.min_snr),
             np.column_stack([param.ravel() for param
                              in np.meshgrid(*params, indexing='ij')]),
@@ -297,12 +302,14 @@ def main(args=None):
             'distance', 'longitude', 'latitude',
             'inclination', 'polarization', 'coa_phase', 'time_geocent')
     for row in zip(*values):
-        sims.appendRow(**dict(dict.fromkeys(sims.validcolumns, None),
-            process_id=process.process_id,
-            simulation_id=sims.get_next_id(),
-            waveform=args.waveform,
-            f_lower=args.f_low,
-            **dict(zip(keys, row))))
+        sims.appendRow(
+            **dict(
+                dict.fromkeys(sims.validcolumns, None),
+                process_id=process.process_id,
+                simulation_id=sims.get_next_id(),
+                waveform=args.waveform,
+                f_lower=args.f_low,
+                **dict(zip(keys, row))))
 
     # Apply redshift factor
     colnames = ['distance', 'mass1', 'mass2']

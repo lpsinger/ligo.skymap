@@ -902,14 +902,7 @@ static void log_posterior_toa_phoa_snr_loop(
 {
     const npy_intp n = dimensions[0],
                nifos = dimensions[1],
-            nsamples = dimensions[2],
-                ndim = dimensions[3];
-
-    if (ndim != 3)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
-        return;
-    }
+            nsamples = dimensions[2];
 
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
 
@@ -1091,7 +1084,7 @@ PyMODINIT_FUNC PyInit_core(void)
             log_posterior_toa_phoa_snr_loops, no_ufunc_data,
             log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
             "log_posterior_toa_phoa_snr", NULL, 0,
-            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,ndim,ndim),(nifos,ndim),(nifos)->()"));
+            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,3,3),(nifos,3),(nifos)->()"));
 
     PyModule_AddObject(
         module, "conditional_pdf", PyUFunc_FromFuncAndData(

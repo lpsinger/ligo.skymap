@@ -529,7 +529,7 @@ static void toa_errors(
 
 /* Compute antenna factors from the detector response tensor and source
  * sky location, and return as a complex number F_plus + i F_cross. */
-static float complex complex_antenna_factor(
+static float complex antenna_factor(
     const float D[3][3],
     float ra,
     float dec,
@@ -731,7 +731,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
 
         /* Look up antenna factors */
         for (unsigned int iifo = 0; iifo < nifos; iifo++)
-            F[iifo] = complex_antenna_factor(
+            F[iifo] = antenna_factor(
                 responses[iifo], phi, M_PI_2-theta, gmst) * horizons[iifo];
 
         toa_errors(dt, theta, phi, gmst, nifos, locations, epochs);
@@ -1212,7 +1212,7 @@ double bayestar_log_posterior_toa_phoa_snr(
     /* Loop over detectors */
     for (unsigned int iifo = 0; iifo < nifos; iifo++)
     {
-        const double complex F = complex_antenna_factor(
+        const double complex F = antenna_factor(
             responses[iifo], ra, dec, gmst) * horizons[iifo];
 
         const double complex z_times_r =

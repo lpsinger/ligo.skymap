@@ -45,7 +45,9 @@ def test_bayestar_signal_amplitude_model(ra, dec, inclination, polarization,
     u = np.cos(inclination)
     u2 = np.square(u)
     F = get_complex_antenna(detector.response, ra, dec, gmst)
-    result = signal_amplitude_model(F, exp_i_twopsi, u, u2)
+    result = signal_amplitude_model(
+        np.complex64(F), np.complex64(exp_i_twopsi),
+        np.float32(u), np.float32(u2))
 
     abs_expected = 1 / get_eff_dist(
         detector, ra, dec, inclination, polarization, epoch, gmst)

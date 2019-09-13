@@ -960,12 +960,12 @@ static void signal_amplitude_model_loop(
         /* FIXME: args must be void ** to avoid alignment warnings */
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        *(double complex *) &args[4][i * steps[4]] =
+        *(float complex *) &args[4][i * steps[4]] =
             bayestar_signal_amplitude_model(
-            *(double complex *) &args[0][i * steps[0]],
-            *(double complex *) &args[1][i * steps[1]],
-            *(double *)         &args[2][i * steps[2]],
-            *(double *)         &args[3][i * steps[3]]);
+            *(float complex *) &args[0][i * steps[0]],
+            *(float complex *) &args[1][i * steps[1]],
+            *(float *)         &args[2][i * steps[2]],
+            *(float *)         &args[3][i * steps[3]]);
         #pragma GCC diagnostic pop
     }
 }
@@ -1023,8 +1023,8 @@ static const char double_ufunc_types[] = {
                   uniq2pixarea_types[] = {NPY_INT64, NPY_DOUBLE},
                   uniq2ang_types[] = {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
                   signal_amplitude_model_ufunc_types[] = {
-                      NPY_CDOUBLE, NPY_CDOUBLE, NPY_DOUBLE,
-                      NPY_DOUBLE, NPY_CDOUBLE};
+                      NPY_CFLOAT, NPY_CFLOAT, NPY_FLOAT,
+					  NPY_FLOAT, NPY_CFLOAT};
 
 static void *const no_ufunc_data[] = {NULL};
 

@@ -950,6 +950,33 @@ static void log_posterior_toa_phoa_snr_loop(
 }
 
 
+static void antenna_factor_loop(
+    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+{
+    const npy_intp n = dimensions[0];
+
+	/* FIXME: args must be void ** to avoid alignment warnings */
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wcast-align"
+    for (npy_intp i = 0; i < n; i ++)
+    {
+        float response[3][3];
+
+		for (int j = 0; j < 3; j ++)
+			for (int k = 0; k < 3; k ++)
+				response[j][k] = *(float *) &args[0][
+					i * steps[0] + j * steps[5] + k * steps[6]];
+
+        *(float complex *) &args[4][i * steps[4]] = antenna_factor(
+                response,
+                *(float *) &args[1][i * steps[1]],
+                *(float *) &args[2][i * steps[2]],
+                *(float *) &args[3][i * steps[3]]);
+    }
+	#pragma GCC diagnostic pop
+}
+
+
 static void signal_amplitude_model_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
@@ -1003,6 +1030,7 @@ static const PyUFuncGenericFunction
     uniq2pixarea_loops[] = {uniq2pixarea_loop},
     uniq2ang_loops[] = {uniq2ang_loop},
     log_posterior_toa_phoa_snr_loops[] = {log_posterior_toa_phoa_snr_loop},
+    antenna_factor_loops[] = {antenna_factor_loop},
     signal_amplitude_model_loops[] = {signal_amplitude_model_loop};
 
 static const char log_posterior_toa_phoa_snr_types[] = {
@@ -1022,6 +1050,8 @@ static const char double_ufunc_types[] = {
                   uniq2order_types[] = {NPY_INT64, NPY_INT8},
                   uniq2pixarea_types[] = {NPY_INT64, NPY_DOUBLE},
                   uniq2ang_types[] = {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
+				  antenna_factor_types[] = {
+					  NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
                   signal_amplitude_model_ufunc_types[] = {
                       NPY_CFLOAT, NPY_CFLOAT, NPY_FLOAT,
 					  NPY_FLOAT, NPY_CFLOAT};
@@ -1173,6 +1203,13 @@ PyMODINIT_FUNC PyInit_core(void)
             uniq2ang_loops, no_ufunc_data,
             uniq2ang_types, 1, 1, 2, PyUFunc_None,
             "uniq2ang", NULL, 0));
+
+    PyModule_AddObject(
+        module, "antenna_factor", PyUFunc_FromFuncAndDataAndSignature(
+            antenna_factor_loops, no_ufunc_data,
+            antenna_factor_types, 1, 4, 1, PyUFunc_None,
+            "antenna_factor", NULL, 0,
+            "(3,3),(),(),()->()"));
 
     PyModule_AddObject(
         module, "signal_amplitude_model", PyUFunc_FromFuncAndData(

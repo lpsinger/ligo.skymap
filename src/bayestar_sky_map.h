@@ -130,6 +130,16 @@ double bayestar_log_posterior_toa_phoa_snr(
     const double *horizons          /* SNR=1 horizon distances for each detector */
 );
 
+/* Compute antenna factors from the detector response tensor and source
+ * sky location, and return as a complex number F_plus + i F_cross. */
+float complex antenna_factor(
+    const float D[3][3],
+    float ra,
+    float dec,
+    float gmst
+);
+
+
 /* Expression for complex amplitude on arrival (without 1/distance factor).
  * This is more of an internal function, but it's *really* important that
  * it agrees with LAL conventions, so we expose it in the interface in order

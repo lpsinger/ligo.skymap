@@ -529,7 +529,7 @@ static void toa_errors(
 
 /* Compute antenna factors from the detector response tensor and source
  * sky location, and return as a complex number F_plus + i F_cross. */
-static float complex antenna_factor(
+float complex antenna_factor(
     const float D[3][3],
     float ra,
     float dec,

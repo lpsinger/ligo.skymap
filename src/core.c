@@ -256,12 +256,6 @@ static void parameters_to_moments_loop(
 static void volume_render_loop(
     char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
 {
-    if (dimensions[1] != 3)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
-        return;
-    }
-
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const long long nside = npix2nside64(dimensions[2]);
@@ -1151,7 +1145,7 @@ PyMODINIT_FUNC PyInit_core(void)
             volume_render_loops, no_ufunc_data,
             volume_render_ufunc_types, 1, 11, 1, PyUFunc_None,
             "volume_render", NULL, 0,
-            "(),(),(),(),(),(i,i),(),(n),(n),(n),(n)->()"));
+            "(),(),(),(),(),(3,3),(),(n),(n),(n),(n)->()"));
 
     PyModule_AddObject(
         module, "marginal_pdf", PyUFunc_FromFuncAndDataAndSignature(

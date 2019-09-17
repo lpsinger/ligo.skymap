@@ -5,7 +5,7 @@ Changelog
 0.1.12 (unreleased)
 ===================
 
-- No changes yet.
+- Build macOS wheels with OpenMP.
 
 0.1.11 (2019-08-28)
 ===================

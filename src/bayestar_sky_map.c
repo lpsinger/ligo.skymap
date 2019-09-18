@@ -104,7 +104,8 @@ static __itt_string_handle
     *itt_task_lookup_table,
     *itt_task_initial_step,
     *itt_task_refinement_step,
-    *itt_task_final_step;
+    *itt_task_final_step,
+    *itt_task_log_posterior;
 
 #define ITT_TASK_BEGIN(domain, task) __itt_task_begin((domain), __itt_null, __itt_null, (task))
 #define ITT_TASK_END(domain) __itt_task_end((domain))
@@ -822,6 +823,7 @@ static void bayestar_init_func(void)
     itt_task_initial_step = __itt_string_handle_create("initial resolution step");
     itt_task_refinement_step = __itt_string_handle_create("resolution refinement step");
     itt_task_final_step = __itt_string_handle_create("final resolution step");
+    itt_task_log_posterior = __itt_string_handle_create("log likelihood");
 #endif
 }
 static void bayestar_init(void)
@@ -1194,6 +1196,8 @@ double bayestar_log_posterior_toa_phoa_snr(
 ) {
     bayestar_init();
 
+    ITT_TASK_BEGIN(itt_domain, itt_task_log_posterior);
+
     if (distance < min_distance || distance > max_distance)
         return -INFINITY;
 
@@ -1235,6 +1239,8 @@ double bayestar_log_posterior_toa_phoa_snr(
 
     if (cosmology)
         result += log_dVC_dVL(distance);
+
+    ITT_TASK_END(itt_domain);
 
     return result;
 }

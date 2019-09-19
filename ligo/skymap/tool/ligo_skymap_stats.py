@@ -94,6 +94,7 @@ values with the following columns:
 """
 
 import sqlite3
+import sys
 
 import numpy as np
 
@@ -214,7 +215,8 @@ def process(fitsfilename):
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    p = parser()
+    opts = p.parse_args(args)
 
     from tqdm import tqdm
     from .. import omp
@@ -223,15 +225,21 @@ def main(args=None):
         dbfilename = None
     else:
         dbfilename = sqlite.get_filename(opts.database)
-    args = (dbfilename, opts.contour, opts.modes, opts.area, opts.cosmology)
+    startupargs = (
+        dbfilename, opts.contour, opts.modes, opts.area, opts.cosmology)
     if opts.jobs == 1:
         pool_map = map
     else:
         omp.num_threads = 1  # disable OpenMP parallelism
 
         from multiprocessing import Pool
-        pool_map = Pool(opts.jobs, startup, args).imap
-    startup(*args)
+        pool_map = Pool(opts.jobs, startup, startupargs).imap
+    startup(*startupargs)
+
+    if args is None:
+        print('#', *sys.argv, file=opts.output)
+    else:
+        print('#', p.prog, *args, file=opts.output)
 
     colnames = ['coinc_event_id']
     if opts.database is not None:

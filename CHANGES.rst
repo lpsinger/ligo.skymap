@@ -7,6 +7,9 @@ Changelog
 
 - Build macOS wheels with OpenMP.
 
+- Record the command line with which ``ligo-skymap-stats`` was called by
+  writing it to the ASCII table output as a comment line starting with ``#``.
+
 0.1.11 (2019-08-28)
 ===================
 

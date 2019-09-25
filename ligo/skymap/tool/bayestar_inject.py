@@ -161,7 +161,7 @@ def main(args=None):
             m1_dist = m2_dist = ns_broad_mass_dist
             x1_dist = x2_dist = ns_broad_spin_dist
         else:
-            raise AssertionError('This line hould not be reached.')
+            raise AssertionError('This line should not be reached.')
     elif args.distribution.startswith('nsbh_'):
         m1_min = bh_mass_min
         m1_max = bh_mass_max
@@ -186,7 +186,7 @@ def main(args=None):
             x1_dist = bh_broad_spin_dist
             x2_dist = ns_broad_spin_dist
         else:
-            raise AssertionError('This line hould not be reached.')
+            raise AssertionError('This line should not be reached.')
     elif args.distribution.startswith('bbh_'):
         m1_min = m2_min = bh_mass_min
         m1_max = m2_max = bh_mass_max
@@ -201,9 +201,9 @@ def main(args=None):
             m1_dist = m2_dist = bh_broad_mass_dist
             x1_dist = x2_dist = bh_broad_spin_dist
         else:
-            raise AssertionError('This line hould not be reached.')
+            raise AssertionError('This line should not be reached.')
     else:
-        raise AssertionError('This line hould not be reached.')
+        raise AssertionError('This line should not be reached.')
 
     dists = (m1_dist, m2_dist, x1_dist, x2_dist)
 

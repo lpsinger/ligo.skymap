@@ -53,7 +53,7 @@ def get_snr_at_z(cosmo, psds, H, z):
         result = snrs[-1]
     else:
         result = 0.0
-    return result / cosmo.angular_diameter_distance(z).value
+    return result / cosmo.comoving_distance(z).value
 
 
 def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):

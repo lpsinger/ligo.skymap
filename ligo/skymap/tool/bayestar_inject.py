@@ -72,7 +72,7 @@ def get_snr_at_z(cosmo, psds, H, z):
     HSs = [signal_psd_series(Hinterp, psd) for psd in psds]
     snrs = [np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
             for HS in HSs if np.any(HS.data.data != 0)]
-    return get_decisive_snr(snrs) / cosmo.comoving_distance(z).value
+    return get_decisive_snr(snrs) / cosmo.angular_diameter_distance(z).value
 
 
 def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):

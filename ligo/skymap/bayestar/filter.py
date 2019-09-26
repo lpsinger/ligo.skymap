@@ -403,6 +403,14 @@ class InterpolatedPSD(interpolate.interp1d):
         self._f_min = min(f)
         self._f_max = max(f)
 
+    @property
+    def f_min(self):
+        return self._f_min
+
+    @property
+    def f_max(self):
+        return self._f_max
+
     def __call__(self, f):
         f_min = np.min(f)
         f_max = np.max(f)

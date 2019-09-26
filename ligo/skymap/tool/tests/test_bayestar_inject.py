@@ -7,7 +7,8 @@ import pytest
 
 from ...bayestar.filter import (abs2, abscissa, get_f_lso, InterpolatedPSD,
                                 signal_psd_series, sngl_inspiral_psd)
-from ..bayestar_inject import get_decisive_snr, get_snr_at_z
+from ..bayestar_inject import (get_decisive_snr, get_max_comoving_distance,
+                               get_snr_at_z)
 
 
 def test_get_decisive_snr():
@@ -62,8 +63,38 @@ def test_get_snr_at_z(z):
     S = InterpolatedPSD(abscissa(psd)[:-1], psd.data.data[:-1])
     H = sngl_inspiral_psd('TaylorF2zeroPN', mass1, mass2)
 
-    snr = get_snr_at_z(cosmo, [S], H, z)
+    snr = get_snr_at_z(cosmo, [S], H.f0, H.deltaF, len(H.data.data),
+                       InterpolatedPSD(abscissa(H), H.data.data, fill_value=0),
+                       z)
     expected_snr = get_snr_at_z_lalsimulation(
         cosmo, z, mass1, mass2, f_low, f_high, df, S)
 
     assert snr == pytest.approx(expected_snr, rel=1e-3)
+
+
+def test_get_max_comoving_distance():
+    cosmo = default_cosmology.get_cosmology_from_string('WMAP9')
+    f_low = 10
+    f_high = 4096
+    df = 1
+    mass1 = mass2 = 1.4
+    z = 1.0
+
+    params = (mass1, mass2, 0.0, 0.0)
+
+    psd = lal.CreateREAL8FrequencySeries(
+        '', 0, f_low, df, lal.DimensionlessUnit, (f_high - f_low) // df)
+    lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
+    # Strip last sample because it's zero
+    S = InterpolatedPSD(abscissa(psd)[:-1], psd.data.data[:-1])
+
+    H = sngl_inspiral_psd('TaylorF2zeroPN', mass1, mass2)
+    snr = get_snr_at_z(cosmo, [S], H.f0, H.deltaF, len(H.data.data),
+                       InterpolatedPSD(abscissa(H), H.data.data, fill_value=0),
+                       z)
+
+    comoving_distance = get_max_comoving_distance(
+        cosmo, [S], 'TaylorF2zeroPN', f_low, snr, params)
+    expected_comoving_distance = cosmo.comoving_distance(z).value
+
+    assert comoving_distance == pytest.approx(expected_comoving_distance)

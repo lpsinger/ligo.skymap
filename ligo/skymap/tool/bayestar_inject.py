@@ -63,12 +63,11 @@ def get_decisive_snr(snrs):
         return 0.0
 
 
-def get_snr_at_z(cosmo, psds, H, z):
-    f = abscissa(H)
-    interp = InterpolatedPSD(f, H.data.data, fill_value=0)
+def get_snr_at_z(cosmo, psds, f0, df, n, H, z):
+    f = f0 + np.arange(n) * df
     Hinterp = lal.CreateREAL8FrequencySeries(
-        H.name, H.epoch, H.f0, H.deltaF, H.sampleUnits, len(H.data.data))
-    Hinterp.data.data[:] = interp(f * (1 + z))
+        '', 0, f0, df, lal.DimensionlessUnit, n)
+    Hinterp.data.data[:] = H(f * (1 + z))
     HSs = [signal_psd_series(Hinterp, psd) for psd in psds]
     snrs = [np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
             for HS in HSs if np.any(HS.data.data != 0)]
@@ -85,7 +84,9 @@ def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):
         return 0.0
     H = lal.CutREAL8FrequencySeries(
         H, int(nonzero[0]), int(nonzero[-1] - nonzero[0] + 1))
-    func = functools.partial(get_snr_at_z, cosmo, psds, H)
+    Hinterp = InterpolatedPSD(abscissa(H), H.data.data, fill_value=0)
+    func = functools.partial(
+        get_snr_at_z, cosmo, psds, H.f0, H.deltaF, len(H.data.data), Hinterp)
     z = cosmology.z_at_value(func, min_snr, zmax=100)
     return cosmo.comoving_distance(z).value
 

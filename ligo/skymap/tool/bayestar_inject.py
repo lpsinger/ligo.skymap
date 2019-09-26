@@ -38,6 +38,31 @@ from . import (
 lal.ClobberDebugLevel(lal.LALNDEBUG)
 
 
+def get_decisive_snr(snrs):
+    """Return the SNR for the trigger that decides if an event is detectable.
+
+    If there are two or more detectors, then the decisive SNR is the SNR of the
+    second loudest detector (since a coincidence of two or more events is
+    required). If there is only one detector, then the decisive SNR is just the
+    SNR of that detector. If there are no detectors, then 0 is returned.
+
+    Parameters
+    ----------
+    snrs : list
+        List of SNRs (floats).
+
+    Returns
+    -------
+    decisive_snr : float
+    """
+    if len(snrs) > 1:
+        return sorted(snrs)[-2]
+    elif len(snrs) == 1:
+        return snrs[0]
+    else:
+        return 0.0
+
+
 def get_snr_at_z(cosmo, psds, H, z):
     f = abscissa(H)
     interp = InterpolatedPSD(f, H.data.data, fill_value=0)
@@ -45,15 +70,9 @@ def get_snr_at_z(cosmo, psds, H, z):
         H.name, H.epoch, H.f0, H.deltaF, H.sampleUnits, len(H.data.data))
     Hinterp.data.data[:] = interp(f * (1 + z))
     HSs = [signal_psd_series(Hinterp, psd) for psd in psds]
-    snrs = sorted(np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
-                  for HS in HSs if np.any(HS.data.data != 0))
-    if len(snrs) > 1:
-        result = snrs[-2]
-    elif len(snrs) == 1:
-        result = snrs[-1]
-    else:
-        result = 0.0
-    return result / cosmo.comoving_distance(z).value
+    snrs = [np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
+            for HS in HSs if np.any(HS.data.data != 0)]
+    return get_decisive_snr(snrs) / cosmo.comoving_distance(z).value
 
 
 def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):

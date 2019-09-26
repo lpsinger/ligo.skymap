@@ -97,6 +97,10 @@ def z_for_comoving_distance(cosmo, distance):
         cosmo.comoving_distance, distance * units.Mpc, zmax=100)
 
 
+def assert_not_reached():
+    raise AssertionError('This line should not be reached.')
+
+
 def parser():
     parser = ArgumentParser(parents=[random_parser])
     parser.add_argument(
@@ -180,7 +184,7 @@ def main(args=None):
             m1_dist = m2_dist = ns_broad_mass_dist
             x1_dist = x2_dist = ns_broad_spin_dist
         else:
-            raise AssertionError('This line should not be reached.')
+            assert_not_reached()
     elif args.distribution.startswith('nsbh_'):
         m1_min = bh_mass_min
         m1_max = bh_mass_max
@@ -205,7 +209,7 @@ def main(args=None):
             x1_dist = bh_broad_spin_dist
             x2_dist = ns_broad_spin_dist
         else:
-            raise AssertionError('This line should not be reached.')
+            assert_not_reached()
     elif args.distribution.startswith('bbh_'):
         m1_min = m2_min = bh_mass_min
         m1_max = m2_max = bh_mass_max
@@ -220,9 +224,9 @@ def main(args=None):
             m1_dist = m2_dist = bh_broad_mass_dist
             x1_dist = x2_dist = bh_broad_spin_dist
         else:
-            raise AssertionError('This line should not be reached.')
+            assert_not_reached()
     else:
-        raise AssertionError('This line should not be reached.')
+        assert_not_reached()
 
     dists = (m1_dist, m2_dist, x1_dist, x2_dist)
 

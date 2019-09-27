@@ -37,8 +37,6 @@ from . import (
 
 lal.ClobberDebugLevel(lal.LALNDEBUG)
 
-__all__ = ('get_decisive_snr', 'get_snr_at_z')
-
 
 def get_decisive_snr(snrs):
     """Return the SNR for the trigger that decides if an event is detectable.

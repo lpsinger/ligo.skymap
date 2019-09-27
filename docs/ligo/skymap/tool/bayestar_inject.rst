@@ -8,5 +8,6 @@ Observing Scenarios Injection Tool (`bayestar-inject`)
 Python helper functions
 -----------------------
 
-.. automodule:: ligo.skymap.tool.bayestar_inject
-    :members:
+.. currentmodule:: ligo.skymap.tool.bayestar_inject
+.. autofunction:: get_decisive_snr
+.. autofunction:: get_snr_at_z

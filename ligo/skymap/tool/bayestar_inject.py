@@ -37,6 +37,8 @@ from . import (
 
 lal.ClobberDebugLevel(lal.LALNDEBUG)
 
+__all__ = ('get_decisive_snr', 'get_snr_at_z')
+
 
 def get_decisive_snr(snrs):
     """Return the SNR for the trigger that decides if an event is detectable.
@@ -64,6 +66,30 @@ def get_decisive_snr(snrs):
 
 
 def get_snr_at_z(cosmo, psds, f0, df, n, H, z):
+    r"""Calculate the SNR of a gravitational-wave signal at a given redshift.
+
+    Parameters
+    ----------
+    cosmo : :class:`astropy.cosmology.FLRW`
+        The cosmological model.
+    psds : list
+        A list of noise PSD functions for the detectors.
+    f0 : float
+        Frequency integration lower limit
+    df : float
+        Frequency integration step
+    n : int
+        Frequency integration number of steps
+    H : callable
+        Signal noise PSD function in the source frame
+    z : float
+        Redshift
+
+    Returns
+    -------
+    float : SNR
+        The SNR of the signal if it is at a redshift `z`
+    """
     f = f0 + np.arange(n) * df
     Hinterp = lal.CreateREAL8FrequencySeries(
         '', 0, f0, df, lal.DimensionlessUnit, n)

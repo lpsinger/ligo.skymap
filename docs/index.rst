@@ -125,6 +125,7 @@ BAYESTAR Rapid Sky Localization
    ligo/skymap/tool/bayestar_mcmc
    ligo/skymap/tool/bayestar_realize_coincs
    ligo/skymap/tool/bayestar_sample_model_psd
+   ligo/skymap/tool/bayestar_inject
 
 Sky Map Visualization
 ---------------------

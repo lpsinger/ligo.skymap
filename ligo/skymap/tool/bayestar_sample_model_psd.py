@@ -20,9 +20,8 @@ detectors by evaluating a model power noise sensitivity curve."""
 
 from argparse import SUPPRESS
 import inspect
-import os
 
-from . import ArgumentParser, FileType, register_to_xmldoc
+from . import ArgumentParser, FileType, register_to_xmldoc, write_fileobj
 
 psd_name_prefix = 'SimNoisePSD'
 
@@ -81,7 +80,6 @@ def main(args=None):
     p = parser()
     opts = p.parse_args(args)
 
-    import glue.ligolw.utils
     import lal.series
     import lalsimulation
     import numpy as np
@@ -127,8 +125,4 @@ def main(args=None):
 
     xmldoc = lal.series.make_psd_xmldoc(psds)
     register_to_xmldoc(xmldoc, p, opts)
-
-    with glue.ligolw.utils.SignalsTrap():
-        glue.ligolw.utils.write_fileobj(
-            xmldoc, opts.output,
-            gz=(os.path.splitext(opts.output.name)[-1] == ".gz"))
+    write_fileobj(xmldoc, opts.output)

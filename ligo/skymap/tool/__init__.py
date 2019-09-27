@@ -554,3 +554,15 @@ def iterlines(file, start_message=start_msg, stop_message=stop_msg):
 
     if is_tty:
         print(stop_message, file=sys.stderr)
+
+
+def should_gzip(filename):
+    _, ext = os.path.splitext(filename)
+    return ext == '.gz'
+
+
+def write_fileobj(xmldoc, f):
+    import glue.ligolw.utils
+
+    with glue.ligolw.utils.SignalsTrap():
+        glue.ligolw.utils.write_fileobj(xmldoc, f, gz=should_gzip(f.name))

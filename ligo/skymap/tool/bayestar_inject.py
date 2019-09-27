@@ -33,7 +33,7 @@ import numpy as np
 from ..bayestar.filter import (
     InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd)
 from . import (
-    ArgumentParser, FileType, random_parser, register_to_xmldoc)
+    ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
 
 lal.ClobberDebugLevel(lal.LALNDEBUG)
 
@@ -122,7 +122,6 @@ def parser():
 
 def main(args=None):
     import itertools
-    import os
 
     from astropy.utils.console import ProgressBar
     from glue.ligolw import lsctables
@@ -350,7 +349,4 @@ def main(args=None):
     ligolw_process.set_process_end_time(process)
 
     # Write output file.
-    with ligolw_utils.SignalsTrap():
-        ligolw_utils.write_fileobj(
-            xmldoc, args.output,
-            gz=(os.path.splitext(args.output.name)[-1] == ".gz"))
+    write_fileobj(xmldoc, args.output)

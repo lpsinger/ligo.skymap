@@ -32,13 +32,13 @@ there is a choice for how to generate perturbed time and phase measurements:
 
 import copy
 import functools
-import os
 
 import lal
 import numpy as np
 
 from . import (
-    ArgumentParser, EnableAction, FileType, random_parser, register_to_xmldoc)
+    ArgumentParser, EnableAction, FileType, random_parser, register_to_xmldoc,
+    write_fileobj)
 
 # Squelch annoying and uninformative LAL log messages.
 lal.ClobberDebugLevel(lal.LALNDEBUG)
@@ -492,7 +492,4 @@ def main(args=None):
     ligolw_process.set_process_end_time(process)
 
     # Write output file.
-    with ligolw_utils.SignalsTrap():
-        ligolw_utils.write_fileobj(
-            xmldoc, opts.output,
-            gz=(os.path.splitext(opts.output.name)[-1] == ".gz"))
+    write_fileobj(xmldoc, opts.output)

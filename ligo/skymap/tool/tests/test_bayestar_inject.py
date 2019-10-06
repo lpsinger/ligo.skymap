@@ -8,7 +8,7 @@ import pytest
 from ...bayestar.filter import (abs2, abscissa, get_f_lso, InterpolatedPSD,
                                 signal_psd_series, sngl_inspiral_psd)
 from ..bayestar_inject import (get_decisive_snr, get_max_comoving_distance,
-                               get_snr_at_z)
+                               get_snr_at_z, z_at_comoving_distance)
 
 
 def test_get_decisive_snr():
@@ -98,3 +98,11 @@ def test_get_max_comoving_distance():
     expected_comoving_distance = cosmo.comoving_distance(z).value
 
     assert comoving_distance == pytest.approx(expected_comoving_distance)
+
+
+def test_z_at_comoving_distance():
+    cosmo = default_cosmology.get_cosmology_from_string('WMAP9')
+    expected_redshift = np.concatenate(([0], np.logspace(-8, 3), [np.inf]))
+    comoving_distance = cosmo.comoving_distance(expected_redshift)
+    redshift = z_at_comoving_distance(cosmo, comoving_distance)
+    np.testing.assert_allclose(redshift, expected_redshift)

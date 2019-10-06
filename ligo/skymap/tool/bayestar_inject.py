@@ -26,9 +26,14 @@ each grid cell."""
 import functools
 
 from astropy import cosmology
+from astropy.cosmology import LambdaCDM
+from astropy.cosmology.core import vectorize_if_needed
 from astropy import units
+from astropy.units import dimensionless_unscaled
 import lal
 import numpy as np
+from scipy.integrate import quad
+from scipy.optimize import root_scalar
 
 from ..bayestar.filter import (
     InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd)
@@ -115,11 +120,53 @@ def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):
     return cosmo.comoving_distance(z).value
 
 
-def z_for_comoving_distance(cosmo, distance):
-    if distance == 0.0:
-        return 0.0
-    return cosmology.z_at_value(
-        cosmo.comoving_distance, distance * units.Mpc, zmax=100)
+def z_at_comoving_distance(cosmo, d):
+    """Get the redshift as a function of comoving distance.
+
+    Parameters
+    ----------
+    cosmo : :class:`astropy.cosmology.LambdaCDM`
+        The cosmological model.
+    d : :class:`astropy.units.Quantity`
+        The distance in Mpc (may be scalar or a Numpy array).
+
+    Returns
+    -------
+    z : float, :class:`numpy.ndarray`
+        The redshift.
+
+    Notes
+    -----
+    This function is optimized for ΛCDM cosmologies. For more general
+    cosmological models, use :func:`astropy.cosmology.z_at_value`.
+
+    The optimization consists of passing Scipy's root finder a bracketing
+    interval that is guaranteed to contain the solution. This enables
+    convergence across (nearly) all physically valid values of the comoving
+    distance without the need to tune `z_min` and `z_max`.
+    """
+    if not isinstance(cosmo, LambdaCDM):
+        raise NotImplemented(
+            'This method is optimized for LambdaCDM cosmologies. For more '
+            'general cosmologies, use astropy.cosmology.z_at_value.')
+
+    inv_efunc_scalar_args = cosmo._inv_efunc_scalar_args
+    r = (d / cosmo.hubble_distance).to_value(
+        dimensionless_unscaled)
+    r_max = (cosmo.comoving_distance(np.inf) / cosmo.hubble_distance).to_value(
+        dimensionless_unscaled)
+    fprime = lambda z: cosmo._inv_efunc_scalar(z, *inv_efunc_scalar_args)
+    eps = np.finfo(np.float).eps
+
+    def z_at_r(r):
+        if r > r_max:
+            return np.nan
+        f = lambda z: quad(fprime, 0, z)[0] - r
+        z_max = r / np.square(1 - np.sqrt(r / r_max))
+        xtol = max(2e-12 * z_max, eps)
+        return root_scalar(f, bracket=[r, z_max], xtol=xtol).root
+
+    return vectorize_if_needed(z_at_r, r)
 
 
 def assert_not_reached():  # pragma: no cover
@@ -361,10 +408,7 @@ def main(args=None):
     # Apply redshift factor
     colnames = ['distance', 'mass1', 'mass2']
     columns = [sims.getColumnByName(colname) for colname in colnames]
-    zp1 = 1 + np.asarray(ProgressBar.map(
-        functools.partial(z_for_comoving_distance, cosmo),
-        np.asarray(columns[0]),
-        multiprocess=True))
+    zp1 = 1 + z_at_comoving_distance(cosmo, np.asarray(columns[0]) * units.Mpc)
     for column in columns:
         column[:] = np.asarray(column) * zp1
 

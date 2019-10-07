@@ -146,7 +146,7 @@ def z_at_comoving_distance(cosmo, d):
     distance without the need to tune `z_min` and `z_max`.
     """
     if not isinstance(cosmo, LambdaCDM):
-        raise NotImplemented(
+        raise NotImplementedError(
             'This method is optimized for LambdaCDM cosmologies. For more '
             'general cosmologies, use astropy.cosmology.z_at_value.')
 

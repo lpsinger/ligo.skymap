@@ -352,7 +352,6 @@ def main(args=None):
     params = m1, m2, x1, x2
 
     # Calculate the maximum distance on the grid.
-    shape = tuple(len(param) for param in params)
     max_z = np.reshape(
         progress_map(
             functools.partial(
@@ -361,7 +360,7 @@ def main(args=None):
             np.column_stack([param.ravel() for param
                              in np.meshgrid(*params, indexing='ij')]),
             multiprocess=True),
-        shape)
+        tuple(len(param) for param in params))
     max_distance = cosmo.comoving_distance(max_z).to_value(units.Mpc)
 
     # Make sure that all distances are valid.
@@ -389,7 +388,8 @@ def main(args=None):
 
     # Draw random grid cells
     dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
-    indices = np.unravel_index(dist.rvs(size=args.nsamples), shape)
+    indices = np.unravel_index(
+        dist.rvs(size=args.nsamples), max_distance.shape)
 
     # Draw random intrinsic params from each cell
     values = [

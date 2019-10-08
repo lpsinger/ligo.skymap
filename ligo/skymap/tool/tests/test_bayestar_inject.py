@@ -8,7 +8,7 @@ import pytest
 from ...bayestar.filter import (abs2, abscissa, get_f_lso, InterpolatedPSD,
                                 signal_psd_series)
 from ..bayestar_inject import (get_decisive_snr, z_at_snr,
-                               z_at_comoving_distance)
+                               z_at_comoving_distance, cell_max)
 
 
 def test_get_decisive_snr():
@@ -76,3 +76,17 @@ def test_z_at_comoving_distance():
     comoving_distance = cosmo.comoving_distance(expected_redshift)
     redshift = z_at_comoving_distance(cosmo, comoving_distance)
     np.testing.assert_allclose(redshift, expected_redshift)
+
+
+def test_cell_max():
+    values = np.random.uniform(size=(5, 6, 7))
+    maxima = cell_max(values)
+    np.testing.assert_array_equal(maxima.shape, np.asarray(values.shape) - 1)
+    assert np.all(maxima >= values[+1:, +1:, +1:])
+    assert np.all(maxima >= values[+1:, +1:, :-1])
+    assert np.all(maxima >= values[+1:, :-1, +1:])
+    assert np.all(maxima >= values[+1:, :-1, :-1])
+    assert np.all(maxima >= values[:-1, +1:, +1:])
+    assert np.all(maxima >= values[:-1, +1:, :-1])
+    assert np.all(maxima >= values[:-1, :-1, +1:])
+    assert np.all(maxima >= values[:-1, :-1, :-1])

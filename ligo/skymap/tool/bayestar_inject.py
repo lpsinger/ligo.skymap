@@ -35,6 +35,7 @@ import numpy as np
 from scipy.integrate import quad, fixed_quad
 from scipy.interpolate import interp1d
 from scipy.optimize import root_scalar
+from scipy.ndimage import maximum_filter
 
 from ..bayestar.filter import sngl_inspiral_psd
 from . import (
@@ -183,6 +184,28 @@ def z_at_comoving_distance(cosmo, d):
     return vectorize_if_needed(z_at_r, r)
 
 
+def cell_max(values):
+    r"""
+    Find pairwise max of consecutive elements across all axes of an array.
+
+    Parameters
+    ----------
+    values : :class:`numpy.ndarray`
+        An input array of :math:`n` dimensions,
+        :math:`(m_0, m_1, \dots, m_{n-1})`.
+
+    Returns
+    -------
+    maxima : :class:`numpy.ndarray`
+        An input array of :math:`n` dimensions, each with a length 1 less than
+        the input array,
+        :math:`(m_0 - 1, m_1 - 1, \dots, m_{n-1} - 1)`.
+    """
+    maxima = maximum_filter(values, size=2, mode='constant')
+    indices = [slice(1, None)] * np.ndim(values)
+    return maxima[indices]
+
+
 def assert_not_reached():  # pragma: no cover
     raise AssertionError('This line should not be reached.')
 
@@ -206,8 +229,6 @@ def parser():
 
 
 def main(args=None):
-    import itertools
-
     from glue.ligolw import lsctables
     from glue.ligolw.utils import process as ligolw_process
     from glue.ligolw import utils as ligolw_utils
@@ -346,31 +367,17 @@ def main(args=None):
     # Make sure that we filled in all entries
     assert np.all(max_distance >= 0)
 
-    # Find piecewise constant approximate upper bound on distance:
-    # Calculate approximate gradient at each grid point, then approximate
-    # function with a plane at that point, and find the maximum of that plane
-    # in a square patch around that point
-    max_distance_grad = np.asarray(np.gradient(max_distance, *params))
-    param_edges = [
-        np.concatenate(((p[0],), 0.5 * (p[1:] + p[:-1]), (p[-1],)))
-        for p in params]
-    param_los = [param_edge[:-1] for param_edge in param_edges]
-    param_his = [param_edge[1:] for param_edge in param_edges]
-    lo_hi_deltas = [((param_lo, param_hi) - param)
-                    for param_lo, param_hi, param
-                    in zip(param_los, param_his, params)]
-    corner_deltas = np.asarray([np.meshgrid(*delta, indexing='ij')
-                                for delta in itertools.product(*lo_hi_deltas)])
-    max_distance += (corner_deltas * max_distance_grad).sum(1).max(0)
+    # Find piecewise constant approximate upper bound on distance.
+    max_distance = cell_max(max_distance)
 
     # Truncate maximum distance at the particle horizon.
     max_distance = np.minimum(
         max_distance, cosmo.comoving_distance(np.inf).value)
 
     # Calculate V * T in each grid cell
-    cdf_los = [dist.cdf(param_lo) for param_lo, dist in zip(param_los, dists)]
-    cdf_his = [dist.cdf(param_hi) for param_hi, dist in zip(param_his, dists)]
-    cdfs = [cdf_hi - cdf_lo for cdf_lo, cdf_hi in zip(cdf_los, cdf_his)]
+    cdfs = [dist.cdf(param) for param, dist in zip(params, dists)]
+    cdf_los = [cdf[:-1] for cdf in cdfs]
+    cdfs = [np.diff(cdf) for cdf in cdfs]
     probs = np.prod(np.meshgrid(*cdfs, indexing='ij'), axis=0)
     probs /= probs.sum()
     probs *= 4/3*np.pi*max_distance**3

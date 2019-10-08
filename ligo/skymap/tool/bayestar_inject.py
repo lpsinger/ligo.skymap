@@ -32,7 +32,8 @@ from astropy import units
 from astropy.units import dimensionless_unscaled
 import lal
 import numpy as np
-from scipy.integrate import quad
+from scipy.integrate import quad, fixed_quad
+from scipy.interpolate import interp1d
 from scipy.optimize import root_scalar
 
 from ..bayestar.filter import (
@@ -68,56 +69,70 @@ def get_decisive_snr(snrs):
         return 0.0
 
 
-def get_snr_at_z(cosmo, psds, f0, df, n, H, z):
-    r"""Calculate the SNR of a gravitational-wave signal at a given redshift.
+def lo_hi_nonzero(x):
+    nonzero = np.flatnonzero(x)
+    return nonzero[0], nonzero[-1]
+
+
+def z_at_snr(cosmo, psds, waveform, f_low, snr, params):
+    """
+    Get redshift at which a waveform attains a given SNR.
 
     Parameters
     ----------
     cosmo : :class:`astropy.cosmology.FLRW`
         The cosmological model.
     psds : list
-        A list of noise PSD functions for the detectors.
-    f0 : float
-        Frequency integration lower limit
-    df : float
-        Frequency integration step
-    n : int
-        Frequency integration number of steps
-    H : callable
-        Signal noise PSD function in the source frame
-    z : float
-        Redshift
+        List of :class:`lal.REAL8FrequencySeries` objects.
+    waveform : str
+        Waveform approximant name.
+    f_low : float
+        Low-frequency cutoff for template.
+    snr : float
+        Target SNR.
+    params : list
+        List of waveform parameters: mass1, mass2, spin1z, spin2z.
 
     Returns
     -------
-    float : SNR
-        The SNR of the signal if it is at a redshift `z`
+    comoving_distance : float
+        Comoving distance in Mpc.
     """
-    f = f0 + np.arange(n) * df
-    Hinterp = lal.CreateREAL8FrequencySeries(
-        '', 0, f0, df, lal.DimensionlessUnit, n)
-    Hinterp.data.data[:] = H(f * (1 + z))
-    HSs = [signal_psd_series(Hinterp, psd) for psd in psds]
-    snrs = [np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
-            for HS in HSs if np.any(HS.data.data != 0)]
-    return get_decisive_snr(snrs) / cosmo.angular_diameter_distance(z).value
-
-
-def get_max_comoving_distance(cosmo, psds, waveform, f_low, min_snr, params):
+    # Construct waveform
     mass1, mass2, spin1z, spin2z = params
-    H = sngl_inspiral_psd(waveform, f_low=f_low,
-                          mass1=mass1, mass2=mass2,
-                          spin1z=spin1z, spin2z=spin2z)
-    nonzero = np.flatnonzero(H.data.data)
-    if len(nonzero) == 0:
-        return 0.0
-    H = lal.CutREAL8FrequencySeries(
-        H, int(nonzero[0]), int(nonzero[-1] - nonzero[0] + 1))
-    Hinterp = InterpolatedPSD(abscissa(H), H.data.data, fill_value=0)
-    func = functools.partial(
-        get_snr_at_z, cosmo, psds, H.f0, H.deltaF, len(H.data.data), Hinterp)
-    z = cosmology.z_at_value(func, min_snr, zmax=100)
-    return cosmo.comoving_distance(z).value
+    series = sngl_inspiral_psd(waveform, f_low=f_low,
+                               mass1=mass1, mass2=mass2,
+                               spin1z=spin1z, spin2z=spin2z)
+    i_lo, i_hi = lo_hi_nonzero(series.data.data)
+    log_f = np.log(series.f0 + series.deltaF * np.arange(i_lo, i_hi + 1))
+    log_f_lo = log_f[0]
+    log_f_hi = log_f[-1]
+    num = interp1d(
+        log_f, np.log(series.data.data[i_lo:i_hi + 1]),
+        fill_value=-np.inf, bounds_error=False, assume_sorted=True)
+
+    denoms = []
+    for series in psds:
+        i_lo, i_hi = lo_hi_nonzero(
+            np.isfinite(series.data.data) & (series.data.data != 0))
+        log_f = np.log(series.f0 + series.deltaF * np.arange(i_lo, i_hi + 1))
+        denom = interp1d(
+            log_f, log_f - np.log(series.data.data[i_lo:i_hi + 1]),
+            fill_value=-np.inf, bounds_error=False, assume_sorted=True)
+        denoms.append(denom)
+
+    def snr_at_z(z):
+        logzp1 = np.log(z + 1)
+        integrand = lambda log_f: [
+            np.exp(num(log_f + logzp1) + denom(log_f)) for denom in denoms]
+        integrals, _ = fixed_quad(
+            integrand, log_f_lo, log_f_hi - logzp1, n=1024)
+        snr = get_decisive_snr(np.sqrt(4 * integrals))
+        with np.errstate(divide='ignore'):
+            snr /= cosmo.angular_diameter_distance(z).to_value(units.Mpc)
+        return snr
+
+    return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
 
 
 def z_at_comoving_distance(cosmo, d):
@@ -302,12 +317,13 @@ def main(args=None):
     dists = (m1_dist, m2_dist, x1_dist, x2_dist)
 
     # Read PSDs
-    psds = list(
+    psd_series = list(
         lal.series.read_psd_xmldoc(
             ligolw_utils.load_fileobj(
                 args.reference_psd,
                 contenthandler=lal.series.PSDContentHandler)[0]).values())
-    psds = tuple(InterpolatedPSD(abscissa(psd), psd.data.data) for psd in psds)
+    psds = tuple(
+        InterpolatedPSD(abscissa(psd), psd.data.data) for psd in psd_series)
 
     # Construct mass1, mass2, spin1z, spin2z grid.
     m1 = np.geomspace(m1_min, m1_max, 5)
@@ -318,15 +334,16 @@ def main(args=None):
 
     # Calculate the maximum distance on the grid.
     shape = tuple(len(param) for param in params)
-    max_distance = np.reshape(
+    max_z = np.reshape(
         ProgressBar.map(
             functools.partial(
-                get_max_comoving_distance, cosmo, psds,
+                z_at_snr, cosmo, psd_series,
                 args.waveform, args.f_low, args.min_snr),
             np.column_stack([param.ravel() for param
                              in np.meshgrid(*params, indexing='ij')]),
             multiprocess=True),
         shape)
+    max_distance = cosmo.comoving_distance(max_z).to_value(units.Mpc)
 
     # Make sure that we filled in all entries
     assert np.all(max_distance >= 0)

@@ -202,7 +202,7 @@ def cell_max(values):
         :math:`(m_0 - 1, m_1 - 1, \dots, m_{n-1} - 1)`.
     """
     maxima = maximum_filter(values, size=2, mode='constant')
-    indices = [slice(1, None)] * np.ndim(values)
+    indices = (slice(1, None),) * np.ndim(values)
     return maxima[indices]
 
 

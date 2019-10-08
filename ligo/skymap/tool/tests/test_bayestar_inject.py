@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from ...bayestar.filter import (abs2, abscissa, get_f_lso, InterpolatedPSD,
-                                signal_psd_series, sngl_inspiral_psd)
+                                signal_psd_series)
 from ..bayestar_inject import (get_decisive_snr, z_at_snr,
                                z_at_comoving_distance)
 

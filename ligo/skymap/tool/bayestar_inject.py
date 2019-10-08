@@ -36,8 +36,7 @@ from scipy.integrate import quad, fixed_quad
 from scipy.interpolate import interp1d
 from scipy.optimize import root_scalar
 
-from ..bayestar.filter import (
-    InterpolatedPSD, abscissa, signal_psd_series, sngl_inspiral_psd)
+from ..bayestar.filter import sngl_inspiral_psd
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
 
@@ -318,13 +317,11 @@ def main(args=None):
     dists = (m1_dist, m2_dist, x1_dist, x2_dist)
 
     # Read PSDs
-    psd_series = list(
+    psds = list(
         lal.series.read_psd_xmldoc(
             ligolw_utils.load_fileobj(
                 args.reference_psd,
                 contenthandler=lal.series.PSDContentHandler)[0]).values())
-    psds = tuple(
-        InterpolatedPSD(abscissa(psd), psd.data.data) for psd in psd_series)
 
     # Construct mass1, mass2, spin1z, spin2z grid.
     m1 = np.geomspace(m1_min, m1_max, 5)
@@ -338,7 +335,7 @@ def main(args=None):
     max_z = np.reshape(
         progress_map(
             functools.partial(
-                z_at_snr, cosmo, psd_series,
+                z_at_snr, cosmo, psds,
                 args.waveform, args.f_low, args.min_snr),
             np.column_stack([param.ravel() for param
                              in np.meshgrid(*params, indexing='ij')]),

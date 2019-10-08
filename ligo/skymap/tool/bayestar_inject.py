@@ -345,10 +345,10 @@ def main(args=None):
                 contenthandler=lal.series.PSDContentHandler)[0]).values())
 
     # Construct mass1, mass2, spin1z, spin2z grid.
-    m1 = np.geomspace(m1_min, m1_max, 5)
-    m2 = np.geomspace(m2_min, m2_max, 5)
-    x1 = np.linspace(x1_min, x1_max, 5)
-    x2 = np.linspace(x2_min, x2_max, 5)
+    m1 = np.geomspace(m1_min, m1_max, 10)
+    m2 = np.geomspace(m2_min, m2_max, 10)
+    x1 = np.linspace(x1_min, x1_max, 10)
+    x2 = np.linspace(x2_min, x2_max, 10)
     params = m1, m2, x1, x2
 
     # Calculate the maximum distance on the grid.

@@ -209,13 +209,14 @@ def parser():
 def main(args=None):
     import itertools
 
-    from astropy.utils.console import ProgressBar
     from glue.ligolw import lsctables
     from glue.ligolw.utils import process as ligolw_process
     from glue.ligolw import utils as ligolw_utils
     from glue.ligolw import ligolw
     import lal.series
     from scipy import stats
+
+    from ..util import progress_map
 
     p = parser()
     args = p.parse_args(args)
@@ -335,7 +336,7 @@ def main(args=None):
     # Calculate the maximum distance on the grid.
     shape = tuple(len(param) for param in params)
     max_z = np.reshape(
-        ProgressBar.map(
+        progress_map(
             functools.partial(
                 z_at_snr, cosmo, psd_series,
                 args.waveform, args.f_low, args.min_snr),

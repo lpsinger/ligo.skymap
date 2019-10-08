@@ -364,15 +364,15 @@ def main(args=None):
         shape)
     max_distance = cosmo.comoving_distance(max_z).to_value(units.Mpc)
 
-    # Make sure that we filled in all entries
-    assert np.all(max_distance >= 0)
+    # Make sure that all distances are valid.
+    particle_horizon = cosmo.comoving_distance(np.inf).to_value(units.Mpc)
+    assert np.all(max_distance >= 0), \
+        'some distances are negative'
+    assert np.all(max_distance <= particle_horizon), \
+        'some distances are greater than particle horizon'
 
     # Find piecewise constant approximate upper bound on distance.
     max_distance = cell_max(max_distance)
-
-    # Truncate maximum distance at the particle horizon.
-    max_distance = np.minimum(
-        max_distance, cosmo.comoving_distance(np.inf).value)
 
     # Calculate V * T in each grid cell
     cdfs = [dist.cdf(param) for param, dist in zip(params, dists)]

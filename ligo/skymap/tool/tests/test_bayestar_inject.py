@@ -17,7 +17,7 @@ def test_get_decisive_snr():
     assert get_decisive_snr([4.0]) == 4.0
 
 
-def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, S):
+def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, psd):
     params = lal.CreateDict()
     lalsimulation.SimInspiralWaveformParamsInsertPNPhaseOrder(
         params, lalsimulation.PNORDER_NEWTONIAN)
@@ -27,26 +27,14 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, S):
         params, z)
     f_max = get_f_lso(mass1, mass2) / (1 + z)
 
-    # "Signal" waveform with requested inclination angle
-    Hplus, Hcross = lalsimulation.SimInspiralFD(
+    # "Signal" waveform with requested inclination angle.
+    # Take (arbitrarily) only the plus polarization.
+    h, _ = lalsimulation.SimInspiralFD(
         mass1 * lal.MSUN_SI, mass2 * lal.MSUN_SI,
         0, 0, 0, 0, 0, 0, cosmo.comoving_distance(z).to_value(u.m),
         0, 0, 0, 0, 0, 1e-3 * (f_max - f_low), f_low, f_max, f_low,
         params, lalsimulation.TaylorF2)
-
-    # Assume Fplus=1, Fcross=0, so take Hplus only
-    H = Hplus.data.data
-
-    # Throw away signal above merger.
-    H[abscissa(Hplus) >= f_max] = 0
-
-    # Create output frequency series.
-    signal_psd = lal.CreateREAL8FrequencySeries(
-        'signal PSD', 0, Hplus.f0, Hplus.deltaF, Hplus.sampleUnits**2, len(H))
-    signal_psd.data.data = abs2(H)
-    HS = signal_psd_series(signal_psd, S)
-    assert np.all(np.isfinite(HS.data.data))
-    return np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
+    return lalsimulation.MeasureSNRFD(h, psd, f_low, f_max)
 
 
 @pytest.mark.parametrize('mtotal', [2.8, 10.0, 50.0])
@@ -61,10 +49,8 @@ def test_z_at_snr(mtotal, z):
     psd = lal.CreateREAL8FrequencySeries(
         '', 0, f_low, df, lal.DimensionlessUnit, int((f_high - f_low) // df))
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
-    # Strip last sample because it's zero
-    S = InterpolatedPSD(abscissa(psd)[:-1], psd.data.data[:-1])
 
-    snr = get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, S)
+    snr = get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, psd)
     z_solution = z_at_snr(
         cosmo, [psd], 'TaylorF2zeroPN', f_low, snr, (mass1, mass2, 0, 0))
 

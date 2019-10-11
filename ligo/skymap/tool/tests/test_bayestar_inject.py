@@ -18,6 +18,7 @@ def test_get_decisive_snr():
 
 
 def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
+    """Calculate optimal SNR the LALSimulation way."""
     params = lal.CreateDict()
     lalsimulation.SimInspiralWaveformParamsInsertRedshift(params, z)
 

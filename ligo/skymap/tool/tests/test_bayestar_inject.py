@@ -54,7 +54,7 @@ def test_z_at_snr(mtotal, z):
     z_solution = z_at_snr(
         cosmo, [psd], 'TaylorF2zeroPN', f_low, snr, (mass1, mass2, 0, 0))
 
-    assert z_solution == pytest.approx(z, rel=0.005)
+    assert z_solution == pytest.approx(z, rel=1e-3)
 
 
 def test_z_at_comoving_distance():

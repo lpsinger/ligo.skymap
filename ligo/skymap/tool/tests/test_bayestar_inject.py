@@ -17,7 +17,7 @@ def test_get_decisive_snr():
     assert get_decisive_snr([4.0]) == 4.0
 
 
-def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, df, S):
+def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, S):
     params = lal.CreateDict()
     lalsimulation.SimInspiralWaveformParamsInsertPNPhaseOrder(
         params, lalsimulation.PNORDER_NEWTONIAN)
@@ -25,19 +25,20 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, df, S):
         params, lalsimulation.PNORDER_NEWTONIAN)
     lalsimulation.SimInspiralWaveformParamsInsertRedshift(
         params, z)
+    f_max = get_f_lso(mass1, mass2) / (1 + z)
 
     # "Signal" waveform with requested inclination angle
     Hplus, Hcross = lalsimulation.SimInspiralFD(
         mass1 * lal.MSUN_SI, mass2 * lal.MSUN_SI,
         0, 0, 0, 0, 0, 0, cosmo.comoving_distance(z).to_value(u.m),
-        0, 0, 0, 0, 0, df, f_low, f_high, f_low,
+        0, 0, 0, 0, 0, 1e-3 * (f_max - f_low), f_low, f_max, f_low,
         params, lalsimulation.TaylorF2)
 
     # Assume Fplus=1, Fcross=0, so take Hplus only
     H = Hplus.data.data
 
     # Throw away signal above merger.
-    H[abscissa(Hplus) >= get_f_lso(mass1, mass2) / (1 + z)] = 0
+    H[abscissa(Hplus) >= f_max] = 0
 
     # Create output frequency series.
     signal_psd = lal.CreateREAL8FrequencySeries(
@@ -48,26 +49,26 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, df, S):
     return np.sqrt(4 * np.trapz(HS.data.data, dx=HS.deltaF))
 
 
-@pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0, 10.0])
-def test_z_at_snr(z):
+@pytest.mark.parametrize('mtotal', [2.8, 10.0, 50.0])
+@pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0, 5.0])
+def test_z_at_snr(mtotal, z):
     cosmo = default_cosmology.get_cosmology_from_string('WMAP9')
     f_low = 10
     f_high = 4096
     df = 1
-    mass1 = mass2 = 1.4
+    mass1 = mass2 = 0.5 * mtotal
 
     psd = lal.CreateREAL8FrequencySeries(
-        '', 0, f_low, df, lal.DimensionlessUnit, (f_high - f_low) // df)
+        '', 0, f_low, df, lal.DimensionlessUnit, int((f_high - f_low) // df))
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
     # Strip last sample because it's zero
     S = InterpolatedPSD(abscissa(psd)[:-1], psd.data.data[:-1])
 
-    snr = get_snr_at_z_lalsimulation(
-        cosmo, z, mass1, mass2, f_low, f_high, df, S)
+    snr = get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, S)
     z_solution = z_at_snr(
         cosmo, [psd], 'TaylorF2zeroPN', f_low, snr, (mass1, mass2, 0, 0))
 
-    assert z_solution == pytest.approx(z, rel=1e-3)
+    assert z_solution == pytest.approx(z, rel=0.005)
 
 
 def test_z_at_comoving_distance():

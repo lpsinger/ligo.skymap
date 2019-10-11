@@ -19,8 +19,7 @@ def test_get_decisive_snr():
 
 def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
     params = lal.CreateDict()
-    lalsimulation.SimInspiralWaveformParamsInsertRedshift(
-        params, z)
+    lalsimulation.SimInspiralWaveformParamsInsertRedshift(params, z)
 
     # "Signal" waveform with requested inclination angle.
     # Take (arbitrarily) only the plus polarization.

@@ -33,8 +33,8 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, df, S):
         0, 0, 0, 0, 0, df, f_low, f_high, f_low,
         params, lalsimulation.TaylorF2)
 
-    # Force `plus' and `cross' waveform to be in quadrature.
-    H = 0.5 * (Hplus.data.data + 1j * Hcross.data.data)
+    # Assume Fplus=1, Fcross=0, so take Hplus only
+    H = Hplus.data.data
 
     # Throw away signal above merger.
     H[abscissa(Hplus) >= get_f_lso(mass1, mass2) / (1 + z)] = 0

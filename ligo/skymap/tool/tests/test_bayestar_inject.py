@@ -5,8 +5,6 @@ import lalsimulation
 import numpy as np
 import pytest
 
-from ...bayestar.filter import (abs2, abscissa, get_f_lso, InterpolatedPSD,
-                                signal_psd_series)
 from ..bayestar_inject import (get_decisive_snr, z_at_snr,
                                z_at_comoving_distance, cell_max)
 
@@ -45,7 +43,8 @@ def test_z_at_snr(mtotal, z):
         '', 0, f_low, df, lal.DimensionlessUnit, int((f_high - f_low) // df))
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
 
-    snr = get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd)
+    snr = get_snr_at_z_lalsimulation(
+        cosmo, z, mass1, mass2, f_low, f_high, psd)
     z_solution = z_at_snr(
         cosmo, [psd], 'IMRPhenomPv2', f_low, snr, (mass1, mass2, 0, 0))
 

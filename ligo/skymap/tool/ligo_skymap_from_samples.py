@@ -57,8 +57,8 @@ def parser():
     parser.add_argument('--enable-multiresolution', action=EnableAction,
                         default=True,
                         help='generate a multiresolution HEALPix map')
-    parser.add_argument('-j', '--jobs', action='store_true',
-                        help='Use multiple threads')
+    parser.add_argument('-j', '--jobs', type=int, default=1, const=None,
+                        nargs='?', help='Number of threads')
     parser.add_argument('--instruments', metavar='H1|L1|V1|...', nargs='+',
                         help='instruments to store in FITS header')
     parser.add_argument('--objid', help='event ID to store in FITS header')
@@ -119,14 +119,14 @@ def main(args=None):
             cls = Clustered2Plus1DSkyKDE
         else:
             cls = Clustered2DSkyKDE
-        skypost = cls(pts, trials=args.trials, multiprocess=args.jobs)
+        skypost = cls(pts, trials=args.trials, jobs=args.jobs)
 
         log.info('pickling')
         with open(os.path.join(args.outdir, 'skypost.obj'), 'wb') as out:
             pickle.dump(skypost, out)
     else:
         skypost = pickle.load(args.loadpost)
-        skypost.multiprocess = args.j
+        skypost.jobs = args.jobs
 
     log.info('making skymap')
     hpmap = skypost.as_healpix()

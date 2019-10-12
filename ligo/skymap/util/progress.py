@@ -35,7 +35,7 @@ class WrappedFunc:
         return i, self.func(*args)
 
 
-def progress_map(func, *iterables, multiprocess=False, **kwargs):
+def progress_map(func, *iterables, jobs=1, **kwargs):
     r"""
     Map a function across iterables of arguments.
 
@@ -44,8 +44,10 @@ def progress_map(func, *iterables, multiprocess=False, **kwargs):
     accurate progress information.
     """
     total = min(len(iterable) for iterable in iterables)
-    if multiprocess:
-        with Pool() as pool:
+    if jobs == 1:
+        return list(tqdm(map(func, *iterables), total=total, **kwargs))
+    else:
+        with Pool(jobs) as pool:
             return [
                 item[1] for item in sorted(
                     tqdm(
@@ -58,5 +60,3 @@ def progress_map(func, *iterables, multiprocess=False, **kwargs):
                     key=itemgetter(0)
                 )
             ]
-    else:
-        return list(tqdm(map(func, *iterables), total=total, **kwargs))

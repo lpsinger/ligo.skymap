@@ -212,6 +212,9 @@ def parser():
     parser.add_argument('--waveform', default='o2-uberbank')
     parser.add_argument('--nsamples', type=int, default=100000)
     parser.add_argument('-o', '--output', type=FileType('wb'), default='-')
+    parser.add_argument(
+        '-j', '--jobs', type=int, default=1, const=None, nargs='?',
+        help='Number of threads')
     return parser
 
 
@@ -346,7 +349,7 @@ def main(args=None):
                 args.waveform, args.f_low, args.min_snr),
             np.column_stack([param.ravel() for param
                              in np.meshgrid(*params, indexing='ij')]),
-            multiprocess=True),
+            jobs=args.jobs),
         tuple(len(param) for param in params))
 
     # Make sure that all redshifts are valid.

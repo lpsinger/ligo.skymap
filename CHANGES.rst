@@ -10,6 +10,10 @@ Changelog
   comoving volume per unit observer time. This is in agreement with the
   conventional definition for LIGO/Virgo astrophysical rates.
 
+- The ``bayestar-inject`` and ``ligo-skymap-from-samples`` scripts now accept
+  an optional integer value for the ``-j`` flag to set the number of
+  subprocesses.
+
 0.1.12 (2019-09-19)
 ===================
 

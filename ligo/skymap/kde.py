@@ -204,10 +204,10 @@ def k_means(pts, k):
     return mus, assign
 
 
-def _cluster(cls, pts, trials, i, seed, multiprocess):
+def _cluster(cls, pts, trials, i, seed, jobs):
     # FIXME: This is an inelegant hack to disable OpenMP inside subprocesses.
     # See https://git.ligo.org/lscsoft/ligo.skymap/issues/7.
-    if multiprocess:
+    if jobs != 1:
         omp.num_threads = 1
 
     k = i // trials
@@ -228,9 +228,8 @@ def _cluster(cls, pts, trials, i, seed, multiprocess):
 
 class ClusteredKDE(object):
 
-    def __init__(self, pts, max_k=40, trials=5, assign=None,
-                 multiprocess=False):
-        self.multiprocess = multiprocess
+    def __init__(self, pts, max_k=40, trials=5, assign=None, jobs=1):
+        self.jobs = jobs
         if assign is None:
             log.info('clustering ...')
             # Make sure that each thread gets a different random number state.
@@ -241,7 +240,7 @@ class ClusteredKDE(object):
             # threads, then s must be drawn from the interval [0, 2**32 - n).
             seed = np.random.randint(0, 2**32 - max_k * trials)
             func = partial(_cluster, type(self), pts, trials, seed=seed,
-                           multiprocess=multiprocess)
+                           jobs=jobs)
             self.bic, self.k, self.kdes = max(
                 self._map(func, range(trials, (max_k + 1) * trials)),
                 key=lambda items: items[:2])
@@ -299,7 +298,7 @@ class ClusteredKDE(object):
         return w / np.sum(w)
 
     def _map(self, func, items):
-        return progress_map(func, items, multiprocess=self.multiprocess)
+        return progress_map(func, items, jobs=self.jobs)
 
 
 class SkyKDE(ClusteredKDE):
@@ -309,13 +308,11 @@ class SkyKDE(ClusteredKDE):
         """Override in sub-classes to transform points."""
         raise NotImplementedError
 
-    def __init__(self, pts, max_k=40, trials=5, assign=None,
-                 multiprocess=False):
+    def __init__(self, pts, max_k=40, trials=5, assign=None, jobs=1):
         if assign is None:
             pts = self.transform(pts)
         super(SkyKDE, self).__init__(
-            pts, max_k=max_k, trials=trials, assign=assign,
-            multiprocess=multiprocess)
+            pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
 
     def __call__(self, pts):
         return super(SkyKDE, self).__call__(self.transform(pts))
@@ -494,15 +491,12 @@ class Clustered2Plus1DSkyKDE(Clustered3DSkyKDE):
     distribution as a function of (RA, Dec) and a 3D clustered KDE for the
     conditional distance distribution."""
 
-    def __init__(self, pts, max_k=40, trials=5, assign=None,
-                 multiprocess=False):
+    def __init__(self, pts, max_k=40, trials=5, assign=None, jobs=1):
         if assign is None:
             self.twod = Clustered2DSkyKDE(
-                pts, max_k=max_k, trials=trials, assign=assign,
-                multiprocess=multiprocess)
+                pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
         super(Clustered2Plus1DSkyKDE, self).__init__(
-            pts, max_k=max_k, trials=trials, assign=assign,
-            multiprocess=multiprocess)
+            pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
 
     def __call__(self, pts, distances=False):
         probdensity = self.twod(pts)

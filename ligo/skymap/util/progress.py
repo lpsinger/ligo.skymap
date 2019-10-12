@@ -17,7 +17,10 @@
 #
 """Tools for progress bars"""
 
-from multiprocessing import Pool
+try:
+    from billiard import Pool
+except ImportError:
+    from multiprocessing import Pool
 from operator import itemgetter
 
 from tqdm.auto import tqdm

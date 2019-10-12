@@ -18,6 +18,11 @@ Changelog
   the ``--maxpts`` argument is greater than or equal to the number of posterior
   samples.
 
+- If the ``billiard`` package is present, then use it instead of the
+  ``multiprocessing`` standard library module to parallelize
+  ``ligo-skymap-from-samples`` so that the script's Python entry point can
+  be called from daemon processes (for example, inside Celery tasks).
+
 0.1.12 (2019-09-19)
 ===================
 

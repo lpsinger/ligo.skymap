@@ -14,6 +14,10 @@ Changelog
   an optional integer value for the ``-j`` flag to set the number of
   subprocesses.
 
+- ``ligo-skymap-from-samples`` will use all posterior samples if the value of
+  the ``--maxpts`` argument is greater than or equal to the number of posterior
+  samples.
+
 0.1.12 (2019-09-19)
 ===================
 

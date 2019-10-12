@@ -49,7 +49,9 @@ def parser():
                         metavar='SKYPOST.obj',
                         help='filename for pickled posterior state')
     parser.add_argument('--maxpts', type=int,
-                        help='maximum number of posterior points to use')
+                        help='maximum number of posterior points to use; if '
+                        'omitted or greater than or equal to the number of '
+                        'posterior samples, then use all samples')
     parser.add_argument('--trials', type=int, default=5,
                         help='number of trials at each clustering number')
     parser.add_argument('--enable-distance-map', action=EnableAction,
@@ -91,10 +93,7 @@ def main(args=None):
         # FIXME: remove this code path once we support only HDF5
         data = Table.read(args.samples, format='ascii')
 
-    if args.maxpts is not None:
-        # Shuffle the data and take a random subsample.
-        # Note that if arg.maxpts > len(data), then this
-        # just selects the entire array.
+    if args.maxpts is not None and args.maxpts < len(data):
         log.info('taking random subsample of chain')
         data = data[np.random.choice(len(data), args.maxpts, replace=False)]
     try:

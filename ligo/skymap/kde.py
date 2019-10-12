@@ -22,7 +22,6 @@ from functools import partial
 
 from astropy.coordinates import SkyCoord
 from astropy.table import Table
-from astropy.utils.console import ProgressBar
 from astropy.utils.misc import NumpyRNGContext
 import healpy as hp
 import logging
@@ -33,6 +32,7 @@ from . import distance
 from . import moc
 from . import omp
 from .coordinates import EigenFrame
+from .util import progress_map
 
 log = logging.getLogger()
 
@@ -299,7 +299,7 @@ class ClusteredKDE(object):
         return w / np.sum(w)
 
     def _map(self, func, items):
-        return ProgressBar.map(func, items, multiprocess=self.multiprocess)
+        return progress_map(func, items, multiprocess=self.multiprocess)
 
 
 class SkyKDE(ClusteredKDE):

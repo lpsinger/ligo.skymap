@@ -5,7 +5,10 @@ Changelog
 0.1.13 (unreleased)
 ===================
 
-- No changes yet.
+- The ``bayestar-inject`` script now assumes that the source distribution is
+  specified per unit comoving volume per unit proper time, rather than per unit
+  comoving volume per unit observer time. This is in agreement with the
+  conventional definition for LIGO/Virgo astrophysical rates.
 
 0.1.12 (2019-09-19)
 ===================

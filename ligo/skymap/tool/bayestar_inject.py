@@ -26,7 +26,6 @@ each grid cell."""
 import functools
 
 from astropy import cosmology
-from astropy.cosmology import LambdaCDM
 from astropy.cosmology.core import vectorize_if_needed
 from astropy import units
 from astropy.units import dimensionless_unscaled
@@ -135,53 +134,41 @@ def z_at_snr(cosmo, psds, waveform, f_low, snr, params):
     return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
 
 
-def z_at_comoving_distance(cosmo, d):
-    """Get the redshift as a function of comoving distance.
+def _sensitive_volume_integral(cosmo, z):
+    dh3_sr = cosmo.hubble_distance**3 / units.sr
 
-    Parameters
-    ----------
-    cosmo : :class:`astropy.cosmology.LambdaCDM`
-        The cosmological model.
-    d : :class:`astropy.units.Quantity`
-        The distance in Mpc (may be scalar or a Numpy array).
+    def integrand(z):
+        result = cosmo.differential_comoving_volume(z)
+        result /= (1 + z) * dh3_sr
+        return result.to_value(dimensionless_unscaled)
 
-    Returns
-    -------
-    z : float, :class:`numpy.ndarray`
-        The redshift.
+    def integral(z):
+        result, _ = quad(integrand, 0, z)
+        return result
 
-    Notes
-    -----
-    This function is optimized for ΛCDM cosmologies. For more general
-    cosmological models, use :func:`astropy.cosmology.z_at_value`.
+    return vectorize_if_needed(integral, z)
 
-    The optimization consists of passing Scipy's root finder a bracketing
-    interval that is guaranteed to contain the solution. This enables
-    convergence across (nearly) all physically valid values of the comoving
-    distance without the need to tune `z_min` and `z_max`.
+
+def sensitive_volume(cosmo, z):
+    """Sensitive volume :math:`V(z)` out to redshift :math:`z`.
+
+    Given a population of events that occur at a constant rate density
+    :math:`R` per unit comoving volume per unit proper time, the number of
+    observed events out to a redshift :math:`N(z)` over an observation time
+    :math:`T` is :math:`N(z) = R T V(z)`.
     """
-    if not isinstance(cosmo, LambdaCDM):
-        raise NotImplementedError(
-            'This method is optimized for LambdaCDM cosmologies. For more '
-            'general cosmologies, use astropy.cosmology.z_at_value.')
+    dh3 = cosmo.hubble_distance**3
+    return 4 * np.pi * dh3 * _sensitive_volume_integral(cosmo, z)
 
-    inv_efunc_scalar_args = cosmo._inv_efunc_scalar_args
-    r = (d / cosmo.hubble_distance).to_value(
-        dimensionless_unscaled)
-    r_max = (cosmo.comoving_distance(np.inf) / cosmo.hubble_distance).to_value(
-        dimensionless_unscaled)
-    fprime = lambda z: cosmo._inv_efunc_scalar(z, *inv_efunc_scalar_args)
-    eps = np.finfo(np.float).eps
 
-    def z_at_r(r):
-        if r > r_max:
-            return np.nan
-        f = lambda z: quad(fprime, 0, z)[0] - r
-        z_max = r / np.square(1 - np.sqrt(r / r_max))
-        xtol = max(2e-12 * z_max, eps)
-        return root_scalar(f, bracket=[r, z_max], xtol=xtol).root
+def sensitive_distance(cosmo, z):
+    r"""Sensitive distance as a function of redshift :math:`z`.
 
-    return vectorize_if_needed(z_at_r, r)
+    The sensitive distance is the distance :math:`d_s(z)` defined such that
+    :math:`V(z) = 4/3\pi {d_s(z)}^3`, where :math:`V(z)` is the sensitive
+    volume."""
+    dh = cosmo.hubble_distance
+    return dh * np.cbrt(3 * _sensitive_volume_integral(cosmo, z))
 
 
 def cell_max(values):
@@ -361,14 +348,12 @@ def main(args=None):
                              in np.meshgrid(*params, indexing='ij')]),
             multiprocess=True),
         tuple(len(param) for param in params))
-    max_distance = cosmo.comoving_distance(max_z).to_value(units.Mpc)
 
-    # Make sure that all distances are valid.
-    particle_horizon = cosmo.comoving_distance(np.inf).to_value(units.Mpc)
-    assert np.all(max_distance >= 0), \
-        'some distances are negative'
-    assert np.all(max_distance <= particle_horizon), \
-        'some distances are greater than particle horizon'
+    # Make sure that all redshifts are valid.
+    assert np.all(max_z >= 0), 'some redshifts are negative'
+    assert np.all(np.isfinite(max_z)), 'some redshifts are not finite'
+
+    max_distance = sensitive_distance(cosmo, max_z).to_value(units.Mpc)
 
     # Find piecewise constant approximate upper bound on distance.
     max_distance = cell_max(max_distance)
@@ -427,10 +412,20 @@ def main(args=None):
                 f_lower=args.f_low,
                 **dict(zip(keys, row))))
 
-    # Apply redshift factor
     colnames = ['distance', 'mass1', 'mass2']
     columns = [sims.getColumnByName(colname) for colname in colnames]
-    zp1 = 1 + z_at_comoving_distance(cosmo, np.asarray(columns[0]) * units.Mpc)
+
+    # Convert from sensitive distance to redshift and comoving distance.
+    # FIXME: Replace this brute-force lookup table with a solver.
+    z = np.linspace(0, max_z.max(), 10000)
+    ds = sensitive_distance(cosmo, z).to_value(units.Mpc)
+    dc = cosmo.comoving_distance(z).to_value(units.Mpc)
+    z_for_ds = interp1d(ds, z, kind='cubic', assume_sorted=True)
+    dc_for_ds = interp1d(ds, dc, kind='cubic', assume_sorted=True)
+    zp1 = 1 + z_for_ds(np.asarray(columns[0]))
+    columns[0][:] = dc_for_ds(np.asarray(columns[0]))
+
+    # Apply redshift factor
     for column in columns:
         column[:] = np.asarray(column) * zp1
 

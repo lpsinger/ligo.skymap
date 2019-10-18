@@ -191,7 +191,7 @@ typedef struct {
 } radial_integrand_params;
 
 
-/* Uniform-in-comoving volume prior for the WMAP9 cosmology.
+/* Uniform-in-comoving volume prior for the Planck15 cosmology.
  * This is implemented as a cubic spline interpolant.
  *
  * The following static variables are defined in bayestar_cosmology.h, which

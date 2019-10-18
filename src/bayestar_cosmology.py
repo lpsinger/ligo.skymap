@@ -49,7 +49,7 @@ from ligo.skymap.postprocess.cosmology import z_for_DL, dVC_dVL_for_DL
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'cosmology', choices=astropy.cosmology.parameters.available,
-    default='WMAP9', nargs='?', help='Cosmological model')
+    default='Planck15', nargs='?', help='Cosmological model')
 args = parser.parse_args()
 
 cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(

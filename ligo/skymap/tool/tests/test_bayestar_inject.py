@@ -32,7 +32,7 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
 @pytest.mark.parametrize('mtotal', [2.8, 10.0, 50.0, 100.0])
 @pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
 def test_z_at_snr(mtotal, z):
-    cosmo = default_cosmology.get_cosmology_from_string('WMAP9')
+    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
     f_low = 10
     f_high = 4096
     df = 0.1

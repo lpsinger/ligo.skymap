@@ -19,7 +19,7 @@
 """
 Cosmology-related utilities.
 
-All functions in this module use the WMAP9 cosmological parameters.
+All functions in this module use the Planck15 cosmological parameters.
 """
 
 import numpy as np
@@ -27,7 +27,7 @@ import astropy.cosmology
 import astropy.units as u
 
 cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
-    'WMAP9')
+    'Planck15')
 
 
 def dVC_dVL_for_z(z):

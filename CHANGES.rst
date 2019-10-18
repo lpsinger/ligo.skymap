@@ -23,6 +23,8 @@ Changelog
   ``ligo-skymap-from-samples`` so that the script's Python entry point can
   be called from daemon processes (for example, inside Celery tasks).
 
+- Switch from WMAP9 to Planck15 cosmological parameters.
+
 0.1.12 (2019-09-19)
 ===================
 

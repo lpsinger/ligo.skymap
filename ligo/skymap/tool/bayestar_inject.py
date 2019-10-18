@@ -201,7 +201,7 @@ def parser():
     parser = ArgumentParser(parents=[random_parser])
     parser.add_argument(
         '--cosmology', choices=cosmology.parameters.available,
-        default='WMAP9', help='Cosmological model')
+        default='Planck15', help='Cosmological model')
     parser.add_argument(
         '--distribution', required=True, choices=(
             'bns_astro', 'bns_broad', 'nsbh_astro', 'nsbh_broad',

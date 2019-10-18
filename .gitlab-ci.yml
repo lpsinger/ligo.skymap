@@ -104,8 +104,7 @@ wheel/cp37-cp37m-macosx:
       RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
       RUN pip --no-cache-dir install 'pytest < 5.1' pytest-astropy pytest-cov pytest-mpl gcovr pycobertura sphinx sphinx-argparse sphinx-astropy flake8
       COPY requirements.txt .
-      RUN pip --no-cache-dir install -r requirements.txt
-      RUN rm -f requirements.txt
+      RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG

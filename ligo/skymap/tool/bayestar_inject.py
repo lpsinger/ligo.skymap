@@ -380,43 +380,26 @@ def main(args=None):
         dist.rvs(size=args.nsamples), max_distance.shape)
 
     # Draw random intrinsic params from each cell
-    values = [
+    cols = {}
+    cols['mass1'], cols['mass2'], cols['spin1z'], cols['spin2z'] = [
         dist.ppf(stats.uniform(cdf_lo[i], cdf[i]).rvs(size=args.nsamples))
         for i, dist, cdf_lo, cdf in zip(indices, dists, cdf_los, cdfs)]
 
-    # Draw random extrinsic parameters for each cell
-    dist = stats.powerlaw(a=3, scale=max_distance[indices])
-    values.append(dist.rvs(size=args.nsamples))
-    dist = stats.uniform(0, 2 * np.pi)
-    values.append(dist.rvs(size=args.nsamples))
-    dist = stats.uniform(-1, 2)
-    values.append(np.arcsin(dist.rvs(size=args.nsamples)))
-    dist = stats.uniform(-1, 2)
-    values.append(np.arccos(dist.rvs(size=args.nsamples)))
-    dist = stats.uniform(0, 2 * np.pi)
-    values.append(dist.rvs(size=args.nsamples))
-    dist = stats.uniform(-np.pi, 2 * np.pi)
-    values.append(dist.rvs(size=args.nsamples))
-    dist = stats.uniform(1e9, units.year.to(units.second))
-    values.append(np.sort(dist.rvs(size=args.nsamples)))
-
-    # Populate sim_inspiral table
-    sims = xmlroot.appendChild(lsctables.New(lsctables.SimInspiralTable))
-    keys = ('mass1', 'mass2', 'spin1z', 'spin2z',
-            'distance', 'longitude', 'latitude',
-            'inclination', 'polarization', 'coa_phase', 'time_geocent')
-    for row in zip(*values):
-        sims.appendRow(
-            **dict(
-                dict.fromkeys(sims.validcolumns, None),
-                process_id=process.process_id,
-                simulation_id=sims.get_next_id(),
-                waveform=args.waveform,
-                f_lower=args.f_low,
-                **dict(zip(keys, row))))
-
-    colnames = ['distance', 'mass1', 'mass2']
-    columns = [sims.getColumnByName(colname) for colname in colnames]
+    # Draw random extrinsic parameters
+    cols['distance'] = stats.powerlaw(a=3, scale=max_distance[indices]).rvs(
+        size=args.nsamples)
+    cols['longitude'] = stats.uniform(0, 2 * np.pi).rvs(
+        size=args.nsamples)
+    cols['latitude'] = np.arcsin(stats.uniform(-1, 2).rvs(
+        size=args.nsamples))
+    cols['inclination'] = np.arccos(stats.uniform(-1, 2).rvs(
+        size=args.nsamples))
+    cols['polarization'] = stats.uniform(0, 2 * np.pi).rvs(
+        size=args.nsamples)
+    cols['coa_phase'] = stats.uniform(-np.pi, 2 * np.pi).rvs(
+        size=args.nsamples)
+    cols['time_geocent'] = stats.uniform(1e9, units.year.to(units.s)).rvs(
+        size=args.nsamples)
 
     # Convert from sensitive distance to redshift and comoving distance.
     # FIXME: Replace this brute-force lookup table with a solver.
@@ -425,12 +408,25 @@ def main(args=None):
     dc = cosmo.comoving_distance(z).to_value(units.Mpc)
     z_for_ds = interp1d(ds, z, kind='cubic', assume_sorted=True)
     dc_for_ds = interp1d(ds, dc, kind='cubic', assume_sorted=True)
-    zp1 = 1 + z_for_ds(np.asarray(columns[0]))
-    columns[0][:] = dc_for_ds(np.asarray(columns[0]))
+    zp1 = 1 + z_for_ds(cols['distance'])
+    cols['distance'] = dc_for_ds(cols['distance'])
 
-    # Apply redshift factor
-    for column in columns:
-        column[:] = np.asarray(column) * zp1
+    # Apply redshift factor to convert from comoving distance and source frame
+    # masses to luminosity distance and observer frame masses.
+    for key in ['distance', 'mass1', 'mass2']:
+        cols[key] *= zp1
+
+    # Populate sim_inspiral table
+    sims = xmlroot.appendChild(lsctables.New(lsctables.SimInspiralTable))
+    for row in zip(*cols.values()):
+        sims.appendRow(
+            **dict(
+                dict.fromkeys(sims.validcolumns, None),
+                process_id=process.process_id,
+                simulation_id=sims.get_next_id(),
+                waveform=args.waveform,
+                f_lower=args.f_low,
+                **dict(zip(cols.keys(), row))))
 
     # Record process end time.
     process.comment = str(volumetric_rate)

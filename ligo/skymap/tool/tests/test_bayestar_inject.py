@@ -1,11 +1,15 @@
+from functools import partial
+
 from astropy.cosmology import default_cosmology
 from astropy import units as u
 import lal
 import lalsimulation
 import numpy as np
 import pytest
+from scipy.misc import derivative
 
-from ..bayestar_inject import get_decisive_snr, z_at_snr, cell_max
+from ..bayestar_inject import (
+    get_decisive_snr, z_at_snr, cell_max, sensitive_distance, sensitive_volume)
 
 
 def test_get_decisive_snr():
@@ -48,6 +52,30 @@ def test_z_at_snr(mtotal, z):
         cosmo, [psd], 'IMRPhenomPv2', f_low, snr, (mass1, mass2, 0, 0))
 
     assert z_solution == pytest.approx(z, rel=1e-2)
+
+
+def test_sensitive_volume_0():
+    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    assert sensitive_volume(cosmo, 0) == 0
+
+
+@pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
+def test_sensitive_volume(z):
+    """Test that the sensitive volume has the correct derivative with z."""
+    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    dVC_dz = cosmo.differential_comoving_volume(z)
+    expected = (dVC_dz / (1 + z) * 4 * np.pi * u.sr).to_value(u.Mpc**3)
+    actual = derivative(
+        partial(sensitive_volume, cosmo), x0=z, dx=1e-6 * z).to_value(u.Mpc**3)
+    assert expected == pytest.approx(actual)
+
+
+@pytest.mark.parametrize('z', [0.0, 0.001, 0.01, 0.1, 1.0, 2.0])
+def test_sensitive_distance(z):
+    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    expected = sensitive_volume(cosmo, z).to_value(u.Mpc**3)
+    actual = (4/3 * np.pi * sensitive_distance(cosmo, z)**3).to_value(u.Mpc**3)
+    assert expected == pytest.approx(actual)
 
 
 def test_cell_max():

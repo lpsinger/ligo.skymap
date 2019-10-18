@@ -398,7 +398,7 @@ def main(args=None):
         size=args.nsamples)
     cols['coa_phase'] = stats.uniform(-np.pi, 2 * np.pi).rvs(
         size=args.nsamples)
-    cols['time_geocent'] = stats.uniform(1e9, units.year.to(units.s)).rvs(
+    cols['time_geocent'] = stats.uniform(1e9, units.year.to(units.second)).rvs(
         size=args.nsamples)
 
     # Convert from sensitive distance to redshift and comoving distance.

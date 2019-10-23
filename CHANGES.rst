@@ -25,9 +25,10 @@ Changelog
 
 - Switch from WMAP9 to Planck15 cosmological parameters.
 
-- ``ligo.skymap.kde.Clustered2DSkyKDE.as_healpix()`` has an optional ``top_nside``
-  to allow for better initial grid, before refinement. 
-  ``ligo-skymap-from-samples`` has an additional ``--top-nside`` argument, accordingly.
+- ``ligo.skymap.kde.Clustered2DSkyKDE.as_healpix()`` has an optional
+  ``top_nside`` to allow for better initial grid, before refinement.
+  ``ligo-skymap-from-samples`` has an additional ``--top-nside`` argument,
+  accordingly.
 
 0.1.12 (2019-09-19)
 ===================

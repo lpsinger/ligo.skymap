@@ -9,7 +9,8 @@ import pytest
 from scipy.misc import derivative
 
 from ..bayestar_inject import (
-    get_decisive_snr, z_at_snr, cell_max, sensitive_distance, sensitive_volume)
+    get_decisive_snr, z_at_snr, get_max_z, cell_max, sensitive_distance,
+    sensitive_volume)
 
 
 def test_get_decisive_snr():
@@ -49,9 +50,39 @@ def test_z_at_snr(mtotal, z):
     snr = get_snr_at_z_lalsimulation(
         cosmo, z, mass1, mass2, f_low, f_high, psd)
     z_solution = z_at_snr(
-        cosmo, [psd], 'IMRPhenomPv2', f_low, snr, (mass1, mass2, 0, 0))
+        cosmo, [psd], 'IMRPhenomPv2', f_low, snr, mass1, mass2, 0, 0)
 
     assert z_solution == pytest.approx(z, rel=1e-2)
+
+
+def test_get_max_z():
+    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    f_low = 10
+    f_high = 4096
+    df = 0.1
+    waveform = 'IMRPhenomPv2'
+    snr = 8
+    m1 = np.asarray([50.0])
+    m2 = np.asarray([30.0, 50.0])
+    x1 = np.asarray([-1.0, 0.0, 1.0])
+    x2 = np.asarray([-1.0, -0.5, 0.5, 1.0])
+
+    psd = lal.CreateREAL8FrequencySeries(
+        '', 0, f_low, df, lal.DimensionlessUnit, int((f_high - f_low) // df))
+    lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
+
+    result = get_max_z(
+        cosmo, [psd], waveform, f_low, snr, m1, m2, x1, x2)
+    # Check that shape matches
+    assert result.shape == (1, 2, 3, 4)
+    # Spot check some individual cells
+    for im1, m1_ in enumerate(m1):
+        for im2, m2_ in enumerate(m2):
+            for ix1, x1_ in enumerate(x1):
+                for ix2, x2_ in enumerate(x2):
+                    expected = z_at_snr(
+                        cosmo, [psd], waveform, f_low, snr, m1_, m2_, x1_, x2_)
+                    assert result[im1, im2, ix1, ix2] == expected
 
 
 def test_sensitive_volume_0():

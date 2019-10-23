@@ -23,7 +23,7 @@ not reject an excessive number of events. We divide the intrinsic parameter
 space into a very coarse grid and we calculate the maximum horizon distance in
 each grid cell."""
 
-import functools
+from functools import partial
 
 from astropy import cosmology
 from astropy.cosmology.core import vectorize_if_needed
@@ -36,6 +36,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import root_scalar
 from scipy.ndimage import maximum_filter
 
+from ..util import progress_map
 from ..bayestar.filter import sngl_inspiral_psd
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
@@ -73,7 +74,7 @@ def lo_hi_nonzero(x):
     return nonzero[0], nonzero[-1]
 
 
-def z_at_snr(cosmo, psds, waveform, f_low, snr, params):
+def z_at_snr(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z):
     """
     Get redshift at which a waveform attains a given SNR.
 
@@ -98,7 +99,6 @@ def z_at_snr(cosmo, psds, waveform, f_low, snr, params):
         Comoving distance in Mpc.
     """
     # Construct waveform
-    mass1, mass2, spin1z, spin2z = params
     series = sngl_inspiral_psd(waveform, f_low=f_low,
                                mass1=mass1, mass2=mass2,
                                spin1z=spin1z, spin2z=spin2z)
@@ -132,6 +132,21 @@ def z_at_snr(cosmo, psds, waveform, f_low, snr, params):
         return snr
 
     return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
+
+
+def get_max_z(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z,
+              jobs=1):
+    # Calculate the maximum distance on the grid.
+    params = [mass1, mass2, spin1z, spin2z]
+    result = progress_map(
+        partial(z_at_snr, cosmo, psds, waveform, f_low, snr),
+        *(param.ravel() for param in np.meshgrid(*params, indexing='ij')),
+        jobs=jobs)
+    result = np.reshape(result, tuple(len(param) for param in params))
+
+    assert np.all(result >= 0), 'some redshifts are negative'
+    assert np.all(np.isfinite(result)), 'some redshifts are not finite'
+    return result
 
 
 def _sensitive_volume_integral(cosmo, z):
@@ -225,8 +240,6 @@ def main(args=None):
     from glue.ligolw import ligolw
     import lal.series
     from scipy import stats
-
-    from ..util import progress_map
 
     p = parser()
     args = p.parse_args(args)
@@ -342,20 +355,9 @@ def main(args=None):
     params = m1, m2, x1, x2
 
     # Calculate the maximum distance on the grid.
-    max_z = np.reshape(
-        progress_map(
-            functools.partial(
-                z_at_snr, cosmo, psds,
-                args.waveform, args.f_low, args.min_snr),
-            np.column_stack([param.ravel() for param
-                             in np.meshgrid(*params, indexing='ij')]),
-            jobs=args.jobs),
-        tuple(len(param) for param in params))
-
-    # Make sure that all redshifts are valid.
-    assert np.all(max_z >= 0), 'some redshifts are negative'
-    assert np.all(np.isfinite(max_z)), 'some redshifts are not finite'
-
+    max_z = get_max_z(
+        cosmo, psds, args.waveform, args.f_low, args.min_snr, m1, m2, x1, x2,
+        jobs=args.jobs)
     max_distance = sensitive_distance(cosmo, max_z).to_value(units.Mpc)
 
     # Find piecewise constant approximate upper bound on distance.

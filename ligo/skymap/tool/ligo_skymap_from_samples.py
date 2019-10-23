@@ -59,7 +59,7 @@ def parser():
     parser.add_argument('--enable-multiresolution', action=EnableAction,
                         default=True,
                         help='generate a multiresolution HEALPix map')
-    parser.add_argument('--topnside', type=int, default=16,
+    parser.add_argument('--top-nside', type=int, default=16,
                         help='choose a start nside before HEALPix refinement '
                         'steps (must be a valid nside)')
     parser.add_argument('-j', '--jobs', type=int, default=1, const=None,
@@ -131,7 +131,7 @@ def main(args=None):
         skypost.jobs = args.jobs
 
     log.info('making skymap')
-    hpmap = skypost.as_healpix(top_nside=args.topnside)
+    hpmap = skypost.as_healpix(top_nside=args.top_nside)
     if not args.enable_multiresolution:
         hpmap = rasterize(hpmap)
     hpmap.meta.update(io.fits.metadata_for_version_module(version))

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.13 (unreleased)
+0.1.13 (2019-10-30)
 ===================
 
 - The ``bayestar-inject`` script now assumes that the source distribution is

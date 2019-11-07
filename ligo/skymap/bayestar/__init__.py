@@ -354,17 +354,22 @@ def localize(
 
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')
-    args = (min_inclination, max_inclination, min_distance, max_distance,
-            prior_distance_power, cosmology, gmst, sample_rate, toas,
-            snr_series, responses, locations, horizons)
     if mcmc:
         max_abs_t = 2 * snr_series.data.shape[1] / sample_rate
+        if min_inclination != 0 or max_inclination != np.pi / 2:
+            log.warn('inclination limits are not supported for MCMC mode')
+        args = (min_distance, max_distance, prior_distance_power, cosmology,
+                gmst, sample_rate, toas, snr_series, responses, locations,
+                horizons)
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
             xmax=[2 * np.pi, 1, max_distance, 1, 2 * np.pi, 2 * max_abs_t],
             chain_dump=chain_dump)
     else:
+        args = (min_inclination, max_inclination, min_distance, max_distance,
+                prior_distance_power, cosmology, gmst, sample_rate, toas,
+                snr_series, responses, locations, horizons)
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
         skymap = Table(skymap)
         skymap.meta['log_bci'] = log_bci

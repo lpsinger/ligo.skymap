@@ -5,7 +5,8 @@ Changelog
 0.1.14 (unreleased)
 ===================
 
-- No changes yet.
+- Require astropy < 3.2 to work around a regression that affects reprojecting from
+  ICRS to ITRS coordinates.
 
 0.1.13 (2019-10-30)
 ===================

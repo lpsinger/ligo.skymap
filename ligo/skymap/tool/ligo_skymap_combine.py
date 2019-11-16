@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Tito Dal Canton, Eric Burns, Leo Singer
+# Copyright (C) 2018-2019  Tito Dal Canton, Eric Burns, Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """Combine different sky localizations of a common event observed by different
 instruments in order to form a more constrained localization.
 
@@ -22,7 +21,8 @@ If one of the input maps contains distance information (for instance from
 BAYESTAR or LALInference) then the marginal distance posterior in the output
 map is updated according to the restriction in sky location imposed by the
 other input map(s). Only one input map can currently have distance
-information."""
+information.
+"""
 
 from . import ArgumentParser, FileType
 

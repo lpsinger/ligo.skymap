@@ -26,7 +26,7 @@ template_args = {'mass1': 1.414, 'mass2': 1.414}
 
 
 def test_localize_0_detectors():
-    """Running on an event with 0 detectors should raise an error. """
+    """Running on an event with 0 detectors should raise an error."""
     test_event = MockEvent([], template_args)
     with pytest.raises(ValueError):
         localize(test_event)
@@ -34,7 +34,8 @@ def test_localize_0_detectors():
 
 def test_localize_1_detector():
     """Running on an event with 1 detector should produce a sky map that
-    reflects the antenna pattern."""
+    reflects the antenna pattern.
+    """
     psd = lal.CreateREAL8FrequencySeries(
         None, 0, 0, 32, lal.DimensionlessUnit, 128)
     psd.data.data[:] = 1

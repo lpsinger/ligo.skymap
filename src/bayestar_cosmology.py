@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -16,6 +16,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """
+Generate lookup tables for cosmological priors.
+
 This is a lookup table for the BAYESTAR uniform-in-comoving-volume prior. The
 BAYESTAR posterior distribution has a builtin prior that is uniform in naively
 Euclidean luminosity distance space (proportional to DL^2). When we want to

@@ -69,7 +69,6 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     Notes
     -----
-
     The center of the ellipse is the median a posteriori sky position. The
     length and orientation of the semi-major and semi-minor axes are measured
     as follows:
@@ -90,14 +89,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     References
     ----------
-
     .. [1] http://ds9.si.edu/doc/ref/region.html
     .. [2] http://aladin.u-strasbg.fr/java/AladinScriptManual.gml#draw
     .. [3] http://docs.astropy.org/en/stable/wcs/index.html#supported-projections
 
     Examples
     --------
-
     **Example 1**
 
     First, we need some imports.
@@ -304,6 +301,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
     >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
     (0.0, 0.0, 64.77564486039148, 33.50986301851987, 9.217477126726322, 6372.42573159241)
+
     """  # noqa: E501
     try:
         prob['UNIQ']

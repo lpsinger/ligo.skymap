@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018  Leo Singer
+# Copyright (C) 2015-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Plot a volumetric posterior in three-projection view.
-"""
+"""Plot a volumetric posterior in three-projection view."""
 
 
 from . import ArgumentParser, FileType, figure_parser

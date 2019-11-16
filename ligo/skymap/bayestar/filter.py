@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 #
-# Copyright (C) 2013-2018  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -16,10 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Utility functions for BAYESTAR that are related to matched filtering.
-"""
-
+"""Utility functions for BAYESTAR that are related to matched filtering."""
 import logging
 import math
 
@@ -36,6 +33,8 @@ log = logging.getLogger('BAYESTAR')
 def ceil_pow_2(n):
     """Return the least integer power of 2 that is greater than or equal to n.
 
+    Examples
+    --------
     >>> ceil_pow_2(128.0)
     128.0
     >>> ceil_pow_2(0.125)
@@ -46,6 +45,7 @@ def ceil_pow_2(n):
     0.25
     >>> ceil_pow_2(1.0)
     1.0
+
     """
     # frexp splits floats into mantissa and exponent, ldexp does the opposite.
     # For positive numbers, mantissa is in [0.5, 1.).
@@ -58,7 +58,8 @@ def ceil_pow_2(n):
 
 def abscissa(series):
     """Produce the independent variable for a lal TimeSeries or
-    FrequencySeries."""
+    FrequencySeries.
+    """
     try:
         delta = series.deltaT
         x0 = float(series.epoch)
@@ -129,7 +130,6 @@ def truncated_ifft(y, nsamples_out=None):
 
     Examples
     --------
-
     First generate the IFFT of a random signal:
 
     >>> nsamples_out = 1024
@@ -156,6 +156,7 @@ def truncated_ifft(y, nsamples_out=None):
     Traceback (most recent call last):
       ...
     ValueError: Input is too short: you gave me an input of length 1024, but you asked for an IFFT of length 1025.
+
     """  # noqa: E501
     nsamples = len(y)
     if nsamples_out is None:
@@ -199,7 +200,8 @@ def get_approximant_and_orders_from_string(s):
     of the form "TaylorT4threePointFivePN". In this example, the waveform is
     "TaylorT4" and the phase order is 7 (twice 3.5). If the input contains the
     substring "restricted" or "Restricted", then the amplitude order is taken
-    to be 0. Otherwise, the amplitude order is the same as the phase order."""
+    to be 0. Otherwise, the amplitude order is the same as the phase order.
+    """
     # SWIG-wrapped functions apparently do not understand Unicode, but
     # often the input argument will come from a Unicode XML file.
     s = str(s)
@@ -217,7 +219,8 @@ def get_approximant_and_orders_from_string(s):
 
 def get_f_lso(mass1, mass2):
     """Calculate the GW frequency during the last stable orbit of a compact
-    binary."""
+    binary.
+    """
     return 1 / (6 ** 1.5 * np.pi * (mass1 + mass2) * lal.MTSUN_SI)
 
 
@@ -298,8 +301,7 @@ def signal_psd_series(H, S):
 
 
 def autocorrelation(H, out_duration, normalize=True):
-    """
-    Calculate the complex autocorrelation sequence a(t), for t >= 0, of an
+    """Calculate the complex autocorrelation sequence a(t), for t >= 0, of an
     inspiral signal.
 
     Parameters
@@ -315,8 +317,8 @@ def autocorrelation(H, out_duration, normalize=True):
         The complex-valued autocorrelation sequence.
     sample_rate : float
         The sample rate.
-    """
 
+    """
     # Compute duration of template, rounded up to a power of 2.
     H_len = H.data.data.size
     nsamples = 2 * H_len
@@ -345,14 +347,16 @@ def autocorrelation(H, out_duration, normalize=True):
 
 def abs2(y):
     """Return the absolute value squared, :math:`|z|^2` ,for a complex number
-    :math:`z`, without performing a square root."""
+    :math:`z`, without performing a square root.
+    """
     return np.square(y.real) + np.square(y.imag)
 
 
 class vectorize_swig_psd_func(object):  # noqa: N801
     """Create a vectorized Numpy function from a SWIG-wrapped PSD function.
     SWIG does not provide enough information for Numpy to determine the number
-    of input arguments, so we can't just use np.vectorize."""
+    of input arguments, so we can't just use np.vectorize.
+    """
 
     def __init__(self, str):
         self.__func = getattr(lalsimulation, str + 'Ptr')
@@ -376,7 +380,8 @@ class vectorize_swig_psd_func(object):  # noqa: N801
 
 class InterpolatedPSD(interpolate.interp1d):
     """Create a (linear in log-log) interpolating function for a discretely
-    sampled power spectrum S(f)."""
+    sampled power spectrum S(f).
+    """
 
     def __init__(self, f, S, f_high_truncate=1.0, fill_value=np.inf):
         assert f_high_truncate <= 1.0
@@ -430,13 +435,11 @@ class SignalModel(object):
     """Class to speed up computation of signal/noise-weighted integrals and
     Barankin and Cramér-Rao lower bounds on time and phase estimation.
 
-
     Note that the autocorrelation series and the moments are related,
     as shown below.
 
     Examples
     --------
-
     Create signal model:
 
     >>> from . import filter
@@ -475,12 +478,13 @@ class SignalModel(object):
 
     >>> for i, (am, qm) in enumerate(zip(acor_moments, quad_moments)):
     ...     assert np.allclose(am, qm, rtol=0.05)
+
     """
 
     def __init__(self, h):
         """Create a TaylorF2 signal model with the given masses, PSD function
-        S(f), PN amplitude order, and low-frequency cutoff."""
-
+        S(f), PN amplitude order, and low-frequency cutoff.
+        """
         # Find indices of first and last nonzero samples.
         nonzero = np.flatnonzero(h.data.data)
         first_nonzero = nonzero[0]
@@ -502,18 +506,21 @@ class SignalModel(object):
 
     def get_sn_average(self, func):
         """Get the average of a function of angular frequency, weighted by the
-        signal to noise per unit angular frequency."""
+        signal to noise per unit angular frequency.
+        """
         num = np.trapz(func(self.w) * self.denom_integrand, dx=self.dw)
         return num / self.den
 
     def get_sn_moment(self, power):
         """Get the average of angular frequency to the given power, weighted by
-        the signal to noise per unit frequency."""
+        the signal to noise per unit frequency.
+        """
         return self.get_sn_average(lambda w: w**power)
 
     def get_crb(self, snr):
         """Get the Cramér-Rao bound, or inverse Fisher information matrix,
-        describing the phase and time estimation covariance."""
+        describing the phase and time estimation covariance.
+        """
         w1 = self.get_sn_moment(1)
         w2 = self.get_sn_moment(2)
         fisher = np.asarray(((1, -w1), (-w1, w2)))

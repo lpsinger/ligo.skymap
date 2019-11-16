@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -24,7 +24,8 @@ __all__ = ('add_newdoc_ufunc', 'require_contiguous')
 def add_newdoc_ufunc(func, doc):  # pragma: no cover
     """The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
     docstring if it is `NULL`. This workaround avoids an exception when the
-    user tries to `reload()` this module."""
+    user tries to `reload()` this module.
+    """
     try:
         np.lib.add_newdoc_ufunc(func, doc)
     except ValueError as e:
@@ -35,7 +36,8 @@ def add_newdoc_ufunc(func, doc):  # pragma: no cover
 
 def require_contiguous(func):
     """Wrap a Numpy ufunc to guarantee that all of its inputs are
-    C-contiguous arrays."""
+    C-contiguous arrays.
+    """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         n = func.nin

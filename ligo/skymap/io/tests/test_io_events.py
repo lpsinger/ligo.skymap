@@ -35,7 +35,7 @@ def raises(expected_exception, msg):
 
 
 def ligolw_assertions(source):
-    """Common assertions for test_ligolw and test_sqlite."""
+    """Test common assertions for test_ligolw and test_sqlite."""
     assert len(source) == 250
     event = source[821759]
     assert len(event.singles) == 2
@@ -233,7 +233,6 @@ def test_detector_disabled():
 
 def test_hdf(tmpdir):
     """Test reading events from HDF5 files."""
-
     # Create test input files
     ifos = ['L1', 'H1']
     filenames = []

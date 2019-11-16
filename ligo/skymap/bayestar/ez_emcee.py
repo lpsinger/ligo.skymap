@@ -1,4 +1,4 @@
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -88,7 +88,6 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
 
     Examples
     --------
-
     >>> from ligo.skymap.bayestar.ez_emcee import ez_emcee
     >>> from matplotlib import pyplot as plt
     >>> import numpy as np
@@ -104,8 +103,8 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
     >>> plt.plot(chain[:, 0], chain[:, 1], '.')   # doctest: +SKIP
 
     .. image:: eggbox.png
-    '''  # noqa: E501
 
+    '''  # noqa: E501
     lo = np.asarray(lo)
     hi = np.asarray(hi)
     ndim = len(lo)

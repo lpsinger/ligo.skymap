@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -15,8 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""Tools for reading and writing SQLite databases"""
-
+"""Tools for reading and writing SQLite databases."""
 import sqlite3
 _open = open
 
@@ -62,7 +61,6 @@ def open(string, mode):
 
     Examples
     --------
-
     >>> import tempfile
     >>> import os
     >>> with tempfile.TemporaryDirectory() as d:
@@ -86,6 +84,7 @@ def open(string, mode):
     Traceback (most recent call last):
       ...
     ValueError: Invalid mode "x". Must be one of "arw".
+
     """
     if string in {'-', '/dev/stdin', '/dev/stdout'}:
         raise ValueError('Cannot open stdin/stdout as an SQLite database')
@@ -101,7 +100,7 @@ def open(string, mode):
 
 
 def get_filename(connection):
-    """Get the name of the file associated with an SQLite connection.
+    r"""Get the name of the file associated with an SQLite connection.
 
     Parameters
     ----------
@@ -120,7 +119,6 @@ def get_filename(connection):
 
     Examples
     --------
-
     >>> import tempfile
     >>> import os
     >>> with tempfile.TemporaryDirectory() as d:
@@ -130,7 +128,7 @@ def get_filename(connection):
     /.../test.sqlite
 
     >>> with tempfile.TemporaryDirectory() as d:
-    ...     with sqlite3.connect(os.path.join(d, 'test1.sqlite')) as db1, \\
+    ...     with sqlite3.connect(os.path.join(d, 'test1.sqlite')) as db1, \
     ...          sqlite3.connect(os.path.join(d, 'test2.sqlite')) as db2:
     ...         filename = get_filename(db1)
     ...         db2.execute('ATTACH DATABASE "{}" AS db2'.format(filename))
@@ -139,6 +137,7 @@ def get_filename(connection):
     Traceback (most recent call last):
       ...
     RuntimeError: Expected exactly one attached database
+
     """
     result = connection.execute('pragma database_list').fetchall()
     try:

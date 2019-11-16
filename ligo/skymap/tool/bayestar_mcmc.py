@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -15,9 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Markov-Chain Monte Carlo sky localization.
-"""
+"""Markov-Chain Monte Carlo sky localization."""
 
 from . import (
     ArgumentParser, FileType, waveform_parser,

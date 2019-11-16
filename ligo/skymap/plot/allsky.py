@@ -32,7 +32,6 @@ Matplotlib projection registry. The projections are:
 
 Example
 -------
-
 The following example demonstrates most of the features of this module.
 
 .. plot::
@@ -80,6 +79,7 @@ The following example demonstrates most of the features of this module.
         marker=ligo.skymap.plot.reticle(),
         markersize=30,
         markeredgewidth=3)
+
 """  # noqa: E501
 from astropy.convolution import convolve_fft, Gaussian2DKernel
 from astropy.coordinates import SkyCoord
@@ -120,7 +120,8 @@ __all__ = (
 
 class WCSInsetPatch(PathPatch):
     """Subclass of `matplotlib.patches.PathPatch` for marking the outline of
-    one `astropy.visualization.wcsaxes.WCSAxes` inside another."""
+    one `astropy.visualization.wcsaxes.WCSAxes` inside another.
+    """
 
     def __init__(self, ax, *args, **kwargs):
         self._ax = ax
@@ -160,7 +161,8 @@ class WCSInsetConnectionPatch(ConnectionPatch):
 
 class AutoScaledWCSAxes(WCSAxes):
     """Axes base class. The pixel scale is adjusted to the DPI of the image,
-    and there are a variety of convenience methods."""
+    and there are a variety of convenience methods.
+    """
 
     name = 'astro wcs'
 
@@ -205,13 +207,14 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         patch : `matplotlib.patches.PathPatch`
+
         """
         return self.add_patch(WCSInsetPatch(
             ax, *args, transform=self.get_transform('world'), **kwargs))
 
     def connect_inset_axes(self, ax, loc, *args, **kwargs):
-        """Convenience function to connect a corner of another WCSAxes to the
-        matching point inside this one.
+        """Connect a corner of another WCSAxes to the matching point inside
+        this one.
 
         Parameters
         ----------
@@ -231,6 +234,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         patch : `matplotlib.patches.ConnectionPatch`
+
         """
         return self.add_patch(WCSInsetConnectionPatch(
             self, ax, loc, *args, **kwargs))
@@ -244,6 +248,7 @@ class AutoScaledWCSAxes(WCSAxes):
             Position of compass vertex in axes coordinates.
         size : float
             Size of compass in axes coordinates.
+
         """
         xy = x, y
         scale = self.wcs.pixel_scale_matrix
@@ -277,6 +282,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         patch : `matplotlib.patches.FancyArrowPatch`
+
         """
         return self.add_patch(ScaleBar(self, *args, **kwargs))
 
@@ -328,6 +334,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         countours : `matplotlib.contour.QuadContourSet`
+
         """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
@@ -357,6 +364,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         contours : `matplotlib.contour.QuadContourSet`
+
         """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
@@ -386,6 +394,7 @@ class AutoScaledWCSAxes(WCSAxes):
         Returns
         -------
         image : `matplotlib.image.AxesImage`
+
         """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,
                                   nested=nested, field=field, smooth=smooth)
@@ -444,7 +453,7 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
 
 
 class AllSkyAxes(AutoScaledWCSAxes):
-    """Base class for a multi-purpose all-sky projection"""
+    """Base class for a multi-purpose all-sky projection."""
 
     def __init__(self, *args, obstime=None, **kwargs):
         header = {
@@ -502,7 +511,7 @@ class Geo(WCSAxes):
 
 
 class Degrees(WCSAxes):
-    """WCS axes with longitude axis in degrees"""
+    """WCS axes with longitude axis in degrees."""
 
     def __init__(self, *args, **kwargs):
         super(Degrees, self).__init__(*args, **kwargs)
@@ -510,7 +519,7 @@ class Degrees(WCSAxes):
 
 
 class Hours(WCSAxes):
-    """WCS axes with longitude axis in hour angle"""
+    """WCS axes with longitude axis in hour angle."""
 
     def __init__(self, *args, **kwargs):
         super(Hours, self).__init__(*args, **kwargs)

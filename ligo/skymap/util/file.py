@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -15,8 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""File tools"""
-
+"""File tools."""
 import errno
 import os
 import shutil
@@ -25,7 +24,8 @@ import tempfile
 
 def rename(src, dst):
     """Like `os.rename`, but works across different devices because it
-    catches and handles ``EXDEV`` (``Invalid cross-device link``) errors."""
+    catches and handles ``EXDEV`` (``Invalid cross-device link``) errors.
+    """
     try:
         os.rename(src, dst)
     except OSError as e:
@@ -48,12 +48,12 @@ def rm_f(filename):
 
     Examples
     --------
-
     >>> with tempfile.TemporaryDirectory() as d:
     ...     rm_f('test')
     ...     with open('test', 'w') as f:
     ...         print('Hello world', file=f)
     ...     rm_f('test')
+
     """
     try:
         os.remove(filename)

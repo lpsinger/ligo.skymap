@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -14,9 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Base classes for reading events from search pipelines.
-"""
+"""Base classes for reading events from search pipelines."""
 
 from abc import ABCMeta, abstractmethod
 from collections.abc import Mapping
@@ -65,6 +63,7 @@ class Event(metaclass=ABCMeta):
         Sequence of `SingleEvent`
     template_args : dict
         Dictionary of template parameters
+
     """
 
     @property
@@ -104,6 +103,7 @@ class SingleEvent(metaclass=ABCMeta):
         Power spectral density
     snr_series : `COMPLEX8TimeSeries`
         SNR time series
+
     """
 
     @property

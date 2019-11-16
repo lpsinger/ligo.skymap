@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2018  Leo Singer
+# Copyright (C) 2012-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,12 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Axes subclass for making probability--probability (P--P) plots.
+"""Axes subclass for making probability--probability (P--P) plots.
 
 Example
 -------
-
 You can create new P--P plot axes by passing the keyword argument
 ``projection='pp_plot'`` when creating new Matplotlib axes.
 
@@ -64,6 +62,7 @@ Or, you can call the constructor of `PPPlot` directly.
     ax.add_confidence_band(n, alpha=0.95)
     ax.add_lightning(n, 20)
     ax.add_diagonal()
+
 """
 import matplotlib
 from matplotlib import axes
@@ -109,7 +108,6 @@ class PPPlot(axes.Axes):
 
         Parameters
         ----------
-
         p_values : `numpy.ndarray`
             One or more lists of P-values.
 
@@ -130,11 +128,10 @@ class PPPlot(axes.Axes):
 
         Other parameters
         ----------------
-
         kwargs :
             optional extra arguments to `matplotlib.axes.Axes.plot`
-        """
 
+        """
         # Construct sequence of x, y pairs to pass to plot()
         args = list(self._make_series(p_values))
         min_n = min(len(ps) for ps in p_values)
@@ -150,14 +147,13 @@ class PPPlot(axes.Axes):
         return self.plot(*args, **kwargs)
 
     def add_worst(self, *p_values):
-        """
-        Mark the point at which the deviation is largest.
+        """Mark the point at which the deviation is largest.
 
         Parameters
         ----------
-
         p_values : `numpy.ndarray`
             Same as in `add_series`.
+
         """
         series = list(self._make_series(p_values))
         for xs, ys in zip(series[0::2], series[1::2]):
@@ -183,11 +179,10 @@ class PPPlot(axes.Axes):
 
         Other parameters
         ----------------
-
         kwargs :
             optional extra arguments to `matplotlib.axes.Axes.plot`
-        """
 
+        """
         # Make copy of kwargs to pass to plot()
         kwargs = dict(kwargs)
         kwargs.setdefault('color', 'black')
@@ -203,20 +198,17 @@ class PPPlot(axes.Axes):
 
         Parameters
         ----------
-
         nsamples : int
             Number of P-values in each trial
-
         ntrials : int
             Number of line series to draw.
 
         Other parameters
         ----------------
-
         kwargs :
             optional extra arguments to `matplotlib.axes.Axes.plot`
-        """
 
+        """
         # Draw random samples
         args = np.random.uniform(size=(ntrials, nsamples))
 
@@ -235,21 +227,18 @@ class PPPlot(axes.Axes):
 
         Parameters
         ----------
-
         nsamples : int
             Number of P-values
-
         alpha : float, default: 0.95
             Confidence level
-
         annotate : bool, optional, default: True
             If True, then label the confidence band.
 
         Other parameters
         ----------------
-
         **kwargs :
             optional extra arguments to `matplotlib.axes.Axes.fill_betweenx`
+
         """
         n = nsamples
         k = np.arange(0, n + 1)
@@ -288,7 +277,9 @@ class PPPlot(axes.Axes):
     @classmethod
     def _as_mpl_axes(cls):
         """Support placement in figure using the `projection` keyword argument.
-        See http://matplotlib.org/devel/add_new_projection.html"""
+
+        See http://matplotlib.org/devel/add_new_projection.html.
+        """
         return cls, {}
 
 

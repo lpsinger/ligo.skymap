@@ -16,9 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Catalog cross matching for HEALPix sky maps
-"""
+"""Catalog cross matching for HEALPix sky maps."""
 from collections import namedtuple
 
 from astropy import units as u
@@ -35,6 +33,7 @@ __all__ = ('crossmatch', 'CrossmatchResult')
 
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.
+
     Based on <http://en.wikipedia.org/w/index.php?title=Flood_fill&oldid=566525693#Alternative_implementations>.
     """  # noqa: E501
     # Initialize stack with starting pixel index.
@@ -60,7 +59,8 @@ def count_modes(m, nest=False):
     """Count the number of modes in a binary HEALPix image by repeatedly
     applying the flood-fill algorithm.
 
-    WARNING: The input array is clobbered in the process."""
+    WARNING: The input array is clobbered in the process.
+    """
     npix = len(m)
     nside = hp.npix2nside(npix)
     for nmodes in range(npix):
@@ -83,7 +83,8 @@ def count_modes_moc(uniq, i):
 
 def cos_angle_distance(theta0, phi0, theta1, phi1):
     """Cosine of angular separation in radians between two points on the
-    unit sphere."""
+    unit sphere.
+    """
     cos_angle_distance = (
         np.cos(phi1 - phi0) * np.sin(theta0) * np.sin(theta1) +
         np.cos(theta0) * np.cos(theta1))
@@ -101,8 +102,7 @@ CrossmatchResult = namedtuple(
     'searched_area searched_prob offset searched_modes contour_areas '
     'area_probs contour_modes searched_prob_dist contour_dists '
     'searched_vol searched_prob_vol contour_vols probdensity probdensity_vol')
-"""
-Cross match result as returned by
+"""Cross match result as returned by
 :func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.
 
 Notes
@@ -112,6 +112,7 @@ Notes
  - All areas returned are in square degrees.
  - All distances are luminosity distances in Mpc.
  - All volumes are in Mpc³.
+
 """
 _same_length_as_coordinates = ''' \
 Same length as the `coordinates` argument passed to \
@@ -165,7 +166,8 @@ targets.''' + _same_length_as_coordinates
 
 def crossmatch(sky_map, coordinates=None,
                contours=(), areas=(), modes=False, cosmology=False):
-    """
+    """Cross match a sky map with a catalog of points.
+
     Given a sky map and the true right ascension and declination (in radians),
     find the smallest area in deg^2 that would have to be searched to find the
     source, the smallest posterior mass, and the angular offset in degrees from
@@ -217,7 +219,6 @@ def crossmatch(sky_map, coordinates=None,
 
     Examples
     --------
-
     First, some imports:
 
     >>> from astroquery.vizier import VizierClass
@@ -271,8 +272,8 @@ def crossmatch(sky_map, coordinates=None,
            ---  14.5341000000000005 -26.0949000000000026   307.61000000000001
            ---  23.1280999999999963 -31.1109199999999966   320.62700000000001
     Length = 1478 rows
-    """  # noqa: E501
 
+    """  # noqa: E501
     # Astropy coordinates that are constructed without distance have
     # a distance field that is unity (dimensionless).
     if coordinates is None:

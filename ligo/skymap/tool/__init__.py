@@ -15,9 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Functions that support the command line interface.
-"""
+"""Functions that support the command line interface."""
 
 import argparse
 from distutils.dir_util import mkpath
@@ -53,7 +51,8 @@ class FileType(argparse.FileType):
     """Inherit from :class:`argparse.FileType` to enable opening stdin or
     stdout in binary mode.
 
-    This is a workaround for https://bugs.python.org/issue14156."""
+    This is a workaround for https://bugs.python.org/issue14156.
+    """
 
     def __call__(self, string):
         if string == '-' and 'b' in self._mode:
@@ -360,8 +359,7 @@ class HelpFormatter(argparse.RawDescriptionHelpFormatter,
 
 
 class ArgumentParser(argparse.ArgumentParser):
-    """
-    An ArgumentParser subclass with some sensible defaults.
+    """An ArgumentParser subclass with some sensible defaults.
 
     - Any ``.py`` suffix is stripped from the program name, because the
       program is probably being invoked from the stub shell script.
@@ -374,6 +372,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
     - A ``--version`` option is added that prints the version of ligo.skymap.
     """
+
     def __init__(self,
                  prog=None,
                  usage=None,

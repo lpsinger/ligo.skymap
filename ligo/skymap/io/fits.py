@@ -17,9 +17,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Reading and writing HEALPix FITS files. An example FITS header looks like
-this:
+"""Reading and writing HEALPix FITS files.
+
+An example FITS header looks like this:
 
 .. code-block:: sh
 
@@ -82,19 +82,16 @@ def gps_to_iso8601(gps_time):
 
     Parameters
     ----------
-
     gps : float
         Time in seconds since GPS epoch
 
     Returns
     -------
-
     iso8601 : str
         ISO 8601 date string (with fractional seconds)
 
     Examples
     --------
-
     >>> gps_to_iso8601(1000000000.01)
     '2011-09-14T01:46:25.010000'
     >>> gps_to_iso8601(1000000000)
@@ -107,6 +104,7 @@ def gps_to_iso8601(gps_time):
     '2011-09-14T01:59:59.999999'
     >>> gps_to_iso8601(1000000814.9999999)
     '2011-09-14T02:00:00.000000'
+
     """
     gps_seconds_fraction, gps_seconds = math.modf(gps_time)
     gps_seconds_fraction = '{0:6f}'.format(gps_seconds_fraction)
@@ -123,28 +121,25 @@ def gps_to_iso8601(gps_time):
 
 
 def iso8601_to_gps(iso8601):
-    """
-    Convert an ISO 8601 date string to a floating-point GPS time in seconds.
+    """Convert an ISO 8601 date string to a floating-point GPS time in seconds.
 
     Parameters
     ----------
-
     iso8601 : str
         ISO 8601 date string (with fractional seconds)
 
     Returns
     -------
-
     gps : float
         Time in seconds since GPS epoch
 
     Examples
     --------
-
     >>> gps_to_iso8601(1129501781.2)
     '2015-10-21T22:29:24.200000'
     >>> iso8601_to_gps('2015-10-21T22:29:24.2')
     1129501781.2
+
     """
     iso8601, _, second_fraction = iso8601.partition('.')
     second_fraction = float('0.' + second_fraction)
@@ -154,26 +149,23 @@ def iso8601_to_gps(iso8601):
 
 
 def gps_to_mjd(gps_time):
-    """
-    Convert a floating-point GPS time in seconds to a modified Julian day.
+    """Convert a floating-point GPS time in seconds to a modified Julian day.
 
     Parameters
     ----------
-
     gps_time : float
         Time in seconds since GPS epoch
 
     Returns
     -------
-
     mjd : float
         Modified Julian day
 
     Examples
     --------
-
     >>> '%.9f' % round(gps_to_mjd(1129501781.2), 9)
     '57316.937085648'
+
     """
     gps_seconds_fraction, gps_seconds = math.modf(gps_time)
     mjd = lal.ConvertCivilTimeToMJD(lal.GPSToUTC(int(gps_seconds)))
@@ -244,7 +236,6 @@ def write_sky_map(filename, m, **kwargs):
 
     Parameters
     ----------
-
     filename: str
         Path to the optionally gzip-compressed FITS file.
 
@@ -267,7 +258,6 @@ def write_sky_map(filename, m, **kwargs):
 
     Examples
     --------
-
     Test header contents:
 
     >>> order = 9
@@ -334,8 +324,8 @@ def write_sky_map(filename, m, **kwargs):
     VCSVERS = 'foo 1.0 '           / Software version
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
-    """  # noqa: E501
 
+    """  # noqa: E501
     log.debug('normalizing metadata')
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
         m = Table(m)
@@ -407,13 +397,11 @@ def write_sky_map(filename, m, **kwargs):
 
 
 def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
-    """
-    Read a LIGO/Virgo-type sky map and return a tuple of the HEALPix array
+    """Read a LIGO/Virgo-type sky map and return a tuple of the HEALPix array
     and a dictionary of metadata from the header.
 
     Parameters
     ----------
-
     filename: string
         Path to the optionally gzip-compressed FITS file.
 
@@ -440,7 +428,6 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
 
     Examples
     --------
-
     Test that we can read a legacy IDL-compatible file
     (https://bugs.ligo.org/redmine/issues/5168):
 
@@ -452,6 +439,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     ...     hp.write_map(f.name, ipix_nest, nest=True, column_names=['PROB'])
     ...     m, meta = read_sky_map(f.name)
     ...     np.testing.assert_array_equal(m, hp.ring2nest(nside, ipix_nest))
+
     """
     m = Table.read(filename, format='fits', **kwargs)
 

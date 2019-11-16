@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -21,7 +21,6 @@ Fig. 2 of the GW150914 localization and follow-up paper [1]_.
 
 Example
 -------
-
 .. plot::
    :context: reset
    :include-source:
@@ -59,12 +58,11 @@ Example
 
 References
 ----------
-
 .. [1] LSC/Virgo et al., 2016. "Localization and Broadband Follow-up of the
        Gravitational-wave Transient GW150914." ApJL 826, L13
        <https://doi.org/10.3847/2041-8205/826/1/L13>.
-"""  # noqa: E501
 
+"""  # noqa: E501
 from astropy.coordinates import (
     CartesianRepresentation, DynamicMatrixTransform, EarthLocation,
     EarthLocationAttribute, frame_transform_graph, ITRS,
@@ -88,7 +86,8 @@ del lal, registry
 
 class DetectorFrame(ITRS):
     """A coordinate frames to visualize triangulation rings from pairs of
-    gravitational-wave detectors."""
+    gravitational-wave detectors.
+    """
 
     site_1 = EarthLocationAttribute()
     site_2 = EarthLocationAttribute()

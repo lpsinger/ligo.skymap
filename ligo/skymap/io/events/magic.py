@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -14,9 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Read events from either HDF or LIGO-LW files.
-"""
+"""Read events from either HDF or LIGO-LW files."""
 import os
 import sqlite3
 from subprocess import check_output
@@ -41,6 +39,7 @@ def _get_file_type(f):
     -------
     filetype : bytes
         A string describing the file type
+
     """
     try:
         f.read
@@ -56,14 +55,14 @@ def _get_file_type(f):
 
 
 def MagicEventSource(f, *args, **kwargs):  # noqa: N802
-    """
-    Read events from either HDF or LIGO-LW files. The format is determined
+    """Read events from either HDF or LIGO-LW files. The format is determined
     using the POSIX `file` command, which determines the file by looking for
     'magic' byte strings (hence the name of this module).
 
     Returns
     -------
     source : `EventSource`
+
     """
     if isinstance(f, h5py.File):
         opener = hdf.open

@@ -21,7 +21,8 @@ The idea is to efficiently sample events, uniformly in comoving volume, and
 from a distribution of masses and spins, such that later detection cuts will
 not reject an excessive number of events. We divide the intrinsic parameter
 space into a very coarse grid and we calculate the maximum horizon distance in
-each grid cell."""
+each grid cell.
+"""
 
 from functools import partial
 
@@ -60,6 +61,7 @@ def get_decisive_snr(snrs):
     Returns
     -------
     decisive_snr : float
+
     """
     if len(snrs) > 1:
         return sorted(snrs)[-2]
@@ -97,6 +99,7 @@ def z_at_snr(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z):
     -------
     comoving_distance : float
         Comoving distance in Mpc.
+
     """
     # Construct waveform
     series = sngl_inspiral_psd(waveform, f_low=f_low,
@@ -181,7 +184,8 @@ def sensitive_distance(cosmo, z):
 
     The sensitive distance is the distance :math:`d_s(z)` defined such that
     :math:`V(z) = 4/3\pi {d_s(z)}^3`, where :math:`V(z)` is the sensitive
-    volume."""
+    volume.
+    """
     dh = cosmo.hubble_distance
     return dh * np.cbrt(3 * _sensitive_volume_integral(cosmo, z))
 
@@ -202,6 +206,7 @@ def cell_max(values):
         An input array of :math:`n` dimensions, each with a length 1 less than
         the input array,
         :math:`(m_0 - 1, m_1 - 1, \dots, m_{n-1} - 1)`.
+
     """
     maxima = maximum_filter(values, size=2, mode='constant')
     indices = (slice(1, None),) * np.ndim(values)

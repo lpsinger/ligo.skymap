@@ -56,6 +56,7 @@ def input_skymap(order1, d_order, fraction):
         The increase in orer for part of the sky map.
     fraction : float
         The fraction of the original pixels to refine.
+
     """
     order2 = order1 + d_order
     npix1 = hp.nside2npix(hp.order2nside(order1))
@@ -81,7 +82,8 @@ def input_skymap(order1, d_order, fraction):
 
 def test_rasterize_oom():
     """Test that rasterize() will correctly raise a MemoryError if it runs out
-    of memory."""
+    of memory.
+    """
     # A pixel at the highest possible 64-bit HEALPix resolution.
     uniq = moc.nest2uniq(np.int8(29), 0)
     data = table.Table({'UNIQ': [uniq], 'VALUE': [0]})

@@ -15,9 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Make an airmass chart for a LIGO/Virgo probability sky map.
-"""
+"""Make an airmass chart for a LIGO/Virgo probability sky map."""
 
 import numpy as np
 
@@ -59,7 +57,8 @@ def parser():
 
 def condition_secz(x):
     """Condition secz airmass formula: values <= 0 are below the horizon,
-    which we map to infinite airmass."""
+    which we map to infinite airmass.
+    """
     return np.where(x <= 0, np.inf, x)
 
 

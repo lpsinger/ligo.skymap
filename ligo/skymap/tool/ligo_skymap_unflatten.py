@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018  Leo Singer
+# Copyright (C) 2018-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 """Convert a HEALPix FITS file to multi-resolution UNIQ indexing from the more
-common IMPLICIT indexing."""
+common IMPLICIT indexing.
+"""
 
 from . import ArgumentParser, FileType
 

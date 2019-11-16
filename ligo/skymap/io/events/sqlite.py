@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2018  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -14,9 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Read events from GstLal-style SQLite output.
-"""
+"""Read events from a GstLal-style SQLite output."""
 import os
 import sqlite3
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2018  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -31,6 +31,7 @@ class GraceDBEventSource(EventSource):
         List of GraceDB ID strings.
     client : `ligo.gracedb.rest.GraceDb`, optional
         Client object
+
     """
 
     def __init__(self, graceids, client=None):

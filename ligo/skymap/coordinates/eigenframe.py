@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2018  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -34,7 +34,8 @@ __all__ = ('EigenFrame',)
 
 class EigenFrame(BaseCoordinateFrame):
     """A coordinate frame that has its axes aligned with the principal
-    components of a cloud of points."""
+    components of a cloud of points.
+    """
 
     e_x = CartesianRepresentationAttribute(
         default=CartesianRepresentation(1, 0, 0, unit=dimensionless_unscaled),
@@ -62,6 +63,7 @@ class EigenFrame(BaseCoordinateFrame):
         -------
         frame : `EigenFrame`
             A new coordinate frame
+
         """
         v = coords.icrs.cartesian.xyz.value
         _, r = np.linalg.eigh(np.dot(v, v.T))
@@ -92,6 +94,7 @@ class EigenFrame(BaseCoordinateFrame):
         -------
         frame : `EigenFrame`
             A new coordinate frame
+
         """
         r = principal_axes(prob, distmu, distsigma, nest=nest)
         r = r[:, ::-1]  # Order by descending eigenvalue

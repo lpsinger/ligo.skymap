@@ -28,7 +28,8 @@ class VectorLikePriorEvaluator(ptemcee.sampler.LikePriorEvaluator):
 
 class Sampler(ptemcee.sampler.Sampler):
     """Patched version of :class:`ptemcee.Sampler` that supports the
-    `vectorize` option of :class:`emcee.EnsembleSampler`."""
+    `vectorize` option of :class:`emcee.EnsembleSampler`.
+    """
 
     def __init__(self, nwalkers, dim, logl, logp,  # noqa: N803
                  ntemps=None, Tmax=None, betas=None,  # noqa: N803

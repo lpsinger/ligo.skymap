@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -15,8 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Create summary plots for sky maps of found injections, optionally binned
+"""Create summary plots for sky maps of found injections, optionally binned
 cumulatively by false alarm rate or SNR.
 """
 

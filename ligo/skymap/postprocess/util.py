@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013-2017  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -16,9 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Postprocessing utilities for HEALPix sky maps
-"""
+"""Postprocessing utilities for HEALPix sky maps."""
 
 from astropy.coordinates import (CartesianRepresentation, SkyCoord,
                                  UnitSphericalRepresentation)
@@ -35,7 +33,6 @@ def find_greedy_credible_levels(p, ranking=None):
 
     Parameters
     ----------
-
     p : np.ndarray
         The input array, typically a HEALPix image.
 
@@ -45,11 +42,11 @@ def find_greedy_credible_levels(p, ranking=None):
 
     Returns
     -------
-
     cls : np.ndarray
         An array with the same shape as `p`, with values ranging from `0`
         to `p.sum()`, representing the greedy credible level to which each
         entry in the array belongs.
+
     """
     p = np.asarray(p)
     pflat = p.ravel()
@@ -69,7 +66,6 @@ def smooth_ud_grade(m, nside, nest=False):
 
     Parameters
     ----------
-
     m : np.ndarray
         The input HEALPix array.
 
@@ -79,9 +75,9 @@ def smooth_ud_grade(m, nside, nest=False):
 
     Returns
     -------
-
     new_m : np.ndarray
         The resampled HEALPix array. The sum of `m` is approximately preserved.
+
     """
     npix = hp.nside2npix(nside)
     theta, phi = hp.pix2ang(nside, np.arange(npix), nest=nest)

@@ -20,7 +20,6 @@ Distance distribution functions from [1]_, [2]_, [3]_.
 
 References
 ----------
-
 .. [1] Singer, Chen, & Holz, 2016. "Going the Distance: Mapping Host Galaxies
    of LIGO and Virgo Sources in Three Dimensions Using Local Cosmography and
    Targeted Follow-up." ApJL, 829, L15
@@ -32,6 +31,7 @@ References
    <https://doi.org/10.3847/0067-0049/226/1/10>.
 
 .. [3] https://asd.gsfc.nasa.gov/Leo.Singer/going-the-distance
+
 """
 
 import numpy as np
@@ -67,6 +67,7 @@ Returns
 -------
 pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
+
 """)
 
 
@@ -104,6 +105,7 @@ Test against numerical integral of pdf.
 >>> result = conditional_cdf(
 ...     r, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(expected, result)
+
 """)
 
 
@@ -139,11 +141,13 @@ Test against numerical estimate.
 ... lambda r: conditional_cdf(r, distmu, distsigma, distnorm) - p, 0.0, 100.0)
 >>> r16 = conditional_ppf(p, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(expected_r16, r16)
+
 """)
 
 
 add_newdoc_ufunc(moments_to_parameters, """\
 Convert ansatz moments to parameters.
+
 This function is the inverse of `parameters_to_moments`.
 
 Parameters
@@ -161,11 +165,13 @@ distsigma : `numpy.ndarray`
     Distance scale parameter (Mpc)
 distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
+
 """)
 
 
 add_newdoc_ufunc(parameters_to_moments, """\
 Convert ansatz parameters to moments.
+
 This function is the inverse of `moments_to_parameters`.
 
 Parameters
@@ -222,6 +228,7 @@ Check some more arbitrary values using numerical quadrature:
 ...     np.testing.assert_approx_equal(mean, expected_mean, 5)
 ...     np.testing.assert_approx_equal(std, expected_std, 5)
 ...     np.testing.assert_approx_equal(norm, expected_norm, 5)
+
 """)
 
 
@@ -312,6 +319,7 @@ Last, check that we don't have a coordinate singularity at the origin.
 ...                   prob, distmu, distsigma, distnorm)
 >>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
 >>> np.testing.assert_allclose(P, P_expected, rtol=1e-4)
+
 """)
 volume_render = require_contiguous(volume_render)
 
@@ -347,6 +355,7 @@ Examples
 ...     conditional_pdf(r[:, np.newaxis], distmu, distsigma, distnorm), prob)
 >>> pdf = marginal_pdf(r, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(pdf, pdf_expected, rtol=1e-4)
+
 """)
 marginal_pdf = require_contiguous(marginal_pdf)
 
@@ -382,6 +391,7 @@ Examples
 ...     conditional_cdf(r[:, np.newaxis], distmu, distsigma, distnorm), prob)
 >>> cdf = marginal_cdf(r, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(cdf, cdf_expected, rtol=1e-4)
+
 """)
 marginal_cdf = require_contiguous(marginal_cdf)
 
@@ -419,6 +429,7 @@ Examples
 >>> cdf = marginal_cdf(r_expected, prob, distmu, distsigma, distnorm)
 >>> r = marginal_ppf(cdf, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(r, r_expected, rtol=1e-4)
+
 """)
 marginal_ppf = require_contiguous(marginal_ppf)
 
@@ -449,6 +460,7 @@ def ud_grade(prob, distmu, distsigma, *args, **kwargs):
         Resampled distance scale parameter (Mpc)
     distnorm : `numpy.ndarray`
         Resampled distance normalization factor (Mpc^-2)
+
     """
     bad = ~(np.isfinite(distmu) & np.isfinite(distsigma))
     distmean, diststd, _ = parameters_to_moments(distmu, distsigma)
@@ -512,7 +524,6 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
 
     Examples
     --------
-
     >>> # Some imports
     >>> import scipy.stats
     >>> import scipy.integrate
@@ -573,6 +584,7 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
     ...     for ipix in range(npix)])
     >>> result_integral = prob.sum() * hp.nside2pixarea(nside)
     >>> np.testing.assert_almost_equal(result_integral, 1.0, decimal=4)
+
     """
     # Initialize moments of conditional KDE.
     r0bar = 0
@@ -648,6 +660,7 @@ def parameters_to_marginal_moments(prob, distmu, distsigma):
         Mean distance (Mpc)
     diststd : float
         Std. deviation of distance (Mpc)
+
     """
     good = np.isfinite(prob) & np.isfinite(distmu) & np.isfinite(distsigma)
     prob = prob[good]

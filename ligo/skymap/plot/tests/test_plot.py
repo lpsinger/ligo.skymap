@@ -70,7 +70,8 @@ def test_pp_plot_default(rcparams):
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_allsky_axes(rcparams, coordsys, units, proj):
     """Test projection of a HEALPix image onto allsky axes, either
-    in celestial or earth-fixed coordinates."""
+    in celestial or earth-fixed coordinates.
+    """
     # Set up axes. (The obstime has an effect only for geographic axes.)
     fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111, projection=coordsys + ' ' + units + ' ' + proj,

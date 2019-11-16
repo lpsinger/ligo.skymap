@@ -16,7 +16,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 """Construct a LIGO-LW XML power spectral density file for a network of
-detectors by evaluating a model power noise sensitivity curve."""
+detectors by evaluating a model power noise sensitivity curve.
+"""
 
 from argparse import SUPPRESS
 import inspect

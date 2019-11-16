@@ -21,11 +21,11 @@ maps [2]_.
 
 References
 ----------
-
 .. [1] Reinecke & Hivon, 2015. "Efficient data structures for masks on 2D
        grids." AA 580, A132 <https://doi.org/10.1051/0004-6361/201526549>.
 .. [2] Boch et al., 2014. "MOC - HEALPix Multi-Order Coverage map." IVOA
        Recommendation <http://ivoa.net/documents/MOC/>.
+
 """
 
 from astropy import table
@@ -53,6 +53,7 @@ Returns
 -------
 uniq : `numpy.ndarray`
     NUNIQ pixel index
+
 """)
 
 
@@ -68,6 +69,7 @@ Returns
 -------
 order : `numpy.ndarray`
     HEALPix resolution order, the logarithm base 2 of `nside`
+
 """)
 
 
@@ -83,6 +85,7 @@ Returns
 -------
 area : `numpy.ndarray`
     The pixel's area in steradians
+
 """)
 
 
@@ -100,6 +103,7 @@ order : `numpy.ndarray`
     HEALPix resolution order (logarithm base 2 of `nside`)
 ipix : `numpy.ndarray`
     NESTED pixel index
+
 """)
 
 
@@ -122,6 +126,7 @@ def rasterize(moc_data, order=None):
     nested_data : `numpy.ndarray`
         A fixed-order, NESTED-ordering HEALPix dataset with all of the columns
         that were in moc_data, with the exception of the UNIQ column.
+
     """
     if order is None or order < 0:
         order = -1

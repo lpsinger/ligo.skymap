@@ -19,7 +19,8 @@ def test_detector_frame():
                           frame=itrs_frame)
     assert itrs_coord.transform_to(detector_frame).lat.deg == 90
 
-    detector_coord = SkyCoord(lon=0*u.deg, lat=90*u.deg, frame=detector_frame)
+    detector_coord = SkyCoord(lon=0 * u.deg, lat=90 * u.deg,
+                              frame=detector_frame)
     converted = detector_coord.transform_to(itrs_frame)
     assert converted.spherical.lon.deg == approx(itrs_coord.spherical.lon.deg)
     assert converted.spherical.lat.deg == approx(itrs_coord.spherical.lat.deg)

@@ -1,6 +1,4 @@
-"""
-Pytest plugin to discover doctests from Numpy ufuncs
-"""
+"""Pytest plugin to discover doctests from Numpy ufuncs."""
 
 
 try:

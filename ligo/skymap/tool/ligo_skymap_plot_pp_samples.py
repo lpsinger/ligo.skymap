@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2018  Leo Singer
+# Copyright (C) 2017-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,9 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Create a P-P plot to compare a posterior sample chain with a sky map.
-"""
+"""Create a P-P plot to compare a posterior sample chain with a sky map."""
 
 import re
 

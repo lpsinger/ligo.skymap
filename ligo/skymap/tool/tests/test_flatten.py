@@ -24,6 +24,7 @@ def input_skymap(order1, d_order, fraction):
         The increase in orer for part of the sky map.
     fraction : float
         The fraction of the original pixels to refine.
+
     """
     order2 = order1 + d_order
     npix1 = hp.nside2npix(hp.order2nside(order1))

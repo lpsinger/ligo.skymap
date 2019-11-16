@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Leo Singer, John Veitch
+# Copyright (C) 2016-2019  Leo Singer, John Veitch
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -14,9 +14,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Reading HDF5 posterior sample chain HDF5 files.
-"""
+"""Read HDF5 posterior sample chain HDF5 files."""
 
 import numpy as np
 import h5py
@@ -76,7 +74,6 @@ def _find_table(group, tablename):
 
     Examples
     --------
-
     Check that we can find a file by name:
 
     >>> import os.path
@@ -116,6 +113,7 @@ def _find_table(group, tablename):
     Traceback (most recent call last):
         ...
     KeyError: 'Multiple tables called bat exist: foo/bat, foo/xyzzy/bat'
+
     """
     results = {}
 
@@ -157,7 +155,6 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Examples
     --------
-
     Test reading a file written using the Python API:
 
     >>> import os.path
@@ -181,6 +178,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     >>> table = read_samples(filename)
     >>> table.colnames
     ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'ghi', 'rst']
+
     """
     with h5py.File(filename, 'r') as f:
         if path is not None:  # Look for a given path
@@ -230,7 +228,6 @@ def write_samples(table, filename, metadata=None, **kwargs):
 
     Examples
     --------
-
     Check that we catch columns that are supposed to be FIXED but are not:
 
     >>> table = Table([
@@ -260,6 +257,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...     write_samples(
     ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
     ...         metadata={'bat/baz': {'widget': 'shoephone'}})
+
     """  # noqa: W291
     # Copy the table so that we do not modify the original.
     table = table.copy()

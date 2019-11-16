@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 #
-# Copyright (C) 2013-2018  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -16,12 +16,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Sub-sample interpolation for matched filter time series.
+"""Sub-sample interpolation for matched filter time series.
 
 Example
 -------
-
 .. plot::
    :context: reset
    :include-source:
@@ -60,8 +58,8 @@ Example
         ax_arg.plot(i, arg, *args, **kwargs)
     ax_arg.legend()
     fig.tight_layout()
-"""
 
+"""
 import numpy as np
 from scipy import optimize
 
@@ -82,7 +80,8 @@ def lanczos(t, a):
 
 def lanczos_interpolant(t, y):
     """An interpolant constructed by convolution of the Lanczos kernel with
-    a set of discrete samples at unit intervals."""
+    a set of discrete samples at unit intervals.
+    """
     a = len(y) // 2
     return sum(lanczos(t - i + a, a) * yi for i, yi in enumerate(y))
 
@@ -94,8 +93,9 @@ def lanczos_interpolant_utility_func(t, y):
 
 def interpolate_max_lanczos(imax, y, window_length):
     """Find the time and maximum absolute value of a time series by Lanczos
-    interpolation."""
-    yi = y[imax-window_length:imax+window_length+1]
+    interpolation.
+    """
+    yi = y[(imax - window_length):(imax + window_length + 1)]
     tmax = optimize.fminbound(
         lanczos_interpolant_utility_func, -1., 1., (yi,), xtol=1e-5)
     tmax = tmax.item()
@@ -181,8 +181,8 @@ def interpolate_max_catmull_rom(imax, y, window_length):
 
 def interpolate_max_quadratic_fit(imax, y, window_length):
     """Quadratic fit to absolute value of y. Note that this one does not alter
-    the value at the maximum."""
-
+    the value at the maximum.
+    """
     t = np.arange(-window_length, window_length + 1.)
     y = y[imax - window_length:imax + window_length + 1]
     y_abs = np.abs(y)
@@ -221,7 +221,7 @@ def interpolate_max_quadratic_fit(imax, y, window_length):
 
 
 def interpolate_max_nearest_neighbor(imax, y, window_length):
-    """Trivial, nearest-neighbor interpolation"""
+    """Trivial, nearest-neighbor interpolation."""
     return imax, y[imax]
 
 
@@ -269,5 +269,6 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         `imax - 0.5` and `imax + 0.5`.
     ymax_interp : complex
         The interpolated value at the maximum.
+
     """
     return _interpolants[method](imax, np.asarray(y), window_length)

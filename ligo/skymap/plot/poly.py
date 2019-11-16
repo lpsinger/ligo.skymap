@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2018  Leo Singer
+# Copyright (C) 2012-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Plotting tools for drawing polygons
-"""
+"""Plotting tools for drawing polygons."""
 import numpy as np
 import healpy as hp
 
@@ -28,8 +26,10 @@ __all__ = ('subdivide_vertices', 'cut_dateline',
 
 
 def subdivide_vertices(vertices, subdivisions):
-    """Subdivide a list of vertices by inserting subdivisions additional vertices
-    between each original pair of vertices using linear interpolation."""
+    """Subdivide a list of vertices by inserting subdivisions additional
+    vertices between each original pair of vertices using linear
+    interpolation.
+    """
     subvertices = np.empty((subdivisions * len(vertices), vertices.shape[1]))
     frac = np.atleast_2d(
         np.arange(subdivisions + 1, dtype=float) / subdivisions).T.repeat(
@@ -49,7 +49,8 @@ def cut_dateline(vertices):
     is always given in terms of a reference angle (between -π and π).
 
     This routine is not meant to cover all possible cases; it will only work
-    for convex polygons that extend over less than a hemisphere."""
+    for convex polygons that extend over less than a hemisphere.
+    """
     vertices = vertices.copy()
     vertices[:, 0] += np.pi
     vertices = cut_prime_meridian(vertices)
@@ -64,8 +65,8 @@ def cut_prime_meridian(vertices):
     longitude is always given in terms of a wrapped angle (between 0 and 2π).
 
     This routine is not meant to cover all possible cases; it will only work
-    for convex polygons that extend over less than a hemisphere."""
-
+    for convex polygons that extend over less than a hemisphere.
+    """
     from shapely import geometry
 
     # Ensure that the list of vertices does not contain a repeated endpoint.
@@ -159,8 +160,8 @@ def cut_prime_meridian(vertices):
 
 def make_rect_poly(width, height, theta, phi, subdivisions=10):
     """Create a Polygon patch representing a rectangle with half-angles width
-    and height rotated from the north pole to (theta, phi)."""
-
+    and height rotated from the north pole to (theta, phi).
+    """
     # Convert width and height to radians, then to Cartesian coordinates.
     w = np.sin(np.deg2rad(width))
     h = np.sin(np.deg2rad(height))

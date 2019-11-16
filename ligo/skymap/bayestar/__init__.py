@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018  Leo Singer
+# Copyright (C) 2013-2019  Leo Singer
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -20,12 +20,11 @@ Rapid sky localization with BAYESTAR [1]_.
 
 References
 ----------
-
 .. [1] Singer & Price, 2016. "Rapid Bayesian position reconstruction for
        gravitational-wave transients." PRD, 93, 024013
        <https://doi.org/10.1103/PhysRevD.93.024013>.
-"""
 
+"""
 import inspect
 import logging
 import os
@@ -290,7 +289,7 @@ def condition_prior(horizons, min_distance=None, max_distance=None,
 
 def localize(
         event, waveform='o2-uberbank', f_low=30.0,
-        min_inclination=0, max_inclination=np.pi/2,
+        min_inclination=0, max_inclination=np.pi / 2,
         min_distance=None, max_distance=None, prior_distance_power=None,
         cosmology=False, mcmc=False, chain_dump=None,
         enable_snr_series=True, f_high_truncate=0.95):
@@ -327,8 +326,8 @@ def localize(
     -------
     skymap : `astropy.table.Table`
         A 3D sky map in multi-order HEALPix format.
-    """
 
+    """
     # Hide event parameters, but show all other arguments
     def formatvalue(value):
         if isinstance(value, Event):
@@ -487,7 +486,11 @@ def derasterize(skymap):
 
 def test():
     """Run BAYESTAR C unit tests.
+
+    Examples
+    --------
     >>> test()
     0
+
     """
     return int(core.test())

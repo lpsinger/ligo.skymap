@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2018  Leo Singer
+# Copyright (C) 2012-2019  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,9 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Miscellaneous plotting utilities
-"""
+"""Miscellaneous plotting utilities."""
 import matplotlib
 from matplotlib import text
 from matplotlib import ticker
@@ -67,7 +65,8 @@ def colorbar(*args):
 
 def outline_text(ax):
     """Add a white outline to all text to make it stand out from the
-    background."""
+    background.
+    """
     effects = [patheffects.withStroke(linewidth=2, foreground='w')]
     for artist in ax.findobj(text.Text):
         artist.set_path_effects(effects)

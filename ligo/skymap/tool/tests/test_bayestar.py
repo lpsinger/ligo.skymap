@@ -126,7 +126,8 @@ def localize_lvalert(coinc_without_inj, psd, tmpdir, monkeypatch):
 @pytest.mark.internet_off
 def test_bayestar(localize_coincs, localize_lvalert, coinc_sqlite, tmpdir):
     """Test bayestar-realize-coincs, bayestar-localize-coincs,
-    bayestar-localize-lvalert, and ligo-skymap-stats."""
+    bayestar-localize-lvalert, and ligo-skymap-stats.
+    """
     # Check that bayestar-localize-coincs and bayestar-localize-lvalert
     # produce the same output.
     skymap1, meta1 = io.read_sky_map(localize_coincs, distances=True)

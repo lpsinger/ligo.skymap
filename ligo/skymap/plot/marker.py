@@ -14,9 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Specialized markers
-"""
+"""Specialized markers."""
 
 from matplotlib.path import Path
 import numpy as np
@@ -34,7 +32,6 @@ The Earth symbol (circle and cross).
 
 Examples
 --------
-
 .. plot::
    :context: reset
    :include-source:
@@ -45,35 +42,30 @@ Examples
 
     plt.plot(0, 0, markersize=20, markeredgewidth=2,
              markerfacecolor='none', marker=earth)
+
 """
 
 
 def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
-    """
-    Create a reticle (crosshairs) marker.
+    """Create a reticle or crosshairs marker.
 
     Parameters
     ----------
-
     inner : float
         Distance from the origin to the inside of the crosshairs.
-
     outer : float
         Distance from the origin to the outside of the crosshairs.
-
     angle : float
         Rotation in degrees; 0 for a '+' orientation and 45 for 'x'.
 
     Returns
     -------
-
     path : `matplotlib.path.Path`
         The new marker path, suitable for passing to Matplotlib functions
         (e.g., `plt.plot(..., marker=reticle())`)
 
     Examples
     --------
-
     .. plot::
        :context: reset
        :include-source:
@@ -91,6 +83,7 @@ def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
         ax.set_ylim(-0.5, 0.5)
         for x, marker in enumerate(markers):
             ax.plot(x, 0, markersize=20, markeredgewidth=2, marker=marker)
+
     """
     angle = np.deg2rad(angle)
     x = np.cos(angle)

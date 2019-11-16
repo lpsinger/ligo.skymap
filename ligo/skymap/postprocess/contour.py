@@ -110,7 +110,6 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
     Examples
     --------
-
     A very simply example sky map...
 
     >>> nside = 32
@@ -119,6 +118,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     >>> m = dec
     >>> contour(m, [10, 20, 30], degrees=True)
     [[[[..., ...], ...], ...], ...]
+
     """
     # Determine HEALPix resolution.
     npix = len(m)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013-2018  Leo Singer, Rainer Corley
+# Copyright (C) 2013-2019  Leo Singer, Rainer Corley
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -16,8 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-"""
-Cosmology-related utilities.
+"""Cosmology-related utilities.
 
 All functions in this module use the Planck15 cosmological parameters.
 """
@@ -31,7 +30,7 @@ cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
 
 
 def dVC_dVL_for_z(z):
-    r'''Ratio, :math:`\mathrm{d}V_C / \mathrm{d}V_L`, between the comoving
+    r"""Ratio, :math:`\mathrm{d}V_C / \mathrm{d}V_L`, between the comoving
     volume element and a naively Euclidean volume element in luminosity
     distance space; given as a function of redshift.
 
@@ -47,7 +46,7 @@ def dVC_dVL_for_z(z):
        \left(
        {D_L}^2 \frac{\mathrm{d}D_L}{\mathrm{d}z}
        \right)^{-1}.
-    '''
+    """
     Ok0 = cosmo.Ok0
     DH = cosmo.hubble_distance
     DM_by_DH = (cosmo.comoving_transverse_distance(z) / DH).value
@@ -74,5 +73,6 @@ def z_for_DL(DL):
 
 def dVC_dVL_for_DL(DL):
     """Same as :meth:`dVC_dVL_for_z`, but as a function of luminosity
-    distance."""
+    distance.
+    """
     return dVC_dVL_for_z(z_for_DL(DL))

@@ -14,9 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-Backdrops for astronomical plots.
-"""
+"""Backdrops for astronomical plots."""
 
 import warnings
 
@@ -59,7 +57,6 @@ def mellinger():
 
     Examples
     --------
-
     .. plot::
        :context: reset
        :include-source:
@@ -82,8 +79,8 @@ def mellinger():
             for layer in norm(backdrop.data)])
         backdrop_reprojected = np.rollaxis(backdrop_reprojected, 0, 3)
         ax.imshow(backdrop_reprojected)
-    """
 
+    """
     url = 'http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits'
     hdu, = fits.open(url, cache=True)
     return hdu
@@ -113,7 +110,6 @@ def bluemarble(t, resolution='low'):
 
     Examples
     --------
-
     .. plot::
        :context: reset
        :include-source:
@@ -125,8 +121,8 @@ def bluemarble(t, resolution='low'):
         obstime = '2017-08-17 12:41:04'
         ax = plt.axes(projection='geo degrees aitoff', obstime=obstime)
         ax.imshow(reproject_interp_rgb(bluemarble(obstime), ax.header))
-    """
 
+    """
     variants = {
         'low': '5400x2700',
         'high': '21600x10800'
@@ -172,7 +168,6 @@ def blackmarble(t, resolution='low'):
 
     Examples
     --------
-
     .. plot::
        :context: reset
        :include-source:
@@ -184,8 +179,8 @@ def blackmarble(t, resolution='low'):
         obstime = '2017-08-17 12:41:04'
         ax = plt.axes(projection='geo degrees aitoff', obstime=obstime)
         ax.imshow(reproject_interp_rgb(blackmarble(obstime), ax.header))
-    """
 
+    """
     variants = {
         'low': '3600x1800',
         'high': '13500x6750',

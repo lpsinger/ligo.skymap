@@ -1,5 +1,5 @@
 astroplan>=0.5
-astropy>=3.1,<3.2  # https://github.com/astropy/astropy/pull/9609
+astropy>=3.1
 astropy-healpix>=0.3  # https://github.com/astropy/astropy-healpix/pull/106
 astroquery
 healpy
@@ -14,7 +14,7 @@ numpy>=1.14,!=1.15.3
 pillow>=2.5.0
 ptemcee
 python-ligo-lw
-reproject>=0.3.2,<0.6  # https://github.com/astropy/astropy/pull/9609
+reproject>=0.3.2
 scipy>=0.14
 seaborn>=0.8.0
 tqdm

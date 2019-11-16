@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.14 (unreleased)
+0.1.14 (2019-11-16)
 ===================
 
 - Add a monkey patch to work around a regression in Astropy 3.2 that broke

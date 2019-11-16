@@ -5,7 +5,9 @@ Changelog
 0.1.14 (unreleased)
 ===================
 
-- No changes yet.
+- Add a monkey patch to work around a regression in Astropy 3.2 that broke
+  WCS transformations from ITRS to ICRS coordinates.
+  See https://github.com/astropy/astropy/pull/9609/files.
 
 0.1.13 (2019-10-30)
 ===================

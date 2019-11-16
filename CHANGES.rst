@@ -9,6 +9,11 @@ Changelog
   WCS transformations from ITRS to ICRS coordinates.
   See https://github.com/astropy/astropy/pull/9609/files.
 
+- Fix a bug in the Python C extension code that could cause out-of-memory
+  errors to be misreported as a SystemError with the message ``<built-in
+  function rasterize> returned NULL without setting an error``, instead of as a
+  MemoryError.
+
 0.1.13 (2019-10-30)
 ===================
 

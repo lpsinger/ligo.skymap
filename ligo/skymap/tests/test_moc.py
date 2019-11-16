@@ -79,6 +79,16 @@ def input_skymap(order1, d_order, fraction):
     return table.vstack((data1[:n], data2[n * npix2 // npix1:]))
 
 
+def test_rasterize_oom():
+    """Test that rasterize() will correctly raise a MemoryError if it runs out
+    of memory."""
+    # A pixel at the highest possible 64-bit HEALPix resolution.
+    uniq = moc.nest2uniq(np.int8(29), 0)
+    data = table.Table({'UNIQ': [uniq], 'VALUE': [0]})
+    with pytest.raises(MemoryError):
+        moc._rasterize(data)
+
+
 @pytest.mark.parametrize('order_in', [6])
 @pytest.mark.parametrize('d_order_in', range(3))
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])

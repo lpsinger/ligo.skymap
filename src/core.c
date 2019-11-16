@@ -502,7 +502,10 @@ static PyObject *rasterize(
     out = moc_rasterize64(pixels, offset, itemsize, len, &npix, order);
     Py_END_ALLOW_THREADS
     if (!out)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Out of memory");
         goto done;
+    }
 
     /* Prepare output object */
     capsule = PyCapsule_New(out, NULL, capsule_free);

@@ -24,7 +24,7 @@ def wcs_to_celestial_frame(*args, **kwargs):
     frame = _wcs_to_celestial_frame_builtin(*args, **kwargs)
     if isinstance(frame, ITRS):
         frame = ITRS(obstime=frame.obstime,
-                     representation=SphericalRepresentation)
+                     representation_type=SphericalRepresentation)
     return frame
 
 

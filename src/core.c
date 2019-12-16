@@ -1080,11 +1080,8 @@ PyMODINIT_FUNC PyInit_core(void)
     PyObject *module = NULL;
 
     gsl_set_error_handler_off();
-
-    if (import_array())
-        goto done;
-    if (import_umath())
-        goto done;
+    import_array();
+    import_umath();
 
     OmpType.tp_new = PyType_GenericNew;
     if (PyType_Ready(&OmpType) < 0)

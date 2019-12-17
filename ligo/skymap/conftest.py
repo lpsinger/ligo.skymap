@@ -21,13 +21,9 @@ from astropy.tests.helper import enable_deprecations_as_exceptions
 
 # Customize the following lines to add/remove entries from
 # the list of packages for which version numbers are displayed when running
-# the tests. Making it pass for KeyError is essential in some cases when
-# the package uses other astropy affiliated packages.
-try:
-    PYTEST_HEADER_MODULES['Astropy'] = 'astropy'
-    del PYTEST_HEADER_MODULES['h5py']
-except KeyError:
-    pass
+# the tests.
+PYTEST_HEADER_MODULES['Astropy'] = 'astropy'
+PYTEST_HEADER_MODULES.pop('h5py', None)
 
 # This is to figure out the package version, rather than
 # using Astropy's

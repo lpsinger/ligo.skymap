@@ -2,8 +2,7 @@
 # test infrastructure.
 import os
 
-from astropy.tests.plugins.display import (pytest_report_header,
-                                           PYTEST_HEADER_MODULES,
+from astropy.tests.plugins.display import (PYTEST_HEADER_MODULES,
                                            TESTED_VERSIONS)
 
 from astropy.tests.helper import enable_deprecations_as_exceptions

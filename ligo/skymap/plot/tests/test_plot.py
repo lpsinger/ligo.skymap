@@ -115,6 +115,8 @@ def test_zoom_axes(rcparams):
                       center='197.45d -23.38d', radius='90 arcmin')
     ax.scalebar((0.1, 0.1), 30 * u.arcmin)
     ax.grid()
+    ax.set_xlabel('')
+    ax.set_ylabel('')
     return fig
 
 

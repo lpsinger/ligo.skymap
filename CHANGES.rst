@@ -9,6 +9,9 @@ Changelog
   ``bayestar-localize-coincs`` tool, for consistency with
   ``bayestar-localize-lvalert`` tool.
 
+- Remove installation dependency on astroquery, because it is only needed for
+  the unit tests.
+
 0.1.14 (2019-11-16)
 ===================
 

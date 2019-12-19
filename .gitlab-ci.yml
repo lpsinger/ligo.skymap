@@ -155,7 +155,7 @@ docs:
     OMP_NUM_THREADS: 1
   <<: *in-tmpdir
   script:
-    - pip install ${CI_PROJECT_DIR}/*.whl
+    - pip install ${CI_PROJECT_DIR}/*.whl astroquery
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --durations=10", verbose=True))'
 
 test/python3.6:

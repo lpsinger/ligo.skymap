@@ -5,7 +5,9 @@ Changelog
 0.1.15 (unreleased)
 ===================
 
-- No changes yet.
+- Add support for the ``--detector-disabled`` command line option to the
+  ``bayestar-localize-coincs`` tool, for consistency with
+  ``bayestar-localize-lvalert`` tool.
 
 0.1.14 (2019-11-16)
 ===================

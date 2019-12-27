@@ -40,6 +40,9 @@ def parser():
     parser = ArgumentParser(
         parents=[waveform_parser, prior_parser, mcmc_parser, random_parser])
     parser.add_argument(
+        '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
+        help='disable certain detectors')
+    parser.add_argument(
         '--keep-going', '-k', default=False, action='store_true',
         help='Keep processing events if a sky map fails to converge')
     parser.add_argument(
@@ -98,6 +101,10 @@ def main(args=None):
     log.info(
         '%s:reading input files', ','.join(file.name for file in opts.input))
     event_source = events.open(*opts.input, sample=opts.pycbc_sample)
+
+    if opts.disable_detector:
+        event_source = events.detector_disabled.open(
+            event_source, opts.disable_detector)
 
     mkpath(opts.output)
 

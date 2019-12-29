@@ -82,6 +82,7 @@ typedef struct {
 
 
 /* Perform sky localization based on TDOAs, PHOAs, and amplitude. */
+__attribute__ ((malloc))
 bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     size_t *out_len,                /* Number of returned pixels */
     double *out_log_bci,            /* log Bayes factor: coherent vs. incoherent */
@@ -132,6 +133,7 @@ double bayestar_log_posterior_toa_phoa_snr(
 
 /* Compute antenna factors from the detector response tensor and source
  * sky location, and return as a complex number F_plus + i F_cross. */
+__attribute__ ((pure))
 float complex antenna_factor(
     const float D[3][3],
     float ra,
@@ -144,6 +146,7 @@ float complex antenna_factor(
  * This is more of an internal function, but it's *really* important that
  * it agrees with LAL conventions, so we expose it in the interface in order
  * to be to validate it in Python against the LALSimulation SWIG bindings. */
+__attribute__ ((const))
 float complex bayestar_signal_amplitude_model(
     float complex F,               /* Complex antenna factor */
     float complex exp_i_twopsi,    /* e^(i*2*psi), for polarization angle psi */

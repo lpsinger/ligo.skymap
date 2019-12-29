@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017  Leo Singer
+ * Copyright (C) 2015-2019  Leo Singer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,19 +45,23 @@ typedef struct {
     double a[][4][4];
 } bicubic_interp;
 
+__attribute__ ((malloc))
 cubic_interp *cubic_interp_init(
     const double *data, int n, double tmin, double dt);
 
 void cubic_interp_free(cubic_interp *interp);
 
+__attribute__ ((pure))
 double cubic_interp_eval(const cubic_interp *interp, double t);
 
+__attribute__ ((malloc))
 bicubic_interp *bicubic_interp_init(
     const double *data, int ns, int nt,
     double smin, double tmin, double ds, double dt);
 
 void bicubic_interp_free(bicubic_interp *interp);
 
+__attribute__ ((pure))
 double bicubic_interp_eval(const bicubic_interp *interp, double s, double t);
 
 int cubic_interp_test(void);

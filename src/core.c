@@ -952,17 +952,17 @@ static void antenna_factor_loop(
 {
     const npy_intp n = dimensions[0];
 
-	/* FIXME: args must be void ** to avoid alignment warnings */
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wcast-align"
+    /* FIXME: args must be void ** to avoid alignment warnings */
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wcast-align"
     for (npy_intp i = 0; i < n; i ++)
     {
         float response[3][3];
 
-		for (int j = 0; j < 3; j ++)
-			for (int k = 0; k < 3; k ++)
-				response[j][k] = *(float *) &args[0][
-					i * steps[0] + j * steps[5] + k * steps[6]];
+        for (int j = 0; j < 3; j ++)
+            for (int k = 0; k < 3; k ++)
+                response[j][k] = *(float *) &args[0][
+                    i * steps[0] + j * steps[5] + k * steps[6]];
 
         *(float complex *) &args[4][i * steps[4]] = antenna_factor(
                 response,
@@ -970,7 +970,7 @@ static void antenna_factor_loop(
                 *(float *) &args[2][i * steps[2]],
                 *(float *) &args[3][i * steps[3]]);
     }
-	#pragma GCC diagnostic pop
+    #pragma GCC diagnostic pop
 }
 
 
@@ -1047,11 +1047,11 @@ static const char double_ufunc_types[] = {
                   uniq2order_types[] = {NPY_INT64, NPY_INT8},
                   uniq2pixarea_types[] = {NPY_INT64, NPY_DOUBLE},
                   uniq2ang_types[] = {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
-				  antenna_factor_types[] = {
-					  NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
+                  antenna_factor_types[] = {
+                      NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
                   signal_amplitude_model_ufunc_types[] = {
                       NPY_CFLOAT, NPY_CFLOAT, NPY_FLOAT,
-					  NPY_FLOAT, NPY_CFLOAT};
+                      NPY_FLOAT, NPY_CFLOAT};
 
 static void *const no_ufunc_data[] = {NULL};
 

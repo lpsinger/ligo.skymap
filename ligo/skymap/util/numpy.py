@@ -18,7 +18,7 @@
 import functools
 import numpy as np
 
-__all__ = ('add_newdoc_ufunc', 'require_contiguous')
+__all__ = ('add_newdoc_ufunc', 'require_contiguous_aligned')
 
 
 def add_newdoc_ufunc(func, doc):  # pragma: no cover
@@ -34,7 +34,7 @@ def add_newdoc_ufunc(func, doc):  # pragma: no cover
             pass
 
 
-def require_contiguous(func):
+def require_contiguous_aligned(func):
     """Wrap a Numpy ufunc to guarantee that all of its inputs are
     C-contiguous arrays.
     """
@@ -42,7 +42,7 @@ def require_contiguous(func):
     def wrapper(*args, **kwargs):
         n = func.nin
         args = [arg if i >= n or np.isscalar(arg)
-                else np.ascontiguousarray(arg)
+                else np.require(arg, requirements={'CONTIGUOUS', 'ALIGNED'})
                 for i, arg in enumerate(args)]
         return func(*args, **kwargs)
     return wrapper

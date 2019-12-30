@@ -48,15 +48,20 @@ from .. import moc
 from .. import healpix_tree
 from .. import version
 from .. import core
-from ..core import log_posterior_toa_phoa_snr as _log_posterior_toa_phoa_snr
-from ..util.numpy import require_contiguous
+from ..core import (antenna_factor, signal_amplitude_model,
+                    log_posterior_toa_phoa_snr as _log_posterior_toa_phoa_snr)
+from ..util.numpy import require_contiguous_aligned
 from .ez_emcee import ez_emcee
 
-__all__ = ('derasterize', 'localize', 'rasterize')
+__all__ = ('derasterize', 'localize', 'rasterize', 'antenna_factor',
+           'signal_amplitude_model')
 
 log = logging.getLogger('BAYESTAR')
 
-_log_posterior_toa_phoa_snr = require_contiguous(_log_posterior_toa_phoa_snr)
+antenna_factor = require_contiguous_aligned(antenna_factor)
+signal_amplitude_model = require_contiguous_aligned(signal_amplitude_model)
+_log_posterior_toa_phoa_snr = require_contiguous_aligned(
+    _log_posterior_toa_phoa_snr)
 
 
 # Wrap so that ufunc parameter names are known
@@ -494,3 +499,6 @@ def test():
 
     """
     return int(core.test())
+
+
+del require_contiguous_aligned

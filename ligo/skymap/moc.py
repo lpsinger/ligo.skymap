@@ -33,7 +33,7 @@ import numpy as np
 
 from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
 from .core import rasterize as _rasterize
-from .util.numpy import add_newdoc_ufunc
+from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
 
 __all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea',
            'uniq2ang', 'rasterize')
@@ -55,6 +55,7 @@ uniq : `numpy.ndarray`
     NUNIQ pixel index
 
 """)
+nest2uniq = require_contiguous_aligned(nest2uniq)
 
 
 add_newdoc_ufunc(uniq2order, """\
@@ -71,6 +72,7 @@ order : `numpy.ndarray`
     HEALPix resolution order, the logarithm base 2 of `nside`
 
 """)
+uniq2order = require_contiguous_aligned(uniq2order)
 
 
 add_newdoc_ufunc(uniq2pixarea, """\
@@ -87,6 +89,7 @@ area : `numpy.ndarray`
     The pixel's area in steradians
 
 """)
+uniq2pixarea = require_contiguous_aligned(uniq2pixarea)
 
 
 add_newdoc_ufunc(uniq2nest, """\
@@ -105,6 +108,7 @@ ipix : `numpy.ndarray`
     NESTED pixel index
 
 """)
+uniq2nest = require_contiguous_aligned(uniq2nest)
 
 
 def rasterize(moc_data, order=None):
@@ -153,4 +157,4 @@ def rasterize(moc_data, order=None):
     return _rasterize(moc_data, order=order)
 
 
-del add_newdoc_ufunc
+del add_newdoc_ufunc, require_contiguous_aligned

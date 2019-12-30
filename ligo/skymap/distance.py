@@ -40,7 +40,7 @@ import scipy.special
 from .core import (conditional_pdf, conditional_cdf, conditional_ppf,
                    moments_to_parameters, parameters_to_moments, volume_render,
                    marginal_pdf, marginal_cdf, marginal_ppf)
-from .util.numpy import add_newdoc_ufunc, require_contiguous
+from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
 
 __all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
            'moments_to_parameters', 'parameters_to_moments', 'volume_render',
@@ -69,6 +69,7 @@ pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
 
 """)
+conditional_pdf = require_contiguous_aligned(conditional_pdf)
 
 
 add_newdoc_ufunc(conditional_cdf, """\
@@ -107,6 +108,7 @@ Test against numerical integral of pdf.
 >>> np.testing.assert_almost_equal(expected, result)
 
 """)
+conditional_cdf = require_contiguous_aligned(conditional_cdf)
 
 
 add_newdoc_ufunc(conditional_ppf, """\
@@ -143,6 +145,7 @@ Test against numerical estimate.
 >>> np.testing.assert_almost_equal(expected_r16, r16)
 
 """)
+conditional_ppf = require_contiguous_aligned(conditional_ppf)
 
 
 add_newdoc_ufunc(moments_to_parameters, """\
@@ -167,6 +170,7 @@ distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
 
 """)
+moments_to_parameters = require_contiguous_aligned(moments_to_parameters)
 
 
 add_newdoc_ufunc(parameters_to_moments, """\
@@ -230,6 +234,7 @@ Check some more arbitrary values using numerical quadrature:
 ...     np.testing.assert_approx_equal(norm, expected_norm, 5)
 
 """)
+parameters_to_moments = require_contiguous_aligned(parameters_to_moments)
 
 
 add_newdoc_ufunc(volume_render, """\
@@ -321,7 +326,7 @@ Last, check that we don't have a coordinate singularity at the origin.
 >>> np.testing.assert_allclose(P, P_expected, rtol=1e-4)
 
 """)
-volume_render = require_contiguous(volume_render)
+volume_render = require_contiguous_aligned(volume_render)
 
 
 add_newdoc_ufunc(marginal_pdf, """\
@@ -357,7 +362,7 @@ Examples
 >>> np.testing.assert_allclose(pdf, pdf_expected, rtol=1e-4)
 
 """)
-marginal_pdf = require_contiguous(marginal_pdf)
+marginal_pdf = require_contiguous_aligned(marginal_pdf)
 
 
 add_newdoc_ufunc(marginal_cdf, """\
@@ -393,7 +398,7 @@ Examples
 >>> np.testing.assert_allclose(cdf, cdf_expected, rtol=1e-4)
 
 """)
-marginal_cdf = require_contiguous(marginal_cdf)
+marginal_cdf = require_contiguous_aligned(marginal_cdf)
 
 
 add_newdoc_ufunc(marginal_ppf, """\
@@ -431,7 +436,7 @@ Examples
 >>> np.testing.assert_allclose(r, r_expected, rtol=1e-4)
 
 """)
-marginal_ppf = require_contiguous(marginal_ppf)
+marginal_ppf = require_contiguous_aligned(marginal_ppf)
 
 
 def ud_grade(prob, distmu, distsigma, *args, **kwargs):
@@ -672,4 +677,4 @@ def parameters_to_marginal_moments(prob, distmu, distsigma):
     return rbar, np.sqrt(r2bar - np.square(rbar))
 
 
-del add_newdoc_ufunc, require_contiguous
+del add_newdoc_ufunc, require_contiguous_aligned

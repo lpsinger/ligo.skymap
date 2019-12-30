@@ -28,12 +28,13 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_nan.h>
 #include <Python.h>
+#include "warnings.h"
 /* Ignore warnings in Numpy API itself */
-#pragma GCC diagnostic push
+WARNINGS_PUSH
 #pragma GCC diagnostic ignored "-Wcast-qual"
 #include <numpy/arrayobject.h>
 #include <numpy/ufuncobject.h>
-#pragma GCC diagnostic pop
+WARNINGS_POP
 #include "bayestar_distance.h"
 #include "bayestar_moc.h"
 #include "bayestar_sky_map.h"
@@ -140,15 +141,16 @@ static void conditional_pdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_pdf(
         *(double *) &args[0][i * steps[0]],
         *(double *) &args[1][i * steps[1]],
         *(double *) &args[2][i * steps[2]],
         *(double *) &args[3][i * steps[3]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -164,15 +166,16 @@ static void conditional_cdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_cdf(
         *(double *) &args[0][i * steps[0]],
         *(double *) &args[1][i * steps[1]],
         *(double *) &args[2][i * steps[2]],
         *(double *) &args[3][i * steps[3]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -188,15 +191,16 @@ static void conditional_ppf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_ppf(
         *(double *) &args[0][i * steps[0]],
         *(double *) &args[1][i * steps[1]],
         *(double *) &args[2][i * steps[2]],
         *(double *) &args[3][i * steps[3]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -212,16 +216,17 @@ static void moments_to_parameters_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         bayestar_distance_moments_to_parameters(
             *(double *) &args[0][i * steps[0]],
             *(double *) &args[1][i * steps[1]],
              (double *) &args[2][i * steps[2]],
              (double *) &args[3][i * steps[3]],
              (double *) &args[4][i * steps[4]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -237,16 +242,17 @@ static void parameters_to_moments_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         bayestar_distance_parameters_to_moments(
             *(double *) &args[0][i * steps[0]],
             *(double *) &args[1][i * steps[1]],
              (double *) &args[2][i * steps[2]],
              (double *) &args[3][i * steps[3]],
              (double *) &args[4][i * steps[4]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -268,9 +274,10 @@ static void volume_render_loop(
     {
         if (OMP_WAS_INTERRUPTED)
             OMP_EXIT_LOOP_EARLY
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[11][i * steps[11]] = bayestar_volume_render(
             *(double *)   &args[0][i * steps[0]],
             *(double *)   &args[1][i * steps[1]],
@@ -284,7 +291,7 @@ static void volume_render_loop(
              (double *)   &args[8][i * steps[8]],
              (double *)   &args[9][i * steps[9]],
              (double *)   &args[10][i * steps[10]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
     OMP_END_INTERRUPTIBLE
 
@@ -309,9 +316,10 @@ static void marginal_pdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
             bayestar_distance_marginal_pdf(
             *(double *) &args[0][i * steps[0]], npix,
@@ -319,7 +327,7 @@ static void marginal_pdf_loop(
              (double *) &args[2][i * steps[2]],
              (double *) &args[3][i * steps[3]],
              (double *) &args[4][i * steps[4]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -343,9 +351,10 @@ static void marginal_cdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
             bayestar_distance_marginal_cdf(
             *(double *) &args[0][i * steps[0]], npix,
@@ -353,7 +362,7 @@ static void marginal_cdf_loop(
              (double *) &args[2][i * steps[2]],
              (double *) &args[3][i * steps[3]],
              (double *) &args[4][i * steps[4]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -377,9 +386,10 @@ static void marginal_ppf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
             bayestar_distance_marginal_ppf(
             *(double *) &args[0][i * steps[0]], npix,
@@ -387,7 +397,7 @@ static void marginal_ppf_loop(
              (double *) &args[2][i * steps[2]],
              (double *) &args[3][i * steps[3]],
              (double *) &args[4][i * steps[4]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -414,12 +424,12 @@ static PyObject *rasterize(
 
     /* Parse arguments */
     /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+    WARNINGS_PUSH
+    WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i",
         keywords, &arg, &order))
         return NULL;
-    #pragma GCC diagnostic pop
+    WARNINGS_POP
 
     PyArrayObject *arr = (PyArrayObject *) PyArray_FromAny(
         arg, NULL, 1, 1, NPY_ARRAY_CARRAY_RO, NULL);
@@ -546,13 +556,14 @@ static void nest2uniq_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(int64_t *) &args[2][i * steps[2]] = nest2uniq64(
         *(int8_t *)  &args[0][i * steps[0]],
         *(int64_t *) &args[1][i * steps[1]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -564,13 +575,14 @@ static void uniq2nest_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(int8_t *)  &args[1][i * steps[1]] = uniq2nest64(
         *(int64_t *) &args[0][i * steps[0]],
          (int64_t *) &args[2][i * steps[2]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -582,12 +594,13 @@ static void uniq2order_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(int8_t *)  &args[1][i * steps[1]] = uniq2order64(
         *(int64_t *) &args[0][i * steps[0]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -599,12 +612,13 @@ static void uniq2pixarea_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *)  &args[1][i * steps[1]] = uniq2pixarea64(
         *(int64_t *) &args[0][i * steps[0]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -616,14 +630,15 @@ static void uniq2ang_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         uniq2ang64(
             *(int64_t *) &args[0][i * steps[0]],
              (double *)  &args[1][i * steps[1]],
              (double *)  &args[2][i * steps[2]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -730,14 +745,14 @@ static PyObject *sky_map_toa_phoa_snr(
 
     /* Parse arguments */
     /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+    WARNINGS_PUSH
+    WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiidfOOOOO",
         keywords, &min_inclination, &max_inclination, &min_distance,
         &max_distance, &prior_distance_power, &cosmology, &gmst, &sample_rate,
         &epochs_obj, &snrs_obj, &responses_obj, &locations_obj, &horizons_obj))
         return NULL;
-    #pragma GCC diagnostic pop
+    WARNINGS_POP
 
     if (cosmology && prior_distance_power != 2)
     {
@@ -920,9 +935,10 @@ static void log_posterior_toa_phoa_snr_loop(
                 &args[15][i * steps[15] + j * steps[24]];
         }
 
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(double *)   &args[17][i * steps[17]] = bayestar_log_posterior_toa_phoa_snr(
         *(double *)   &args[0][i * steps[0]],
         *(double *)   &args[1][i * steps[1]],
@@ -940,7 +956,7 @@ static void log_posterior_toa_phoa_snr_loop(
          (const double *) &args[12][i * steps[12]],
          snrs, responses, locations,
          (const double *) &args[16][i * steps[16]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 
     gsl_set_error_handler(old_handler);
@@ -952,13 +968,14 @@ static void antenna_factor_loop(
 {
     const npy_intp n = dimensions[0];
 
-    /* FIXME: args must be void ** to avoid alignment warnings */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wcast-align"
     for (npy_intp i = 0; i < n; i ++)
     {
         float response[3][3];
 
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         for (int j = 0; j < 3; j ++)
             for (int k = 0; k < 3; k ++)
                 response[j][k] = *(float *) &args[0][
@@ -969,8 +986,8 @@ static void antenna_factor_loop(
                 *(float *) &args[1][i * steps[1]],
                 *(float *) &args[2][i * steps[2]],
                 *(float *) &args[3][i * steps[3]]);
+        WARNINGS_POP
     }
-    #pragma GCC diagnostic pop
 }
 
 
@@ -981,16 +998,17 @@ static void signal_amplitude_model_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* FIXME: args must be void ** to avoid alignment warnings */
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wcast-align"
+        /* Alignment of the ufunc arguments is enforced in Python by the
+         * require_contiguous_aligned wrapper function. */
+        WARNINGS_PUSH
+        WARNINGS_IGNORE_CAST_ALIGN
         *(float complex *) &args[4][i * steps[4]] =
             bayestar_signal_amplitude_model(
             *(float complex *) &args[0][i * steps[0]],
             *(float complex *) &args[1][i * steps[1]],
             *(float *)         &args[2][i * steps[2]],
             *(float *)         &args[3][i * steps[3]]);
-        #pragma GCC diagnostic pop
+        WARNINGS_POP
     }
 }
 
@@ -1099,12 +1117,8 @@ PyMODINIT_FUNC PyInit_core(void)
         PyObject_CallFunctionObjArgs((PyObject *) &OmpType, NULL));
 
     /* Ignore warnings in Numpy API */
-    #pragma GCC diagnostic push
-    #ifdef __clang__
-    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
-    #else
-    #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
-    #endif
+    WARNINGS_PUSH
+    WARNINGS_IGNORE_DISCARDED_QUALIFIERS
 
     PyModule_AddObject(
         module, "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
@@ -1213,7 +1227,8 @@ PyMODINIT_FUNC PyInit_core(void)
             signal_amplitude_model_loops, no_ufunc_data,
             signal_amplitude_model_ufunc_types, 1, 4, 1, PyUFunc_None,
             "signal_amplitude_model", NULL, 0));
-    #pragma GCC diagnostic pop
+
+    WARNINGS_POP
 
 done:
     return module;

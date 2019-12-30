@@ -5,7 +5,7 @@ import lalsimulation
 import numpy as np
 from pytest import approx, mark
 
-from ...core import signal_amplitude_model
+from .. import signal_amplitude_model
 
 
 def get_eff_dist(detector, ra, dec, inclination, polarization, epoch, gmst):

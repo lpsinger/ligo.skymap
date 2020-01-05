@@ -1,6 +1,8 @@
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml
+  - project: emfollow/gitlab-ci-templates
+    file: sccb.yml
 
 stages:
   - dist
@@ -320,3 +322,10 @@ deploy/wheel:
     - wheel/cp38-cp38-macosx
   only:
     - tags
+
+#
+# SCCB request.
+#
+
+sccb:
+  stage: deploy

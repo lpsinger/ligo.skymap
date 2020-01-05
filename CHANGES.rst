@@ -30,6 +30,10 @@ Changelog
 - Change the license for the project as a whole to GPL 3.0 or later (GPLv3+).
   Previously, the source files had been a mix of GPLv2+ and GPLv3+.
 
+- Add ``ligo-skymap-contour-moc`` command line to create a credible region 
+  in a MOC (Multi Order Coverage) data structure. The input can be either a
+  multiresolution or a flattened HEALPix probability map.
+
 0.1.15 (2020-01-05)
 ===================
 

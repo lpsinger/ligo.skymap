@@ -137,6 +137,7 @@ Sky Map Visualization
    :maxdepth: 1
 
    ligo/skymap/tool/ligo_skymap_contour
+   ligo/skymap/tool/ligo_skymap_contour_moc
    ligo/skymap/tool/ligo_skymap_plot
    ligo/skymap/tool/ligo_skymap_plot_airmass
    ligo/skymap/tool/ligo_skymap_plot_observability

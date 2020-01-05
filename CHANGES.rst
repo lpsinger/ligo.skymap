@@ -17,7 +17,7 @@ Changelog
 
 - Add a monkey patch to work around a regression in Astropy 3.2 that broke
   WCS transformations from ITRS to ICRS coordinates.
-  See https://github.com/astropy/astropy/pull/9609/files.
+  See https://github.com/astropy/astropy/pull/9609.
 
 - Fix a bug in the Python C extension code that could cause out-of-memory
   errors to be misreported as a SystemError with the message ``<built-in

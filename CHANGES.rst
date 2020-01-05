@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.15 (unreleased)
+0.1.15 (2020-01-05)
 ===================
 
 - Add support for the ``--detector-disabled`` command line option to the

@@ -1,3 +1,6 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml

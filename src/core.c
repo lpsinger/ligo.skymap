@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019  Leo Singer
+ * Copyright (C) 2013-2020  Leo Singer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,35 +96,11 @@ static PyGetSetDef Omp_getsetdefs[] = {
 
 static PyTypeObject OmpType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    "ligo.skymap.omp",         /* tp_name */
-    sizeof(Omp),               /* tp_basicsize */
-    0,                         /* tp_itemsize */
-    0,                         /* tp_dealloc */
-    0,                         /* tp_print */
-    0,                         /* tp_getattr */
-    0,                         /* tp_setattr */
-    0,                         /* tp_reserved */
-    0,                         /* tp_repr */
-    0,                         /* tp_as_number */
-    0,                         /* tp_as_sequence */
-    0,                         /* tp_as_mapping */
-    0,                         /* tp_hash  */
-    0,                         /* tp_call */
-    0,                         /* tp_str */
-    0,                         /* tp_getattro */
-    0,                         /* tp_setattro */
-    0,                         /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,        /* tp_flags */
-    "Global OpenMP settings",  /* tp_doc */
-    0,                         /* tp_traverse */
-    0,                         /* tp_clear */
-    0,                         /* tp_richcompare */
-    0,                         /* tp_weaklistoffset */
-    0,                         /* tp_iter */
-    0,                         /* tp_iternext */
-    0,                         /* tp_methods */
-    0,                         /* tp_members */
-    Omp_getsetdefs,            /* tp_getset */
+    .tp_name = "ligo.skymap.omp",
+    .tp_basicsize = sizeof(Omp),
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = "Global OpenMP settings",
+    .tp_getset = Omp_getsetdefs,
 };
 
 

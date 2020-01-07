@@ -6,17 +6,20 @@ The `ligo.skymap` package provides tools for reading, writing, generating, and
 visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
 the key features of this package are:
 
-*  :doc:`ligo/skymap/tool/bayestar_localize_coincs`: BAYESTAR, providing rapid,
+*  Command line tool :doc:`bayestar-localize-coincs
+   <ligo/skymap/tool/bayestar_localize_coincs>`: BAYESTAR, providing rapid,
    coherent, Bayesian, 3D position reconstruction for compact binary
    coalescence events
 
-*  :doc:`ligo/skymap/tool/ligo_skymap_from_samples`: Create 3D sky maps from
+*  Command line tool :doc:`ligo-skymap-from-samples
+   <ligo/skymap/tool/ligo_skymap_from_samples>`: Create 3D sky maps from
    posterior sample chains using kernel density estimation
 
-*  :doc:`ligo/skymap/tool/ligo_skymap_plot`: An everyday tool for plotting
-   HEALPix maps
+*  Command line tool :doc:`ligo-skymap-plot
+   <ligo/skymap/tool/ligo_skymap_plot>`: An everyday tool for plotting HEALPix
+   maps
 
-*  Module :mod:`ligo.skymap.plot`: Astronomical mapmaking tools for
+*  Module :mod:`ligo.skymap.plot.allsky`: Astronomical mapmaking tools for
    perfectionists and figure connoisseurs
 
 .. figure:: _static/localization.svg

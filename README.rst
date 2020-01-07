@@ -6,14 +6,14 @@ The `ligo.skymap` package provides tools for reading, writing, generating, and
 visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
 the key features of this package are:
 
-*  `Script bayestar-localize-coincs`_: BAYESTAR, providing rapid,
-   coherent, Bayesian, 3D position reconstruction for compact binary
-   coalescence events
+*  `Command line tool bayestar-localize-coincs`_ and
+   `bayestar-localize-lvalert`_: BAYESTAR, providing rapid, coherent, Bayesian,
+   3D position reconstruction for compact binary coalescence events
 
-*  `Script ligo-skymap-from-samples`_: Create 3D sky maps from
+*  `Command line tool ligo-skymap-from-samples`_: Create 3D sky maps from
    posterior sample chains using kernel density estimation
 
-*  `Script ligo-skymap-plot`_: An everyday tool for plotting
+*  `Command line tool ligo-skymap-plot`_: An everyday tool for plotting
    HEALPix maps
 
 *  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
@@ -48,9 +48,10 @@ documentation`_.
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
    https://10.1126/science.aap9455
 
-.. _`Script bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
-.. _`Script ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
-.. _`Script ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
+.. _`Command line tool bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
+.. _`bayestar-localize-lvalert`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_lvalert.html
+.. _`Command line tool ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
+.. _`Command line tool ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
 .. _`Module ligo.skymap.plot`: https://lscsoft.docs.ligo.org/ligo.skymap/#plotting-and-visualization-ligo-skymap-plot
 .. _`installation instructions`: https://lscsoft.docs.ligo.org/ligo.skymap/quickstart/install.html
 .. _`full documentation`: https://lscsoft.docs.ligo.org/ligo.skymap

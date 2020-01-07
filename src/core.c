@@ -242,8 +242,6 @@ static void volume_render_loop(
     const npy_intp n = dimensions[0];
     const long long nside = npix2nside64(dimensions[2]);
 
-    /* FIXME: Check that array arguments are stored contiguously */
-
     OMP_BEGIN_INTERRUPTIBLE
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)

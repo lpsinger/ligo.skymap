@@ -205,10 +205,6 @@ def blackmarble(t, resolution='low'):
     return fits.ImageHDU(img[:, :, :], header)
 
 
-# FIXME: renamed
-nightlights = blackmarble
-
-
 def reproject_interp_rgb(input_data, *args, **kwargs):
     data = input_data.data
     wcs = WCS(input_data.header).celestial

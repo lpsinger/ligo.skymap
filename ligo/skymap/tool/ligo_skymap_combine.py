@@ -28,7 +28,7 @@ from . import ArgumentParser, FileType
 
 
 def parser():
-    parser = ArgumentParser(description=__doc__)
+    parser = ArgumentParser()
     parser.add_argument('input', metavar='INPUT.fits[.gz]',
                         type=FileType('rb'), nargs='+',
                         help='Input sky localizations')

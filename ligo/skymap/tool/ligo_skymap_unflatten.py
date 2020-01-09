@@ -22,7 +22,7 @@ from . import ArgumentParser, FileType
 
 
 def parser():
-    parser = ArgumentParser(description=__doc__)
+    parser = ArgumentParser()
     parser.add_argument('input', metavar='INPUT.fits',
                         type=FileType('rb'), help='Input FITS file')
     parser.add_argument('output', metavar='OUTPUT.fits[.gz]',

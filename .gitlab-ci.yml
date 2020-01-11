@@ -30,15 +30,16 @@ sdist:
 # Build binary wheels for Linux and macOS.
 #
 
-.wheel/manylinux2010: &wheel-manylinux2010
+.wheel/manylinux2014: &wheel-manylinux2014
+  tags: [cit]
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
-  image: containers.ligo.org/leo-singer/lalsuite-manylinux/manylinux2010_x86_64:icc
+  image: containers.ligo.org/leo-singer/lalsuite-manylinux/manylinux2014_x86_64:icc
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux2010/\1/')
+    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux2014/\1/')
     - ${PYPREFIX}/bin/python setup.py bdist_wheel
     - auditwheel repair dist/*.whl
     - rm dist/*
@@ -72,12 +73,12 @@ sdist:
       - '*.whl'
     expire_in: 1 day
 
-wheel/cp36-cp36m-manylinux2010:
-  <<: *wheel-manylinux2010
-wheel/cp37-cp37m-manylinux2010:
-  <<: *wheel-manylinux2010
-wheel/cp38-cp38-manylinux2010:
-  <<: *wheel-manylinux2010
+wheel/cp36-cp36m-manylinux2014:
+  <<: *wheel-manylinux2014
+wheel/cp37-cp37m-manylinux2014:
+  <<: *wheel-manylinux2014
+wheel/cp38-cp38-manylinux2014:
+  <<: *wheel-manylinux2014
 wheel/cp36-cp36m-macosx:
   <<: *wheel-macos
 wheel/cp37-cp37m-macosx:
@@ -167,20 +168,20 @@ test/python3.6:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel/cp36-cp36m-manylinux2010
+    - wheel/cp36-cp36m-manylinux2014
 
 test/python3.7:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   dependencies:
-    - wheel/cp37-cp37m-manylinux2010
+    - wheel/cp37-cp37m-manylinux2014
 
 # FIXME: uncomment and add classifier once LALSuite is built for Python 3.8.
 # test/python3.8:
 #   <<: *test
 #   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
 #   dependencies:
-#     - wheel/cp38-cp38-manylinux2010
+#     - wheel/cp38-cp38-manylinux2014
 
 #
 # Measure test coverage:
@@ -317,9 +318,9 @@ deploy/wheel:
     - twine upload *.whl *.tar.*
   dependencies:
     - sdist
-    - wheel/cp36-cp36m-manylinux2010
-    - wheel/cp37-cp37m-manylinux2010
-    - wheel/cp38-cp38-manylinux2010
+    - wheel/cp36-cp36m-manylinux2014
+    - wheel/cp37-cp37m-manylinux2014
+    - wheel/cp38-cp38-manylinux2014
     - wheel/cp36-cp36m-macosx
     - wheel/cp37-cp37m-macosx
     - wheel/cp38-cp38-macosx

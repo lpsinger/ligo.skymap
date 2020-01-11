@@ -5,7 +5,10 @@ Changelog
 0.1.16 (unreleased)
 ===================
 
-- No changes yet.
+- Update the compiler version that is used to build Linux wheels to icc
+  19.1.0.166 from Intel Parallel Studio XE 2020u0. Due to C ABI requirements,
+  the wheels are now built for the `manylinux2014
+  <https://www.python.org/dev/peps/pep-0599/>`_ standard.
 
 0.1.15 (2020-01-05)
 ===================

@@ -318,7 +318,7 @@ class AutoScaledWCSAxes(WCSAxes):
         ----------
         data : `numpy.ndarray` or str or `~astropy.io.fits.TableHDU` or `~astropy.io.fits.BinTableHDU` or tuple
             The HEALPix data set. If this is a `numpy.ndarray`, then it is
-            interpreted as the HEALPi array in the same coordinate system as
+            interpreted as the HEALPix array in the same coordinate system as
             the axes. Otherwise, the input data can be any type that is
             understood by `reproject.reproject_from_healpix`.
         smooth : `astropy.units.Quantity`, optional
@@ -348,7 +348,7 @@ class AutoScaledWCSAxes(WCSAxes):
         ----------
         data : `numpy.ndarray` or str or `~astropy.io.fits.TableHDU` or `~astropy.io.fits.BinTableHDU` or tuple
             The HEALPix data set. If this is a `numpy.ndarray`, then it is
-            interpreted as the HEALPi array in the same coordinate system as
+            interpreted as the HEALPix array in the same coordinate system as
             the axes. Otherwise, the input data can be any type that is
             understood by `reproject.reproject_from_healpix`.
         smooth : `astropy.units.Quantity`, optional
@@ -378,7 +378,7 @@ class AutoScaledWCSAxes(WCSAxes):
         ----------
         data : `numpy.ndarray` or str or `~astropy.io.fits.TableHDU` or `~astropy.io.fits.BinTableHDU` or tuple
             The HEALPix data set. If this is a `numpy.ndarray`, then it is
-            interpreted as the HEALPi array in the same coordinate system as
+            interpreted as the HEALPix array in the same coordinate system as
             the axes. Otherwise, the input data can be any type that is
             understood by `reproject.reproject_from_healpix`.
         smooth : `astropy.units.Quantity`, optional

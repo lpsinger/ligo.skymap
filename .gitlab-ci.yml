@@ -31,7 +31,6 @@ sdist:
 #
 
 .wheel/manylinux2014: &wheel-manylinux2014
-  tags: [cit]
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.

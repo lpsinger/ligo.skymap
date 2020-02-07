@@ -17,6 +17,9 @@ Changelog
   shorthand for ``astro hours``, and ``geo`` by itself is short for
   ``geo degrees``.
 
+- ``ligo-skymap-plot`` now supports a variety of projections using the
+  ``--projection`` option.
+
 - Turn on continuous integration testing for Python 3.8.
 
 - Change the license for the project as a whole to GPL 3.0 or later (GPLv3+).

@@ -50,7 +50,19 @@ def parser():
         help='read injection positions from database')
     parser.add_argument(
         '--geo', action='store_true',
-        help='Plot in geographic coordinates, (lat, lon) instead of (RA, Dec)')
+        help='Use a terrestrial reference frame with coordinates (lon, lat) '
+             'instead of the celestial frame with coordinates (RA, dec) '
+             'and draw continents on the map')
+    parser.add_argument(
+        '--projection', type=str, default='mollweide',
+        choices=['mollweide', 'aitoff', 'globe', 'zoom'],
+        help='Projection style')
+    parser.add_argument(
+        '--projection-center', metavar='CENTER',
+        help='Specify the center for globe and zoom projections, e.g. 14h 10d')
+    parser.add_argument(
+        '--zoom-radius', metavar='RADIUS',
+        help='Specify the radius for zoom projections, e.g. 4deg')
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
@@ -81,11 +93,19 @@ def main(args=None):
     deg2perpix = hp.nside2pixarea(nside, degrees=True)
     probperdeg2 = skymap / deg2perpix
 
+    axes_args = {}
     if opts.geo:
+        axes_args['projection'] = 'geo'
         obstime = Time(metadata['gps_time'], format='gps').utc.isot
-        ax = plt.axes(projection='geo degrees mollweide', obstime=obstime)
+        axes_args['obstime'] = obstime
     else:
-        ax = plt.axes(projection='astro hours mollweide')
+        axes_args['projection'] = 'astro'
+    axes_args['projection'] += ' ' + opts.projection
+    if opts.projection_center is not None:
+        axes_args['center'] = SkyCoord(opts.projection_center)
+    if opts.zoom_radius is not None:
+        axes_args['radius'] = opts.zoom_radius
+    ax = plt.axes(**axes_args)
     ax.grid()
 
     # Plot sky map.

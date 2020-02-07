@@ -25,13 +25,22 @@ def skymap(tmpdir):
 
 
 @pytest.mark.parametrize('geo', [False, True])
-def test_plot(tmpdir, skymap, geo):
+@pytest.mark.parametrize('proj', ['mollweide', 'aitoff', 'globe', 'zoom'])
+def test_plot(tmpdir, skymap, geo, proj):
     """Test ligo-skymap-plot."""
     pngfilename = str(tmpdir / 'skymap.png')
     args = ['ligo-skymap-plot', skymap, '-o', pngfilename, '--annotate',
-            '--colorbar', '--radec', '320', '45']
+            '--colorbar', '--radec', '320', '45', '--projection', proj]
     if geo:
         args.append('--geo')
+    if proj == 'globe':
+        args.append('--projection-center')
+        args.append('0d 0d' if geo else '0h 0d')
+    elif proj == 'zoom':
+        args.append('--projection-center')
+        args.append('0d 0d' if geo else '0h 0d')
+        args.append('--zoom-radius')
+        args.append('20deg')
     args.extend(['--contour', '90'])
     run_entry_point(*args)
 

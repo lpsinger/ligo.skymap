@@ -10,6 +10,8 @@ Changelog
   the wheels are now built for the `manylinux2014
   <https://www.python.org/dev/peps/pep-0599/>`_ standard.
 
+- Fix a unit test failure with astropy < 4.0.0.
+
 0.1.15 (2020-01-05)
 ===================
 

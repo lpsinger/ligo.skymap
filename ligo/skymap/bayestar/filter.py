@@ -352,7 +352,7 @@ def abs2(y):
     return np.square(y.real) + np.square(y.imag)
 
 
-class vectorize_swig_psd_func(object):  # noqa: N801
+class vectorize_swig_psd_func:  # noqa: N801
     """Create a vectorized Numpy function from a SWIG-wrapped PSD function.
     SWIG does not provide enough information for Numpy to determine the number
     of input arguments, so we can't just use np.vectorize.
@@ -431,7 +431,7 @@ class InterpolatedPSD(interpolate.interp1d):
             np.exp(self.fill_value))
 
 
-class SignalModel(object):
+class SignalModel:
     """Class to speed up computation of signal/noise-weighted integrals and
     Barankin and Cramér-Rao lower bounds on time and phase estimation.
 

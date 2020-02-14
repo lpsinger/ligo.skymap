@@ -41,7 +41,7 @@ _HEALPixTreeVisit = collections.namedtuple(
     'HEALPixTreeVisit', 'nside ipix')
 
 
-class HEALPixTree(object):
+class HEALPixTree:
     """Data structure used internally by the function
     adaptive_healpix_histogram()."""
 

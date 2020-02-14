@@ -479,7 +479,7 @@ class AllSkyAxes(AutoScaledWCSAxes):
         self.coords[1].set_ticklabel(exclude_overlapping=True)
 
 
-class Astro(object):
+class Astro:
     _crval1 = 180
     _xcoord = 'RA--'
     _ycoord = 'DEC-'
@@ -526,11 +526,11 @@ class Hours(WCSAxes):
         self.coords[0].set_major_formatter('hh')
 
 
-class Aitoff(object):
+class Aitoff:
     _wcsprj = 'AIT'
 
 
-class Mollweide(object):
+class Mollweide:
     _wcsprj = 'MOL'
 
 

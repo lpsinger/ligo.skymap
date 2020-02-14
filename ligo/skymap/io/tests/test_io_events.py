@@ -17,7 +17,7 @@ from ...util import sqlite
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 
 
-class MockGraceDb(object):
+class MockGraceDb:
     """Mock GraceDB client class that reads local data files."""
 
     def files(self, graceid, filename):

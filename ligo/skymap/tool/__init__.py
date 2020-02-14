@@ -411,7 +411,7 @@ class ArgumentParser(argparse.ArgumentParser):
             '-l', '--loglevel', action='loglevel', default='INFO')
 
 
-class DirType(object):
+class DirType:
     """Factory for directory arguments."""
 
     def __init__(self, create=False):

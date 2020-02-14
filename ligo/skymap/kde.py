@@ -235,7 +235,7 @@ def _cluster(cls, pts, trials, i, seed, jobs):
         return obj.bic, k, obj.kdes
 
 
-class ClusteredKDE(object):
+class ClusteredKDE:
 
     def __init__(self, pts, max_k=40, trials=5, assign=None, jobs=1):
         self.jobs = jobs

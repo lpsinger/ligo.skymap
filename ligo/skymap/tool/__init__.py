@@ -75,7 +75,7 @@ class EnableAction(argparse.Action):
         if not opt.startswith('--enable-'):
             raise ValueError('Option string must start with --enable-')
         option_strings = [opt, opt.replace('--enable-', '--disable-')]
-        super(EnableAction, self).__init__(
+        super().__init__(
             option_strings,
             dest=dest,
             nargs=0,
@@ -99,8 +99,7 @@ class GlobAction(argparse._StoreAction):
         values = list(
             itertools.chain.from_iterable(glob.iglob(s) for s in values))
         if values:
-            super(GlobAction, self).__call__(
-                parser, namespace, values, *args, **kwargs)
+            super().__call__(parser, namespace, values, *args, **kwargs)
         nvalues = getattr(namespace, self.dest)
         nvalues = 0 if nvalues is None else len(nvalues)
         if self.nargs == argparse.OPTIONAL:
@@ -189,7 +188,7 @@ del group
 class MatplotlibFigureType(FileType):
 
     def __init__(self):
-        super(MatplotlibFigureType, self).__init__('wb')
+        super().__init__('wb')
 
     @staticmethod
     def __show():
@@ -215,7 +214,7 @@ class MatplotlibFigureType(FileType):
             plt.switch_backend(matplotlib.rcParamsOrig['backend'])
             return self.__show
         else:
-            with super(MatplotlibFigureType, self).__call__(string):
+            with super().__call__(string):
                 pass
             plt.switch_backend('agg')
             self.string = string
@@ -230,7 +229,7 @@ class HelpChoicesAction(argparse.Action):
                  dest=argparse.SUPPRESS,
                  default=argparse.SUPPRESS):
         name = option_strings[0].replace('--help-', '')
-        super(HelpChoicesAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             default=default,
@@ -333,7 +332,7 @@ class LogLevelAction(argparse._StoreAction):
             type=None, choices=None, required=False, help=None, metavar=None):
         metavar = '|'.join(logging._levelToName.values())
         type = loglevel_type
-        super(LogLevelAction, self).__init__(
+        super().__init__(
             option_strings, dest, nargs=nargs, const=const, default=default,
             type=type, choices=choices, required=required, help=help,
             metavar=metavar)
@@ -391,7 +390,7 @@ class ArgumentParser(argparse.ArgumentParser):
             prog = prog.replace('_', '-').replace('.py', '')
         if description is None:
             description = parent_frame.f_globals.get('__doc__', None)
-        super(ArgumentParser, self).__init__(
+        super().__init__(
             prog=prog,
             usage=usage,
             description=description,

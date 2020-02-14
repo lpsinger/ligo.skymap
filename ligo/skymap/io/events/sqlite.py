@@ -39,8 +39,7 @@ class SQLiteEventSource(LigoLWEventSource):
             else:
                 filename = f
             db = sqlite.open(filename, 'r')
-        super(SQLiteEventSource, self).__init__(dbtables.get_xml(db),
-                                                *args, **kwargs)
+        super().__init__(dbtables.get_xml(db), *args, **kwargs)
         self._fallbackpath = os.path.dirname(filename) if filename else None
 
 

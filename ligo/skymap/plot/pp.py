@@ -80,7 +80,7 @@ class PPPlot(axes.Axes):
 
     def __init__(self, *args, **kwargs):
         # Call parent constructor
-        super(PPPlot, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Square axes, limits from 0 to 1
         self.set_aspect(1.0)

@@ -68,7 +68,7 @@ class BoundedKDE(gaussian_kde):
     def __init__(self, pts, low=-np.inf, high=np.inf, periodic=False,
                  bw_method=None):
 
-        super(BoundedKDE, self).__init__(pts, bw_method=bw_method)
+        super().__init__(pts, bw_method=bw_method)
         self._low = np.broadcast_to(
             low, self.d).astype(self.dataset.dtype)
         self._high = np.broadcast_to(
@@ -86,7 +86,7 @@ class BoundedKDE(gaussian_kde):
         pts_orig = pts
         pts = np.copy(pts_orig)
 
-        den = super(BoundedKDE, self).evaluate(pts)
+        den = super().evaluate(pts)
 
         for i, (low, high, period) in enumerate(zip(self._low, self._high,
                                                     self._periodic)):
@@ -94,22 +94,22 @@ class BoundedKDE(gaussian_kde):
                 p = high - low
 
                 pts[i, :] += p
-                den += super(BoundedKDE, self).evaluate(pts)
+                den += super().evaluate(pts)
 
                 pts[i, :] -= 2.0 * p
-                den += super(BoundedKDE, self).evaluate(pts)
+                den += super().evaluate(pts)
 
                 pts[i, :] = pts_orig[i, :]
 
             else:
                 if not np.isneginf(low):
                     pts[i, :] = 2.0 * low - pts[i, :]
-                    den += super(BoundedKDE, self).evaluate(pts)
+                    den += super().evaluate(pts)
                     pts[i, :] = pts_orig[i, :]
 
                 if not np.isposinf(high):
                     pts[i, :] = 2.0 * high - pts[i, :]
-                    den += super(BoundedKDE, self).evaluate(pts)
+                    den += super().evaluate(pts)
                     pts[i, :] = pts_orig[i, :]
 
         return den
@@ -321,11 +321,11 @@ class SkyKDE(ClusteredKDE):
     def __init__(self, pts, max_k=40, trials=5, assign=None, jobs=1):
         if assign is None:
             pts = self.transform(pts)
-        super(SkyKDE, self).__init__(
+        super().__init__(
             pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
 
     def __call__(self, pts):
-        return super(SkyKDE, self).__call__(self.transform(pts))
+        return super().__call__(self.transform(pts))
 
     def _bayestar_adaptive_grid(self, top_nside=16, rounds=8):
         """Implement of the BAYESTAR adaptive mesh refinement scheme as
@@ -441,7 +441,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
         frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit='rad'))
         name = '{:s}_{:x}'.format(cls.__name__, id(frame))
         new_cls = type(name, (cls,), {'frame': frame})
-        return super(Clustered2DSkyKDE, cls).__new__(new_cls)
+        return super().__new__(new_cls)
 
     def __reduce__(self):
         """Pickle instances of dynamically created subclasses of
@@ -451,7 +451,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
         return _Clustered2DSkyKDE_factory, factory_args, self.__dict__
 
     def eval_kdes(self, pts):
-        base = super(Clustered2DSkyKDE, self).eval_kdes
+        base = super().eval_kdes
         dphis = (0.0, 2 * np.pi, -2 * np.pi)
         phi, z = pts.T
         return sum(base(np.column_stack((phi + dphi, z))) for dphi in dphis)
@@ -487,13 +487,13 @@ class Clustered3DSkyKDE(SkyKDE):
         """Evaluate the posterior probability density in spherical polar
         coordinates, as a function of (ra, dec, distance).
         """
-        return super(Clustered3DSkyKDE, self).__call__(pts)
+        return super().__call__(pts)
 
     def as_healpix(self, top_nside=16):
         """Return a HEALPix multi-order map of the posterior density and
         conditional distance distribution parameters.
         """
-        m = super(Clustered3DSkyKDE, self).as_healpix(top_nside=top_nside)
+        m = super().as_healpix(top_nside=top_nside)
         order, ipix = moc.uniq2nest(m['UNIQ'])
         nside = 2 ** order.astype(int)
         theta, phi = hp.pix2ang(nside, ipix, nest=True)
@@ -513,14 +513,14 @@ class Clustered2Plus1DSkyKDE(Clustered3DSkyKDE):
         if assign is None:
             self.twod = Clustered2DSkyKDE(
                 pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
-        super(Clustered2Plus1DSkyKDE, self).__init__(
+        super().__init__(
             pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
 
     def __call__(self, pts, distances=False):
         probdensity = self.twod(pts)
         if distances:
-            base = super(Clustered2Plus1DSkyKDE, self)
-            _, distmu, distsigma, distnorm = base.__call__(pts, distances=True)
+            _, distmu, distsigma, distnorm = super().__call__(
+                pts, distances=True)
             return probdensity, distmu, distsigma, distnorm
         else:
             return probdensity
@@ -529,5 +529,5 @@ class Clustered2Plus1DSkyKDE(Clustered3DSkyKDE):
         """Evaluate the posterior probability density in spherical polar
         coordinates, as a function of (ra, dec, distance).
         """
-        base = super(Clustered2Plus1DSkyKDE, self)
-        return self(pts) * base.posterior_spherical(pts) / base.__call__(pts)
+        return self(pts) * super().posterior_spherical(pts) / super().__call__(
+            pts)

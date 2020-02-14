@@ -54,4 +54,4 @@ class Sampler(ptemcee.sampler.Sampler):
         if self._vectorize:
             return self._likeprior(ps)
         else:
-            return super(self).evaluate(ps)
+            return super().evaluate(ps)

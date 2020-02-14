@@ -402,7 +402,7 @@ class InterpolatedPSD(interpolate.interp1d):
             keep = (f <= f_high_truncate * max(f))
             f = f[keep]
             S = S[keep]
-        super(InterpolatedPSD, self).__init__(
+        super().__init__(
             np.log(f), np.log(S),
             kind='linear', bounds_error=False, fill_value=np.log(fill_value))
         self._f_min = min(f)
@@ -427,7 +427,7 @@ class InterpolatedPSD(interpolate.interp1d):
                         'only sampled up to %g Hz', f_max, self._f_max)
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),
-            np.exp(super(InterpolatedPSD, self).__call__(np.log(f))),
+            np.exp(super().__call__(np.log(f))),
             np.exp(self.fill_value))
 
 

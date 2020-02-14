@@ -125,7 +125,7 @@ class WCSInsetPatch(PathPatch):
 
     def __init__(self, ax, *args, **kwargs):
         self._ax = ax
-        super(WCSInsetPatch, self).__init__(
+        super().__init__(
             None, *args, fill=False,
             edgecolor=ax.coords.frame.get_color(),
             linewidth=ax.coords.frame.get_linewidth(),
@@ -152,7 +152,7 @@ class WCSInsetConnectionPatch(ConnectionPatch):
                      ax.coords.frame.transform.inverted())
         xy_inset = corners[self._corners_map[loc]]
         xy = transform.transform_point(xy_inset)
-        super(WCSInsetConnectionPatch, self).__init__(
+        super().__init__(
             xy, xy_inset, 'data', 'data', ax, ax_inset, *args,
             color=ax_inset.coords.frame.get_color(),
             linewidth=ax_inset.coords.frame.get_linewidth(),
@@ -167,7 +167,7 @@ class AutoScaledWCSAxes(WCSAxes):
     name = 'astro wcs'
 
     def __init__(self, *args, header, **kwargs):
-        super(AutoScaledWCSAxes, self).__init__(*args, aspect=1, **kwargs)
+        super().__init__(*args, aspect=1, **kwargs)
         h = Header(header, copy=True)
         naxis1 = h['NAXIS1']
         naxis2 = h['NAXIS2']
@@ -422,7 +422,7 @@ class GlobeAxes(AutoScaledWCSAxes):
             'RADESYS': 'ICRS'}
         if rotate is not None:
             header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
-        super(GlobeAxes, self).__init__(
+        super().__init__(
             *args, frame_class=EllipticalFrame, header=header, **kwargs)
 
 
@@ -449,7 +449,7 @@ class ZoomSkyAxes(AutoScaledWCSAxes):
             'RADESYS': 'ICRS'}
         if rotate is not None:
             header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
-        super(ZoomSkyAxes, self).__init__(*args, header=header, **kwargs)
+        super().__init__(*args, header=header, **kwargs)
 
 
 class AllSkyAxes(AutoScaledWCSAxes):
@@ -471,7 +471,7 @@ class AllSkyAxes(AutoScaledWCSAxes):
             'RADESYS': self._radesys}
         if obstime is not None:
             header['DATE-OBS'] = Time(obstime).utc.isot
-        super(AllSkyAxes, self).__init__(
+        super().__init__(
             *args, frame_class=EllipticalFrame, header=header, **kwargs)
         self.coords[0].set_ticks(spacing=45 * u.deg)
         self.coords[1].set_ticks(spacing=30 * u.deg)
@@ -489,7 +489,7 @@ class Astro:
 class GeoAngleFormatterLocator(AngleFormatterLocator):
 
     def formatter(self, values, spacing):
-        return super(GeoAngleFormatterLocator, self).formatter(
+        return super().formatter(
             reference_angle_deg(values.to(u.deg).value) * u.deg, spacing)
 
 
@@ -500,7 +500,7 @@ class Geo(WCSAxes):
     _ycoord = 'TLAT'
 
     def __init__(self, *args, **kwargs):
-        super(Geo, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.invert_xaxis()
         fl = self.coords[0]._formatter_locator
         self.coords[0]._formatter_locator = GeoAngleFormatterLocator(
@@ -514,7 +514,7 @@ class Degrees(WCSAxes):
     """WCS axes with longitude axis in degrees."""
 
     def __init__(self, *args, **kwargs):
-        super(Degrees, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.coords[0].set_major_formatter('d')
 
 
@@ -522,7 +522,7 @@ class Hours(WCSAxes):
     """WCS axes with longitude axis in hour angle."""
 
     def __init__(self, *args, **kwargs):
-        super(Hours, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.coords[0].set_major_formatter('hh')
 
 
@@ -603,7 +603,7 @@ class ScaleBar(FancyArrowPatch):
             linewidth=rcParams['lines.linewidth'],
         )
         kwargs.update(custom_kwargs)
-        super(ScaleBar, self).__init__(
+        super().__init__(
             xy, (x + dx, y),
             *args,
             arrowstyle='-',

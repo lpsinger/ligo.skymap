@@ -81,8 +81,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
         self._fallbackpath = (
             os.path.dirname(filename) if filename else fallbackpath)
         self._psds_for_file = lru_cache(maxsize=None)(self._psds_for_file)
-        super(LigoLWEventSource, self).__init__(
-            self._make_events(doc, psd_file, coinc_def))
+        super().__init__(self._make_events(doc, psd_file, coinc_def))
 
     _template_keys = '''mass1 mass2
                         spin1x spin1y spin1z spin2x spin2y spin2z'''.split()

@@ -12,6 +12,11 @@ Changelog
 
 - Fix a unit test failure with astropy < 4.0.0.
 
+- Add support for all combinations of map projection options, including
+  ``geo degrees globe`` and ``geo degrees zoom``. Also, ``astro`` by itself is
+  shorthand for ``astro hours``, and ``geo`` by itself is short for
+  ``geo degrees``.
+
 0.1.15 (2020-01-05)
 ===================
 

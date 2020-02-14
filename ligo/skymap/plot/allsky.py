@@ -15,23 +15,80 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Axes subclasses for all-sky maps. This adds several
-`astropy.visualization.wcsaxes.WCSAxes` subclasses to the
-Matplotlib projection registry. The projections are:
+Axes subclasses for astronomical mapmaking.
 
-*  ``astro degrees aitoff``
-*  ``astro degrees mollweide``
-*  ``astro hours aitoff``
-*  ``astro hours mollweide``
-*  ``geo degrees aitoff``
-*  ``geo hours aitoff``
-*  ``geo degrees mollweide``
-*  ``geo hours mollweide``
-*  ``astro globe`` with options `center` and `rotate`
-*  ``astro zoom`` with options `center`, `radius`, and `rotate`
+This module adds several :class:`astropy.visualization.wcsaxes.WCSAxes`
+subclasses to the Matplotlib projection registry. The projections have names of
+the form :samp:`{astro_or_geo} [{lon_units}] {projection}`.
 
-Example
--------
+:samp:`{astro_or_geo}` may be ``astro`` or ``geo``. It controls the
+reference frame, either celestial (ICRS) or terrestrial (ITRS).
+
+:samp:`{lon_units}` may be ``hours`` or ``degrees``. It controls the units of
+the longitude axis. If omitted, ``astro`` implies ``hours`` and ``geo`` implies
+degrees.
+
+:samp:`{projection}` may be any of the following:
+
+* ``aitoff`` for the Aitoff all-sky projection
+
+* ``mollweide`` for the Mollweide all-sky projection
+
+* ``globe`` for an orthographic projection, like the three-dimensional view of
+  the Earth from a distant satellite
+
+* ``zoom`` for a gnomonic projection suitable for visualizing small zoomed-in
+  patches
+
+Some of the projections support additional optional arguments. The ``globe``
+projections support the options ``center`` and ``rotate``. The ``zoom``
+projections support the options ``center``, ``radius``, and ``rotate``.
+
+Examples
+--------
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    ax = plt.axes(projection='astro hours mollweide')
+    ax.grid()
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    ax = plt.axes(projection='geo aitoff')
+    ax.grid()
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    ax = plt.axes(projection='astro zoom',
+                  center='5h -32d', radius='5 deg', rotate='20 deg')
+    ax.grid()
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    ax = plt.axes(projection='geo globe', center='-50d +23d')
+    ax.grid()
+
+Complete Example
+----------------
 The following example demonstrates most of the features of this module.
 
 .. plot::
@@ -81,6 +138,8 @@ The following example demonstrates most of the features of this module.
         markeredgewidth=3)
 
 """  # noqa: E501
+from itertools import product
+
 from astropy.convolution import convolve_fft, Gaussian2DKernel
 from astropy.coordinates import SkyCoord
 from astropy.io.fits import Header
@@ -103,19 +162,7 @@ from . import itrs_frame_monkeypatch
 
 itrs_frame_monkeypatch.install()
 
-__all__ = (
-    'AstroDegreesAitoffAllSkyAxes',
-    'AstroDegreesMollweideAllSkyAxes',
-    'AstroHoursAitoffAllSkyAxes',
-    'AstroHoursMollweideAllSkyAxes',
-    'AutoScaledWCSAxes',
-    'GeoDegreesAitoffAllSkyAxes',
-    'GeoDegreesMollweideAllSkyAxes',
-    'GeoHoursAitoffAllSkyAxes',
-    'GeoHoursMollweideAllSkyAxes',
-    'GlobeAxes',
-    'ScaleBar',
-    'ZoomSkyAxes')
+__all__ = ['AutoScaledWCSAxes', 'ScaleBar']
 
 
 class WCSInsetPatch(PathPatch):
@@ -401,185 +448,6 @@ class AutoScaledWCSAxes(WCSAxes):
         return self.imshow(img, **kwargs)
 
 
-class GlobeAxes(AutoScaledWCSAxes):
-
-    name = 'astro globe'
-
-    def __init__(self, *args, center='0d 0d', rotate=None, **kwargs):
-        center = SkyCoord(center).icrs
-        header = {
-            'NAXIS': 2,
-            'NAXIS1': 180,
-            'NAXIS2': 180,
-            'CRPIX1': 90.5,
-            'CRPIX2': 90.5,
-            'CRVAL1': center.ra.deg,
-            'CRVAL2': center.dec.deg,
-            'CDELT1': -2 / np.pi,
-            'CDELT2': 2 / np.pi,
-            'CTYPE1': 'RA---SIN',
-            'CTYPE2': 'DEC--SIN',
-            'RADESYS': 'ICRS'}
-        if rotate is not None:
-            header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
-        super().__init__(
-            *args, frame_class=EllipticalFrame, header=header, **kwargs)
-
-
-class ZoomSkyAxes(AutoScaledWCSAxes):
-
-    name = 'astro zoom'
-
-    def __init__(self, *args, center='0d 0d', radius='1 deg', rotate=None,
-                 **kwargs):
-        center = SkyCoord(center).icrs
-        radius = u.Quantity(radius).to(u.deg).value
-        header = {
-            'NAXIS': 2,
-            'NAXIS1': 512,
-            'NAXIS2': 512,
-            'CRPIX1': 256.5,
-            'CRPIX2': 256.5,
-            'CRVAL1': center.ra.deg,
-            'CRVAL2': center.dec.deg,
-            'CDELT1': -radius / 256,
-            'CDELT2': radius / 256,
-            'CTYPE1': 'RA---TAN',
-            'CTYPE2': 'DEC--TAN',
-            'RADESYS': 'ICRS'}
-        if rotate is not None:
-            header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
-        super().__init__(*args, header=header, **kwargs)
-
-
-class AllSkyAxes(AutoScaledWCSAxes):
-    """Base class for a multi-purpose all-sky projection."""
-
-    def __init__(self, *args, obstime=None, **kwargs):
-        header = {
-            'NAXIS': 2,
-            'NAXIS1': 360,
-            'NAXIS2': 180,
-            'CRPIX1': 180.5,
-            'CRPIX2': 90.5,
-            'CRVAL1': self._crval1,
-            'CRVAL2': 0.0,
-            'CDELT1': -2 * np.sqrt(2) / np.pi,
-            'CDELT2': 2 * np.sqrt(2) / np.pi,
-            'CTYPE1': self._xcoord + '-' + self._wcsprj,
-            'CTYPE2': self._ycoord + '-' + self._wcsprj,
-            'RADESYS': self._radesys}
-        if obstime is not None:
-            header['DATE-OBS'] = Time(obstime).utc.isot
-        super().__init__(
-            *args, frame_class=EllipticalFrame, header=header, **kwargs)
-        self.coords[0].set_ticks(spacing=45 * u.deg)
-        self.coords[1].set_ticks(spacing=30 * u.deg)
-        self.coords[0].set_ticklabel(exclude_overlapping=True)
-        self.coords[1].set_ticklabel(exclude_overlapping=True)
-
-
-class Astro:
-    _crval1 = 180
-    _xcoord = 'RA--'
-    _ycoord = 'DEC-'
-    _radesys = 'ICRS'
-
-
-class GeoAngleFormatterLocator(AngleFormatterLocator):
-
-    def formatter(self, values, spacing):
-        return super().formatter(
-            reference_angle_deg(values.to(u.deg).value) * u.deg, spacing)
-
-
-class Geo(WCSAxes):
-    _crval1 = 0
-    _radesys = 'ITRS'
-    _xcoord = 'TLON'
-    _ycoord = 'TLAT'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.invert_xaxis()
-        fl = self.coords[0]._formatter_locator
-        self.coords[0]._formatter_locator = GeoAngleFormatterLocator(
-            values=fl.values,
-            number=fl.number,
-            spacing=fl.spacing,
-            format=fl.format)
-
-
-class Degrees(WCSAxes):
-    """WCS axes with longitude axis in degrees."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.coords[0].set_major_formatter('d')
-
-
-class Hours(WCSAxes):
-    """WCS axes with longitude axis in hour angle."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.coords[0].set_major_formatter('hh')
-
-
-class Aitoff:
-    _wcsprj = 'AIT'
-
-
-class Mollweide:
-    _wcsprj = 'MOL'
-
-
-class AstroDegreesAitoffAllSkyAxes(Astro, Degrees, Aitoff, AllSkyAxes):
-    name = 'astro degrees aitoff'
-
-
-class AstroDegreesMollweideAllSkyAxes(Astro, Degrees, Mollweide, AllSkyAxes):
-    name = 'astro degrees mollweide'
-
-
-class AstroHoursAitoffAllSkyAxes(Astro, Hours, Aitoff, AllSkyAxes):
-    name = 'astro hours aitoff'
-
-
-class AstroHoursMollweideAllSkyAxes(Astro, Hours, Mollweide, AllSkyAxes):
-    name = 'astro hours mollweide'
-
-
-class GeoDegreesAitoffAllSkyAxes(Geo, Degrees, Aitoff, AllSkyAxes):
-    name = 'geo degrees aitoff'
-
-
-class GeoHoursAitoffAllSkyAxes(Geo, Hours, Aitoff, AllSkyAxes):
-    name = 'geo hours aitoff'
-
-
-class GeoDegreesMollweideAllSkyAxes(Geo, Degrees, Mollweide, AllSkyAxes):
-    name = 'geo degrees mollweide'
-
-
-class GeoHoursMollweideAllSkyAxes(Geo, Hours, Mollweide, AllSkyAxes):
-    name = 'geo hours mollweide'
-
-
-projection_registry.register(
-    AutoScaledWCSAxes,
-    AstroDegreesAitoffAllSkyAxes,
-    AstroDegreesMollweideAllSkyAxes,
-    AstroHoursAitoffAllSkyAxes,
-    AstroHoursMollweideAllSkyAxes,
-    GeoDegreesAitoffAllSkyAxes,
-    GeoHoursAitoffAllSkyAxes,
-    GeoDegreesMollweideAllSkyAxes,
-    GeoHoursMollweideAllSkyAxes,
-    GlobeAxes,
-    ZoomSkyAxes)
-
-
 class ScaleBar(FancyArrowPatch):
 
     def _func(self, dx, x, y):
@@ -618,3 +486,171 @@ class ScaleBar(FancyArrowPatch):
         return self._ax.text(
             0.5 * (x0 + x1), y, s,
             ha='center', va='bottom', transform=self._ax.transAxes, **kwargs)
+
+
+class Astro:
+    _crval1 = 180
+    _xcoord = 'RA--'
+    _ycoord = 'DEC-'
+    _radesys = 'ICRS'
+
+
+class GeoAngleFormatterLocator(AngleFormatterLocator):
+
+    def formatter(self, values, spacing):
+        return super().formatter(
+            reference_angle_deg(values.to(u.deg).value) * u.deg, spacing)
+
+
+class Geo:
+    _crval1 = 0
+    _radesys = 'ITRS'
+    _xcoord = 'TLON'
+    _ycoord = 'TLAT'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.invert_xaxis()
+        fl = self.coords[0]._formatter_locator
+        self.coords[0]._formatter_locator = GeoAngleFormatterLocator(
+            values=fl.values,
+            number=fl.number,
+            spacing=fl.spacing,
+            format=fl.format,
+            format_unit=fl.format_unit)
+
+
+class Degrees:
+    """WCS axes with longitude axis in degrees."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.coords[0].set_format_unit(u.degree)
+
+
+class Hours:
+    """WCS axes with longitude axis in hour angle."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.coords[0].set_format_unit(u.hourangle)
+
+
+class Globe(AutoScaledWCSAxes):
+
+    def __init__(self, *args, center='0d 0d', rotate=None, **kwargs):
+        center = SkyCoord(center).icrs
+        header = {
+            'NAXIS': 2,
+            'NAXIS1': 180,
+            'NAXIS2': 180,
+            'CRPIX1': 90.5,
+            'CRPIX2': 90.5,
+            'CRVAL1': center.ra.deg,
+            'CRVAL2': center.dec.deg,
+            'CDELT1': -2 / np.pi,
+            'CDELT2': 2 / np.pi,
+            'CTYPE1': self._xcoord + '-SIN',
+            'CTYPE2': self._ycoord + '-SIN',
+            'RADESYS': self._radesys}
+        if rotate is not None:
+            header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, **kwargs)
+
+
+class Zoom(AutoScaledWCSAxes):
+
+    def __init__(self, *args, center='0d 0d', radius='1 deg', rotate=None,
+                 **kwargs):
+        center = SkyCoord(center).icrs
+        radius = u.Quantity(radius).to(u.deg).value
+        header = {
+            'NAXIS': 2,
+            'NAXIS1': 512,
+            'NAXIS2': 512,
+            'CRPIX1': 256.5,
+            'CRPIX2': 256.5,
+            'CRVAL1': center.ra.deg,
+            'CRVAL2': center.dec.deg,
+            'CDELT1': -radius / 256,
+            'CDELT2': radius / 256,
+            'CTYPE1': self._xcoord + '-TAN',
+            'CTYPE2': self._ycoord + '-TAN',
+            'RADESYS': self._radesys}
+        if rotate is not None:
+            header['LONPOLE'] = u.Quantity(rotate).to_value(u.deg)
+        super().__init__(*args, header=header, **kwargs)
+
+
+class AllSkyAxes(AutoScaledWCSAxes):
+    """Base class for a multi-purpose all-sky projection."""
+
+    def __init__(self, *args, obstime=None, **kwargs):
+        header = {
+            'NAXIS': 2,
+            'NAXIS1': 360,
+            'NAXIS2': 180,
+            'CRPIX1': 180.5,
+            'CRPIX2': 90.5,
+            'CRVAL1': self._crval1,
+            'CRVAL2': 0.0,
+            'CDELT1': -2 * np.sqrt(2) / np.pi,
+            'CDELT2': 2 * np.sqrt(2) / np.pi,
+            'CTYPE1': self._xcoord + '-' + self._wcsprj,
+            'CTYPE2': self._ycoord + '-' + self._wcsprj,
+            'RADESYS': self._radesys}
+        if obstime is not None:
+            header['DATE-OBS'] = Time(obstime).utc.isot
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, **kwargs)
+        self.coords[0].set_ticks(spacing=45 * u.deg)
+        self.coords[1].set_ticks(spacing=30 * u.deg)
+        self.coords[0].set_ticklabel(exclude_overlapping=True)
+        self.coords[1].set_ticklabel(exclude_overlapping=True)
+
+
+class Aitoff(AllSkyAxes):
+    _wcsprj = 'AIT'
+
+
+class Mollweide(AllSkyAxes):
+    _wcsprj = 'MOL'
+
+
+moddict = globals()
+
+#
+# Create subclasses and register all projections:
+# '{astro|geo} {hours|degrees} {aitoff|globe|mollweide|zoom}'
+#
+bases1 = (Astro, Geo)
+bases2 = (Hours, Degrees)
+bases3 = (Aitoff, Globe, Mollweide, Zoom)
+for bases in product(bases1, bases2, bases3):
+    class_name = ''.join(cls.__name__ for cls in bases) + 'Axes'
+    projection = ' '.join(cls.__name__.lower() for cls in bases)
+    new_class = type(class_name, bases, {'name': projection})
+    projection_registry.register(new_class)
+    moddict[class_name] = new_class
+    __all__.append(class_name)
+
+#
+# Create some synonyms:
+# 'astro' will be short for 'astro hours',
+# 'geo' will be short for 'geo degrees'
+#
+for base1, base2 in zip(bases1, bases2):
+    for base3 in (Aitoff, Globe, Mollweide, Zoom):
+        bases = (base1, base2, base3)
+        orig_class_name = ''.join(cls.__name__ for cls in bases) + 'Axes'
+        orig_class = moddict[orig_class_name]
+        class_name = ''.join(cls.__name__ for cls in (base1, base3)) + 'Axes'
+        projection = ' '.join(cls.__name__.lower() for cls in (base1, base3))
+        new_class = type(class_name, (orig_class,), {'name': projection})
+        projection_registry.register(new_class)
+        moddict[class_name] = new_class
+        __all__.append(class_name)
+
+del class_name, moddict, projection, projection_registry, new_class
+__all__ = tuple(__all__)

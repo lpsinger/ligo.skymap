@@ -213,7 +213,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
     name = 'astro wcs'
 
-    def __init__(self, *args, header, **kwargs):
+    def __init__(self, *args, header, obstime=None, **kwargs):
         super().__init__(*args, aspect=1, **kwargs)
         h = Header(header, copy=True)
         naxis1 = h['NAXIS1']
@@ -227,6 +227,8 @@ class AutoScaledWCSAxes(WCSAxes):
         h['CRPIX2'] = (h['CRPIX2'] - 1) * (h['NAXIS2'] - 1) / (naxis2 - 1) + 1
         h['CDELT1'] /= scale1
         h['CDELT2'] /= scale2
+        if obstime is not None:
+            h['DATE-OBS'] = Time(obstime).utc.isot
         self.reset_wcs(WCS(h))
         self.set_xlim(-0.5, h['NAXIS1'] - 0.5)
         self.set_ylim(-0.5, h['NAXIS2'] - 0.5)
@@ -586,7 +588,7 @@ class Zoom(AutoScaledWCSAxes):
 class AllSkyAxes(AutoScaledWCSAxes):
     """Base class for a multi-purpose all-sky projection."""
 
-    def __init__(self, *args, obstime=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         header = {
             'NAXIS': 2,
             'NAXIS1': 360,
@@ -600,8 +602,6 @@ class AllSkyAxes(AutoScaledWCSAxes):
             'CTYPE1': self._xcoord + '-' + self._wcsprj,
             'CTYPE2': self._ycoord + '-' + self._wcsprj,
             'RADESYS': self._radesys}
-        if obstime is not None:
-            header['DATE-OBS'] = Time(obstime).utc.isot
         super().__init__(
             *args, frame_class=EllipticalFrame, header=header, **kwargs)
         self.coords[0].set_ticks(spacing=45 * u.deg)

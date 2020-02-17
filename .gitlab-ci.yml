@@ -126,9 +126,8 @@ dependencies/python3.6:
 dependencies/python3.7:
   <<: *dependencies
 
-# FIXME: uncomment and add classifier once LALSuite is built for Python 3.8.
-# dependencies/python3.8:
-#   <<: *dependencies
+dependencies/python3.8:
+  <<: *dependencies
 
 #
 # Generate documentation.
@@ -175,12 +174,11 @@ test/python3.7:
   dependencies:
     - wheel/cp37-cp37m-manylinux2014
 
-# FIXME: uncomment and add classifier once LALSuite is built for Python 3.8.
-# test/python3.8:
-#   <<: *test
-#   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
-#   dependencies:
-#     - wheel/cp38-cp38-manylinux2014
+test/python3.8:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
+  dependencies:
+    - wheel/cp38-cp38-manylinux2014
 
 #
 # Measure test coverage:

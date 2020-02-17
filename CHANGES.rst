@@ -17,6 +17,8 @@ Changelog
   shorthand for ``astro hours``, and ``geo`` by itself is short for
   ``geo degrees``.
 
+- Turn on continuous integration testing for Python 3.8.
+
 0.1.15 (2020-01-05)
 ===================
 

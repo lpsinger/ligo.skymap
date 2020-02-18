@@ -19,6 +19,9 @@ Changelog
 
 - Turn on continuous integration testing for Python 3.8.
 
+- Change the license for the project as a whole to GPL 3.0 or later (GPLv3+).
+  Previously, the source files had been a mix of GPLv2+ and GPLv3+.
+
 0.1.15 (2020-01-05)
 ===================
 

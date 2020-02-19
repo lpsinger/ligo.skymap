@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 #
 # Copyright (C) 2013-2020  Leo Singer
 #

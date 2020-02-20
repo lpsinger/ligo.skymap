@@ -350,7 +350,7 @@ double bayestar_volume_render(
      * In the central 10% of the image, we integrate in z to avoid the
      * coordinate singularity in theta.
      */
-    if (a / max_distance >= 5e-2)
+    if (a >= 5e-2 * max_distance)
     {
         /* Construct regular grid from -theta_max to +theta_max */
         for (double theta = -theta_max; theta <= theta_max; theta += dtheta)

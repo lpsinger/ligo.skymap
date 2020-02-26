@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.1.16 (unreleased)
+0.1.16 (2020-02-26)
 ===================
 
 - Update the compiler version that is used to build Linux wheels to icc

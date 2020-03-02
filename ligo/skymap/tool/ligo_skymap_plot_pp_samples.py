@@ -71,7 +71,8 @@ def main(args=None):
 
     # If required, downselect to a smaller number of posterior samples.
     if args.max_points is not None:
-        chain = Table(np.random.permutation(chain)[:args.max_points])
+        chain = Table(np.random.permutation(chain)[:args.max_points],
+                      copy=False)
 
     # Calculate P-P plot.
     contours = np.asarray(args.contour)

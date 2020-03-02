@@ -326,11 +326,11 @@ def write_sky_map(filename, m, **kwargs):
     """  # noqa: E501
     log.debug('normalizing metadata')
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
-        m = Table(m)
+        m = Table(m, copy=False)
     else:
         if np.ndim(m) == 1:
             m = [m]
-        m = Table(m, names=DEFAULT_NESTED_NAMES[:len(m)])
+        m = Table(m, names=DEFAULT_NESTED_NAMES[:len(m)], copy=False)
     m.meta.update(kwargs)
 
     if 'UNIQ' in m.colnames:

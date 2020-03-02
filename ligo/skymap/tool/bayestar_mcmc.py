@@ -192,7 +192,7 @@ def main(args=None):
             chain[:, i] = func(chain[:, i])
 
         # Create Astropy table
-        chain = Table(rows=chain, names=names)
+        chain = Table(rows=chain, names=names, copy=False)
 
         log.info('%s:saving posterior samples', coinc_event_id)
 

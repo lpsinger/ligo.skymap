@@ -99,7 +99,7 @@ def localize_emcee(args, xmin, xmax, chain_dump=None):
     if chain_dump:
         _, ndim = chain.shape
         names = 'ra dec distance inclination twopsi time'.split()[:ndim]
-        write_samples(Table(rows=chain, names=names), chain_dump,
+        write_samples(Table(rows=chain, names=names, copy=False), chain_dump,
                       path='/bayestar/posterior_samples', overwrite=True)
 
     # Pass a random subset of 1000 points to the KDE, to save time.
@@ -374,7 +374,7 @@ def localize(
                 prior_distance_power, cosmology, gmst, sample_rate, toas,
                 snr_series, responses, locations, horizons)
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
-        skymap = Table(skymap)
+        skymap = Table(skymap, copy=False)
         skymap.meta['log_bci'] = log_bci
         skymap.meta['log_bsn'] = log_bsn
 
@@ -480,7 +480,7 @@ def derasterize(skymap):
     value = np.stack(value)
     uniq = (4 * np.square(nside) + ipix)
     old_units = [column.unit for column in skymap.columns.values()]
-    skymap = Table(value, meta=skymap.meta)
+    skymap = Table(value, meta=skymap.meta, copy=False)
     for old_unit, column in zip(old_units, skymap.columns.values()):
         column.unit = old_unit
     skymap.add_column(Column(uniq, name='UNIQ'), 0)

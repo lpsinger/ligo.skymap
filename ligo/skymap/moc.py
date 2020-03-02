@@ -137,10 +137,10 @@ def rasterize(moc_data, order=None):
         orig_order, orig_nest = uniq2nest(moc_data['UNIQ'])
         to_downsample = order < orig_order
         if np.any(to_downsample):
-            to_keep = table.Table(moc_data[~to_downsample])
+            to_keep = table.Table(moc_data[~to_downsample], copy=False)
             orig_order = orig_order[to_downsample]
             orig_nest = orig_nest[to_downsample]
-            to_downsample = table.Table(moc_data[to_downsample])
+            to_downsample = table.Table(moc_data[to_downsample], copy=False)
 
             ratio = 1 << (2 * np.int64(orig_order - order))
             weights = 1.0 / ratio

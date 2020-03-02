@@ -367,7 +367,7 @@ class SkyKDE(ClusteredKDE):
         uniq = moc.nest2uniq(order.astype(np.int8), ipix)
 
         # Done!
-        return Table([uniq, post], names=['UNIQ', 'PROBDENSITY'])
+        return Table([uniq, post], names=['UNIQ', 'PROBDENSITY'], copy=False)
 
 
 # We have to put in some hooks to make instances of Clustered2DSkyKDE picklable

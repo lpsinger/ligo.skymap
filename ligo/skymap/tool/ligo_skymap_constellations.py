@@ -52,7 +52,8 @@ def main(args=None):
     ipix = np.arange(npix)
     ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta['nest'])
     coord = SkyCoord(ra * u.deg, dec * u.deg)
-    table = Table({'prob': prob, 'constellation': coord.get_constellation()})
+    table = Table({'prob': prob, 'constellation': coord.get_constellation()},
+                  copy=False)
     table = table.group_by('constellation').groups.aggregate(np.sum)
     table.sort('prob')
     table.reverse()

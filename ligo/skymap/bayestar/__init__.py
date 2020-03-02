@@ -450,7 +450,8 @@ def rasterize(skymap, order=None):
         skymap['DISTVAR'] = probdensity * (
             np.square(diststd) + np.square(distmean))
 
-    skymap = Table(moc.rasterize(skymap, order=order), meta=skymap.meta)
+    skymap = Table(moc.rasterize(skymap, order=order),
+                   meta=skymap.meta, copy=False)
 
     # If we are downsampling, then convert back to distance parameters.
     if downsampling:

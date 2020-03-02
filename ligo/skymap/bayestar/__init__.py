@@ -424,7 +424,7 @@ def localize(
 
 
 def rasterize(skymap, order=None):
-    orig_order = moc.uniq2nest(skymap['UNIQ'].max())
+    orig_order, _ = moc.uniq2nest(skymap['UNIQ'].max())
 
     # Determine whether we need to do nontrivial downsampling.
     downsampling = (order is not None and 0 <= order < orig_order

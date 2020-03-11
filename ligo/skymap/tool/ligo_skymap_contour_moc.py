@@ -52,7 +52,7 @@ def main(args=None):
     try:
         from mocpy import MOC
     except ImportError:
-        pars.error('This command-line tool requires mocpy >= 0.8.2.'
+        pars.error('This command-line tool requires mocpy >= 0.8.2. '
                    'Please install it by running "pip install mocpy".')
 
     from ..io import read_sky_map

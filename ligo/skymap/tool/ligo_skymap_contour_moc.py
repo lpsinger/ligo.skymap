@@ -14,10 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-Create a contour for a credible level of an all-sky probability in a standard
-MOC (Multi Order Coverage) data structure (http://ivoa.net/documents/MOC/). The
-input can be either a multiresolution or a flattened HEALPix FITS probability
-map. The output is a FITS MOC file.
+Create a contour for a credible level of an all-sky probability map. The input
+is a HEALPix FITS probability map. The output is a `Multi-Order Coverage (MOC)
+<http://ivoa.net/documents/MOC/>`_ FITS file.
 """
 
 from . import ArgumentParser, FileType

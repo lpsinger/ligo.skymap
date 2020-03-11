@@ -174,6 +174,20 @@ def condition(
     max_abs_t = np.max(
         np.sqrt(np.sum(np.square(locations), axis=1))) + 0.005
 
+    # Calculate a minimum arrival time prior for low-bandwidth signals.
+    # This is important for early-warning events, for which the light travel
+    # time between detectors may be only a tiny fraction of the template
+    # autocorrelation time.
+    #
+    # The period of the autocorrelation function is 2 pi times the timing
+    # uncertainty at SNR=1 (see Eq. (24) of [1]_). We want a quarter period:
+    # there is a factor of a half because we want the first zero crossing,
+    # and another factor of a half because the SNR time series will be cropped
+    # to a two-sided interval.
+    max_acor_t = max(0.5 * np.pi * signal_model.get_crb_toa_uncert(1)
+                     for signal_model in signal_models)
+    max_abs_t = max(max_abs_t, max_acor_t)
+
     if snr_series is None:
         log.warning("No SNR time series found, so we are creating a "
                     "zero-noise SNR time series from the whitened template's "

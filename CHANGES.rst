@@ -8,6 +8,13 @@ Changelog
 - Teach BAYESTAR to respect the ``f_final`` column in the ``sngl_inspiral``
   table for pre-merger, early warning templates.
 
+- Ensure that BAYESTAR's arrival time prior is long enough to contain at least
+  half a cycle of the template autocorrelation sequence. Previously, the
+  duration of the arrival time prior was calculated solely from the light
+  travel times between the participating detectors. This fixes an issue where
+  SNR time series for early-warning events could have been cropped to only 1-3
+  samples.
+
 0.1.16 (2020-02-26)
 ===================
 

@@ -56,7 +56,6 @@ def main(args=None):
 
     # Create progress bar.
     from tqdm import tqdm
-    from glue.text_progress_bar import ProgressBar
     progress = tqdm()
     progress.set_description('Starting up')
 

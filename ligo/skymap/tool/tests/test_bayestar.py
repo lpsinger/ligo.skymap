@@ -1,12 +1,12 @@
-from glue.ligolw import lsctables as lsctables
-from glue.ligolw import utils as ligolw_utils
+from ligo.lw import lsctables as lsctables
+from ligo.lw import utils as ligolw_utils
 from lalinspiral.thinca import InspiralCoincDef
 import numpy as np
 import pytest
 
 from ... import io
 from ...io.events.ligolw import ContentHandler
-from . import run_entry_point, run_glue, run_lalsuite
+from . import run_entry_point, run_ligolw, run_lalsuite
 
 
 @pytest.fixture
@@ -85,8 +85,7 @@ def coinc_without_inj(coinc, tmpdir):
 @pytest.fixture
 def coinc_sqlite(coinc, tmpdir):
     filename = str(tmpdir / 'coinc.sqlite')
-    run_glue('ligolw_sqlite', coinc, '--ilwdchar-compat',
-             '-p', '-r', '-d', filename)
+    run_ligolw('ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
     return filename
 
 

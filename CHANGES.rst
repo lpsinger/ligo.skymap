@@ -8,6 +8,12 @@ Changelog
 - Normalize column names when an ascii file is passed to
   ``ligo-skymap-from-samples``.
 
+- Migrate LIGO-LW XML support from the ``glue.ligolw`` module to the newer and
+  better maintained ``ligo.lw`` module.
+
+- Teach BAYESTAR to accept either string row IDs (such as
+  ``sngl_inspiral:event_id:1``) or integer row IDs (such as ``1``).
+
 0.3.1 (2020-05-28)
 ==================
 

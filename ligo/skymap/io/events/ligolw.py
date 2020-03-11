@@ -22,26 +22,29 @@ import logging
 import operator
 import os.path
 
-from glue.ligolw import array, lsctables, param
-from glue.ligolw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
-from glue.ligolw.lsctables import (
+from ligo.lw import array, lsctables, param, table
+from ligo.lw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
+from ligo.lw.lsctables import (
     CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
-    SnglInspiralID, SnglInspiralTable, TimeSlideID, TimeSlideTable)
-from glue.ligolw.utils import load_filename, load_fileobj
+    SnglInspiralTable, TimeSlideID, TimeSlideTable)
+from ligo.lw.utils import load_filename, load_fileobj
 import lal
 import lal.series
 from lalinspiral.thinca import InspiralCoincDef
 
 from .base import Event, EventSource, SingleEvent
+from ...util import ilwd
 
 __all__ = ('LigoLWEventSource',)
 
 log = logging.getLogger('BAYESTAR')
 
 
+@ilwd.use_in
 @array.use_in
-@param.use_in
 @lsctables.use_in
+@param.use_in
+@table.use_in
 class ContentHandler(LIGOLWContentHandler):
     pass
 
@@ -64,7 +67,7 @@ def _read_xml(f, fallbackpath=None):
                 raise
         filename = f
     else:
-        doc, _ = load_fileobj(f, contenthandler=ContentHandler)
+        doc = load_fileobj(f, contenthandler=ContentHandler)
         try:
             filename = f.name
         except AttributeError:
@@ -77,15 +80,15 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
     Parameters
     ----------
-    f : str, file-like object, or `glue.ligolw.ligolw.Document`
+    f : str, file-like object, or `ligo.lw.ligolw.Document`
         The name of the file, or the file object, or the XML document object,
         containing the trigger tables.
-    psd_file : str, file-like object, or `glue.ligolw.ligolw.Document`
+    psd_file : str, file-like object, or `ligo.lw.ligolw.Document`
         The name of the file, or the file object, or the XML document object,
         containing the PSDs. If not supplied, then PSDs will be read
         automatically from any files mentioned in ``--reference-psd`` command
         line arguments stored in the ProcessParams table.
-    coinc_def : `glue.ligolw.lsctables.CoincDef`, optional
+    coinc_def : `ligo.lw.lsctables.CoincDef`, optional
         An optional coinc definer to limit which events are read.
     fallbackpath : str, optional
         A directory to search for PSD files whose ``--reference-psd`` command
@@ -240,8 +243,6 @@ class LigoLWEventSource(OrderedDict, EventSource):
                     continue
                 array.get_array(elem, 'snr')
                 event_id = param.get_pyvalue(elem, 'event_id')
-                if not isinstance(event_id, SnglInspiralID):
-                    continue
             except (AttributeError, ValueError):
                 continue
             else:

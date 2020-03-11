@@ -111,6 +111,7 @@ Utilities
    :maxdepth: 1
 
    ligo/skymap/util/file
+   ligo/skymap/util/ilwd
    ligo/skymap/util/numpy
    ligo/skymap/util/sqlite
    ligo/skymap/tool/index

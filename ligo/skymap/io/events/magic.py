@@ -18,7 +18,7 @@ import os
 import sqlite3
 from subprocess import check_output
 
-from glue.ligolw.ligolw import Element
+from ligo.lw.ligolw import Element
 import h5py
 
 from . import hdf, ligolw, sqlite

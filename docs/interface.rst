@@ -78,11 +78,11 @@ Unfortunately, LIGO-LW is a rather complicated format. We recommend using
 either the :mod:`ligo.lw` module or GWPy's :ref:`tabular LIGO-LW I/O
 <gwpy-table-io-ligolw>` feature to simplify reading and writing LIGO-LW files.
 
-.. important::
+.. note::
     There are two variants of the LIGO-LW format, an old format implemented by
     :mod:`glue.ligolw` that uses string ("ilwdchar") row IDs, and a new format
-    implemented by :mod:`ligo.lw` that uses integer row IDs. Since GraceDB only
-    supports the former, both files MUST be in the LIGO-LW string row ID format.
+    implemented by :mod:`ligo.lw` that uses integer row IDs. GraceDB and
+    BAYESTAR can accept *either* format.
 
     The :program:`ligolw_no_ilwdchar` command-line tool provided by
     :mod:`ligo.lw` can convert from the new format to the old format.
@@ -246,8 +246,7 @@ detector.
 * Each of the :class:`~ligo.lw.ligolw.LIGO_LW` elements for serialized SNR time
   series MUST contain a :class:`~ligo.lw.ligolw.Param` element to link it to a
   row in the :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>`. The
-  param name MUST be ``event_id:param``, the type MUST be ``ilwd:char``, and
-  the param value must match the
+  param name MUST be ``event_id:param`` and the param value must match the
   :attr:`~ligo.lw.lsctables.SnglInspiral.event_id` column in the corresponding
   :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>` row.
 

@@ -7,7 +7,7 @@ This tutorial will show you how to create a collection of sky maps for
 simulated binary neutron star mergers using BAYESTAR.
 
 Some of the command-line tools used in this tutorial come from LALSuite or
-glue. If you followed the :doc:`Quick Start installation instructions
+python-ligo-lw. If you followed the :doc:`Quick Start installation instructions
 <install>`, then these tools should have been installed automatically with the
 other dependencies of ligo.skymap.
 
@@ -129,10 +129,10 @@ The output is saved in the current working directory to FITS files named
 -----------------------------
 
 Optionally, if you want to generate P-P plots, you need to convert the
-``coinc.xml`` file to SQLite using the ``ligolw_sqlite`` tool from glue. Run
-the following command::
+``coinc.xml`` file to SQLite using the ``ligolw_sqlite`` tool from
+python-ligo-lw. Run the following command::
 
-    ligolw_sqlite --ilwdchar-compat --preserve-ids --replace --database coinc.sqlite coinc.xml
+    ligolw_sqlite --preserve-ids --replace --database coinc.sqlite coinc.xml
 
 The output is saved in SQLite format as ``coinc.sqlite``.
 

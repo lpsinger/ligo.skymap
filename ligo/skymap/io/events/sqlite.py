@@ -17,7 +17,7 @@
 import os
 import sqlite3
 
-from glue.ligolw import dbtables
+from ligo.lw import dbtables
 
 from ...util import sqlite
 from .ligolw import LigoLWEventSource

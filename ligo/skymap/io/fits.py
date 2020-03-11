@@ -63,7 +63,7 @@ import healpy as hp
 import numpy as np
 from astropy.io import fits
 from astropy import units as u
-from glue.ligolw import lsctables
+from ligo.lw import lsctables
 import itertools
 import time
 import lal

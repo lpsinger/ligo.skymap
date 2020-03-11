@@ -12,7 +12,7 @@ import pkg_resources
 dist = 'ligo.skymap'
 group = 'console_scripts'
 
-__all__ = ('entry_points', 'run_entry_point', 'run_glue', 'run_lalsuite')
+__all__ = ('entry_points', 'run_entry_point', 'run_ligolw', 'run_lalsuite')
 
 entry_points = sorted(pkg_resources.get_entry_map(dist, group).keys())
 
@@ -26,18 +26,18 @@ def run_entry_point(name, *args):
             raise subprocess.CalledProcessError(e.code, [name, *args])
 
 
-def exec_glue(name, *args):
-    provider = pkg_resources.get_provider('glue')
+def exec_ligolw(name, *args):
+    provider = pkg_resources.get_provider('python-ligo-lw')
     sys.argv = [name, *args]
     provider.run_script(name, {'__name__': '__main__'})
 
 
-def run_glue(name, *args):
-    """Run an external tool that is provided by Glue.
+def run_ligolw(name, *args):
+    """Run an external tool that is provided by python-ligo-lw.
 
-    This is trivial if glue has actually been installed and LALSuite is
-    in the PATH. If glue is not installed and is only present as an egg,
-    then things get more complicated.
+    This is trivial if python-ligo-lw has actually been installed and LALSuite
+    is in the PATH. If python-ligo-lw is not installed and is only present as
+    an egg, then things get more complicated.
     """
     path = distutils.spawn.find_executable(name)
     if path:
@@ -46,7 +46,8 @@ def run_glue(name, *args):
     else:
         # The tool has not been installed, so we have to try to run it using
         # pkg_resources.
-        process = multiprocessing.Process(target=exec_glue, args=[name, *args])
+        process = multiprocessing.Process(
+            target=exec_ligolw, args=[name, *args])
         process.start()
         process.join()
         if process.exitcode != 0:

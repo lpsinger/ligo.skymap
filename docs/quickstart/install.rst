@@ -64,7 +64,6 @@ You are now ready to get started using `ligo.skymap`.
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53
-          *  `lscsoft-glue <https://pypi.org/project/lscsoft-glue/>`_ ≥ 2.0.0
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.0.2

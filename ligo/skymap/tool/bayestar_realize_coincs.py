@@ -222,19 +222,19 @@ def main(args=None):
     opts = p.parse_args(args)
 
     # LIGO-LW XML imports.
-    from glue.ligolw import ligolw
-    from glue.ligolw.param import Param
-    from glue.ligolw.utils import process as ligolw_process
-    from glue.ligolw.utils.search_summary import append_search_summary
-    from glue.ligolw import utils as ligolw_utils
-    from glue.ligolw.lsctables import (
+    from ligo.lw import ligolw
+    from ligo.lw.param import Param
+    from ligo.lw.utils import process as ligolw_process
+    from ligo.lw.utils.search_summary import append_search_summary
+    from ligo.lw import utils as ligolw_utils
+    from ligo.lw.lsctables import (
         New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
         CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
         SnglInspiralTable, TimeSlideTable)
 
     # glue, LAL and pylal imports.
     from ligo import segments
-    import glue.lal
+    import lal
     import lal.series
     import lalsimulation
     from lalinspiral.inspinjfind import InspiralSCExactCoincDef
@@ -267,7 +267,7 @@ def main(args=None):
     from ..bayestar import filter
 
     # Read PSDs.
-    xmldoc, _ = ligolw_utils.load_fileobj(
+    xmldoc = ligolw_utils.load_fileobj(
         opts.reference_psd, contenthandler=lal.series.PSDContentHandler)
     psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
     psds = {
@@ -276,7 +276,7 @@ def main(args=None):
     psds = [psds[ifo] for ifo in opts.detector]
 
     # Extract simulation table from injection file.
-    inj_xmldoc, _ = ligolw_utils.load_fileobj(
+    inj_xmldoc = ligolw_utils.load_fileobj(
         opts.input, contenthandler=ContentHandler)
     orig_sim_inspiral_table = SimInspiralTable.get_table(inj_xmldoc)
 
@@ -306,8 +306,7 @@ def main(args=None):
         xmldoc, p, opts, ifos=opts.detector, comment="Simulated coincidences")
 
     # Add search summary to output file.
-    all_time = segments.segment(
-        [glue.lal.LIGOTimeGPS(0), glue.lal.LIGOTimeGPS(2e9)])
+    all_time = segments.segment([lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9)])
     append_search_summary(xmldoc, process, inseg=all_time, outseg=all_time)
 
     # Create a time slide entry.  Needed for coinc_event rows.

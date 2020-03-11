@@ -5,7 +5,7 @@ import re
 import subprocess
 from unittest.mock import patch
 
-from glue.ligolw.utils import load_filename
+from ligo.lw.utils import load_filename
 import h5py
 import numpy as np
 import pytest
@@ -104,7 +104,7 @@ def test_sqlite(tmpdir):
     # Convert the test data to SQLite format in the temporary directory.
     xmlfilename = os.path.join(DATA_PATH, '2016_subset.xml.gz')
     dbfilename = str(tmpdir / '2016_subset.sqlite')
-    subprocess.check_call(['ligolw_sqlite', '--ilwdchar-compat', '-p',
+    subprocess.check_call(['ligolw_sqlite', '-p',
                            xmlfilename, '-d', dbfilename])
 
     # Symbolicly link the PSD directory into the temporary directory.

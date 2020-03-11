@@ -238,10 +238,10 @@ def parser():
 
 
 def main(args=None):
-    from glue.ligolw import lsctables
-    from glue.ligolw.utils import process as ligolw_process
-    from glue.ligolw import utils as ligolw_utils
-    from glue.ligolw import ligolw
+    from ligo.lw import lsctables
+    from ligo.lw.utils import process as ligolw_process
+    from ligo.lw import utils as ligolw_utils
+    from ligo.lw import ligolw
     import lal.series
     from scipy import stats
 
@@ -349,7 +349,7 @@ def main(args=None):
         lal.series.read_psd_xmldoc(
             ligolw_utils.load_fileobj(
                 args.reference_psd,
-                contenthandler=lal.series.PSDContentHandler)[0]).values())
+                contenthandler=lal.series.PSDContentHandler)).values())
 
     # Construct mass1, mass2, spin1z, spin2z grid.
     m1 = np.geomspace(m1_min, m1_max, 10)

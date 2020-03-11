@@ -521,7 +521,7 @@ def _sanitize_arg_value_for_xmldoc(value):
 
 
 def register_to_xmldoc(xmldoc, parser, opts, **kwargs):
-    from glue.ligolw.utils import process
+    from ligo.lw.utils import process
     params = {key: _sanitize_arg_value_for_xmldoc(value)
               for key, value in opts.__dict__.items()}
     return process.register_to_xmldoc(
@@ -565,7 +565,7 @@ def should_gzip(filename):
 
 
 def write_fileobj(xmldoc, f):
-    import glue.ligolw.utils
+    import ligo.lw.utils
 
-    with glue.ligolw.utils.SignalsTrap():
-        glue.ligolw.utils.write_fileobj(xmldoc, f, gz=should_gzip(f.name))
+    with ligo.lw.utils.SignalsTrap():
+        ligo.lw.utils.write_fileobj(xmldoc, f, gz=should_gzip(f.name))

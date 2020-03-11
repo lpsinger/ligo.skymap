@@ -64,7 +64,8 @@ def ligolw_assertions(source):
         'spin1z': 0.0,
         'spin2x': 0.0,
         'spin2y': 0.0,
-        'spin2z': 0.0}
+        'spin2z': 0.0,
+        'f_final': 2047.0}
 
 
 def test_unknown():
@@ -156,7 +157,8 @@ def test_gracedb():
                 'spin1z': 0.33962944,
                 'spin2x': 0.0,
                 'spin2y': 0.0,
-                'spin2z': -0.1238557}
+                'spin2z': -0.1238557,
+                'f_final': 1024.0}
         elif i == 1:
             assert event_id == 'G197392'
             assert (event.singles[0].snr_series is event.singles[1].snr_series
@@ -185,7 +187,8 @@ def test_gracedb():
                 'spin1z': 0.34881824,
                 'spin2x': 0.0,
                 'spin2y': 0.0,
-                'spin2z': -0.53029484}
+                'spin2z': -0.53029484,
+                'f_final': 0.0}
 
 
 @patch('ligo.gracedb.rest.GraceDb', MockGraceDb)

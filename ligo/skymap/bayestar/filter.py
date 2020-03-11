@@ -222,8 +222,8 @@ def get_f_lso(mass1, mass2):
     return 1 / (6 ** 1.5 * np.pi * (mass1 + mass2) * lal.MTSUN_SI)
 
 
-def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0,
-                      **kwargs):
+def sngl_inspiral_psd(waveform, mass1, mass2,
+                      f_min=10, f_final=None, f_ref=None, **kwargs):
     # FIXME: uberbank mass criterion. Should find a way to get this from
     # pipeline output metadata.
     if waveform == 'o1-uberbank':
@@ -257,7 +257,9 @@ def sngl_inspiral_psd(waveform, mass1, mass2, f_min=10, f_max=2048, f_ref=0,
         S2z=float(kwargs.get('spin2z') or 0),
         distance=1e6 * lal.PC_SI, inclination=0, phiRef=0,
         longAscNodes=0, eccentricity=0, meanPerAno=0,
-        deltaF=0, f_min=f_min, f_max=f_max, f_ref=f_ref,
+        deltaF=0, f_min=f_min,
+        f_max=float(f_final or 2048),
+        f_ref=float(f_ref or 0),
         LALparams=params, approximant=approx)
 
     # Force `plus' and `cross' waveform to be in quadrature.

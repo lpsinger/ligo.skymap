@@ -83,7 +83,8 @@ class LigoLWEventSource(OrderedDict, EventSource):
         super().__init__(self._make_events(doc, psd_file, coinc_def))
 
     _template_keys = '''mass1 mass2
-                        spin1x spin1y spin1z spin2x spin2y spin2z'''.split()
+                        spin1x spin1y spin1z spin2x spin2y spin2z
+                        f_final'''.split()
 
     _invert_phases = {
         'pycbc': False,

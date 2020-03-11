@@ -55,9 +55,10 @@ def main(args=None):
     opts = parser().parse_args(args)
 
     # Create progress bar.
+    from tqdm import tqdm
     from glue.text_progress_bar import ProgressBar
-    progress = ProgressBar()
-    progress.update(-1, 'Starting up')
+    progress = tqdm()
+    progress.set_description('Starting up')
 
     # Late imports
     from matplotlib import pyplot as plt
@@ -73,13 +74,13 @@ def main(args=None):
     import seaborn
 
     # Read input, determine input resolution.
-    progress.update(-1, 'Loading FITS file')
+    progress.set_description('Loading FITS file')
     (prob, mu, sigma, norm), metadata = io.read_sky_map(
         opts.input.name, distances=True)
     npix = len(prob)
     nside = hp.npix2nside(npix)
 
-    progress.update(-1, 'Preparing projection')
+    progress.set_description('Preparing projection')
 
     if opts.align_to is None or opts.input.name == opts.align_to.name:
         prob2, mu2, sigma2, norm2 = prob, mu, sigma, norm
@@ -123,7 +124,7 @@ def main(args=None):
         if opts.projection and opts.projection != iface + 1:
             continue
 
-        progress.update(text='Plotting projection {0}'.format(iface + 1))
+        progress.set_description('Plotting projection {0}'.format(iface + 1))
 
         # Marginalize onto the given face
         density = volume_render(
@@ -196,7 +197,7 @@ def main(args=None):
             fontsize=8, transform=ax.transAxes, verticalalignment='bottom')
 
         # Create marginal distance plot.
-        progress.update(-1, 'Plotting distance')
+        progress.set_description('Plotting distance')
         gs1 = gridspec.GridSpecFromSubplotSpec(5, 5, gs[0, 1])
         ax = fig.add_subplot(gs1[1:-1, 1:-1])
 
@@ -250,5 +251,5 @@ def main(args=None):
             ax.text(0, 1, '\n'.join(text), transform=ax.transAxes, fontsize=7,
                     ha='left', va='bottom', clip_on=False)
 
-    progress.update(-1, 'Saving')
+    progress.set_description('Saving')
     opts.output()

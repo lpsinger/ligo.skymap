@@ -188,7 +188,8 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     # Restore vary types.
     for i, column in enumerate(table.columns.values()):
-        column.meta['vary'] = table.meta['FIELD_{0}_VARY'.format(i)]
+        column.meta['vary'] = table.meta.get(
+            'FIELD_{0}_VARY'.format(i), OUTPUT)
 
     # Restore fixed columns from table attributes.
     for key, value in table.meta.items():

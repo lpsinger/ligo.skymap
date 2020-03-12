@@ -2,8 +2,8 @@
 Changelog
 #########
 
-0.1.17 (unreleased)
-===================
+0.2.0 (unreleased)
+==================
 
 - Teach BAYESTAR to respect the ``f_final`` column in the ``sngl_inspiral``
   table for pre-merger, early warning templates.

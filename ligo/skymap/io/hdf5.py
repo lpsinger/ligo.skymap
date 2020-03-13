@@ -34,15 +34,23 @@ def _identity(x):
 
 
 _colname_map = (('rightascension', 'ra', _identity),
+                ('right_ascension', 'ra', _identity),
                 ('declination', 'dec', _identity),
                 ('logdistance', 'dist', np.exp),
                 ('distance', 'dist', _identity),
+                ('luminosity_distance', 'dist', _identity),
                 ('polarisation', 'psi', _identity),
                 ('chirpmass', 'mc', _identity),
+                ('chirp_mass', 'mc', _identity),
                 ('a_spin1', 'a1', _identity),
+                ('a_1', 'a1', _identity),
                 ('a_spin2', 'a2', _identity),
+                ('a_2', 'a2', _identity),
                 ('tilt_spin1', 'tilt1', _identity),
-                ('tilt_spin2', 'tilt2', _identity))
+                ('tilt_1', 'tilt1', _identity),
+                ('tilt_spin2', 'tilt2', _identity),
+                ('tilt_2', 'tilt2', _identity),
+                ('geocent_time', 'time', _identity))
 
 
 def _remap_colnames(table):

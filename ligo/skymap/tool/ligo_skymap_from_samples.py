@@ -66,6 +66,12 @@ def parser():
     parser.add_argument('--instruments', metavar='H1|L1|V1|...', nargs='+',
                         help='instruments to store in FITS header')
     parser.add_argument('--objid', help='event ID to store in FITS header')
+    parser.add_argument('--path', type=str, default=None,
+                        help="The path of the dataset within the HDF5 file")
+    parser.add_argument('--tablename', type=str, default="posterior_samples",
+                        help='The name of the table to search for recursively '
+                        'within the HDF5 file. By default, search for '
+                        'posterior_samples')
     return parser
 
 
@@ -90,7 +96,8 @@ def main(args=None):
 
     log.info('reading samples')
     try:
-        data = io.read_samples(args.samples.name)
+        data = io.read_samples(args.samples.name, path=args.path,
+                               tablename=args.tablename)
     except IOError:
         # FIXME: remove this code path once we support only HDF5
         data = Table.read(args.samples, format='ascii')

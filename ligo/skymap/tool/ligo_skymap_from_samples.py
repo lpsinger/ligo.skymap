@@ -68,7 +68,7 @@ def parser():
     parser.add_argument('--objid', help='event ID to store in FITS header')
     parser.add_argument('--path', type=str, default=None,
                         help="The path of the dataset within the HDF5 file")
-    parser.add_argument('--tablename', type=str, default="posterior_samples",
+    parser.add_argument('--tablename', type=str, default='posterior_samples',
                         help='The name of the table to search for recursively '
                         'within the HDF5 file. By default, search for '
                         'posterior_samples')

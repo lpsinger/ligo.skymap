@@ -15,6 +15,9 @@ Changelog
   SNR time series for early-warning events could have been cropped to only 1-3
   samples.
 
+- Update installation instructions to state that installation with pip requires
+  pip 19.3 or newer. This has been the case since ligo.skymap 0.1.16.
+
 0.1.16 (2020-02-26)
 ===================
 

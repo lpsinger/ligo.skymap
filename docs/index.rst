@@ -40,9 +40,9 @@ Quick Start, Tutorials
    :maxdepth: 1
 
    quickstart/install
-   quickstart/bayestar-injections
    help
    contributing
+   quickstart/bayestar-injections
 
 *******
 Modules

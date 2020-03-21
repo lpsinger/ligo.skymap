@@ -109,7 +109,7 @@ wheel/cp38-cp38-macosx:
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-astropy pytest-doctest-ufunc pytest-cov pytest-mpl gcovr pycobertura sphinx sphinx-argparse sphinx-astropy flake8 'coverage<5'
+      RUN pip --no-cache-dir install pytest-astropy pytest-doctest-ufunc pytest-cov pytest-mpl gcovr pycobertura sphinx sphinx-argparse sphinx-astropy sphinxcontrib-mermaid flake8 'coverage<5'
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF

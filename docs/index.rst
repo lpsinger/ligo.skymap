@@ -41,6 +41,7 @@ Quick Start, Tutorials
 
    quickstart/install
    quickstart/bayestar-injections
+   help
    contributing
 
 *******

@@ -210,9 +210,28 @@ extensions += ['sphinx.ext.doctest']
 
 extlinks = {
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:'),
+    'dcc': ('https://dcc.ligo.org/LIGO-%s/public', 'LIGO-'),
     'doi': ('https://doi.org/%s', 'doi:')
 }
 
 # -- Options for the module index ---------------------------------------------
 
 modindex_common_prefix = [package.__name__ + '.']
+
+# -- Options for intersphinx --------------------------------------------------
+
+intersphinx_mapping.update({
+    'gracedb': ('https://gracedb.ligo.org/documentation/', None),
+    'gwcelery': ('https://gw.readthedocs.io/projects/gwcelery/en/latest/', None),
+    'celery': ('http://docs.celeryproject.org/en/latest/', None),
+    'ligo-lw': ('https://docs.ligo.org/kipp.cannon/python-ligo-lw/', None),
+    'gwpy': ('https://gwpy.github.io/docs/latest/', None)
+})
+
+# -- Options for mermaid ------------------------------------------------------
+
+extensions.append('sphinxcontrib.mermaid')
+
+mermaid_sequence_config = {"sequence": {
+    "showSequenceNumbers": True
+}}

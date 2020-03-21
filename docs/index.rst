@@ -169,6 +169,7 @@ Developer Info
    changes
    develop
    testing
+   interface
    GitLab Project Page <https://git.ligo.org/lscsoft/ligo.skymap>
    GitHub Mirror <https://github.com/lpsinger/ligo.skymap>
    Python Package Index <https://pypi.org/project/ligo.skymap>

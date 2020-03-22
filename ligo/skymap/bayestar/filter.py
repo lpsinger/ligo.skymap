@@ -258,7 +258,7 @@ def sngl_inspiral_psd(waveform, mass1, mass2,
         distance=1e6 * lal.PC_SI, inclination=0, phiRef=0,
         longAscNodes=0, eccentricity=0, meanPerAno=0,
         deltaF=0, f_min=f_min,
-        f_max=float(f_final or 2048),
+        f_max=ceil_pow_2(2 * (f_final or 2048)),
         f_ref=float(f_ref or 0),
         LALparams=params, approximant=approx)
 
@@ -276,6 +276,9 @@ def sngl_inspiral_psd(waveform, mass1, mass2,
         lalsimulation.SpinTaylorT4Fourier)
     if approx in inspiral_only_waveforms:
         h[abscissa(hplus) >= get_f_lso(mass1, mass2)] = 0
+
+    # Throw away any frequencies above high frequency cutoff
+    h[abscissa(hplus) >= (f_final or 2048)] = 0
 
     # Drop Nyquist frequency.
     if len(h) % 2:

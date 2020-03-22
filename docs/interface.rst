@@ -41,6 +41,7 @@ meanings:
         note over Search: New detection
         Search ->>+ GraceDB: Upload coinc.xml
         activate Search
+        note over GraceDB: Create event G123
         GraceDB ->>- Search: GraceDB ID: G123
         Search ->>+ GraceDB: Upload psd.xml.gz to G123
         deactivate Search

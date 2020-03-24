@@ -28,6 +28,29 @@ from scipy import linalg
 log = logging.getLogger('BAYESTAR')
 
 
+def unwrap(y, *args, **kwargs):
+    """Unwrap phases while skipping NaN or infinite values.
+
+    This is a simple wrapper around :meth:`numpy.unwrap` that can handle
+    invalid values.
+
+    Examples
+    --------
+    >>> t = np.arange(0, 2 * np.pi, 0.5)
+    >>> y = np.exp(1j * t)
+    >>> unwrap(np.angle(y))
+    array([0. , 0.5, 1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. , 5.5, 6. ])
+    >>> y[3] = y[4] = y[7] = np.nan
+    >>> unwrap(np.angle(y))
+    array([0. , 0.5, 1. , nan, nan, 2.5, 3. , nan, 4. , 4.5, 5. , 5.5, 6. ])
+    """
+    good = np.isfinite(y)
+    result = np.empty_like(y)
+    result[~good] = y[~good]
+    result[good] = np.unwrap(y[good], *args, **kwargs)
+    return result
+
+
 def ceil_pow_2(n):
     """Return the least integer power of 2 that is greater than or equal to n.
 

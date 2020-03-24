@@ -273,7 +273,12 @@ def condition(
     # Translate SNR time series back to time of first sample.
     toas -= 0.5 * (nsamples - 1) * deltaT
 
-    return epoch, sample_rate, toas, snr_series, responses, locations, horizons
+    # Convert complex SNRS to amplitude and phase
+    snrs_abs = np.abs(snr_series)
+    snrs_arg = filter.unwrap(np.angle(snr_series))
+    snrs = np.stack((snrs_abs, snrs_arg), axis=-1)
+
+    return epoch, sample_rate, toas, snrs, responses, locations, horizons
 
 
 def condition_prior(horizons, min_distance=None, max_distance=None,
@@ -358,7 +363,7 @@ def localize(
                                      formatvalue=formatvalue)
     run_time = time.perf_counter()
 
-    epoch, sample_rate, toas, snr_series, responses, locations, horizons = \
+    epoch, sample_rate, toas, snrs, responses, locations, horizons = \
         condition(event, waveform=waveform, f_low=f_low,
                   enable_snr_series=enable_snr_series,
                   f_high_truncate=f_high_truncate)
@@ -372,12 +377,11 @@ def localize(
     # Time and run sky localization.
     log.debug('starting computationally-intensive section')
     if mcmc:
-        max_abs_t = 2 * snr_series.data.shape[1] / sample_rate
+        max_abs_t = 2 * snrs.data.shape[1] / sample_rate
         if min_inclination != 0 or max_inclination != np.pi / 2:
             log.warn('inclination limits are not supported for MCMC mode')
         args = (min_distance, max_distance, prior_distance_power, cosmology,
-                gmst, sample_rate, toas, snr_series, responses, locations,
-                horizons)
+                gmst, sample_rate, toas, snrs, responses, locations, horizons)
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
@@ -385,8 +389,8 @@ def localize(
             chain_dump=chain_dump)
     else:
         args = (min_inclination, max_inclination, min_distance, max_distance,
-                prior_distance_power, cosmology, gmst, sample_rate, toas,
-                snr_series, responses, locations, horizons)
+                prior_distance_power, cosmology, gmst, sample_rate, toas, snrs,
+                responses, locations, horizons)
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
         skymap = Table(skymap, copy=False)
         skymap.meta['log_bci'] = log_bci

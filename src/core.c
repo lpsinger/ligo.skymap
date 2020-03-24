@@ -773,13 +773,13 @@ static PyObject *sky_map_toa_phoa_snr(
     memset(locations_npy, 0, sizeof(locations_npy));
 
     /* Arrays of pointers for inputs with multiple dimensions */
-    const float complex *snrs[nifos];
+    const float (*snrs[nifos])[2];
     const float (*responses[nifos])[3];
     const double *locations[nifos];
 
     /* Gather C-aligned arrays from Numpy types */
     INPUT_VECTOR_DOUBLE_NIFOS(epochs)
-    INPUT_LIST_OF_ARRAYS(snrs, NPY_CFLOAT, 1,
+    INPUT_LIST_OF_ARRAYS(snrs, NPY_FLOAT, 2,
         npy_intp dim = PyArray_DIM(npy, 0);
         if (iifo == 0)
             nsamples = dim;
@@ -787,6 +787,12 @@ static PyObject *sky_map_toa_phoa_snr(
         {
             PyErr_SetString(PyExc_ValueError,
                 "expected elements of snrs to be vectors of the same length");
+            goto fail;
+        }
+        if (PyArray_DIM(npy, 1) != 2)
+        {
+            PyErr_SetString(PyExc_ValueError,
+                "expected elements of snrs to be nsamples x 2 arrays");
             goto fail;
         }
     )
@@ -893,18 +899,18 @@ static void log_posterior_toa_phoa_snr_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        const float complex *snrs[nifos];
+        const float (*snrs[nifos])[2];
         const float (*responses[nifos])[3];
         const double *locations[nifos];
 
         for (npy_intp j = 0; j < nifos; j ++)
         {
-            snrs[j] = (const float complex *)
+            snrs[j] = (const float (*)[2])
                 &args[13][i * steps[13] + j * steps[19]];
             responses[j] = (const float (*)[3])
-                &args[14][i * steps[14] + j * steps[21]];
+                &args[14][i * steps[14] + j * steps[22]];
             locations[j] = (const double *)
-                &args[15][i * steps[15] + j * steps[24]];
+                &args[15][i * steps[15] + j * steps[25]];
         }
 
         /* Alignment of the ufunc arguments is enforced in Python by the
@@ -1023,7 +1029,7 @@ static const PyUFuncGenericFunction
 static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
     NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_CFLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
+    NPY_DOUBLE, NPY_FLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
 
 static const char volume_render_ufunc_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
@@ -1097,7 +1103,7 @@ PyMODINIT_FUNC PyInit_core(void)
             log_posterior_toa_phoa_snr_loops, no_ufunc_data,
             log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
             "log_posterior_toa_phoa_snr", NULL, 0,
-            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples),(nifos,3,3),(nifos,3),(nifos)->()"));
+            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples,2),(nifos,3,3),(nifos,3),(nifos)->()"));
 
     PyModule_AddObject(
         module, "conditional_pdf", PyUFunc_FromFuncAndData(

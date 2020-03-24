@@ -78,7 +78,11 @@ y4 = [0, 1.23412285-1.561222751j, -2.06157986+0.782987141j,
       16 + 0.35219617295969, 14.769739126762206+43.89473896632356j],
      [[0, 1, 8, 27, 256], 2, 'catmull-rom', 3, 27],
      [[256, 27, 8, 1, 0], 2, 'catmull-rom', 1, 27],
-     [y4, 2, 'catmull-rom', 2.108106552865, -2.10041938439+0.85409051094j]])
+     [y4, 2, 'catmull-rom', 2.108106552865, -2.10041938439+0.85409051094j],
+     [[0, 1, 8, 27, 256], 2, 'catmull-rom-amp-phase', 3, 27],
+     [[256, 27, 8, 1, 0], 2, 'catmull-rom-amp-phase', 1, 27],
+     [y4, 2, 'catmull-rom-amp-phase',
+      2.0, -2.06157986+0.782987141j]])
 def test_interpolate_max(y, window, method, expected_tmax, expected_ymax):
     tmax, ymax = interpolate_max((len(y) - 1) // 2, y, window, method)
     assert tmax == pytest.approx(expected_tmax)

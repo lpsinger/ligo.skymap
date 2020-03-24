@@ -18,6 +18,14 @@ Changelog
   SNR time series for early-warning events could have been cropped to only 1-3
   samples.
 
+- Change BAYESTAR's strategy for evaluating SNR time series from Catmull-Rom
+  interpolation of the real and imaginary parts to Catmull-Rom interpolation of
+  the amplitude and phase. The old interpolation method could produce
+  oscillatory artifacts in the SNR amplitude if the data are nearly critically
+  sampled, as is the case for early-warning BNS events. The new interpolation
+  method is immune to this kind of artifact, and also has much faster
+  convergence as a function of sample rate.
+
 - Lift the code to apply time shifts to SNR series outside of BAYESTAR's inner
   loop because there are no data dependencies on the variables of integration.
   This is seen to speed up BAYESTAR by 30%.

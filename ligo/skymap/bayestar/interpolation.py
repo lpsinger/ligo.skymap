@@ -61,7 +61,7 @@ Example
 import numpy as np
 from scipy import optimize
 
-from .filter import abs2, exp_i
+from .filter import abs2, exp_i, unwrap
 
 __all__ = ('interpolate_max',)
 
@@ -102,7 +102,7 @@ def interpolate_max_lanczos(imax, y, window_length):
 
 
 #
-# Catmull-Rom spline interpolation
+# Catmull-Rom spline interpolation, real and imaginary parts
 #
 
 
@@ -173,6 +173,69 @@ def interpolate_max_catmull_rom(imax, y, window_length):
 
 
 #
+# Catmull-Rom spline interpolation, amplitude and phase
+#
+
+
+def interpolate_max_catmull_rom_amp_phase_even(y):
+
+    # Construct Catmull-Rom interpolating polynomials for
+    # real and imaginary parts
+    poly_abs = poly_catmull_rom(np.abs(y))
+    poly_arg = poly_catmull_rom(unwrap(np.angle(y)))
+
+    # Find the roots of d(|y|)/dt as approximated
+    roots = poly_abs.r
+
+    # Find which of the two matched interior points has a greater magnitude
+    t_max = 0.
+    y_max = y[1]
+    y_max_abs2 = abs2(y_max)
+
+    new_t_max = 1.
+    new_y_max = y[2]
+    new_y_max_abs2 = abs2(new_y_max)
+
+    if new_y_max_abs2 > y_max_abs2:
+        t_max = new_t_max
+        y_max = new_y_max
+        y_max_abs2 = new_y_max_abs2
+
+    # Find any real root in (0, 1) that has a magnitude greater than the
+    # greatest endpoint
+    for root in roots:
+        if np.isreal(root) and 0 < root < 1:
+            new_t_max = np.real(root)
+            new_y_max = poly_abs(new_t_max) * exp_i(poly_arg(new_t_max))
+            new_y_max_abs2 = abs2(new_y_max)
+            if new_y_max_abs2 > y_max_abs2:
+                t_max = new_t_max
+                y_max = new_y_max
+                y_max_abs2 = new_y_max_abs2
+
+    # Done
+    return t_max, y_max
+
+
+def interpolate_max_catmull_rom_amp_phase(imax, y, window_length):
+    t_max, y_max = interpolate_max_catmull_rom_amp_phase_even(
+        y[imax - 2:imax + 2])
+    y_max_abs2 = abs2(y_max)
+    t_max = t_max - 1
+
+    new_t_max, new_y_max = interpolate_max_catmull_rom_amp_phase_even(
+        y[imax - 1:imax + 3])
+    new_y_max_abs2 = abs2(new_y_max)
+
+    if new_y_max_abs2 > y_max_abs2:
+        t_max = new_t_max
+        y_max = new_y_max
+        y_max_abs2 = new_y_max_abs2
+
+    return imax + t_max, y_max
+
+
+#
 # Quadratic fit
 #
 
@@ -229,13 +292,14 @@ def interpolate_max_nearest_neighbor(imax, y, window_length):
 
 
 _interpolants = {
+    'catmull-rom-amp-phase': interpolate_max_catmull_rom_amp_phase,
     'catmull-rom': interpolate_max_catmull_rom,
     'lanczos': interpolate_max_lanczos,
     'nearest-neighbor': interpolate_max_nearest_neighbor,
     'quadratic-fit': interpolate_max_quadratic_fit}
 
 
-def interpolate_max(imax, y, window_length, method='catmull-rom'):
+def interpolate_max(imax, y, window_length, method='catmull-rom-amp-phase'):
     """Perform sub-sample interpolation to find the phase and amplitude
     at the maximum of the absolute value of a complex series.
 
@@ -249,10 +313,12 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
         The window of the interpolation function for the `lanczos` and
         `quadratic-fit` methods. The interpolation will consider a sliding
         window of `2 * window_length + 1` samples centered on `imax`.
-    method : {'catmull-rom', 'lanczos', 'nearest-neighbor', 'quadratic-fit'}
+    method : {'catmull-rom-amp-phase', 'catmull-rom', 'lanczos', 'nearest-neighbor', 'quadratic-fit'}
         The interpolation method. Can be any of the following:
 
-        * `catmull-rom`: Catmull-Rom cubic splines
+        * `catmull-rom-amp-phase`: Catmull-Rom cubic splines on amplitude and phase
+          The `window_length` parameter is ignored (understood to be 2).
+        * `catmull-rom`: Catmull-Rom cubic splines on real and imaginary parts
           The `window_length` parameter is ignored (understood to be 2).
         * `lanczos`: Lanczos filter interpolation
         * `nearest-neighbor`: Nearest neighbor (e.g., no interpolation).
@@ -268,5 +334,5 @@ def interpolate_max(imax, y, window_length, method='catmull-rom'):
     ymax_interp : complex
         The interpolated value at the maximum.
 
-    """
+    """  # noqa: E501
     return _interpolants[method](imax, np.asarray(y), window_length)

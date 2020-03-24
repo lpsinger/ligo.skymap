@@ -121,6 +121,11 @@ static float cabs2(float complex z) {
 }
 
 
+static float complex exp_i(float phi) {
+    return cosf(phi) + I * sinf(phi);
+}
+
+
 /*
  * Catmull-Rom cubic spline interpolant of x(t) for regularly gridded
  * samples x_i(t_i), assuming:
@@ -130,13 +135,7 @@ static float cabs2(float complex z) {
  *     t_2 = 1,  x_2 = x[2],
  *     t_3 = 2,  x_3 = x[3].
  */
-static float complex complex_catrom(
-    float complex x0,
-    float complex x1,
-    float complex x2,
-    float complex x3,
-    float t
-) {
+static float catrom(float x0, float x1, float x2, float x3, float t) {
     return x1
         + t*(-0.5f*x0 + 0.5f*x2
         + t*(x0 - 2.5f*x1 + 2.0f*x2 - 0.5f*x3
@@ -147,11 +146,7 @@ static float complex complex_catrom(
 /* Evaluate a complex time series using cubic spline interpolation, assuming
  * that the vector x gives the samples of the time series at times
  * 0, 1, ..., nsamples-1. */
-static float complex eval_snr(
-    const float complex *x,
-    size_t nsamples,
-    float t
-) {
+static float complex eval_snr(const float (*x)[2], size_t nsamples, float t) {
     ssize_t i;
     float f;
     float complex y;
@@ -164,7 +159,8 @@ static float complex eval_snr(
     }
 
     if (i >= 1 && i < (ssize_t)nsamples - 2)
-        y = complex_catrom(x[i-1], x[i], x[i+1], x[i+2], f);
+        y = catrom(x[i-1][0], x[i][0], x[i+1][0], x[i+2][0], f) * exp_i(
+            catrom(x[i-1][1], x[i][1], x[i+1][1], x[i+2][1], f));
     else
         y = 0;
 
@@ -571,11 +567,6 @@ float complex bayestar_signal_amplitude_model(
 static const unsigned int ntwopsi = 10;
 
 
-static float complex exp_i(float phi) {
-    return cosf(phi) + I * sinf(phi);
-}
-
-
 /* Compare two pixels by contained probability. */
 static int bayestar_pixel_compare_prob(const void *a, const void *b)
 {
@@ -712,7 +703,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     unsigned int n_u_points,
     float sample_rate,
     const double *epochs,
-    const float complex **snrs,
+    const float (**snrs)[2],
     const float (**responses)[3],
     const double **locations,
     const double *horizons,
@@ -853,7 +844,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     unsigned long nsamples,         /* Length of SNR series */
     float sample_rate,              /* Sample rate in seconds */
     const double *epochs,           /* Timestamps of SNR time series */
-    const float complex **snrs,     /* Complex SNR series */
+    const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
@@ -1078,8 +1069,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
 
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
                 pixels[i].value, gmst, nifos, nsamples, n_u_points,
-                sample_rate, epochs, snrs, responses, locations, horizons,
-                u_points_weights);
+                sample_rate, epochs, snrs, responses, locations,
+                horizons, u_points_weights);
         }
         ITT_TASK_END(itt_domain);
 
@@ -1191,7 +1182,7 @@ double bayestar_log_posterior_toa_phoa_snr(
     unsigned long nsamples,         /* Lengths of SNR series */
     double sample_rate,             /* Sample rate in seconds */
     const double *epochs,           /* Timestamps of SNR time series */
-    const float complex **snrs,     /* Complex SNR series */
+    const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
     const double *horizons          /* SNR=1 horizon distances for each detector */
@@ -1263,56 +1254,30 @@ static void test_cabs2(float complex z)
 }
 
 
-static void test_complex_catrom(void)
+static void test_catrom(void)
 {
     for (float t = 0; t <= 1; t += 0.01f)
     {
-        const float complex result = complex_catrom(0, 0, 0, 0, t);
-        const float complex expected = 0;
-        gsl_test_abs(crealf(result), crealf(expected), 0,
-            "testing complex Catmull-rom interpolant for zero input");
-        gsl_test_abs(cimagf(result), cimagf(expected), 0,
-            "testing complex Catmull-rom interpolant for zero input");
+        const float result = catrom(0, 0, 0, 0, t);
+        const float expected = 0;
+        gsl_test_abs(result, expected, 0,
+            "testing Catmull-rom interpolant for zero input");
     }
 
     for (float t = 0; t <= 1; t += 0.01f)
     {
-        const float complex result = complex_catrom(1, 1, 1, 1, t);
-        const float complex expected = 1;
-        gsl_test_abs(crealf(result), crealf(expected), 0,
-            "testing complex Catmull-rom interpolant for unit input");
-        gsl_test_abs(cimagf(result), cimagf(expected), 0,
-            "testing complex Catmull-rom interpolant for unit input");
+        const float result = catrom(1, 1, 1, 1, t);
+        const float expected = 1;
+        gsl_test_abs(result, expected, 0,
+            "testing Catmull-rom interpolant for unit input");
     }
 
     for (float t = 0; t <= 1; t += 0.01f)
     {
-        const float complex result = complex_catrom(1.0j, 1.0j, 1.0j, 1.0j, t);
-        const float complex expected = 1.0j;
-        gsl_test_abs(crealf(result), crealf(expected), 0,
-            "testing complex Catmull-rom interpolant for unit imaginary input");
-        gsl_test_abs(cimagf(result), cimagf(expected), 1,
-            "testing complex Catmull-rom interpolant for unit imaginary input");
-    }
-
-    for (float t = 0; t <= 1; t += 0.01f)
-    {
-        const float complex result = complex_catrom(1.0+1.0j, 1.0+1.0j, 1.0+1.0j, 1.0+1.0j, t);
-        const float complex expected = 1.0+1.0j;
-        gsl_test_abs(crealf(result), crealf(expected), 0,
-            "testing complex Catmull-rom interpolant for unit real + imaginary input");
-        gsl_test_abs(cimagf(result), cimagf(expected), 0,
-            "testing complex Catmull-rom interpolant for unit real + imaginary input");
-    }
-
-    for (float t = 0; t <= 1; t += 0.01f)
-    {
-        const float complex result = complex_catrom(1, 0, 1, 4, t);
-        const float complex expected = gsl_pow_2(t);
-        gsl_test_abs(crealf(result), crealf(expected), 0,
-            "testing complex Catmull-rom interpolant for quadratic real input");
-        gsl_test_abs(cimagf(result), cimagf(expected), 0,
-            "testing complex Catmull-rom interpolant for quadratic real input");
+        const float result = catrom(1, 0, 1, 4, t);
+        const float expected = gsl_pow_2(t);
+        gsl_test_abs(result, expected, 0,
+            "testing Catmull-rom interpolant for quadratic real input");
     }
 }
 
@@ -1320,20 +1285,23 @@ static void test_complex_catrom(void)
 static void test_eval_snr(void)
 {
     static const size_t nsamples = 64;
-    float complex x[nsamples];
+    float x[nsamples][2];
 
-    /* Populate data with samples of x(t) = t^2 + t j */
+    /* Populate data with samples of x(t) = t^2 * exp(i * t) */
     for (size_t i = 0; i < nsamples; i ++)
-        x[i] = gsl_pow_2(i) + i * 1.0j;
+    {
+        x[i][0] = gsl_pow_2(i);
+        x[i][1] = i;
+    }
 
     for (float t = 0; t <= nsamples; t += 0.1)
     {
-        const float result = eval_snr(x, nsamples, t);
-        const float expected = (t > 1 && t < nsamples - 2) ? (gsl_pow_2(t) + t*1.0j) : 0;
-        gsl_test_abs(crealf(result), crealf(expected), 1e4 * GSL_FLT_EPSILON,
-            "testing real part of eval_snr(%g) for x(t) = t^2 + t j", t);
-        gsl_test_abs(cimagf(result), cimagf(expected), 1e4 * GSL_FLT_EPSILON,
-            "testing imaginary part of eval_snr(%g) for x(t) = t^2 + t j", t);
+        const float complex result = eval_snr(x, nsamples, t);
+        const float complex expected = (t > 1 && t < nsamples - 2) ? (gsl_pow_2(t) * exp_i(t)) : 0;
+        gsl_test_abs(cabsf(result), cabsf(expected), 1e4 * GSL_FLT_EPSILON,
+            "testing abs of eval_snr(%g) for x(t) = t^2 * exp(i * t)", t);
+        gsl_test_abs(cargf(result), cargf(expected), 1e4 * GSL_FLT_EPSILON,
+            "testing arg of eval_snr(%g) for x(t) = t^2 * exp(i * t)", t);
     }
 }
 
@@ -1441,7 +1409,7 @@ int bayestar_test(void)
         for (double im = -1; im < 1; im += 0.1)
             test_cabs2(re + im * 1.0j);
 
-    test_complex_catrom();
+    test_catrom();
     test_eval_snr();
 
     /* Tests of radial integrand with p2=0, b=0. */

@@ -571,7 +571,7 @@ float complex bayestar_signal_amplitude_model(
 static const unsigned int ntwopsi = 10;
 
 
-static float complex exp_i(double phi) {
+static float complex exp_i(float phi) {
     return cosf(phi) + I * sinf(phi);
 }
 

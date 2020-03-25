@@ -5,6 +5,9 @@ Changelog
 0.2.0 (unreleased)
 ==================
 
+- Update installation instructions to state that installation with pip requires
+  pip 19.3 or newer. This has been the case since ligo.skymap 0.1.16.
+
 - Teach BAYESTAR to respect the ``f_final`` column in the ``sngl_inspiral``
   table for pre-merger, early warning templates.
 
@@ -18,9 +21,6 @@ Changelog
 - Lift the code to apply time shifts to SNR series outside of BAYESTAR's inner
   loop because there are no data dependencies on the variables of integration.
   This is seen to speed up BAYESTAR by 30%.
-
-- Update installation instructions to state that installation with pip requires
-  pip 19.3 or newer. This has been the case since ligo.skymap 0.1.16.
 
 0.1.16 (2020-02-26)
 ===================

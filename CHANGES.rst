@@ -22,6 +22,9 @@ Changelog
   loop because there are no data dependencies on the variables of integration.
   This is seen to speed up BAYESTAR by 30%.
 
+- Add software version and command line arguments metadata to the output of
+  ``ligo-skymap-plot-stats``.
+
 0.1.16 (2020-02-26)
 ===================
 

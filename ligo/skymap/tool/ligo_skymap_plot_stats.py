@@ -21,7 +21,7 @@ cumulatively by false alarm rate or SNR.
 from distutils.dir_util import mkpath
 import os
 
-from . import ArgumentParser, FileType
+from . import ArgumentParser, FileType, MatplotlibFigureType
 
 
 def parser():
@@ -69,6 +69,7 @@ def main(args=None):
     if rcParams['text.usetex']:
         labels = [r'\verb/' + label + '/' for label in labels]
     rcParams['savefig.format'] = opts.format
+    metadata = MatplotlibFigureType.get_savefig_metadata(opts.format)
 
     # Normalize column names
     for dataset in datasets:
@@ -182,7 +183,8 @@ def main(args=None):
                 ax.grid()
                 if len(filtered) > 1:
                     ax.legend(labels, loc='lower right')
-                fig.savefig(os.path.join(subdir, colname))
+                fig.savefig(os.path.join(subdir, colname),
+                            metadata=metadata)
                 plt.close()
                 progress.update()
 
@@ -205,6 +207,7 @@ def main(args=None):
                             histtype='step', bins=bins)
                 ax.grid()
                 ax.legend(labels, loc='upper left')
-                fig.savefig(os.path.join(subdir, colname + '_hist'))
+                fig.savefig(os.path.join(subdir, colname + '_hist'),
+                            metadata=metadata)
                 plt.close()
                 progress.update()

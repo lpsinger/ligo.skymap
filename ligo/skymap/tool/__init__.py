@@ -194,17 +194,22 @@ class MatplotlibFigureType(FileType):
         from matplotlib import pyplot as plt
         return plt.show()
 
-    def __save(self):
-        from matplotlib import pyplot as plt
-        _, ext = os.path.splitext(self.string)
-        ext = ext.lower()
+    @staticmethod
+    def get_savefig_metadata(format):
         program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
         cmdline = ' '.join([program] + sys.argv[1:])
         metadata = {'Title': cmdline}
-        if ext == '.png':
+        if format == 'png':
             metadata['Software'] = version_string
-        elif ext in {'.pdf', '.ps', '.eps'}:
+        elif format in {'pdf', 'ps', 'eps'}:
             metadata['Creator'] = version_string
+        return metadata
+
+    def __save(self):
+        from matplotlib import pyplot as plt
+        _, ext = os.path.splitext(self.string)
+        format = ext.lower().lstrip('.')
+        metadata = self.get_savefig_metadata(format)
         return plt.savefig(self.string, metadata=metadata)
 
     def __call__(self, string):

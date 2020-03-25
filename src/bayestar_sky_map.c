@@ -719,12 +719,13 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     const float (*u_points_weights)[2]
 ) {
     float complex F[nifos];
-    double dt[nifos];
+    float complex snrs_interp[nsamples][nifos];
     double accum[nint];
     for (unsigned char k = 0; k < nint; k ++)
         accum[k] = -INFINITY;
 
     {
+        double dt[nifos];
         double theta, phi;
         uniq2ang64(uniq, &theta, &phi);
 
@@ -734,6 +735,13 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                 responses[iifo], phi, M_PI_2-theta, gmst) * horizons[iifo];
 
         toa_errors(dt, theta, phi, gmst, nifos, locations, epochs);
+
+        /* Shift SNR time series by the time delay for this sky position */
+        for (unsigned long isample = 0; isample < nsamples; isample++)
+            for (unsigned int iifo = 0; iifo < nifos; iifo++)
+                snrs_interp[isample][iifo] = eval_snr(
+                    snrs[iifo], nsamples,
+                    isample - dt[iifo] * sample_rate - 0.5 * (nsamples - 1));
     }
 
     /* Integrate over 2*psi */
@@ -773,11 +781,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                 {
                     float complex I0arg_complex_times_r = 0;
                     for (unsigned int iifo = 0; iifo < nifos; iifo ++)
-                    {
-                        I0arg_complex_times_r += conjf(z_times_r[iifo])
-                            * eval_snr(snrs[iifo], nsamples,
-                                isample - dt[iifo] * sample_rate - 0.5 * (nsamples - 1));
-                    }
+                        I0arg_complex_times_r += conjf(z_times_r[iifo]) * snrs_interp[isample][iifo];
                     b = cabsf(I0arg_complex_times_r);
                     b *= FUDGE * FUDGE;
                 }

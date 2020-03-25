@@ -258,7 +258,7 @@ def sngl_inspiral_psd(waveform, mass1, mass2,
         distance=1e6 * lal.PC_SI, inclination=0, phiRef=0,
         longAscNodes=0, eccentricity=0, meanPerAno=0,
         deltaF=0, f_min=f_min,
-        f_max=ceil_pow_2(2 * (f_final or 2048)),
+        f_max=ceil_pow_2(f_final or 2048),
         f_ref=float(f_ref or 0),
         LALparams=params, approximant=approx)
 

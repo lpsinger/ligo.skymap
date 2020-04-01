@@ -165,7 +165,8 @@ docs:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     - python setup.py build_docs
     - mv docs/_build/html ${CI_PROJECT_DIR}/
-  dependencies:
+  needs:
+    - dependencies/python3.7
     - sdist
   artifacts:
     paths:
@@ -180,6 +181,7 @@ docs:
   variables:
     OMP_NUM_THREADS: 1
   <<: *in-tmpdir
+  stage: test
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl astroquery
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --durations=10", verbose=True))'
@@ -187,19 +189,22 @@ docs:
 test/python3.6:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
-  dependencies:
+  needs:
+    - dependencies/python3.6
     - wheel/cp36-cp36m-manylinux2014
 
 test/python3.7:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
-  dependencies:
+  needs:
+    - dependencies/python3.7
     - wheel/cp37-cp37m-manylinux2014
 
 test/python3.8:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
-  dependencies:
+  needs:
+    - dependencies/python3.8
     - wheel/cp38-cp38-manylinux2014
 
 #
@@ -273,7 +278,8 @@ test/coverage:
     - pycobertura show coverage.xml -f html -o coverage.html
     - pycobertura show coverage.xml
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
-  dependencies:
+  needs:
+    - dependencies/python3.7
     - sdist
   artifacts:
     paths:
@@ -290,7 +296,8 @@ test/coverage:
 lint:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
-  dependencies: []
+  needs:
+    - dependencies/python3.7
 
 #
 # Trigger acceptance tests.
@@ -314,7 +321,7 @@ pages:
   script:
     - mv html public
     - mv coverage.html public/coverage.html
-  dependencies:
+  needs:
     - docs
     - test/coverage
   artifacts:

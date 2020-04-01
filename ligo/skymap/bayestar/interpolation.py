@@ -73,7 +73,7 @@ __all__ = ('interpolate_max',)
 
 def lanczos(t, a):
     """The Lanczos kernel."""
-    return np.sinc(t) * np.sinc(t / a)
+    return np.where(np.abs(t) < a, np.sinc(t) * np.sinc(t / a), 0)
 
 
 def lanczos_interpolant(t, y):

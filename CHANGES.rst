@@ -25,6 +25,9 @@ Changelog
 - Add software version and command line arguments metadata to the output of
   ``ligo-skymap-plot-stats``.
 
+- Fix a bug in the Lanczos sub-sample arrival time interpolant: the Lanczos
+  kernel should be zero for ``abs(t) >= a``.
+
 0.1.16 (2020-02-26)
 ===================
 

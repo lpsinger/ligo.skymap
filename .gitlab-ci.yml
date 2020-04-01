@@ -61,7 +61,7 @@ sdist:
     - python${PYVERS} -m venv env
     - source env/bin/activate
     # FIXME: https://github.com/matthew-brett/delocate/pull/38
-    - pip install -q git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate 'numpy==1.7.0;python_version<"3.7"' 'numpy==1.14.5;python_version=="3.7"' 'numpy==1.17.3;python_version=="3.8"'
+    - pip install -q git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate oldest-supported-numpy
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl

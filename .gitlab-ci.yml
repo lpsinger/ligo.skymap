@@ -283,9 +283,9 @@ test/coverage:
     - sdist
   artifacts:
     paths:
-      - coverage.xml
       - coverage.html
     reports:
+      cobertura: coverage.xml
       junit: junit.xml
     expire_in: 1 day
 

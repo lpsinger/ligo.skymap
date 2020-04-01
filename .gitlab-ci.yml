@@ -8,9 +8,25 @@ include:
     file: sccb.yml
 
 stages:
+  - deps
   - dist
   - test
   - deploy
+
+#
+# Read requirements.txt from setup.cfg.
+#
+
+requirements:
+  stage: deps
+  image: python:slim
+  script:
+    - python setup.py egg_info
+    - cp *.egg-info/requires.txt requirements.txt
+  artifacts:
+    paths:
+      - requirements.txt
+    expire_in: 1 day
 
 #
 # Build Python source package.
@@ -21,6 +37,7 @@ sdist:
   stage: dist
   script:
     - python setup.py sdist -d .
+  needs: []
   artifacts:
     paths:
       - '*.tar.*'
@@ -43,6 +60,7 @@ sdist:
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
+  needs: []
   artifacts:
     paths:
       - '*.whl'
@@ -67,6 +85,7 @@ sdist:
     - delocate-wheel -v -w wheelhouse dist/*.whl
     - rm -f *.whl
     - mv wheelhouse/* .
+  needs: []
   artifacts:
     paths:
       - '*.whl'
@@ -103,6 +122,7 @@ wheel/cp38-cp38-macosx:
   stage: dist
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
+    GIT_STRATEGY: none
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
@@ -115,10 +135,12 @@ wheel/cp38-cp38-macosx:
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
+  needs:
+    - requirements
   only:
     changes:
       - .gitlab-ci.yml
-      - requirements.txt
+      - setup.cfg
 
 dependencies/python3.6:
   <<: *dependencies

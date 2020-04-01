@@ -13,8 +13,6 @@ from setuptools.config import read_configuration
 from astropy_helpers.setup_helpers import register_commands, get_package_info
 from astropy_helpers.version_helpers import generate_version_py
 
-import pkg_resources
-
 # Monkey patch find_packages to only locate our namespace package
 from setuptools import PEP420PackageFinder
 from astropy_helpers import setup_helpers
@@ -42,12 +40,4 @@ version = generate_version_py()
 # details.
 package_info = get_package_info()
 
-# Note that requires and provides should not be included in the call to
-# ``setup``, since these are now deprecated. See this link for more details:
-# https://groups.google.com/forum/#!topic/astropy-dev/urYO8ckB2uM
-
-with open('requirements.txt', 'r') as f:
-    install_requires = [str(r) for r in pkg_resources.parse_requirements(f)]
-
-setup(version=version, cmdclass=cmdclass, install_requires=install_requires,
-      **package_info)
+setup(version=version, cmdclass=cmdclass, **package_info)

@@ -6,7 +6,6 @@ include LICENSE.rst
 include ah_bootstrap.py
 include setup.cfg
 include ligo/skymap/tests/coveragerc
-include requirements.txt
 
 recursive-include ligo/skymap *.pyx *.c *.pxd
 recursive-include docs *

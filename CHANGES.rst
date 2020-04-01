@@ -28,6 +28,9 @@ Changelog
 - Fix a bug in the Lanczos sub-sample arrival time interpolant: the Lanczos
   kernel should be zero for ``abs(t) >= a``.
 
+- Remove ``requirements.txt`` file and list dependencies in ``setup.cfg``
+  instead.
+
 0.1.16 (2020-02-26)
 ===================
 

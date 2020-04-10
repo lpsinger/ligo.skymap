@@ -31,6 +31,11 @@ Changelog
 - Remove ``requirements.txt`` file and list dependencies in ``setup.cfg``
   instead.
 
+- The ``bayestar-localize-coincs`` will no longer create HTCondor user log
+  files because the large number of open log files could strain the filesystem
+  if submitting from an NFS mount. This should reduce issues with held jobs on
+  certain LIGO Data Grid clusters.
+
 0.1.16 (2020-02-26)
 ===================
 

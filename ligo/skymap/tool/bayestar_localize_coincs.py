@@ -134,7 +134,6 @@ def main(args=None):
                   environment = "OMP_NUM_THREADS=1"
                   ''', file=f)
             print('error =', os.path.join(opts.output, '$(cid).err'), file=f)
-            print('log =', os.path.join(opts.output, '$(cid).log'), file=f)
             print('arguments = "',
                   *(arg for arg in sys.argv if arg != '--condor-submit'),
                   '--coinc-event-id $(cid)"', file=f)

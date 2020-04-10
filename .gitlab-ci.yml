@@ -137,10 +137,6 @@ wheel/cp38-cp38-macosx:
     - docker push $IMAGE_TAG
   needs:
     - requirements
-  only:
-    changes:
-      - .gitlab-ci.yml
-      - setup.cfg
 
 dependencies/python3.6:
   <<: *dependencies

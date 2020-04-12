@@ -38,6 +38,9 @@ Changelog
 
 - Fix deprecation warning in ``ligo-skymap-stats``.
 
+- Remove the deprecated ``ligo.skymap.postprocess.find_injection_moc`` method,
+  which has been renamed to ``ligo.skymap.postprocess.crossmatch``.
+
 0.1.16 (2020-02-26)
 ===================
 

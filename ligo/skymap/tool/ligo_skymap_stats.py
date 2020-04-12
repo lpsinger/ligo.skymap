@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2019  Leo Singer
+# Copyright (C) 2013-2020  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,11 +95,13 @@ values with the following columns:
 import sqlite3
 import sys
 
+from astropy.coordinates import SkyCoord
+from astropy import units as u
 import numpy as np
 
 from . import ArgumentParser, FileType, SQLiteType
 from ..io import fits
-from ..postprocess import find_injection_moc
+from ..postprocess import crossmatch
 from ..util import sqlite
 
 
@@ -179,13 +181,21 @@ def process(fitsfilename):
             return None
         simulation_id, true_ra, true_dec, true_dist, far, snr = row
 
+    if true_ra is None or true_dec is None:
+        true_coord = None
+    elif true_dist is None:
+        true_coord = SkyCoord(true_ra * u.rad, true_dec * u.rad)
+    else:
+        true_coord = SkyCoord(true_ra * u.rad, true_dec * u.rad,
+                              true_dist * u.Mpc)
+
     (
         searched_area, searched_prob, offset, searched_modes, contour_areas,
         area_probs, contour_modes, searched_prob_dist, contour_dists,
         searched_vol, searched_prob_vol, contour_vols, probdensity,
         probdensity_vol
-    ) = find_injection_moc(
-        sky_map, true_ra, true_dec, true_dist,
+    ) = crossmatch(
+        sky_map, true_coord,
         contours=contour_pvalues, areas=areas, modes=modes, cosmology=cosmology
     )
 

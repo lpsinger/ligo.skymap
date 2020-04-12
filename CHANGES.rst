@@ -36,6 +36,8 @@ Changelog
   if submitting from an NFS mount. This should reduce issues with held jobs on
   certain LIGO Data Grid clusters.
 
+- Fix deprecation warning in ``ligo-skymap-stats``.
+
 0.1.16 (2020-02-26)
 ===================
 

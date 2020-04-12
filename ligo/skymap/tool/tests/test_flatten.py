@@ -72,7 +72,7 @@ def input_skymap(order1, d_order, fraction):
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
 @pytest.mark.parametrize('nside_out', [None, 1, 2, 4, 8, 512])
 def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
-    """Test ligo-skyamp-flatten."""
+    """Test ligo-skymap-flatten."""
     input_filename = str(tmpdir / 'bayestar.fits')
     output_filename = str(tmpdir / 'bayestar.fits.gz')
 

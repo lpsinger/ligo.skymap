@@ -52,7 +52,7 @@ def samples_without_distance(samples, tmpdir):
 
 
 def test_from_samples(samples, tmpdir):
-    """Test ligo-skyamp-from-samples."""
+    """Test ligo-skymap-from-samples."""
     run_entry_point('ligo-skymap-from-samples', '--seed', '150914',
                     samples, '-o', str(tmpdir),
                     '--instruments', 'H1', 'L1', 'V1', '--objid', 'S1234')
@@ -63,7 +63,7 @@ def test_from_samples(samples, tmpdir):
 
 def test_from_samples_without_distance(samples_without_distance,
                                        capsys, tmpdir):
-    """Test ligo-skyamp-from-samples on an MCMC samples file that does not have
+    """Test ligo-skymap-from-samples on an MCMC samples file that does not have
     a distance column.
     """
     with pytest.raises(CalledProcessError):

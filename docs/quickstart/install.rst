@@ -36,7 +36,7 @@ Option 2: conda
 ---------------
 
 If you are using the Anaconda Python distribution or the lightweight Miniconda
-version, you can install `ligo.skyamp` using `conda`_. First, enable the
+version, you can install `ligo.skymap` using `conda`_. First, enable the
 `conda-forge`_ repository by running these commands::
 
     $ conda config --add channels conda-forge

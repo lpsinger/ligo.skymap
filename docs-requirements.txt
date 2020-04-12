@@ -1,4 +1,0 @@
-sphinx-argparse
-sphinx-astropy
-sphinxcontrib-mermaid
--r requirements.txt

@@ -141,7 +141,7 @@ def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
         N.data.data = amp * (
             np.random.randn(n) + 1j * np.random.randn(n))
         noise_term, sample_rate_2 = filter.autocorrelation(
-            N, 2 * duration - 1 / sample_rate, normalize=False)
+            N, len(snr_series) / sample_rate, normalize=False)
         assert sample_rate == sample_rate_2
         snr_series += noise_term
 

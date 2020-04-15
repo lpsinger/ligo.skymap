@@ -90,15 +90,10 @@ either the :mod:`ligo.lw` module or GWPy's :ref:`tabular LIGO-LW I/O
 The :file:`coinc.xml` file
 --------------------------
 
-.. This file describes the search pipeline's matched filter output. It MUST
-.. contain the following information:
-..
-.. * Point estimates of the time, phase, and amplitude on arrival in each detector
-.. * Intrinsic template parameters (masses and spins)
-..
-.. It SHOULD contain the following information:
-..
-.. * The signal-to-noise time series for each detector
+This file describes the search pipeline's matched filter output. It MUST
+contain the point estimates of the time, phase, and amplitude on arrival in
+each detector. It MUST provide the intrinsic template parameters (masses and
+spins). It SHOULD contain a signal-to-noise time series for each detector.
 
 The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
 (in any order):

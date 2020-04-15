@@ -144,7 +144,10 @@ def main(args=None):
                    ON (si.simulation_id = cm1.event_id)
                    INNER JOIN coinc_event_map AS cm2
                    ON (cm1.coinc_event_id = cm2.coinc_event_id)
-                   WHERE cm2.event_id = ?'''
+                   WHERE cm2.event_id = ?
+                   AND cm1.table_name = 'sim_inspiral'
+                   AND cm2.table_name = 'coinc_event_id'
+                   '''
         (ra, dec), = opts.inj_database.execute(
             query, (metadata['objid'],)).fetchall()
         radecs.append(np.rad2deg([ra, dec]).tolist())

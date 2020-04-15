@@ -106,7 +106,8 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
 
     * The value of those rows' :attr:`~ligo.lw.lsctables.Process.program`
       column MUST be one of ``pycbc``, ``gstlal_inspiral``,
-      ``gstlal_inspiral_postcohspiir_online``, or ``MBTAOnline``.
+      ``gstlal_inspiral_postcohspiir_online``, ``MBTAOnline``,
+      ``bayestar_realize_coincs``, or ``bayestar-realize-coincs``.
 
     * Additional valid columns of this table MAY be populated in order to
       identify the pipeline software version or include other metadata.
@@ -116,10 +117,6 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
 :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>`
     * The :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>` table
       MUST contain exactly one row per detector that the search analyzed.
-
-    * Each row's :attr:`~ligo.lw.lsctables.SnglInspiral.process_id`
-      column MUST match one of the rows identifying the search pipeline in the
-      :class:`process <ligo.lw.lsctables.ProcessTable>` table.
 
     * The values of the :attr:`~ligo.lw.lsctables.SnglInspiral.event_id` column
       MUST be distinct across all rows.
@@ -158,13 +155,12 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
       template.
 
     * If the search pipeline as identified by the
-      :attr:`~ligo.lw.lsctables.Process.program` in the corresponding row in
-      the :class:`process <ligo.lw.lsctables.ProcessTable>` table is ``pycbc``,
-      then phase convention of the
-      :attr:`~ligo.lw.lsctables.SnglInspiral.coa_phase` column MUST be that the
-      matched filter output is linear in terms of the data. Otherwise, the
-      phase convention MUST be that the matched filter output is antilinear in
-      terms of the data.
+      :attr:`~ligo.lw.lsctables.Process.program` column in the :class:`process
+      <ligo.lw.lsctables.ProcessTable>` table is ``pycbc``, then phase
+      convention of the :attr:`~ligo.lw.lsctables.SnglInspiral.coa_phase`
+      column MUST be that the matched filter output is linear in terms of the
+      data. Otherwise, the phase convention MUST be that the matched filter
+      output is antilinear in terms of the data.
 
     * The :attr:`~ligo.lw.lsctables.SnglInspiral.end_time`,
       :attr:`~ligo.lw.lsctables.SnglInspiral.end_time_ns`,
@@ -173,10 +169,24 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
       for any row for which there is a corresponding SNR time series (see
       below).
 
+    * Due to a `bug in GraceDB`_, *all* columns of the
+      :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>` table
+      (including blank ones) must be present.
+
 :class:`coinc <ligo.lw.lsctables.CoincTable>`
     * There MUST be exactly one row in the
       :class:`coinc <ligo.lw.lsctables.CoincTable>` table with at least the
       :attr:`~ligo.lw.lsctables.Coinc.coinc_event_id` column populated.
+
+    * The value of the :attr:`~ligo.lw.lsctables.Coinc.process_id` column of
+      the :class:`coinc <ligo.lw.lsctables.CoincTable>` tale MUST match the
+      value of the :attr:`~ligo.lw.lsctables.Process.process_id` column in
+      the:class:`process <ligo.lw.lsctables.ProcessTable>` table that
+      identifies the search pipeline.
+
+    * Note that due to `another bug in GraceDB`_, the
+      :attr:`~ligo.lw.lsctables.Coinc.time_slide_id` column MUST be populated.
+      It MAY have a legal dummy value such as ``time_slide:time_slide_id:0``.
 
 :class:`coinc_event_map <ligo.lw.lsctables.CoincMapTable>`
     * There MUST be exactly one row in the
@@ -197,6 +207,29 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
       column set to the value of the
       :attr:`~ligo.lw.lsctables.Coinc.coinc_event_id` column in the one row of
       the :class:`coinc <ligo.lw.lsctables.CoincTable>` table.
+
+:class:`coinc_inspiral <ligo.lw.lsctables.CoincInspiralTable>`
+    * The :class:`coinc_inspiral <ligo.lw.lsctables.CoincInspiralTable>` table
+      MUST be present because it is required by GraceDB (although it is ignored
+      by BAYESTAR).
+
+    * It MUST have exactly one row.
+
+    * The value in the :attr:`~ligo.lw.lsctables.CoincInspiral.coinc_event_id`
+      column MUST match the value in the corresponding column in the
+      :class:`coinc <ligo.lw.lsctables.CoincTable>` table.
+
+    * The following columns MUST be populated:
+      :attr:`~ligo.lw.lsctables.CoincInspiral.coinc_event_id`,
+      :attr:`~ligo.lw.lsctables.CoincInspiral.combined_far`,
+      :attr:`~ligo.lw.lsctables.CoincInspiral.end_time`,
+      :attr:`~ligo.lw.lsctables.CoincInspiral.end_time_ns`,
+      :attr:`~ligo.lw.lsctables.CoincInspiral.ifos`, and
+      :attr:`~ligo.lw.lsctables.CoincInspiral.snr`.
+
+    * The :attr:`~ligo.lw.lsctables.CoincInspiral.mass` and
+      :attr:`~ligo.lw.lsctables.CoincInspiral.mchirp` columns SHOULD be
+      populated.
 
 The :file:`coinc.xml` file SHOULD also provide SNR time series for each
 detector.
@@ -259,5 +292,13 @@ density (PSD) series.
   range analyzed by the search MUST be absent or have their values set to
   positive infinity. Invalid values MUST NOT be set to zero.
 
+Example files
+-------------
+
+For a minimal example, see the mock :download:`coinc.xml <_static/coinc.xml>`
+and :download:`psd.xml.gz <_static/psd.xml.gz>` files.
+
 .. _`GraceDB`: https://gracedb.ligo.org
 .. _`sequence diagram`: https://en.wikipedia.org/wiki/Sequence_diagram
+.. _`bug in GraceDB`: https://git.ligo.org/lscsoft/gracedb/-/merge_requests/44
+.. _`another bug in GraceDB`: https://git.ligo.org/lscsoft/gracedb/-/issues/197

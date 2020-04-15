@@ -146,6 +146,10 @@ The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
       "early warning" or pre-merger event, then it SHOULD record the predicted
       time of merger.
 
+    * If the event is an early warning event, then the high-frequency cutoff
+      frequency MUST be recorded in the
+      :attr:`~ligo.lw.lsctables.SnglInspiral.f_final` column.
+
     * The :attr:`~ligo.lw.lsctables.SnglInspiral.snr` column MUST report the
       absolute value of the complex matched filter SNR of the best-matching
       template. It MUST NOT report a modified SNR-like quantity such as newSNR.

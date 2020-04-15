@@ -124,7 +124,8 @@ class LigoLWEventSource(OrderedDict, EventSource):
         key = operator.attrgetter('coinc_event_id')
         event_ids_by_coinc_event_id = {
             coinc_event_id:
-                tuple(coinc_map.event_id for coinc_map in coinc_maps)
+                tuple(coinc_map.event_id for coinc_map in coinc_maps
+                      if coinc_map.table_name == SnglInspiralTable.tableName)
             for coinc_event_id, coinc_maps
             in itertools.groupby(sorted(coinc_map_table, key=key), key=key)}
         sngl_inspirals_by_event_id = {

@@ -229,7 +229,7 @@ detector.
 
 * The timestamps of the samples of the SNR time series MUST correspond to
   sample boundaries. The timestamps MUST NOT have any sub-sample time shift
-  applied to it.
+  applied to them.
 
 * For any detector that lacks an SNR time series, sub-sample interpolation
   SHOULD be applied by the search pipeline to obtain the values for the

@@ -107,13 +107,12 @@ def parser():
 
 
 def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
-                 response, location, measurement_error='zero-noise'):
+                 response, location, measurement_error='zero-noise',
+                 duration=0.1):
     from scipy.interpolate import interp1d
 
     from ..bayestar import filter
     from ..bayestar.interpolation import interpolate_max
-
-    duration = 0.1
 
     # Calculate whitened template autocorrelation sequence.
     HS = filter.signal_psd_series(H, S)

@@ -23,7 +23,7 @@
  *         minimal branch instructions needed in evaluate function
  *      5. Interpolating polynomial is precomputed:
  *         modest speedup relative to naive 1D interpolant,
- *         4x speedup over relative to naive 2D interpolant
+ *         4x speedup relative to naive 2D interpolant
  *         at the cost of 16x the memory footprint
  */
 

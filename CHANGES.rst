@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.2.0 (unreleased)
+0.2.0 (2020-04-21)
 ==================
 
 - Update installation instructions to state that installation with pip requires

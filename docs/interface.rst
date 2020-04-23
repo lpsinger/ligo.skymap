@@ -5,7 +5,7 @@ Interface definition for online detection pipelines
 The BAYESTAR rapid localization algorithm is designed as a post-processing
 stage for compact binary merger search pipelines. The script
 :doc:`bayestar-localize-lvalert </ligo/skymap/tool/bayestar_localize_lvalert>`
-provide rapid sky localization as a service.
+provides rapid sky localization as a service.
 
 .. note::
     Other available modes of operation for BAYESTAR that are documented

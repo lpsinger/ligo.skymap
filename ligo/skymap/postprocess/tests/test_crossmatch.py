@@ -1,4 +1,4 @@
-from astropy.coordinates import SkyCoord, SphericalRepresentation
+from astropy.coordinates import CartesianRepresentation, SkyCoord
 from astropy.table import Table
 from astropy import units as u
 import numpy as np
@@ -66,7 +66,7 @@ def test_crossmatch_cartesian_gaussian_distribution(
     else:
         coordinates_xyz = cartesian_gaussian.rvs(size=n_coordinates)
         coordinates = SkyCoord(*coordinates_xyz.T * u.Mpc,
-                               representation_type='cartesian')
+                               representation_type=CartesianRepresentation)
 
     result = crossmatch(skymap, contours=contours, coordinates=coordinates)
 

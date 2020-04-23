@@ -57,9 +57,12 @@ def contours(request):
 @pytest.mark.parametrize('n_coordinates', [None, *range(3)])
 def test_crossmatch_cartesian_gaussian_distribution(
         cartesian_gaussian, contours, n_coordinates):
-    """Test on a Cartesian Gaussian distribution."""
+    """Test on a Cartesian Gaussian distribution.
+
+    This distribution has closed-form expressions for 3D credible volumes.
+    """
     skymap = cartesian_gaussian_to_skymap(
-        5, cartesian_gaussian.mean, cartesian_gaussian.cov)
+        6, cartesian_gaussian.mean, cartesian_gaussian.cov)
 
     if n_coordinates is None:
         coordinates = None
@@ -70,16 +73,28 @@ def test_crossmatch_cartesian_gaussian_distribution(
 
     result = crossmatch(skymap, contours=contours, coordinates=coordinates)
 
-    # Test credible volumes against the known analytic expression.
-    expected = (4 / 3 * np.pi * stats.chi(3).ppf(contours)**3 *
-                np.sqrt(np.linalg.det(cartesian_gaussian.cov)))
+    standard_vol  = 4/3*np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
+    expected = standard_vol * stats.chi(3).ppf(contours)**3
     np.testing.assert_allclose(result.contour_vols, expected, rtol=1e-3)
 
     if coordinates is None:
         assert np.isnan(result.probdensity_vol)
+        assert np.isnan(result.searched_prob_vol)
+        assert np.isnan(result.searched_vol)
     elif np.size(coordinates) == 0:
         assert np.size(result.probdensity_vol) == 0
+        assert np.size(result.searched_prob_vol) == 0
+        assert np.size(result.searched_vol) == 0
     else:
         expected = cartesian_gaussian.pdf(coordinates_xyz)
-        np.testing.assert_allclose(result.probdensity_vol, expected,
-                                   rtol=1e-1)
+        np.testing.assert_allclose(result.probdensity_vol, expected, rtol=3e-2)
+
+        d = coordinates_xyz - cartesian_gaussian.mean
+        r = np.sqrt(np.sum(((d @ np.linalg.inv(cartesian_gaussian.cov)) * d),
+                           axis=-1))
+        expected = stats.chi(3).cdf(r)
+        np.testing.assert_allclose(result.searched_prob_vol, expected,
+                                   rtol=3e-2)
+
+        expected = standard_vol * r**3
+        np.testing.assert_allclose(result.searched_vol, expected, rtol=3e-2)

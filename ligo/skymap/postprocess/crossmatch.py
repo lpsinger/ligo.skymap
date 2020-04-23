@@ -17,6 +17,7 @@
 """Catalog cross matching for HEALPix sky maps."""
 from collections import namedtuple
 
+from astropy.coordinates import ICRS, SkyCoord, SphericalRepresentation
 from astropy import units as u
 import healpy as hp
 import numpy as np
@@ -277,7 +278,10 @@ def crossmatch(sky_map, coordinates=None,
     if coordinates is None:
         true_ra = true_dec = true_dist = None
     else:
-        coordinates = coordinates.icrs
+        # Ensure that coordinates are in proper frame and representation
+        coordinates = SkyCoord(coordinates,
+                               representation_type=SphericalRepresentation,
+                               frame=ICRS)
         true_ra = coordinates.ra.rad
         true_dec = coordinates.dec.rad
         if np.any(coordinates.distance != 1):

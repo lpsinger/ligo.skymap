@@ -287,8 +287,6 @@ def crossmatch(sky_map, coordinates=None,
 
     contours = np.asarray(contours)
 
-    distmean = sky_map.meta.get('distmean', np.nan)
-
     # Sort the pixels by descending posterior probability.
     sky_map = np.flipud(np.sort(sky_map, order='PROBDENSITY'))
 
@@ -366,6 +364,7 @@ def crossmatch(sky_map, coordinates=None,
 
         # Set up distance grid.
         n_r = 1000
+        distmean, _ = distance.parameters_to_marginal_moments(dP, mu, sigma)
         max_r = 6 * distmean
         if true_dist is not None and np.max(true_dist) > max_r:
             max_r = np.max(true_dist)

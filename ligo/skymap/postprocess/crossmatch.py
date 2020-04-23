@@ -269,7 +269,7 @@ def crossmatch(sky_map, coordinates=None,
            ---  14.8323999999999980 -27.0459999999999994   320.62700000000001
            ---  14.5341000000000005 -26.0949000000000026   307.61000000000001
            ---  23.1280999999999963 -31.1109199999999966   320.62700000000001
-    Length = 1478 rows
+    Length = 1479 rows
 
     """  # noqa: E501
     # Astropy coordinates that are constructed without distance have

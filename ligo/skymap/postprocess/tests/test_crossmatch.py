@@ -73,7 +73,7 @@ def test_crossmatch_cartesian_gaussian_distribution(
 
     result = crossmatch(skymap, contours=contours, coordinates=coordinates)
 
-    standard_vol  = 4/3*np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
+    standard_vol = 4/3*np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
     expected = standard_vol * stats.chi(3).ppf(contours)**3
     np.testing.assert_allclose(result.contour_vols, expected, rtol=2e-3)
 

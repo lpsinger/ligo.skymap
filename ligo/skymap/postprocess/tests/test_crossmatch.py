@@ -75,7 +75,7 @@ def test_crossmatch_cartesian_gaussian_distribution(
 
     standard_vol  = 4/3*np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
     expected = standard_vol * stats.chi(3).ppf(contours)**3
-    np.testing.assert_allclose(result.contour_vols, expected, rtol=1e-3)
+    np.testing.assert_allclose(result.contour_vols, expected, rtol=2e-3)
 
     if coordinates is None:
         assert np.isnan(result.probdensity_vol)
@@ -87,14 +87,14 @@ def test_crossmatch_cartesian_gaussian_distribution(
         assert np.size(result.searched_vol) == 0
     else:
         expected = cartesian_gaussian.pdf(coordinates_xyz)
-        np.testing.assert_allclose(result.probdensity_vol, expected, rtol=3e-2)
+        np.testing.assert_allclose(result.probdensity_vol, expected, rtol=4e-2)
 
         d = coordinates_xyz - cartesian_gaussian.mean
         r = np.sqrt(np.sum(((d @ np.linalg.inv(cartesian_gaussian.cov)) * d),
                            axis=-1))
         expected = stats.chi(3).cdf(r)
         np.testing.assert_allclose(result.searched_prob_vol, expected,
-                                   rtol=3e-2)
+                                   atol=5e-3)
 
         expected = standard_vol * r**3
-        np.testing.assert_allclose(result.searched_vol, expected, rtol=3e-2)
+        np.testing.assert_allclose(result.searched_vol, expected, rtol=6e-2)

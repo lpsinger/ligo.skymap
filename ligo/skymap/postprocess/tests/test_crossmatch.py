@@ -98,3 +98,9 @@ def test_crossmatch_cartesian_gaussian_distribution(
 
         expected = standard_vol * r**3
         np.testing.assert_allclose(result.searched_vol, expected, rtol=6e-2)
+
+        # FIXME: to calculate the expected value for result.searched_prob_dist,
+        # one would need the cdf of a generalized chi square distribution.
+        # There is not a convenient Python implementation, but there is in R:
+        # https://cran.r-project.org/web/packages/CompQuadForm/index.html.
+        # See literature references in that project's PDF documentation.

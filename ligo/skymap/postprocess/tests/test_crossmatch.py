@@ -59,7 +59,11 @@ def test_crossmatch_cartesian_gaussian_distribution(
         cartesian_gaussian, contours, n_coordinates):
     """Test on a Cartesian Gaussian distribution.
 
-    This distribution has closed-form expressions for 3D credible volumes.
+    This distribution has closed-form expressions for the following outputs:
+    * contour_vols
+    * probdensity_vol
+    * searched_prob_vol
+    * searched_vol
     """
     skymap = cartesian_gaussian_to_skymap(
         6, cartesian_gaussian.mean, cartesian_gaussian.cov)

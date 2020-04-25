@@ -98,7 +98,7 @@ def test_crossmatch_cartesian_gaussian_distribution(
                            axis=-1))
         expected = stats.chi(3).cdf(r)
         np.testing.assert_allclose(result.searched_prob_vol, expected,
-                                   atol=5e-3)
+                                   atol=1e-2)
 
         expected = standard_vol * r**3
         np.testing.assert_allclose(result.searched_vol, expected, rtol=6e-2)

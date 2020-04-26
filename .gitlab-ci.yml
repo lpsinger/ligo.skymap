@@ -309,6 +309,8 @@ tests/acceptance:
     TRIGGERED_PROJECT_URL: ${CI_PROJECT_URL}
     TRIGGERED_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}
   trigger: leo-singer/ligo.skymap-acceptance-tests
+  needs:
+    - wheel/cp37-cp37m-manylinux2014
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.

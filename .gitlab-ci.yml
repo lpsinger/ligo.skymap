@@ -306,6 +306,8 @@ tests/acceptance:
     - schedules
     - web
   variables:
+    TRIGGERED_PIPELINE_ID: ${CI_PIPELINE_ID}
+    TRIGGERED_PROJECT_ID: ${CI_PROJECT_ID}
     TRIGGERED_PROJECT_URL: ${CI_PROJECT_URL}
     TRIGGERED_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}
   trigger: leo-singer/ligo.skymap-acceptance-tests

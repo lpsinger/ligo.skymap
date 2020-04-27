@@ -304,6 +304,7 @@ lint:
 #
 
 tests/acceptance:
+  stage: test
   only:
     - schedules
     - web

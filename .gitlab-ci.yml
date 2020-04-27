@@ -312,7 +312,7 @@ tests/acceptance:
   variables:
     GIT_STRATEGY: none
   script:
-    - URL="$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/trigger/pipeline"
+    - URL="$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/pipeline"
     - echo "$URL"
     - >
       curl --request POST

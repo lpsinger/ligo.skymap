@@ -62,10 +62,12 @@ sdist:
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
+    - echo $ARTIFACTS_URL/artifacts/download > ARTIFACTS_URL
   needs: []
   artifacts:
     paths:
       - '*.whl'
+      - ARTIFACTS_URL
     expire_in: 1 day
 
 .wheel/macos: &wheel-macos
@@ -306,11 +308,14 @@ tests/acceptance:
     - schedules
     - web
   variables:
-    TRIGGERED_PIPELINE_ID: ${CI_PIPELINE_ID}
-    TRIGGERED_PROJECT_ID: ${CI_PROJECT_ID}
-    TRIGGERED_PROJECT_URL: ${CI_PROJECT_URL}
-    TRIGGERED_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}
-  trigger: leo-singer/ligo.skymap-acceptance-tests
+    GIT_STRATEGY: none
+  script:
+    - >
+      curl --request POST
+      --form "token=$CI_JOB_TOKEN"
+      --form "variables[TRIGGERED_ARTIFACTS_URL]=$(cat ARTIFACTS_URL)"
+      --form "ref=master"
+      "$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/trigger/pipeline"
   needs:
     - wheel/cp37-cp37m-manylinux2014
 

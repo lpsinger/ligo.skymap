@@ -313,6 +313,7 @@ tests/acceptance:
     GIT_STRATEGY: none
   script:
     - URL="$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/trigger/pipeline"
+    - echo "$URL"
     - >
       curl --request POST
       --form "token=$CI_JOB_TOKEN"

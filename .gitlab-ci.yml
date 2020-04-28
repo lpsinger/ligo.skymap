@@ -62,7 +62,7 @@ sdist:
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
-    - echo $ARTIFACTS_URL/artifacts/download > ARTIFACTS_URL
+    - echo $CI_JOB_URL/artifacts/download > ARTIFACTS_URL
   needs: []
   artifacts:
     paths:

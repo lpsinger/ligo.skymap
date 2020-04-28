@@ -312,14 +312,12 @@ tests/acceptance:
   variables:
     GIT_STRATEGY: none
   script:
-    - URL="$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/pipeline"
-    - echo "$URL"
     - >
-      curl --request POST
+      curl --verbose --request POST
       --form "token=$CI_JOB_TOKEN"
       --form "variables[TRIGGERED_ARTIFACTS_URL]=$(cat ARTIFACTS_URL)"
       --form "ref=master"
-      $URL
+      "$CI_API_V4_URL/projects/leo-singer%2Fligo.skymap-acceptance-tests/trigger/pipeline"
   needs:
     - wheel/cp37-cp37m-manylinux2014
 

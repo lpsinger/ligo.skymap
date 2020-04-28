@@ -317,7 +317,7 @@ tests/acceptance:
       --form "token=$CI_JOB_TOKEN"
       --form "variables[TRIGGERED_ARTIFACTS_URL]=$(cat ARTIFACTS_URL)"
       --form "ref=master"
-      "$CI_API_V4_URL/projects/lscsoft%2Fligo.skymap-acceptance-tests/trigger/pipeline"
+      "$CI_API_V4_URL/projects/lscsoft%2Fligo-skymap-acceptance-tests/trigger/pipeline"
   needs:
     - wheel/cp37-cp37m-manylinux2014
 

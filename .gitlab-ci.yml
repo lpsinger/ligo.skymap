@@ -313,7 +313,7 @@ tests/acceptance:
     GIT_STRATEGY: none
   script:
     - >
-      curl --request POST
+      curl --fail --request POST
       --form "token=$CI_JOB_TOKEN"
       --form "variables[TRIGGERED_ARTIFACTS_URL]=$(cat ARTIFACTS_URL)"
       --form "ref=master"

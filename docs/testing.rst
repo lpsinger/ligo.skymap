@@ -35,4 +35,4 @@ GW170814 and GW170817 as well as populations of simulated events.
 .. _`GitLab Continuous Integration (CI)`: https://docs.gitlab.com/ee/ci/
 .. _`.gitlab-ci.yml`: https://git.ligo.org/lscsoft/ligo.skymap/blob/master/.gitlab-ci.yml
 .. _`coverage report`: https://lscsoft.docs.ligo.org/ligo.skymap/coverage.html
-.. _`acceptance tests`: https://git.ligo.org/leo-singer/ligo.skymap-acceptance-tests
+.. _`acceptance tests`: https://git.ligo.org/lscsoft/ligo-skymap-acceptance-tests

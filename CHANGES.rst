@@ -13,6 +13,8 @@ Changelog
   https://github.com/pypa/setuptools/issues/926 and
   https://github.com/pypa/setuptools/issues/510.)
 
+- Drop dependency on seaborn.
+
 0.2.0 (2020-04-21)
 ==================
 

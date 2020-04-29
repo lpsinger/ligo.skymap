@@ -75,7 +75,6 @@ You are now ready to get started using `ligo.skymap`.
           *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
           *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
-          *  `Seaborn <https://seaborn.pydata.org>`_ ≥ 0.8.0
           *  `tqdm <https://tqdm.github.io>`_
           *  `pytz <http://pytz.sourceforge.net>`_
 

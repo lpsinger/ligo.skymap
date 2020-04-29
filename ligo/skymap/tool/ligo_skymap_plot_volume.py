@@ -70,7 +70,6 @@ def main(args=None):
     import healpy as hp
     import numpy as np
     import scipy.stats
-    import seaborn
 
     # Read input, determine input resolution.
     progress.set_description('Loading FITS file')
@@ -108,9 +107,6 @@ def main(args=None):
     imgwidth = int(opts.dpi * opts.figure_width / n)
     s = np.linspace(-max_distance, max_distance, imgwidth)
     xx, yy = np.meshgrid(s, s)
-
-    # Color palette for markers
-    colors = seaborn.color_palette(n_colors=len(opts.radecdist) + 1)
 
     truth_marker = marker.reticle(
         inner=0.5 * np.sqrt(2), outer=1.5 * np.sqrt(2), angle=45)
@@ -151,14 +147,14 @@ def main(args=None):
                 u, v, cumsum, levels=opts.contour, linewidths=0.5)
 
         # Mark locations
-        for (ra, dec, dist), color in zip(opts.radecdist, colors[1:]):
+        ax._get_lines.get_next_color()  # skip default color
+        for ra, dec, dist in opts.radecdist:
             theta = 0.5 * np.pi - np.deg2rad(dec)
             phi = np.deg2rad(ra)
             xyz = np.dot(rot.T, hp.ang2vec(theta, phi) * dist)
             ax.plot(
                 xyz[axis0], xyz[axis1], marker=truth_marker,
-                markeredgecolor=color, markerfacecolor='none',
-                markeredgewidth=1)
+                markerfacecolor='none', markeredgewidth=1)
 
         # Plot chain
         if opts.chain:
@@ -203,23 +199,22 @@ def main(args=None):
         # Plot marginal distance distribution, integrated over the whole sky.
         d = np.linspace(0, max_distance)
         ax.fill_between(d, marginal_pdf(d, prob, mu, sigma, norm),
-                        alpha=0.5, color=colors[0])
+                        alpha=0.5, color=ax._get_lines.get_next_color())
 
         # Plot conditional distance distribution at true position
         # and mark true distance.
-        for (ra, dec, dist), color in zip(opts.radecdist, colors[1:]):
+        for ra, dec, dist in opts.radecdist:
             theta = 0.5 * np.pi - np.deg2rad(dec)
             phi = np.deg2rad(ra)
             ipix = hp.ang2pix(nside, theta, phi)
-            ax.fill_between(d, scipy.stats.norm(
-                mu[ipix], sigma[ipix]).pdf(d) * norm[ipix] * np.square(d),
-                alpha=0.5, color=color)
-            ax.axvline(dist, color='black', linewidth=0.5)
-            ax.plot(
-                [dist], [-0.15], marker=truth_marker, markeredgecolor=color,
+            lines, = ax.plot(
+                [dist], [-0.15], marker=truth_marker,
                 markerfacecolor='none', markeredgewidth=1, clip_on=False,
                 transform=transforms.blended_transform_factory(
                     ax.transData, ax.transAxes))
+            ax.fill_between(d, scipy.stats.norm(
+                mu[ipix], sigma[ipix]).pdf(d) * norm[ipix] * np.square(d),
+                alpha=0.5, color=lines.get_color())
             ax.axvline(dist, color='black', linewidth=0.5)
 
         # Scale axes

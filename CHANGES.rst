@@ -5,7 +5,13 @@ Changelog
 0.2.1 (unreleased)
 ==================
 
-- No changes yet.
+- Speed up ``import ligo.skymap`` by up to a second by replacing uses of
+  ``pkg_resources`` with the new Python standard library module
+  ``importlib.resources`` (or, for Python < 3.7, the backport
+  ``importlib_resources``). The old ``pkg_resources`` module is known to be
+  slow because it does a lot of work on startup. (See, for example,
+  https://github.com/pypa/setuptools/issues/926 and
+  https://github.com/pypa/setuptools/issues/510.)
 
 0.2.0 (2020-04-21)
 ==================

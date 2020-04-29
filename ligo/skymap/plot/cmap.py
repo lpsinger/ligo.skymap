@@ -16,17 +16,22 @@
 #
 """Register some extra Matplotlib color maps"""
 
+try:
+    from importlib import resources
+except ImportError:
+    # FIXME: remove after dropping support for Python < 3.7
+    import importlib_resources as resources
+
 from matplotlib import cm
 from matplotlib import colors
 import numpy as np
-import pkg_resources
 
 __all__ = ()
 
 
 for name in ['cylon']:
     # Read in color map RGB data.
-    with pkg_resources.resource_stream(__name__, name + '.csv') as f:
+    with resources.open_text(__package__, name + '.csv') as f:
         data = np.loadtxt(f, delimiter=',')
 
     # Create color map.

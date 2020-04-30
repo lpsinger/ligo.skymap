@@ -109,8 +109,11 @@ Notes
  - All probabilities returned are between 0 and 1.
  - All angles returned are in degrees.
  - All areas returned are in square degrees.
- - All distances are luminosity distances in Mpc.
- - All volumes are in Mpc³.
+ - All distances are luminosity distances in units of Mpc.
+ - All volumes are in units of Mpc³. If :func:`.crossmatch` was run with
+   ``cosmology=False``, then all volumes are Euclidean volumes in luminosity
+   distance. If :func:`.crossmatch` was run with ``cosmology=True``, then all
+   volumes are comoving volumes.
 
 """
 _same_length_as_coordinates = ''' \

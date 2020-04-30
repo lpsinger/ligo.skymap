@@ -351,7 +351,7 @@ deploy/wheel:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
     - pip install twine
     - twine upload *.whl *.tar.*
-  dependencies:
+  needs:
     - sdist
     - wheel/cp36-cp36m-manylinux2014
     - wheel/cp37-cp37m-manylinux2014

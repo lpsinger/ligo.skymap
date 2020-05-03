@@ -83,7 +83,7 @@ sdist:
     - python${PYVERS} -m venv env
     - source env/bin/activate
     # FIXME: https://github.com/matthew-brett/delocate/pull/38
-    - pip install -q git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate oldest-supported-numpy
+    - pip install git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate oldest-supported-numpy
     # Build and audit wheel
     - python setup.py bdist_wheel
     - delocate-wheel -v -w wheelhouse dist/*.whl
@@ -132,7 +132,7 @@ wheel/cp38-cp38-macosx:
     - |
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
-      RUN apt-get update -qq && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
+      RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
       RUN pip --no-cache-dir install pytest-astropy pytest-doctest-ufunc pytest-cov pytest-mpl gcovr pycobertura flake8 'coverage<5'
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt

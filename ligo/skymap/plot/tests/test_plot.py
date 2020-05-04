@@ -1,5 +1,6 @@
 from itertools import chain, combinations, product
 
+import astropy_healpix as ah
 import matplotlib
 matplotlib.use('agg')
 from astropy import units as u  # noqa: E402
@@ -80,7 +81,7 @@ def test_allsky_axes(rcparams, coordsys, units, proj):
     # Build a low-resolution example HEALPix sky map:
     # the value is equal to the right ascension.
     nside = 8
-    npix = hp.nside2npix(nside)
+    npix = ah.nside_to_npix(nside)
     ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     img = np.sin(np.deg2rad(ra))
 

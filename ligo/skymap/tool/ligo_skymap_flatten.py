@@ -36,8 +36,8 @@ def main(args=None):
 
     import logging
     import warnings
+    import astropy_healpix as ah
     from astropy.io import fits
-    import healpy as hp
     from ..io import read_sky_map, write_sky_map
     from ..bayestar import rasterize
 
@@ -46,7 +46,7 @@ def main(args=None):
     if args.nside is None:
         order = None
     else:
-        order = hp.nside2order(args.nside)
+        order = ah.nside_to_level(args.nside)
 
     log.info('reading FITS file %s', args.input.name)
     hdus = fits.open(args.input)

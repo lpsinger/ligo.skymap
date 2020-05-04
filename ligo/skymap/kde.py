@@ -19,6 +19,7 @@
 import copyreg
 from functools import partial
 
+import astropy_healpix as ah
 from astropy.coordinates import SkyCoord
 from astropy.table import Table
 from astropy.utils.misc import NumpyRNGContext
@@ -334,7 +335,7 @@ class SkyKDE(ClusteredKDE):
         FIXME: Consider refactoring BAYESTAR itself to perform the adaptation
         step in Python.
         """
-        top_npix = hp.nside2npix(top_nside)
+        top_npix = ah.nside_to_npix(top_nside)
         nrefine = top_npix // 4
         cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
         for iround in range(rounds - 1):

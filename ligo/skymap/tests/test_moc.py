@@ -1,5 +1,5 @@
+import astropy_healpix as ah
 from astropy import table
-import healpy as hp
 import numpy as np
 import pytest
 
@@ -59,8 +59,8 @@ def input_skymap(order1, d_order, fraction):
 
     """
     order2 = order1 + d_order
-    npix1 = hp.nside2npix(hp.order2nside(order1))
-    npix2 = hp.nside2npix(hp.order2nside(order2))
+    npix1 = ah.nside_to_npix(ah.level_to_nside(order1))
+    npix2 = ah.nside_to_npix(ah.level_to_nside(order2))
     ipix1 = np.arange(npix1)
     ipix2 = np.arange(npix2)
 
@@ -96,8 +96,8 @@ def test_rasterize_oom():
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
 @pytest.mark.parametrize('order_out', range(6))
 def test_rasterize_downsample(order_in, d_order_in, fraction_in, order_out):
-    npix_in = hp.nside2npix(hp.order2nside(order_in))
-    npix_out = hp.nside2npix(hp.order2nside(order_out))
+    npix_in = ah.nside_to_npix(ah.level_to_nside(order_in))
+    npix_out = ah.nside_to_npix(ah.level_to_nside(order_out))
     skymap_in = input_skymap(order_in, d_order_in, fraction_in)
     skymap_out = moc.rasterize(skymap_in, order_out)
 
@@ -112,8 +112,8 @@ def test_rasterize_downsample(order_in, d_order_in, fraction_in, order_out):
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
 @pytest.mark.parametrize('order_out', range(3, 9))
 def test_rasterize_upsample(order_in, d_order_in, fraction_in, order_out):
-    npix_in = hp.nside2npix(hp.order2nside(order_in))
-    npix_out = hp.nside2npix(hp.order2nside(order_out))
+    npix_in = ah.nside_to_npix(ah.level_to_nside(order_in))
+    npix_out = ah.nside_to_npix(ah.level_to_nside(order_out))
     skymap_in = input_skymap(order_in, d_order_in, fraction_in)
     skymap_out = moc.rasterize(skymap_in, order_out)
 
@@ -126,7 +126,7 @@ def test_rasterize_upsample(order_in, d_order_in, fraction_in, order_out):
 
 @pytest.mark.parametrize('order', range(3))
 def test_rasterize_default(order):
-    npix = hp.nside2npix(hp.order2nside(order))
+    npix = ah.nside_to_npix(ah.level_to_nside(order))
     skymap_in = input_skymap(order, 0, 0)
     skymap_out = moc.rasterize(skymap_in)
     assert len(skymap_out) == npix

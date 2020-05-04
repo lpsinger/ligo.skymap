@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import astropy_healpix as ah
 import healpy as hp
 import numpy as np
 
@@ -110,7 +111,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     A very simply example sky map...
 
     >>> nside = 32
-    >>> npix = hp.nside2npix(nside)
+    >>> npix = ah.nside_to_npix(nside)
     >>> ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     >>> m = dec
     >>> contour(m, [10, 20, 30], degrees=True)
@@ -122,7 +123,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
     # Determine HEALPix resolution.
     npix = len(m)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     min_area = 0.4 * hp.nside2pixarea(nside)
 
     neighbors = hp.get_all_neighbours(nside, np.arange(npix), nest=nest).T

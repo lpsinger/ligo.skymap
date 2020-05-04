@@ -82,11 +82,12 @@ def main(args=None):
     from ..io import fits
     from .. import plot
     from .. import postprocess
+    import astropy_healpix as ah
     from astropy.coordinates import SkyCoord
     from astropy.time import Time
 
     skymap, metadata = fits.read_sky_map(opts.input.name, nest=None)
-    nside = hp.npix2nside(len(skymap))
+    nside = ah.npix_to_nside(len(skymap))
 
     # Convert sky map from probability to probability per square degree.
     deg2perpix = hp.nside2pixarea(nside, degrees=True)

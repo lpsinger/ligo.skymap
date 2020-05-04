@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import astropy_healpix as ah
 from astropy.wcs import WCS
 import healpy as hp
 import numpy as np
@@ -191,7 +192,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     will be deviations for small radius due to finite resolution.)
 
     >>> def make_uniform_in_sin_theta(radius, nside=512):
-    ...     npix = hp.nside2npix(nside)
+    ...     npix = ah.nside_to_npix(nside)
     ...     theta, phi = hp.pix2ang(nside, np.arange(npix))
     ...     theta_max = np.deg2rad(radius)
     ...     prob = np.where(theta <= theta_max, 1 / np.sin(theta), 0)
@@ -216,7 +217,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     >>> from scipy import stats
     >>> def make_gaussian(mean, cov, nside=512):
-    ...     npix = hp.nside2npix(nside)
+    ...     npix = ah.nside_to_npix(nside)
     ...     xyz = np.transpose(hp.pix2vec(nside, np.arange(npix)))
     ...     dist = stats.multivariate_normal(mean, cov)
     ...     prob = dist.pdf(xyz)
@@ -305,7 +306,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         prob['UNIQ']
     except (IndexError, KeyError, ValueError):
         npix = len(prob)
-        nside = hp.npix2nside(npix)
+        nside = ah.npix_to_nside(npix)
         ipix = range(npix)
         area = hp.nside2pixarea(nside, degrees=True)
     else:

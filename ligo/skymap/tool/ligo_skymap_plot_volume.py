@@ -60,6 +60,7 @@ def main(args=None):
     progress.set_description('Starting up')
 
     # Late imports
+    import astropy_healpix as ah
     from matplotlib import pyplot as plt
     from matplotlib import gridspec
     from matplotlib import transforms
@@ -76,7 +77,7 @@ def main(args=None):
     (prob, mu, sigma, norm), metadata = io.read_sky_map(
         opts.input.name, distances=True)
     npix = len(prob)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
 
     progress.set_description('Preparing projection')
 

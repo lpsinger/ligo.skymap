@@ -46,9 +46,10 @@ def main(args=None):
     args = parser().parse_args(args)
 
     import numpy as np
-    import healpy as hp
+    import astropy_healpix as ah
     from astropy.io import fits
     from astropy.time import Time
+    import healpy as hp
 
     from ..distance import parameters_to_marginal_moments
     from ..io import read_sky_map, write_sky_map
@@ -73,7 +74,7 @@ def main(args=None):
         else:
             data = (data,)
 
-        nside = hp.npix2nside(len(data[0]))
+        nside = ah.npix_to_nside(len(data[0]))
         input_skymaps.append((nside, data[0], meta, header))
 
     max_nside = max(x[0] for x in input_skymaps)
@@ -113,7 +114,7 @@ def main(args=None):
 
     # update marginal distance posterior, if available
     if dist_mu is not None:
-        if hp.npix2nside(len(dist_mu)) < max_nside:
+        if ah.npix_to_nside(len(dist_mu)) < max_nside:
             dist_mu = hp.ud_grade(dist_mu, max_nside, order_in='NESTED',
                                   order_out='NESTED')
             dist_sigma = hp.ud_grade(dist_sigma, max_nside, order_in='NESTED',

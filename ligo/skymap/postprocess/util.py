@@ -16,6 +16,7 @@
 #
 """Postprocessing utilities for HEALPix sky maps."""
 
+import astropy_healpix as ah
 from astropy.coordinates import (CartesianRepresentation, SkyCoord,
                                  UnitSphericalRepresentation)
 from astropy import units as u
@@ -77,7 +78,7 @@ def smooth_ud_grade(m, nside, nest=False):
         The resampled HEALPix array. The sum of `m` is approximately preserved.
 
     """
-    npix = hp.nside2npix(nside)
+    npix = ah.nside_to_npix(nside)
     theta, phi = hp.pix2ang(nside, np.arange(npix), nest=nest)
     new_m = hp.get_interp_val(m, theta, phi, nest=nest)
     return new_m * len(m) / len(new_m)
@@ -85,7 +86,7 @@ def smooth_ud_grade(m, nside, nest=False):
 
 def posterior_mean(prob, nest=False):
     npix = len(prob)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     xyz = hp.pix2vec(nside, np.arange(npix), nest=nest)
     mean_xyz = np.average(xyz, axis=1, weights=prob)
     pos = SkyCoord(*mean_xyz, representation_type=CartesianRepresentation)
@@ -95,7 +96,7 @@ def posterior_mean(prob, nest=False):
 
 def posterior_max(prob, nest=False):
     npix = len(prob)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     i = np.argmax(prob)
     return SkyCoord(
         *hp.pix2ang(nside, i, nest=nest, lonlat=True), unit=u.deg)

@@ -33,6 +33,7 @@ References
 
 """
 
+import astropy_healpix as ah
 import numpy as np
 import healpy as hp
 import scipy.special
@@ -275,7 +276,7 @@ Test volume rendering of a normal unit sphere...
 First, set up the 3D sky map.
 
 >>> nside = 32
->>> npix = hp.nside2npix(nside)
+>>> npix = ah.nside_to_npix(nside)
 >>> prob = np.ones(npix) / npix
 >>> distmu = np.zeros(npix)
 >>> distsigma = np.ones(npix)
@@ -581,7 +582,7 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
     >>>
     >>> # Check that KDE is normalized over unit sphere.
     >>> nside = 32
-    >>> npix = hp.nside2npix(nside)
+    >>> npix = ah.nside_to_npix(nside)
     >>> prob, _, _ = np.transpose([cartesian_kde_to_moments(
     ...     np.asarray(hp.pix2vec(nside, ipix)),
     ...     datasets, inverse_covariances, weights)
@@ -632,7 +633,7 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
 
 def principal_axes(prob, distmu, distsigma, nest=False):
     npix = len(prob)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     good = np.isfinite(prob) & np.isfinite(distmu) & np.isfinite(distsigma)
     ipix = np.flatnonzero(good)
     distmean, diststd, _ = parameters_to_moments(distmu[good], distsigma[good])

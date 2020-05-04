@@ -40,6 +40,7 @@ def main(args=None):
     # Late imports
 
     from ..io import fits
+    import astropy_healpix as ah
     from astropy.coordinates import SkyCoord
     from astropy.table import Table
     from astropy import units as u
@@ -48,7 +49,7 @@ def main(args=None):
 
     prob, meta = fits.read_sky_map(opts.input.name, nest=None)
     npix = len(prob)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     ipix = np.arange(npix)
     ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta['nest'])
     coord = SkyCoord(ra * u.deg, dec * u.deg)

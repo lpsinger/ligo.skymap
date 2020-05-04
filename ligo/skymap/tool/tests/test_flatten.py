@@ -1,3 +1,4 @@
+import astropy_healpix as ah
 from astropy import table
 import healpy as hp
 import numpy as np
@@ -27,13 +28,13 @@ def input_skymap(order1, d_order, fraction):
 
     """
     order2 = order1 + d_order
-    npix1 = hp.nside2npix(hp.order2nside(order1))
-    npix2 = hp.nside2npix(hp.order2nside(order2))
+    npix1 = ah.nside_to_npix(ah.level_to_nside(order1))
+    npix2 = ah.nside_to_npix(ah.level_to_nside(order2))
     ipix1 = np.arange(npix1)
     ipix2 = np.arange(npix2)
 
     # Create a random sky map.
-    area = hp.nside2pixarea(hp.order2nside(order1))
+    area = hp.nside2pixarea(ah.level_to_nside(order1))
     probdensity = np.random.uniform(0, 1, npix1)
     prob = probdensity * area
     normalization = prob.sum()
@@ -92,7 +93,7 @@ def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
         prob, distmu, distsigma)
 
     if nside_out is not None:
-        assert len(prob) == hp.nside2npix(nside_out)
+        assert len(prob) == ah.nside_to_npix(nside_out)
 
     assert prob.sum() == pytest.approx(1)
     assert distmean == pytest.approx(expected_distmean)

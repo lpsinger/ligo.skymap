@@ -17,6 +17,7 @@
 """
 Multiresolution HEALPix trees
 """
+import astropy_healpix as ah
 import numpy as np
 import healpy as hp
 import collections
@@ -29,7 +30,7 @@ __all__ = ('HEALPIX_MACHINE_ORDER', 'HEALPIX_MACHINE_NSIDE', 'HEALPixTree',
 
 # Maximum 64-bit HEALPix resolution.
 HEALPIX_MACHINE_ORDER = 29
-HEALPIX_MACHINE_NSIDE = hp.order2nside(HEALPIX_MACHINE_ORDER)
+HEALPIX_MACHINE_NSIDE = ah.level_to_nside(HEALPIX_MACHINE_ORDER)
 
 
 _HEALPixTreeVisitExtra = collections.namedtuple(
@@ -158,7 +159,7 @@ class HEALPixTree:
     @property
     def flat_bitmap(self):
         """Return flattened HEALPix representation."""
-        m = np.empty(hp.nside2npix(hp.order2nside(self.order)))
+        m = np.empty(ah.nside_to_npix(ah.level_to_nside(self.order)))
         for nside, full_nside, ipix, ipix0, ipix1, samples in self.visit():
             m[ipix0:ipix1] = len(samples) / hp.nside2pixarea(nside)
         return m
@@ -185,11 +186,11 @@ def adaptive_healpix_histogram(
     if nside == -1 and max_nside == -1:
         max_order = HEALPIX_MACHINE_ORDER
     elif nside == -1:
-        max_order = hp.nside2order(max_nside)
+        max_order = ah.nside_to_level(max_nside)
     elif max_nside == -1:
-        max_order = hp.nside2order(nside)
+        max_order = ah.nside_to_level(nside)
     else:
-        max_order = hp.nside2order(min(nside, max_nside))
+        max_order = ah.nside_to_level(min(nside, max_nside))
     tree = HEALPixTree(ipix, max_samples_per_pixel, max_order)
 
     # Compute a flattened bitmap representation of the tree.
@@ -225,7 +226,7 @@ def _interpolate_level(m):
             ipix = 4 * ipix + np.expand_dims(np.arange(4, dtype=np.intp), 1)
             ipix = ipix.T.ravel()
 
-            nside = hp.npix2nside(npix)
+            nside = ah.npix_to_nside(npix)
 
             # Downsample.
             m_lores = hp.ud_grade(
@@ -304,13 +305,13 @@ def interpolate_nested(m, nest=False):
 def _reconstruct_nested_breadthfirst(m, extra):
     m = np.asarray(m)
     max_npix = len(m)
-    max_nside = hp.npix2nside(max_npix)
-    max_order = hp.nside2order(max_nside)
+    max_nside = ah.npix_to_nside(max_npix)
+    max_order = ah.nside_to_level(max_nside)
     seen = np.zeros(max_npix, dtype=bool)
 
     for order in range(max_order + 1):
-        nside = hp.order2nside(order)
-        npix = hp.nside2npix(nside)
+        nside = ah.level_to_nside(order)
+        npix = ah.nside_to_npix(nside)
         skip = max_npix // npix
         if skip > 1:
             b = m.reshape(-1, skip)

@@ -17,6 +17,7 @@
 """Catalog cross matching for HEALPix sky maps."""
 from collections import namedtuple
 
+import astropy_healpix as ah
 from astropy.coordinates import ICRS, SkyCoord, SphericalRepresentation
 from astropy import units as u
 import healpy as hp
@@ -61,7 +62,7 @@ def count_modes(m, nest=False):
     WARNING: The input array is clobbered in the process.
     """
     npix = len(m)
-    nside = hp.npix2nside(npix)
+    nside = ah.npix_to_nside(npix)
     for nmodes in range(npix):
         nonzeroipix = np.flatnonzero(m)
         if len(nonzeroipix):
@@ -300,7 +301,7 @@ def crossmatch(sky_map, coordinates=None,
     # Find the pixel that contains the injection.
     order, ipix = moc.uniq2nest(sky_map['UNIQ'])
     max_order = np.max(order)
-    max_nside = hp.order2nside(max_order)
+    max_nside = ah.level_to_nside(max_order)
     max_ipix = ipix << np.int64(2 * (max_order - order))
     if true_ra is not None:
         true_theta = 0.5 * np.pi - true_dec
@@ -311,7 +312,7 @@ def crossmatch(sky_map, coordinates=None,
 
     # Find the angular offset between the mode and true locations.
     mode_theta, mode_phi = hp.pix2ang(
-        hp.order2nside(order[0]), ipix[0], nest=True)
+        ah.level_to_nside(order[0]), ipix[0], nest=True)
     if true_ra is None:
         offset = np.nan
     else:

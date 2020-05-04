@@ -67,6 +67,7 @@ from glue.ligolw import lsctables
 import itertools
 import time
 import lal
+import astropy_healpix as ah
 from astropy.table import Table
 from .. import moc
 
@@ -260,7 +261,7 @@ def write_sky_map(filename, m, **kwargs):
 
     >>> order = 9
     >>> nside = 2 ** order
-    >>> npix = hp.nside2npix(nside)
+    >>> npix = ah.nside_to_npix(nside)
     >>> prob = np.ones(npix, dtype=np.float) / npix
 
     >>> import tempfile
@@ -360,7 +361,7 @@ def write_sky_map(filename, m, **kwargs):
              'Pixel ordering scheme: RING, NESTED, or NUNIQ'),
             ('COORDSYS', 'C',
              'Ecliptic, Galactic or Celestial (equatorial)'),
-            ('NSIDE', hp.npix2nside(len(m)),
+            ('NSIDE', ah.npix_to_nside(len(m)),
              'Resolution parameter of HEALPIX'),
             ('INDXSCHM', 'IMPLICIT',
              'Indexing: IMPLICIT or EXPLICIT')]
@@ -432,7 +433,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     >>> import tempfile
     >>> with tempfile.NamedTemporaryFile(suffix='.fits') as f:
     ...     nside = 512
-    ...     npix = hp.nside2npix(nside)
+    ...     npix = ah.nside_to_npix(nside)
     ...     ipix_nest = np.arange(npix)
     ...     hp.write_map(f.name, ipix_nest, nest=True, column_names=['PROB'])
     ...     m, meta = read_sky_map(f.name)
@@ -503,14 +504,14 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
         from ..bayestar import derasterize
         if not m.meta['nest']:
             npix = len(m)
-            nside = hp.npix2nside(npix)
+            nside = ah.npix_to_nside(npix)
             m = m[hp.nest2ring(nside, np.arange(npix))]
         m = derasterize(m)
         m.meta.pop('nest', None)
 
     if 'UNIQ' not in m.colnames:
         npix = len(m)
-        nside = hp.npix2nside(npix)
+        nside = ah.npix_to_nside(npix)
 
         if nest is None:
             pass
@@ -531,7 +532,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
 if __name__ == '__main__':
     import os
     nside = 128
-    npix = hp.nside2npix(nside)
+    npix = ah.nside_to_npix(nside)
     prob = np.random.random(npix)
     prob /= sum(prob)
 

@@ -1,3 +1,4 @@
+import astropy_healpix as ah
 from astropy.coordinates import CartesianRepresentation, SkyCoord
 from astropy.table import Table
 from astropy import units as u
@@ -25,7 +26,7 @@ def cartesian_gaussian_to_skymap(level, mean, cov):
     """Convert a 3D Cartesian Gaussian to a 3D sky map."""
     # Set up HEALPix grid.
     nside = 2**level
-    npix = hp.nside2npix(nside)
+    npix = ah.nside_to_npix(nside)
     ipix = np.arange(npix)
     coords = np.column_stack(hp.pix2vec(nside, ipix, nest=True))
 

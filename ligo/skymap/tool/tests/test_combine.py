@@ -1,3 +1,4 @@
+import astropy_healpix as ah
 import healpy as hp
 import numpy as np
 import pytest
@@ -15,7 +16,7 @@ def test_combine(tmpdir):
 
     # generate a hemisphere of constant probability
     nside1 = 32
-    npix1 = hp.nside2npix(nside1)
+    npix1 = ah.nside_to_npix(nside1)
     m1 = np.zeros(npix1)
     disc_idx = hp.query_disc(nside1, (1, 0, 0), np.pi / 2)
     m1[disc_idx] = 1
@@ -26,7 +27,7 @@ def test_combine(tmpdir):
     # generate another hemisphere of constant probability
     # but with higher resolution and rotated 90 degrees
     nside2 = 64
-    npix2 = hp.nside2npix(nside2)
+    npix2 = ah.nside_to_npix(nside2)
     m2 = np.zeros(npix2)
     disc_idx = hp.query_disc(nside2, (0, 1, 0), np.pi / 2)
     m2[disc_idx] = 1
@@ -38,7 +39,7 @@ def test_combine(tmpdir):
 
     m3 = hp.read_map(fn3, nest=True)
     npix3 = len(m3)
-    nside3 = hp.npix2nside(npix3)
+    nside3 = ah.npix_to_nside(npix3)
     pix_area3 = hp.nside2pixarea(nside3)
 
     # resolution must match the highest original resolution

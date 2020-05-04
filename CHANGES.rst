@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.2.1 (unreleased)
+0.2.1 (2020-05-04)
 ==================
 
 - Speed up ``import ligo.skymap`` by up to a second by replacing uses of

@@ -140,7 +140,6 @@ The following example demonstrates most of the features of this module.
 """  # noqa: E501
 from itertools import product
 
-from astropy.convolution import convolve_fft, Gaussian2DKernel
 from astropy.coordinates import SkyCoord
 from astropy.io.fits import Header
 from astropy.time import Time
@@ -349,6 +348,9 @@ class AutoScaledWCSAxes(WCSAxes):
         img = np.ma.array(img, mask=~mask.astype(bool))
 
         if smooth is not None:
+            # Infrequently used imports
+            from astropy.convolution import convolve_fft, Gaussian2DKernel
+
             pixsize = np.mean(np.abs(self.wcs.wcs.cdelt)) * u.deg
             smooth = (smooth / pixsize).to(u.dimensionless_unscaled).value
             kernel = Gaussian2DKernel(smooth)

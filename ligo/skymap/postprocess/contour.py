@@ -15,7 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import healpy as hp
-import networkx as nx
 import numpy as np
 
 __all__ = ('contour', 'simplify')
@@ -118,6 +117,9 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     [[[[..., ...], ...], ...], ...]
 
     """
+    # Infrequently used import
+    import networkx as nx
+
     # Determine HEALPix resolution.
     npix = len(m)
     nside = hp.npix2nside(npix)

@@ -15,6 +15,10 @@ Changelog
 
 - Drop dependency on seaborn.
 
+- Move some rarely used imports (``networkx`` and ``astropy.convolution``) from
+  module scope to function scope to speed up imports by up to half a second on
+  NFS filesystems.
+
 0.2.0 (2020-04-21)
 ==================
 

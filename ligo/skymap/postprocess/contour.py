@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import astropy_healpix as ah
+from astropy import units as u
 import healpy as hp
 import numpy as np
 
@@ -124,7 +125,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     # Determine HEALPix resolution.
     npix = len(m)
     nside = ah.npix_to_nside(npix)
-    min_area = 0.4 * hp.nside2pixarea(nside)
+    min_area = 0.4 * ah.nside_to_pixel_area(nside).to_value(u.sr)
 
     neighbors = hp.get_all_neighbours(nside, np.arange(npix), nest=nest).T
 

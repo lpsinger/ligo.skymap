@@ -18,6 +18,7 @@
 Multiresolution HEALPix trees
 """
 import astropy_healpix as ah
+from astropy import units as u
 import numpy as np
 import healpy as hp
 import collections
@@ -161,7 +162,8 @@ class HEALPixTree:
         """Return flattened HEALPix representation."""
         m = np.empty(ah.nside_to_npix(ah.level_to_nside(self.order)))
         for nside, full_nside, ipix, ipix0, ipix1, samples in self.visit():
-            m[ipix0:ipix1] = len(samples) / hp.nside2pixarea(nside)
+            pixarea = ah.nside_to_pixel_area(nside).to_value(u.sr)
+            m[ipix0:ipix1] = len(samples) / pixarea
         return m
 
 

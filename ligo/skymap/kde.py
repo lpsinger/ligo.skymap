@@ -22,6 +22,7 @@ from functools import partial
 import astropy_healpix as ah
 from astropy.coordinates import SkyCoord
 from astropy.table import Table
+from astropy import units as u
 from astropy.utils.misc import NumpyRNGContext
 import healpy as hp
 import logging
@@ -361,7 +362,7 @@ class SkyKDE(ClusteredKDE):
         ipix = np.asarray(list(ipix))
 
         # Make sure that sky map is normalized (it should be already)
-        post /= np.sum(post * hp.nside2pixarea(nside))
+        post /= np.sum(post * ah.nside_to_pixel_area(nside).to_value(u.sr))
 
         # Convert from NESTED to UNIQ pixel indices
         order = np.log2(nside).astype(int)

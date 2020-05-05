@@ -1,4 +1,5 @@
 import astropy_healpix as ah
+from astropy import units as u
 import healpy as hp
 import numpy as np
 import pytest
@@ -40,14 +41,14 @@ def test_combine(tmpdir):
     m3 = hp.read_map(fn3, nest=True)
     npix3 = len(m3)
     nside3 = ah.npix_to_nside(npix3)
-    pix_area3 = hp.nside2pixarea(nside3)
+    pix_area3 = ah.nside_to_pixel_area(nside3).to_value(u.sr)
 
     # resolution must match the highest original resolution
     assert npix3 == npix2
     # probability must be normalized to 1
     assert m3.sum() == pytest.approx(1)
     # support must be ¼ of the sphere
-    tolerance = 10 * hp.nside2pixarea(nside1)
+    tolerance = 10 * ah.nside_to_pixel_area(nside1).to_value(u.sr)
     assert sum(m3 > 0) * pix_area3 == pytest.approx(np.pi, abs=tolerance)
 
     # generate a BAYESTAR-like map with mock distance information

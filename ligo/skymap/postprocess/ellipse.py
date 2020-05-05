@@ -16,6 +16,7 @@
 #
 
 import astropy_healpix as ah
+from astropy import units as u
 from astropy.wcs import WCS
 import healpy as hp
 import numpy as np
@@ -308,12 +309,12 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         npix = len(prob)
         nside = ah.npix_to_nside(npix)
         ipix = range(npix)
-        area = hp.nside2pixarea(nside, degrees=True)
+        area = ah.nside_to_pixel_area(nside).to_value(u.deg**2)
     else:
         order, ipix = moc.uniq2nest(prob['UNIQ'])
         nside = 1 << order.astype(int)
         ipix = ipix.astype(int)
-        area = hp.nside2pixarea(nside)
+        area = ah.nside_to_pixel_area(nside).to_value(u.sr)
         prob = prob['PROBDENSITY'] * area
         area *= np.square(180 / np.pi)
         nest = True

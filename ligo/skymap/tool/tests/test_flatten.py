@@ -1,6 +1,6 @@
 import astropy_healpix as ah
 from astropy import table
-import healpy as hp
+from astropy import units as u
 import numpy as np
 import pytest
 
@@ -34,7 +34,7 @@ def input_skymap(order1, d_order, fraction):
     ipix2 = np.arange(npix2)
 
     # Create a random sky map.
-    area = hp.nside2pixarea(ah.level_to_nside(order1))
+    area = ah.nside_to_pixel_area(ah.level_to_nside(order1)).to_value(u.sr)
     probdensity = np.random.uniform(0, 1, npix1)
     prob = probdensity * area
     normalization = prob.sum()

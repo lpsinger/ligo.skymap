@@ -23,7 +23,8 @@ results are reported; see Astropy's documentation on
 Coverage analysis
 -----------------
 
-The CI pipeline does code coverage analysis when it runs the unit tests. See the `coverage report`_ for the most recent build.
+The CI pipeline does code coverage analysis when it runs the unit tests. See
+the `coverage report`_ for the most recent build.
 
 Acceptance tests
 ----------------

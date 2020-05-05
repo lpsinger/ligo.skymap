@@ -29,7 +29,7 @@ the `coverage report`_ for the most recent build.
 Acceptance tests
 ----------------
 
-There is a suite of nightly `acceptance tests`_ for BAYESTAR that check that
+There is a suite of weekly `acceptance tests`_ for BAYESTAR that check that
 the code reproduces localizations for past gravitational-wave events including
 GW170814 and GW170817 as well as populations of simulated events.
 

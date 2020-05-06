@@ -374,7 +374,7 @@ def crossmatch(sky_map, coordinates=None,
         n_r = 1000
         distmean, _ = distance.parameters_to_marginal_moments(dP, mu, sigma)
         max_r = 6 * distmean
-        if true_dist is not None and true_dist.size != 0 \
+        if true_dist is not None and np.size(true_dist) != 0 \
                 and np.max(true_dist) > max_r:
             max_r = np.max(true_dist)
         d_r = max_r / n_r

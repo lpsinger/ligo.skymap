@@ -175,14 +175,15 @@ def main(args=None):
                 ax.set_xlabel(xlabel)
                 ax.set_ylabel('cumulative fraction of injections')
                 ax.set_title(title)
-                ax.add_series(*[d.columns.get(colname, []) for d in filtered])
+                for d, label in zip(filtered, labels):
+                    ax.add_series(d.columns.get(colname, []), label=label)
                 ax.add_diagonal()
                 if nsamples:
                     ax.add_confidence_band(
                         nsamples, 0.01 * opts.pp_confidence_interval)
                 ax.grid()
                 if len(filtered) > 1:
-                    ax.legend(labels, loc='lower right')
+                    ax.legend(loc='lower right')
                 fig.savefig(os.path.join(subdir, colname),
                             metadata=metadata)
                 plt.close()
@@ -202,11 +203,13 @@ def main(args=None):
                 if len(values) > 0:
                     bins = np.geomspace(np.min(values), np.max(values),
                                         1000 if opts.cumulative else 20)
-                    ax.hist([d.columns.get(colname, []) for d in filtered],
-                            cumulative=opts.cumulative, density=opts.normed,
-                            histtype='step', bins=bins)
+                    for d, label in zip(filtered, labels):
+                        ax.hist(d.columns.get(colname, []),
+                                cumulative=opts.cumulative,
+                                density=opts.normed, histtype='step',
+                                bins=bins, label=label)
                 ax.grid()
-                ax.legend(labels, loc='upper left')
+                ax.legend(loc='upper left')
                 fig.savefig(os.path.join(subdir, colname + '_hist'),
                             metadata=metadata)
                 plt.close()

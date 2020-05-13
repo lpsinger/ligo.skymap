@@ -140,6 +140,8 @@ html_title = '{0} v{1}'.format(project, release)
 # Output file base name for HTML help builder.
 htmlhelp_basename = project + 'doc'
 
+manpages_url = 'https://man7.org/linux/man-pages/man{section}/{page}.{section}.html'
+
 
 # -- Options for LaTeX output -------------------------------------------------
 

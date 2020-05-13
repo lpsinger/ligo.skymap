@@ -27,7 +27,6 @@ References
 import inspect
 import logging
 import os
-import time
 import sys
 
 from astropy.table import Column, Table
@@ -50,6 +49,7 @@ from .. import core
 from ..core import (antenna_factor, signal_amplitude_model,
                     log_posterior_toa_phoa_snr as _log_posterior_toa_phoa_snr)
 from ..util.numpy import require_contiguous_aligned
+from ..util.stopwatch import Stopwatch
 from .ez_emcee import ez_emcee
 
 __all__ = ('derasterize', 'localize', 'rasterize', 'antenna_factor',
@@ -361,7 +361,9 @@ def localize(
     frame = inspect.currentframe()
     argstr = inspect.formatargvalues(*inspect.getargvalues(frame),
                                      formatvalue=formatvalue)
-    run_time = time.perf_counter()
+
+    stopwatch = Stopwatch()
+    stopwatch.start()
 
     epoch, sample_rate, toas, snrs, responses, locations, horizons = \
         condition(event, waveform=waveform, f_low=f_low,
@@ -417,9 +419,9 @@ def localize(
     skymap.meta['distmean'] = rbar
     skymap.meta['diststd'] = np.sqrt(r2bar - np.square(rbar))
 
-    run_time = time.perf_counter() - run_time
+    stopwatch.stop()
     end_time = lal.GPSTimeNow()
-    log.info('finished computationally-intensive section in %.3f s', run_time)
+    log.info('finished computationally-intensive section in %s', stopwatch)
 
     # Fill in metadata and return.
     program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
@@ -427,7 +429,7 @@ def localize(
     skymap.meta['creator'] = 'BAYESTAR'
     skymap.meta['origin'] = 'LIGO/Virgo'
     skymap.meta['gps_time'] = float(epoch)
-    skymap.meta['runtime'] = float(run_time)
+    skymap.meta['runtime'] = stopwatch.real
     skymap.meta['instruments'] = {single.detector for single in event.singles}
     skymap.meta['gps_creation_time'] = end_time
     skymap.meta['history'] = [

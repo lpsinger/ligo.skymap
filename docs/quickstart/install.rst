@@ -75,7 +75,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
           *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
-          *  `tqdm <https://tqdm.github.io>`_
+          *  `tqdm <https://tqdm.github.io>`_ ≥ 4.27.0
           *  `pytz <http://pytz.sourceforge.net>`_
 
           The following packages are optional for specific features:

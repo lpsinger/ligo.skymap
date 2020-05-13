@@ -448,8 +448,7 @@ def main(args=None):
                 if opts.enable_snr_series:
                     elem = lal.series.build_COMPLEX8TimeSeries(series)
                     elem.appendChild(
-                        Param.from_pyvalue(u'event_id',
-                                           sngl_inspiral.event_id))
+                        Param.from_pyvalue('event_id', sngl_inspiral.event_id))
                     xmlroot.appendChild(elem)
 
                 # Add CoincMap entry.

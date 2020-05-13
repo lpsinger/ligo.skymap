@@ -241,7 +241,7 @@ def main(args=None):
             except KeyError:
                 pass
             else:
-                text.append(u'distance: {}±{} Mpc'.format(
+                text.append('distance: {}±{} Mpc'.format(
                             int(np.round(distmean)), int(np.round(diststd))))
             ax.text(0, 1, '\n'.join(text), transform=ax.transAxes, fontsize=7,
                     ha='left', va='bottom', clip_on=False)

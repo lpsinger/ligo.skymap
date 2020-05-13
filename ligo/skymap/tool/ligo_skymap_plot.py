@@ -178,7 +178,7 @@ def main(args=None):
                 # FIXME: use Unicode symbol instead of TeX '$^2$'
                 # because of broken fonts on Scientific Linux 7.
                 text.append(
-                    u'{:d}% area: {:d} deg²'.format(p, i, grouping=True))
+                    '{:d}% area: {:d} deg²'.format(p, i, grouping=True))
         ax.text(1, 1, '\n'.join(text), transform=ax.transAxes, ha='right')
 
     # Show or save output.

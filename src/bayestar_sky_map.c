@@ -689,7 +689,7 @@ static void logsumexp(const double *accum, double log_weight, double *result, un
 
 
 /* Fudge factor for excess estimation error in gstlal_inspiral. */
-static const double FUDGE = 0.83;
+static const float FUDGE = 0.83;
 
 
 static void bayestar_sky_map_toa_phoa_snr_pixel(

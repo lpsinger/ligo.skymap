@@ -213,7 +213,7 @@ def condition(
             snr_series.append(series)
 
     # Ensure that all of the SNR time series have the same sample rate.
-    # FIXME: for now, the Python wrapper expects all of the SNR time sries to
+    # FIXME: for now, the Python wrapper expects all of the SNR time series to
     # also be the same length.
     deltaT = snr_series[0].deltaT
     sample_rate = 1 / deltaT

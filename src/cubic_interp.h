@@ -66,4 +66,4 @@ int cubic_interp_test(void);
 
 #endif /* __cplusplus */
 
-#endif /* CUBIC_INTEPR_H */
+#endif /* CUBIC_INTERP_H */

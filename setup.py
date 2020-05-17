@@ -28,7 +28,7 @@ def get_extensions():
         'src/cubic_interp_test.c',
     ]
 
-    include_dirs = ['cextern/numpy', np.get_include()]
+    include_dirs = [np.get_include()]
 
     if os.environ.get('LIGO_SKYMAP_USE_SYSTEM_CHEALPIX'):
         pkg_config_packages.append('chealpix')

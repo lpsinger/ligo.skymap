@@ -93,7 +93,6 @@
 #include <gsl/gsl_test.h>
 
 #include "branch_prediction.h"
-#include "logaddexp.h"
 
 #ifdef WITH_ITTNOTIFY
 #include <ittnotify.h>
@@ -727,11 +726,6 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
 ) {
     float complex F[nifos];
     float complex snrs_interp[nsamples][nifos];
-    double accum[nint];
-
-    PRAGMA_LOOP_COUNT_NINT
-    for (unsigned char k = 0; k < nint; k ++)
-        accum[k] = -INFINITY;
 
     {
         double dt[nifos];
@@ -756,25 +750,17 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                     isample - dt[iifo] * sample_rate - 0.5 * (nsamples - 1));
     }
 
-    /* Integrate over 2*psi */
+    float p[ntwopsi][n_u_points], log_p[ntwopsi][n_u_points];
+    float b[ntwopsi][n_u_points][nsamples], log_b[ntwopsi][n_u_points][nsamples];
     for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
     {
         const float twopsi = (2 * M_PI / ntwopsi) * itwopsi;
         const float complex exp_i_twopsi = exp_i(twopsi);
-        double accum1[nint];
 
-        PRAGMA_LOOP_COUNT_NINT
-        for (unsigned char k = 0; k < nint; k ++)
-            accum1[k] = -INFINITY;
-
-        /* Integrate over u from -1 to 1. */
         PRAGMA_LOOP_COUNT_NU
         for (unsigned int iu = 0; iu < n_u_points; iu++)
         {
             const float u = u_points_weights[iu][0];
-            const float log_weight = u_points_weights[iu][1];
-            double accum2[nsamples][nint];
-
             const float u2 = u * u;
             float complex z_times_r[nifos];
             float p2 = 0;
@@ -788,52 +774,54 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
             }
             p2 *= 0.5f;
             p2 *= FUDGE * FUDGE;
-            const float p = sqrtf(p2);
-            const float log_p = logf(p);
+            log_p[itwopsi][iu] = logf(p[itwopsi][iu] = sqrtf(p2));
 
             PRAGMA_LOOP_COUNT_NSAMPLES
             for (unsigned long isample = 0; isample < nsamples; isample++)
             {
-                float b;
-                {
-                    float complex I0arg_complex_times_r = 0;
+                float complex I0arg_complex_times_r = 0;
 
-                    PRAGMA_LOOP_COUNT_NIFOS
-                    for (unsigned int iifo = 0; iifo < nifos; iifo ++)
-                        I0arg_complex_times_r += conjf(z_times_r[iifo]) * snrs_interp[isample][iifo];
-                    b = cabsf(I0arg_complex_times_r);
-                    b *= FUDGE * FUDGE;
-                }
-                const float log_b = logf(b);
-
-                PRAGMA_LOOP_COUNT_NINT
-                for (unsigned char k = 0; k < nint; k ++)
-                {
-                    accum2[isample][k] = log_radial_integrator_eval(
-                        integrators[k], p, b, log_p, log_b);
-                }
+                PRAGMA_LOOP_COUNT_NIFOS
+                for (unsigned int iifo = 0; iifo < nifos; iifo ++)
+                    I0arg_complex_times_r += conjf(z_times_r[iifo]) * snrs_interp[isample][iifo];
+                log_b[itwopsi][iu][isample] = logf(b[itwopsi][iu][isample] = cabsf(I0arg_complex_times_r) * FUDGE * FUDGE);
             }
-
-            double log_sum_accum2[nint];
-            logsumexp(*accum2, log_weight, log_sum_accum2, nsamples, nint);
-
-            PRAGMA_LOOP_COUNT_NINT
-            for (unsigned char k = 0; k < nint; k ++)
-                accum1[k] = logaddexp(accum1[k], log_sum_accum2[k]);
-        }
-
-        PRAGMA_LOOP_COUNT_NINT
-        for (unsigned char k = 0; k < nint; k ++)
-        {
-            accum[k] = logaddexp(accum[k], accum1[k]);
         }
     }
 
-    /* Record logarithm of posterior. */
+    double accum[nint][ntwopsi][n_u_points][nsamples];
     PRAGMA_LOOP_COUNT_NINT
-    for (unsigned char k = 0; k < nint; k ++)
+    for (unsigned int iint = 0; iint < nint; iint ++)
+        for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
+            PRAGMA_LOOP_COUNT_NU
+            for (unsigned int iu = 0; iu < n_u_points; iu++)
+                PRAGMA_LOOP_COUNT_NSAMPLES
+                for (unsigned long isample = 0; isample < nsamples; isample++)
+                    accum[iint][itwopsi][iu][isample] = u_points_weights[iu][1] + log_radial_integrator_eval(integrators[iint], p[itwopsi][iu], b[itwopsi][iu][isample], log_p[itwopsi][iu], log_b[itwopsi][iu][isample]);
+
+    PRAGMA_LOOP_COUNT_NINT
+    for (unsigned int iint = 0; iint < nint; iint ++)
     {
-        value[k] = accum[k];
+        double max_accum = -INFINITY;
+
+        for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
+            PRAGMA_LOOP_COUNT_NU
+            for (unsigned int iu = 0; iu < n_u_points; iu++)
+                PRAGMA_LOOP_COUNT_NSAMPLES
+                for (unsigned long isample = 0; isample < nsamples; isample++)
+                    if (accum[iint][itwopsi][iu][isample] > max_accum)
+                        max_accum = accum[iint][itwopsi][iu][isample];
+
+        double accum1 = 0;
+
+        for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
+            PRAGMA_LOOP_COUNT_NU
+            for (unsigned int iu = 0; iu < n_u_points; iu++)
+                PRAGMA_LOOP_COUNT_NSAMPLES
+                for (unsigned long isample = 0; isample < nsamples; isample++)
+                    accum1 += exp(accum[iint][itwopsi][iu][isample] - max_accum);
+
+        value[iint] = log(accum1) + max_accum;
     }
 }
 

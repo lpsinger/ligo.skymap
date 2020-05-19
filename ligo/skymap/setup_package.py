@@ -25,7 +25,8 @@ def get_extensions():
     kwargs = setup_helpers.pkg_config(pkg_config_packages, [])
     kwargs['include_dirs'].extend(include_dirs)
     kwargs['extra_compile_args'].extend(['-std=gnu99',
-                                         '-DGSL_RANGE_CHECK_OFF'])
+                                         '-DGSL_RANGE_CHECK_OFF',
+                                         '-DHAVE_INLINE'])
 
     if distutils_helpers.get_distutils_build_option('with_ittnotify'):
         kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))

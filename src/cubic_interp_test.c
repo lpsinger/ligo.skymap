@@ -28,7 +28,7 @@ int cubic_interp_test(void)
         static const double data[] = {0, 0, 0, 0};
         cubic_interp *interp = cubic_interp_init(data, 4, -1, 1);
         assert(interp);
-        for (double t = 0; t <= 1; t += 0.01)
+        for (double t = -10; t <= 10; t += 0.01)
         {
             const double result = cubic_interp_eval(interp, t);
             const double expected = 0;
@@ -42,7 +42,7 @@ int cubic_interp_test(void)
         static const double data[] = {1, 1, 1, 1};
         cubic_interp *interp = cubic_interp_init(data, 4, -1, 1);
         assert(interp);
-        for (double t = 0; t <= 1; t += 0.01)
+        for (double t = -10; t <= 10; t += 0.01)
         {
             const double result = cubic_interp_eval(interp, t);
             const double expected = 1;

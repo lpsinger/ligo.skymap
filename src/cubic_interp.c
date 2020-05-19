@@ -87,7 +87,7 @@ static double cubic_eval(const double *a, double t)
 static void cubic_interp_index(
     double f, double t0, double length, double *t, double *i)
 {
-    *t = modf(clip_double(*t * f + t0, 0, length), i);
+    *t = modf(clip_double(*t * f + t0, 0, length - 1), i);
 }
 
 

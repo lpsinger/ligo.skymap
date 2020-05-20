@@ -290,7 +290,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
         table.meta['FIELD_{0}_VARY'.format(i)] = column.meta['vary']
     table.write(filename, format='hdf5', **kwargs)
     if metadata:
-        with h5py.File(filename) as hdf:
+        with h5py.File(filename, 'r+') as hdf:
             for internal_path, attributes in metadata.items():
                 for key, value in attributes.items():
                     try:

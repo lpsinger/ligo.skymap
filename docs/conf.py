@@ -232,8 +232,4 @@ intersphinx_mapping.update({
 
 # -- Options for mermaid ------------------------------------------------------
 
-extensions.append('sphinxcontrib.mermaid')
-
-mermaid_sequence_config = {"sequence": {
-    "showSequenceNumbers": True
-}}
+extensions += ['sphinxcontrib.mermaid']

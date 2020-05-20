@@ -186,9 +186,7 @@ def instruments_from_fits(value):
 
 
 def metadata_for_version_module(version):
-    return {'vcs_version': version.__spec__.parent + ' ' + version.version,
-            'vcs_revision': version.githash,
-            'build_date': version.timestamp.isoformat()}
+    return {'vcs_version': version.__spec__.parent + ' ' + version.version}
 
 
 DEFAULT_NUNIQ_NAMES = ('PROBDENSITY', 'DISTMU', 'DISTSIGMA', 'DISTNORM')

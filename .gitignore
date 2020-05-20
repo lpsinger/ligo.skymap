@@ -5,15 +5,8 @@
 *.so
 __pycache__
 
-# Ignore .c files by default to avoid including generated code. If you want to
-# add a non-generated .c extension, use `git add -f filename.c`.
-ligo/skymap/_compiler.c
-ligo/skymap/cython_version.py
-# *.c
-
 # Other generated files
 ligo/skymap/version.py
-*/cython_version.py
 htmlcov
 .coverage
 MANIFEST
@@ -38,10 +31,10 @@ docs/_build
 # Packages/installer info
 *.egg
 *.egg-info
-.eggs
 dist
 build
 eggs
+.eggs
 parts
 bin
 var
@@ -58,6 +51,7 @@ distribute-*.tar.gz
 .project
 .pydevproject
 .settings
+pip-wheel-metadata/
 
 # Mac OSX
 .DS_Store

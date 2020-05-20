@@ -5,7 +5,27 @@ Changelog
 0.2.3 (unreleased)
 ==================
 
-- No changes yet.
+- Update ligo.skymap to the latest version of the Astropy affiliated package
+  template. Migrate package infrastructure from `APE 4`_ to `APE 17`_. The
+  astropy-helpers submodule has been removed, and the package now includes a
+  pyproject.toml file (see `PEP 517`_ and `PEP 518`_).
+
+- As a consequence of migrating to `APE 17`_ and switching to
+  `setuptools_scm`_, the version of ligo.skymap will be reported slightly
+  differently. The ``ligo.skymap.__githash__`` variable has been removed, and
+  instead the git hash will be part of the ``ligo.skymap.__version__`` version
+  string for unreleased, local versions.
+
+- Correspondingly, ``ligo.skymap`` tools that generate FITS files
+  (``bayestar-localize-lvalert``, ``bayestar-localize-coincs``,
+  ``ligo-skymap-from-samples``) will no longer populate the ``VCSREV`` and
+  ``DATE-BLD`` keys in FITS headers.
+
+.. _`APE 4`: https://github.com/astropy/astropy-APEs/blob/master/APE4.rst
+.. _`APE 17`: https://github.com/astropy/astropy-APEs/blob/master/APE17.rst
+.. _`PEP 517`: https://www.python.org/dev/peps/pep-0517/
+..  _`PEP 518`: https://www.python.org/dev/peps/pep-0518/
+.. _`setuptools_scm`: https://github.com/pypa/setuptools_scm
 
 0.2.2 (2020-05-12)
 ==================

@@ -134,7 +134,7 @@ def test_bayestar(localize_coincs, localize_lvalert, coinc_sqlite, tmpdir):
     skymap2, meta2 = io.read_sky_map(localize_lvalert, distances=True)
     for col1, col2 in zip(skymap1, skymap2):
         np.testing.assert_allclose(col1, col2)
-    for key in 'gps_time origin vcs_version vcs_revision build_date'.split():
+    for key in 'gps_time origin vcs_version'.split():
         assert meta1[key] == meta2[key]
     for key in 'distmean diststd log_bci log_bsn'.split():
         np.testing.assert_allclose(meta1[key], meta2[key])

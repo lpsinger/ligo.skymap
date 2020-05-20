@@ -1,11 +1,6 @@
-variables:
-  GIT_SUBMODULE_STRATEGY: normal
-
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml
-  - project: emfollow/gitlab-ci-templates
-    file: sccb.yml
 
 stages:
   - deps
@@ -21,10 +16,13 @@ requirements:
   stage: deps
   image: python:slim
   script:
-    - python setup.py egg_info
-    # Strip out extras section headers like `[docs]` because these
-    # extras section headers are not valid in a pip requirements file.
-    - grep '^[^\[].*' *.egg-info/requires.txt > requirements.txt
+    - |
+      python >requirements.txt <<EOF
+      from configparser import ConfigParser
+      conf = ConfigParser()
+      conf.read('setup.cfg')
+      print(conf['options']['install_requires'] + ''.join(conf['options.extras_require'].values()))
+      EOF
   artifacts:
     paths:
       - requirements.txt
@@ -38,7 +36,8 @@ sdist:
   image: python
   stage: dist
   script:
-    - python setup.py sdist -d .
+    - pip install pep517
+    - python -m pep517.build -s -o . .
   needs: []
   artifacts:
     paths:
@@ -58,7 +57,8 @@ sdist:
   script:
     # Build and install LALSuite
     - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux2014/\1/')
-    - ${PYPREFIX}/bin/python setup.py bdist_wheel
+    - ${PYPREFIX}/bin/pip install pep517
+    - ${PYPREFIX}/bin/python -m pep517.build -b .
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
@@ -82,10 +82,11 @@ sdist:
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
+    - pip install pep517
     # FIXME: https://github.com/matthew-brett/delocate/pull/38
     - pip install git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate oldest-supported-numpy
     # Build and audit wheel
-    - python setup.py bdist_wheel
+    - python -m pep517.build -b .
     - delocate-wheel -v -w wheelhouse dist/*.whl
     - rm -f *.whl
     - mv wheelhouse/* .
@@ -133,7 +134,7 @@ wheel/cp38-cp38-macosx:
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-astropy pytest-doctest-ufunc pytest-cov pytest-mpl gcovr pycobertura flake8 'coverage<5'
+      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 'coverage<5' tox
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF
@@ -163,7 +164,7 @@ docs:
   <<: *in-tmpdir
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    - python setup.py build_docs
+    - tox -e build_docs
     - mv docs/_build/html ${CI_PROJECT_DIR}/
   needs:
     - dependencies/python3.7
@@ -232,7 +233,8 @@ test/coverage:
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
-    - python setup.py test --coverage -V --args="--mpl --durations=10 --junit-xml=${CI_PROJECT_DIR}/junit.xml"
+    - pip install -e .[test]
+    - pytest --doctest-plus --doctest-ufunc --mpl --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
@@ -361,10 +363,3 @@ deploy/wheel:
     - wheel/cp38-cp38-macosx
   only:
     - tags
-
-#
-# SCCB request.
-#
-
-sccb:
-  stage: deploy

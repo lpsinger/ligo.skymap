@@ -9,7 +9,7 @@ ligo/skymap/extern/quantile.py:
     The weighted quantile implementation from
     https://github.com/numpy/numpy/pull/9211
 
-These files are licenced under the terms of the following licence.
+These files are licensed under the terms of the following license.
 
 ---
 

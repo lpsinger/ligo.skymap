@@ -184,7 +184,7 @@ docs:
   stage: test
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl astroquery
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --durations=10"))'
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
 
 test/python3.6:
   <<: *test

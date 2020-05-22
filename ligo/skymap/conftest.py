@@ -3,8 +3,6 @@
 # get picked up when running the tests inside an interpreter using
 # packagename.test
 
-import os
-
 from astropy.version import version as astropy_version
 
 try:

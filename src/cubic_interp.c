@@ -18,31 +18,29 @@
 
 #include "cubic_interp.h"
 #include "branch_prediction.h"
+#include "vmath.h"
 #include <math.h>
+#include <stdalign.h>
 #include <stdlib.h>
 #include <string.h>
 
+/* Allow contraction of a * b + c to a faster fused multiply-add operation */
+#pragma STDC FP_CONTRACT ON
 
-static int clip_int(int t, int min, int max)
-{
-    if (t < min)
-        return min;
-    else if (t > max)
-        return max;
-    else
-        return t;
-}
+#define VCLIP(x, a, b) VMIN(VMAX((x), (a)), (b))
+#define VCUBIC(a, t) (t * (t * (t * a[0] + a[1]) + a[2]) + a[3])
 
 
-static double clip_double(double t, double min, double max)
-{
-    if (t < min)
-        return min;
-    else if (t > max)
-        return max;
-    else
-        return t;
-}
+struct cubic_interp{
+    double f, t0, length;
+    double a[][4];
+};
+
+
+struct bicubic_interp {
+    v2df fx, x0, xlength;
+    v4df a[][4];
+};
 
 
 /*
@@ -78,19 +76,6 @@ static void cubic_interp_init_coefficients(
 }
 
 
-static double cubic_eval(const double *a, double t)
-{
-    return ((a[0] * t + a[1]) * t + a[2]) * t + a[3];
-}
-
-
-static void cubic_interp_index(
-    double f, double t0, double length, double *t, double *i)
-{
-    *t = modf(clip_double(*t * f + t0, 0, length - 1), i);
-}
-
-
 cubic_interp *cubic_interp_init(
     const double *data, int n, double tmin, double dt)
 {
@@ -107,7 +92,7 @@ cubic_interp *cubic_interp_init(
             double z[4];
             for (int j = 0; j < 4; j ++)
             {
-                z[j] = data[clip_int(i + j - 4, 0, n - 1)];
+                z[j] = data[VCLIP(i + j - 4, 0, n - 1)];
             }
             cubic_interp_init_coefficients(interp->a[i], z, z);
         }
@@ -124,11 +109,19 @@ void cubic_interp_free(cubic_interp *interp)
 
 double cubic_interp_eval(const cubic_interp *interp, double t)
 {
-    double i;
     if (UNLIKELY(isnan(t)))
         return t;
-    cubic_interp_index(interp->f, interp->t0, interp->length, &t, &i);
-    return cubic_eval(interp->a[(int) i], t);
+
+    double x = t, xmin = 0.0, xmax = interp->length - 1.0;
+    x *= interp->f;
+    x += interp->t0;
+    x = VCLIP(x, xmin, xmax);
+
+    double ix = VFLOOR(x);
+    x -= ix;
+
+    const double *a = interp->a[(int) ix];
+    return VCUBIC(a, x);
 }
 
 
@@ -139,17 +132,16 @@ bicubic_interp *bicubic_interp_init(
     bicubic_interp *interp;
     const int slength = ns + 6;
     const int tlength = nt + 6;
-    interp = malloc(sizeof(*interp) + slength * tlength * sizeof(*interp->a));
+    interp = aligned_alloc(alignof(bicubic_interp), sizeof(*interp) + slength * tlength * sizeof(*interp->a));
     if (LIKELY(interp))
     {
-        interp->fs = 1 / ds;
-        interp->ft = 1 / dt;
-        interp->s0 = 3 - interp->fs * smin;
-        interp->t0 = 3 - interp->ft * tmin;
-        interp->slength = slength;
-        interp->tlength = tlength;
+        interp->fx[0] = 1 / ds;
+        interp->fx[1] = 1 / dt;
+        interp->x0[0] = 3 - interp->fx[0] * smin;
+        interp->x0[1] = 3 - interp->fx[1] * tmin;
+        interp->xlength[0] = slength;
+        interp->xlength[1] = tlength;
 
-        #pragma omp taskloop collapse(2)
         for (int is = 0; is < slength; is ++)
         {
             for (int it = 0; it < tlength; it ++)
@@ -158,10 +150,10 @@ bicubic_interp *bicubic_interp_init(
                 for (int js = 0; js < 4; js ++)
                 {
                     double z[4];
-                    int ks = clip_int(is + js - 4, 0, ns - 1);
+                    int ks = VCLIP(is + js - 4, 0, ns - 1);
                     for (int jt = 0; jt < 4; jt ++)
                     {
-                        int kt = clip_int(it + jt - 4, 0, nt - 1);
+                        int kt = VCLIP(it + jt - 4, 0, nt - 1);
                         z[jt] = data[ks * ns + kt];
                     }
                     cubic_interp_init_coefficients(a[js], z, z);
@@ -193,16 +185,18 @@ void bicubic_interp_free(bicubic_interp *interp)
 
 double bicubic_interp_eval(const bicubic_interp *interp, double s, double t)
 {
-    const double (*a)[4];
-    double b[4];
-    double is, it;
-
     if (UNLIKELY(isnan(s) || isnan(t)))
         return s + t;
-    cubic_interp_index(interp->fs, interp->s0, interp->slength, &s, &is);
-    cubic_interp_index(interp->ft, interp->t0, interp->tlength, &t, &it);
-    a = interp->a[(int) (is * interp->slength + it)];
-    for (int i = 0; i < 4; i ++)
-        b[i] = cubic_eval(a[i], s);
-    return cubic_eval(b, t);
+
+    v2df x = {s, t}, xmin = {0.0, 0.0}, xmax = interp->xlength - 1.0;
+    x *= interp->fx;
+    x += interp->x0;
+    x = VCLIP(x, xmin, xmax);
+
+    v2df ix = VFLOOR(x);
+    x -= ix;
+
+    const v4df *a = interp->a[(int) (ix[0] * interp->xlength[0] + ix[1])];
+    v4df b = VCUBIC(a, x[1]);
+    return VCUBIC(b, x[0]);
 }

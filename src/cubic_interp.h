@@ -33,15 +33,8 @@
 
 #ifndef __cplusplus
 
-typedef struct {
-    double f, t0, length;
-    double a[][4];
-} cubic_interp;
-
-typedef struct {
-    double fs, ft, s0, t0, slength, tlength;
-    double a[][4][4];
-} bicubic_interp;
+typedef struct cubic_interp cubic_interp;
+typedef struct bicubic_interp bicubic_interp;
 
 __attribute__ ((malloc))
 cubic_interp *cubic_interp_init(

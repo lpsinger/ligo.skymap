@@ -229,10 +229,12 @@ test/coverage:
     #     enable C assertions
     # -coverage
     #     instrument C code for coverage measurement
+    # -fsanitize=undefined
+    #     enable GCC UndefinedBehaviorSanitizer
     # -fopenmp
     #     The -coverage breaks OpenMP detection in extension-helpers.
     #     See https://github.com/astropy/extension-helpers/issues/1
-    CFLAGS: -UNDEBUG -coverage -fopenmp
+    CFLAGS: -UNDEBUG -coverage -fsanitize=undefined -fopenmp
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:

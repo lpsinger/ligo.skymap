@@ -5,6 +5,9 @@ Changelog
 0.2.3 (unreleased)
 ==================
 
+- Fix an out of bounds access in the bicubic interpolation function that
+  BAYESTAR uses to evaluate the integral over distance.
+
 - Update ligo.skymap to the latest version of the Astropy affiliated package
   template. Migrate package infrastructure from `APE 4`_ to `APE 17`_. The
   astropy-helpers submodule has been removed, and the package now includes a

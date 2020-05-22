@@ -226,7 +226,7 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
-    CFLAGS: -coverage
+    CFLAGS: -UNDEBUG -coverage
     OMP_NUM_THREADS: 4
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir

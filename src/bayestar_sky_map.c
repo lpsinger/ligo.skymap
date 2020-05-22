@@ -467,7 +467,7 @@ static double log_radial_integrator_eval(const log_radial_integrator *integrator
 
     if (UNLIKELY(p == 0)) {
         /* note: p2 == 0 implies b == 0 */
-        assert(b == 0);
+        assert(b < GSL_DBL_EPSILON);
         int k1 = integrator->k + 1;
 
         if (UNLIKELY(k1 == 0))

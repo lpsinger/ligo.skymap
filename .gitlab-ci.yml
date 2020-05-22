@@ -225,9 +225,14 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
-    # -UNDEBUG: enable C assertions
-    # -coverage: instrument C code for coverage measurement
-    CFLAGS: -UNDEBUG -coverage
+    # -UNDEBUG
+    #     enable C assertions
+    # -coverage
+    #     instrument C code for coverage measurement
+    # -fopenmp
+    #     The -coverage breaks OpenMP detection in extension-helpers.
+    #     See https://github.com/astropy/extension-helpers/issues/1
+    CFLAGS: -UNDEBUG -coverage -fopenmp
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:

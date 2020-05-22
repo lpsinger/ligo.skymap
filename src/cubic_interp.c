@@ -24,8 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Allow contraction of a * b + c to a faster fused multiply-add operation */
+/* Allow contraction of a * b + c to a faster fused multiply-add operation.
+ * This pragma is supposedly standard C, but only clang seems to support it.
+ * On other compilers, floating point contraction is ON by default at -O3. */
+#if defined(__clang__) || defined(__llvm__)
 #pragma STDC FP_CONTRACT ON
+#endif
 
 #define VCLIP(x, a, b) VMIN(VMAX((x), (a)), (b))
 #define VCUBIC(a, t) (t * (t * (t * a[0] + a[1]) + a[2]) + a[3])

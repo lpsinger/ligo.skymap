@@ -1,3 +1,6 @@
+variables:
+  OMP_NUM_THREADS: 4
+
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml
@@ -159,8 +162,6 @@ dependencies/python3.8:
 docs:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
-  variables:
-    OMP_NUM_THREADS: 4
   <<: *in-tmpdir
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
@@ -179,8 +180,6 @@ docs:
 #
 
 .test: &test
-  variables:
-    OMP_NUM_THREADS: 4
   <<: *in-tmpdir
   stage: test
   script:
@@ -227,7 +226,6 @@ test/coverage:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
     CFLAGS: -UNDEBUG -coverage
-    OMP_NUM_THREADS: 4
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:

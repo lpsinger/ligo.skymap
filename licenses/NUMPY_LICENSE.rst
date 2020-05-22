@@ -2,7 +2,7 @@ This project contains adaptations of the following parts of Numpy
 (https://numpy.org):
 
 cextern/numpy/logaddexp.h
-    Adapted from the `logaddexp` function in
+    Adapted from the ``logaddexp`` function in
     https://github.com/numpy/numpy/blob/master/numpy/core/src/npymath/npy_math_internal.h.src
 
 ligo/skymap/extern/quantile.py:

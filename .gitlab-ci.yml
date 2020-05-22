@@ -225,6 +225,8 @@ test/coverage:
   stage: test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   variables:
+    # -UNDEBUG: enable C assertions
+    # -coverage: instrument C code for coverage measurement
     CFLAGS: -UNDEBUG -coverage
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir

@@ -19,6 +19,9 @@ Changelog
     selected vector intrinsics. In x86_64 builds, gcc and icc will now emit
     SSE2, SSE4.1, and FMA instructions for this code.
 
+  - Pre-evaluate the SNR=0 limit of the distance integral to move some
+    conditionals and logarithms out of BAYESTAR's innermost loop.
+
 .. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
 
 - Update ligo.skymap to the latest version of the Astropy affiliated package

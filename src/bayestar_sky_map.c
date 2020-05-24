@@ -172,8 +172,7 @@ typedef struct {
     bicubic_interp *region0;
     cubic_interp *region1;
     cubic_interp *region2;
-    double xmax, ymax, vmax, r1, r2;
-    int k;
+    double ymax, vmax, p0_limit;
 } log_radial_integrator;
 
 
@@ -380,6 +379,16 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
     const double umin = - (1 + M_SQRT1_2) * alpha;
     const double vmax = x0 - M_SQRT1_2 * alpha;
     double z0[size][size], z1[size], z2[size];
+    double p0_limit;
+
+    if (UNLIKELY(k == -1))
+    {
+        p0_limit = log(log(r2 / r1));
+    } else {
+        int k1 = k + 1;
+        p0_limit = log((gsl_pow_int(r2, k1) - gsl_pow_int(r1, k1)) / k1);
+    }
+
     /* const double umax = xmax - vmax; */ /* unused */
 
     int interrupted;
@@ -433,12 +442,9 @@ done:
     integrator->region0 = region0;
     integrator->region1 = region1;
     integrator->region2 = region2;
-    integrator->xmax = xmax;
     integrator->ymax = ymax;
     integrator->vmax = vmax;
-    integrator->r1 = r1;
-    integrator->r2 = r2;
-    integrator->k = k;
+    integrator->p0_limit = p0_limit;
     return integrator;
 }
 
@@ -460,39 +466,30 @@ static void log_radial_integrator_free(log_radial_integrator *integrator)
 
 static double log_radial_integrator_eval(const log_radial_integrator *integrator, double p, double b, double log_p, double log_b)
 {
-    const double x = log_p;
-    const double y = M_LN2 + 2 * log_p - log_b;
-    double result;
-    assert(x <= integrator->xmax);
+    assert(p >= 0);
 
-    if (UNLIKELY(p == 0)) {
-        /* note: p2 == 0 implies b == 0 */
-        assert(b < GSL_DBL_EPSILON);
-        int k1 = integrator->k + 1;
-
-        if (UNLIKELY(k1 == 0))
-        {
-            result = log(log(integrator->r2 / integrator->r1));
-        } else {
-            result = log((gsl_pow_int(integrator->r2, k1) - gsl_pow_int(integrator->r1, k1)) / k1);
-        }
-    } else {
+    if (LIKELY(p > 0)) {
+        const double x = log_p;
+        const double y = M_LN2 + 2 * log_p - log_b;
+        double result = gsl_pow_2(0.5 * b / p);
         if (y >= integrator->ymax) {
-            result = cubic_interp_eval(integrator->region1, x);
+            result += cubic_interp_eval(integrator->region1, x);
         } else {
             const double v = 0.5 * (x + y);
             if (v <= integrator->vmax)
             {
                 const double u = 0.5 * (x - y);
-                result = cubic_interp_eval(integrator->region2, u);
+                result += cubic_interp_eval(integrator->region2, u);
             } else {
-                result = bicubic_interp_eval(integrator->region0, x, y);
+                result += bicubic_interp_eval(integrator->region0, x, y);
             }
         }
-        result += gsl_pow_2(0.5 * b / p);
+        return result;
+    } else {
+        /* note: p2 == 0 implies b == 0 */
+        assert(b < GSL_DBL_EPSILON);
+        return integrator->p0_limit;
     }
-
-    return result;
 }
 
 

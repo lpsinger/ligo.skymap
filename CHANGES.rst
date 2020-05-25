@@ -16,8 +16,8 @@ Changelog
   - The function ``bicubic_interp_eval`` had not being effectively
     autovectorized by the compiler. Rewrite it in explicitly vector form using
     the `GCC vector extension`_ (which is also supported by clang and icc) and
-    selected vector intrinsics. In x86_64 builds, gcc and icc will now emit
-    SSE2, SSE4.1, and FMA instructions for this code.
+    selected vector intrinsics. In x86_64 builds, gcc, clang, and icc will now
+    emit SSE2, SSE4.1, and FMA instructions for this code.
 
   - Pre-evaluate the SNR=0 limit of the distance integral to move some
     conditionals and logarithms out of BAYESTAR's innermost loop.

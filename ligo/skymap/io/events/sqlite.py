@@ -26,6 +26,18 @@ __all__ = ('SQLiteEventSource',)
 
 
 class SQLiteEventSource(LigoLWEventSource):
+    """Read events from LIGO-LW SQLite files.
+
+    Parameters
+    ----------
+    f : str, file-like object, or `sqlite3.Connection` instance
+        The SQLite database.
+
+    Returns
+    -------
+    `~ligo.skymap.io.events.EventSource`
+
+    """
 
     def __init__(self, f, *args, **kwargs):
         if isinstance(f, sqlite3.Connection):

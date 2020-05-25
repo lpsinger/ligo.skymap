@@ -54,13 +54,14 @@ def _get_file_type(f):
 
 
 def MagicEventSource(f, *args, **kwargs):  # noqa: N802
-    """Read events from either HDF or LIGO-LW files. The format is determined
-    using the POSIX `file` command, which determines the file by looking for
-    'magic' byte strings (hence the name of this module).
+    """Read events from LIGO-LW XML, LIGO-LW SQlite, or HDF5 files. The format
+    is determined automatically using the :manpage:`file(1)` command, and then
+    the file is opened using :obj:`.ligolw.open`, :obj:`.sqlite.open`, or
+    :obj:`.hdf.open`, as appropriate.
 
     Returns
     -------
-    source : `EventSource`
+    `~ligo.skymap.io.events.EventSource`
 
     """
     if isinstance(f, h5py.File):

@@ -31,6 +31,10 @@ class GraceDBEventSource(EventSource):
     client : `ligo.gracedb.rest.GraceDb`, optional
         Client object
 
+    Returns
+    -------
+    `~ligo.skymap.io.events.EventSource`
+
     """
 
     def __init__(self, graceids, client=None):

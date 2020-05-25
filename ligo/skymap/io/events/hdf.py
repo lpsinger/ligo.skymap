@@ -60,6 +60,18 @@ def _classify_hdf_file(f, sample):
 
 
 class HDFEventSource(EventSource):
+    """Read events from PyCBC-style HDF5 files.
+
+    Parameters
+    ----------
+    *files : list of str, file-like object, or `h5py.File` objects
+        The PyCBC coinc, bank, psds, and triggers files, in any order.
+
+    Returns
+    -------
+    `~ligo.skymap.io.events.EventSource`
+
+    """
 
     def __init__(self, *files, **kwargs):
         sample = kwargs.get('sample', 'foreground')

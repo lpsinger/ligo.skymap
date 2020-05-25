@@ -73,6 +73,33 @@ def _read_xml(f, fallbackpath=None):
 
 
 class LigoLWEventSource(OrderedDict, EventSource):
+    """Read events from LIGO-LW XML files.
+
+    Parameters
+    ----------
+    f : str, file-like object, or `glue.ligolw.utils.Document`
+        The name of the file, or the file object, or the XML document object,
+        containing the trigger tables.
+    psd_file : str, file-like object, or `glue.ligolw.ligolw.Document`
+        The name of the file, or the file object, or the XML document object,
+        containing the PSDs. If not supplied, then PSDs will be read
+        automatically from any files mentioned in ``--reference-psd`` command
+        line arguments stored in the ProcessParams table.
+    psd_file : str, file-like object, or `glue.ligolw.ligolw.Document`
+        The name of the file, or the file object, or the XML document object,
+        containing the PSDs.
+    coinc_def : `glue.ligolw.lsctables.CoincDef`, optional
+        An optional coinc definer to limit which events are read.
+    fallbackpath : str, optional
+        A directory to search for PSD files whose ``--reference-psd`` command
+        line arguments have relative paths. By default, the current working
+        directory and the directory containing file ``f`` are searched.
+
+    Returns
+    -------
+    `~ligo.skymap.io.events.EventSource`
+
+    """
 
     def __init__(self, f, psd_file=None, coinc_def=InspiralCoincDef,
                  fallbackpath=None, **kwargs):

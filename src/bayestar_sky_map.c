@@ -112,6 +112,24 @@ static __itt_string_handle
 #define ITT_TASK_END(domain)
 #endif
 
+/* Loop count hints */
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+#define PRAGMA_LOOP_COUNT_NINT _Pragma("loop count min(1), max(2), avg(2)")
+#define PRAGMA_LOOP_COUNT_NIFOS _Pragma("loop count min(1), max(5), avg(2)")
+#define PRAGMA_LOOP_COUNT_NU _Pragma("loop count min(1), max(20), avg(10)")
+#define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("loop count min(1), max(128), avg(16)")
+#elif defined(__clang__) || defined(__llvm__)
+#define PRAGMA_LOOP_COUNT_NINT _Pragma("unroll 2")
+#define PRAGMA_LOOP_COUNT_NIFOS _Pragma("unroll 2")
+#define PRAGMA_LOOP_COUNT_NU _Pragma("unroll 10")
+#define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("unroll 16")
+#else /* assume GCC */
+#define PRAGMA_LOOP_COUNT_NINT _Pragma("GCC unroll 2")
+#define PRAGMA_LOOP_COUNT_NIFOS _Pragma("GCC unroll 2")
+#define PRAGMA_LOOP_COUNT_NU _Pragma("GCC unroll 10")
+#define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("GCC unroll 16")
+#endif
+
 
 /* Compute |z|^2. Hopefully a little faster than gsl_pow_2(cabs(z)), because no
  * square roots are necessary. */
@@ -507,6 +525,7 @@ static void toa_errors(
     double n[3];
     ang2vec(theta, phi - gmst, n);
 
+    PRAGMA_LOOP_COUNT_NIFOS
     for (int i = 0; i < nifos; i ++)
     {
         double dot = 0;
@@ -709,6 +728,8 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     float complex F[nifos];
     float complex snrs_interp[nsamples][nifos];
     double accum[nint];
+
+    PRAGMA_LOOP_COUNT_NINT
     for (unsigned char k = 0; k < nint; k ++)
         accum[k] = -INFINITY;
 
@@ -718,6 +739,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         uniq2ang64(uniq, &theta, &phi);
 
         /* Look up antenna factors */
+        PRAGMA_LOOP_COUNT_NIFOS
         for (unsigned int iifo = 0; iifo < nifos; iifo++)
             F[iifo] = antenna_factor(
                 responses[iifo], phi, M_PI_2-theta, gmst) * horizons[iifo];
@@ -725,7 +747,9 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         toa_errors(dt, theta, phi, gmst, nifos, locations, epochs);
 
         /* Shift SNR time series by the time delay for this sky position */
+        PRAGMA_LOOP_COUNT_NSAMPLES
         for (unsigned long isample = 0; isample < nsamples; isample++)
+            PRAGMA_LOOP_COUNT_NIFOS
             for (unsigned int iifo = 0; iifo < nifos; iifo++)
                 snrs_interp[isample][iifo] = eval_snr(
                     snrs[iifo], nsamples,
@@ -738,10 +762,13 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         const float twopsi = (2 * M_PI / ntwopsi) * itwopsi;
         const float complex exp_i_twopsi = exp_i(twopsi);
         double accum1[nint];
+
+        PRAGMA_LOOP_COUNT_NINT
         for (unsigned char k = 0; k < nint; k ++)
             accum1[k] = -INFINITY;
 
         /* Integrate over u from -1 to 1. */
+        PRAGMA_LOOP_COUNT_NU
         for (unsigned int iu = 0; iu < n_u_points; iu++)
         {
             const float u = u_points_weights[iu][0];
@@ -752,6 +779,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
             float complex z_times_r[nifos];
             float p2 = 0;
 
+            PRAGMA_LOOP_COUNT_NIFOS
             for (unsigned int iifo = 0; iifo < nifos; iifo ++)
             {
                 p2 += cabs2(
@@ -763,11 +791,14 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
             const float p = sqrtf(p2);
             const float log_p = logf(p);
 
+            PRAGMA_LOOP_COUNT_NSAMPLES
             for (unsigned long isample = 0; isample < nsamples; isample++)
             {
                 float b;
                 {
                     float complex I0arg_complex_times_r = 0;
+
+                    PRAGMA_LOOP_COUNT_NIFOS
                     for (unsigned int iifo = 0; iifo < nifos; iifo ++)
                         I0arg_complex_times_r += conjf(z_times_r[iifo]) * snrs_interp[isample][iifo];
                     b = cabsf(I0arg_complex_times_r);
@@ -775,6 +806,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                 }
                 const float log_b = logf(b);
 
+                PRAGMA_LOOP_COUNT_NINT
                 for (unsigned char k = 0; k < nint; k ++)
                 {
                     accum2[isample][k] = log_radial_integrator_eval(
@@ -784,10 +816,13 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
 
             double log_sum_accum2[nint];
             logsumexp(*accum2, log_weight, log_sum_accum2, nsamples, nint);
+
+            PRAGMA_LOOP_COUNT_NINT
             for (unsigned char k = 0; k < nint; k ++)
                 accum1[k] = logaddexp(accum1[k], log_sum_accum2[k]);
         }
 
+        PRAGMA_LOOP_COUNT_NINT
         for (unsigned char k = 0; k < nint; k ++)
         {
             accum[k] = logaddexp(accum[k], accum1[k]);
@@ -795,6 +830,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     }
 
     /* Record logarithm of posterior. */
+    PRAGMA_LOOP_COUNT_NINT
     for (unsigned char k = 0; k < nint; k ++)
     {
         value[k] = accum[k];
@@ -960,6 +996,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     ITT_TASK_BEGIN(itt_domain, itt_task_lookup_table);
     {
         double pmax = 0;
+
+        PRAGMA_LOOP_COUNT_NIFOS
         for (unsigned int iifo = 0; iifo < nifos; iifo ++)
         {
             pmax += gsl_pow_2(horizons[iifo]);
@@ -1027,6 +1065,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 sample_rate, epochs, snrs, responses, locations, horizons,
                 u_points_weights);
 
+            PRAGMA_LOOP_COUNT_NIFOS
             for (unsigned int iifo = 0; iifo < nifos; iifo ++)
             {
                 bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1,
@@ -1147,6 +1186,8 @@ done:
 
         /* Calculate log Bayes factor. */
         *out_log_bci = *out_log_bsn = log_evidence_coherent;
+
+        PRAGMA_LOOP_COUNT_NIFOS
         for (unsigned int i = 0; i < nifos; i ++)
             *out_log_bci -= log_evidence_incoherent[i];
 
@@ -1204,6 +1245,7 @@ double bayestar_log_posterior_toa_phoa_snr(
     double A = 0;
 
     /* Loop over detectors */
+    PRAGMA_LOOP_COUNT_NIFOS
     for (unsigned int iifo = 0; iifo < nifos; iifo++)
     {
         const double complex F = antenna_factor(

@@ -22,6 +22,8 @@ Changelog
   - Pre-evaluate the SNR=0 limit of the distance integral to move some
     conditionals and logarithms out of BAYESTAR's innermost loop.
 
+  - Add loop count hints to improve the efficacy of loop unrolling.
+
 .. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
 
 - Update ligo.skymap to the latest version of the Astropy affiliated package

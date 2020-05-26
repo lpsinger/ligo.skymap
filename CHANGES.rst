@@ -28,9 +28,6 @@ Changelog
 
   - Perform manual loop fission in ``bayestar_sky_map_toa_phoa_snr_pixel``.
 
-.. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
-.. _`How fast is BAYESTAR?`: https://lscsoft.docs.ligo.org/ligo.skymap/performance.html
-
 - Update ligo.skymap to the latest version of the Astropy affiliated package
   template. Migrate package infrastructure from `APE 4`_ to `APE 17`_. The
   astropy-helpers submodule has been removed, and the package now includes a
@@ -47,6 +44,8 @@ Changelog
   ``ligo-skymap-from-samples``) will no longer populate the ``VCSREV`` and
   ``DATE-BLD`` keys in FITS headers.
 
+.. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
+.. _`How fast is BAYESTAR?`: https://lscsoft.docs.ligo.org/ligo.skymap/performance.html
 .. _`APE 4`: https://github.com/astropy/astropy-APEs/blob/master/APE4.rst
 .. _`APE 17`: https://github.com/astropy/astropy-APEs/blob/master/APE17.rst
 .. _`PEP 517`: https://www.python.org/dev/peps/pep-0517/

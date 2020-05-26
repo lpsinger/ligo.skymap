@@ -43,6 +43,7 @@ Quick Start, Tutorials
    help
    contributing
    quickstart/bayestar-injections
+   performance
 
 *******
 Modules

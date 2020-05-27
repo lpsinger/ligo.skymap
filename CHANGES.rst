@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.3.0 (unreleased)
+0.3.0 (2020-05-26)
 ==================
 
 - Fix an out of bounds access in the bicubic interpolation function that

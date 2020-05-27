@@ -1,4 +1,5 @@
 variables:
+  LIGO_SKYMAP_USE_SYSTEM_CHEALPIX: 1
   OMP_NUM_THREADS: 4
 
 include:

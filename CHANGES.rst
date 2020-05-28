@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.3.1 (unreleased)
+0.3.1 (2020-05-28)
 ==================
 
 - Replace a call to the ``aligned_alloc`` function with the ``posix_memalign``

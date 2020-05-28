@@ -136,8 +136,9 @@ bicubic_interp *bicubic_interp_init(
     bicubic_interp *interp;
     const int slength = ns + 6;
     const int tlength = nt + 6;
-    interp = aligned_alloc(alignof(bicubic_interp), sizeof(*interp) + slength * tlength * sizeof(*interp->a));
-    if (LIKELY(interp))
+    /* FIXME: C11's aligned_alloc would be preferable here to posix_memalign,
+     * but ancient versions of macOS do not have it. */
+    if (LIKELY(!posix_memalign(&interp, alignof(bicubic_interp), sizeof(*interp) + slength * tlength * sizeof(*interp->a))))
     {
         interp->fx[0] = 1 / ds;
         interp->fx[1] = 1 / dt;

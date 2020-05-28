@@ -5,7 +5,11 @@ Changelog
 0.3.1 (unreleased)
 ==================
 
-- No changes yet.
+- Replace a call to the ``aligned_alloc`` function with the ``posix_memalign``
+  function. The ``aligned_alloc`` function is part of the C11 standard library,
+  but is missing on some platforms, particularly very old versions of macOS.
+
+  This fixes an issue with building Conda packages.
 
 0.3.0 (2020-05-26)
 ==================

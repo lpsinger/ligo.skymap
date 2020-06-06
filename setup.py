@@ -36,6 +36,9 @@ def get_extensions():
         include_dirs.append('cextern/chealpix')
         sources.append('cextern/chealpix/chealpix.c')
 
+    if os.environ.get('LIGO_SKYMAP_USE_ITTNOTIFY'):
+        pkg_config_packages.append('ittnotify')
+
     kwargs = pkg_config(pkg_config_packages, [])
     kwargs['include_dirs'].extend(include_dirs)
     kwargs['extra_compile_args'].extend(['-std=gnu11',
@@ -44,7 +47,6 @@ def get_extensions():
 
     if os.environ.get('LIGO_SKYMAP_USE_ITTNOTIFY'):
         kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
-        kwargs.setdefault('libraries', []).append('ittnotify')
 
     extension = Extension(
         name='ligo.skymap.core', language='c', sources=sources, **kwargs)

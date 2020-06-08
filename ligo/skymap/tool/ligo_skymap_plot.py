@@ -45,6 +45,18 @@ def parser():
         '--radec', nargs=2, metavar='deg', type=float, action='append',
         default=[], help='right ascension (deg) and declination (deg) to mark')
     parser.add_argument(
+        '--marker', metavar='matplotlib_marker', default='*', type=str,
+        help='symbol used when marking --radec (has to be one of the matplotlib marker strings)')
+    parser.add_argument(
+        '--marker-color', metavar='color_name', default='white', type=str,
+        help='color for the --radec marker')
+    parser.add_argument(
+        '--marker-ecolor', metavar='color_name', default='black', type=str,
+        help='edge color for the --radec marker')
+    parser.add_argument(
+        '--marker-size', metavar='size_int', default=10, type=int,
+        help='size of the --radec marker symbol')
+    parser.add_argument(
         '--inj-database', metavar='FILE.sqlite', type=SQLiteType('r'),
         help='read injection positions from database')
     parser.add_argument(
@@ -156,8 +168,11 @@ def main(args=None):
     # Add markers (e.g., for injections or external triggers).
     for ra, dec in radecs:
         ax.plot_coord(
-            SkyCoord(ra, dec, unit='deg'), '*',
-            markerfacecolor='white', markeredgecolor='black', markersize=10)
+            SkyCoord(ra, dec, unit='deg'), 
+            opts.marker,
+            markerfacecolor=opts.marker_color, 
+            markeredgecolor=opts.marker_ecolor,
+            markersize=opts.marker_size)
 
     # Add a white outline to all text to make it stand out from the background.
     plot.outline_text(ax)

@@ -77,6 +77,33 @@ def parser():
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
+    
+    # separate display group for PTA related options
+    pta_group = parser.add_argument_group('PTA options', 
+                        'Options for plotting the pulsars of a Pulsar Timing Array')
+    pta_group.add_argument(
+        '--pta-file', metavar='pulsars.csv', type=str,
+        help='path to PTA pulsars file with columns ra, dec (in degrees), '
+        'and noise rms (in seconds). The rms column can be left out if '
+        'specifying the option --pta-fix-marker-size.')
+    pta_group.add_argument(
+        '--pta-size', metavar='int', type=int,
+        help='Optional when using --pta-file, only plot the first INT pulsar')
+    pta_group.add_argument(
+        '--pta-marker', metavar='matplotlib_marker', default='*', type=str,
+        help='symbol used when marking pulsars from --pta-file')
+    pta_group.add_argument(
+        '--pta-color', metavar='color_name', default='white', type=str,
+        help='color for the --pta-file markers')
+    pta_group.add_argument(
+        '--pta-ecolor', metavar='color_name', default='black', type=str,
+        help='edge color for the --pta-file markers')
+    pta_group.add_argument(
+        '--pta-fix-marker-size', metavar='size_int', default=False,
+        help="Optional when using --pta-file. By default, the pulsar noise rms "
+        "area read from the PTA file and used to scale the pulsar markers' sizes. "
+        "Using this option fixes the markers' sizes instead.")
+    
     return parser
 
 
@@ -173,6 +200,37 @@ def main(args=None):
             markerfacecolor=opts.marker_color, 
             markeredgecolor=opts.marker_ecolor,
             markersize=opts.marker_size)
+        
+    # If given, add additional markers for the pulsars from a PTA
+    if opts.pta_file:
+        try:
+            with open(opts.pta_file, 'r') as f:
+                pta_data = np.loadtxt(f, comments='#', delimiter=',')
+            
+        except IOError:
+            print('Could not find PTA file, skipping')
+        except ValueError:
+            print('Could not read points from PTA file, skipping')
+            
+        
+        if opts.pta_size:
+            pta_data = pta_data[:opts.pta_size]
+        
+        # fixed pta marker sizes
+        if opts.pta_fix_marker_size:
+            pulsar_sizes = np.full(len(pta_data), opts.pta_fix_marker_size)
+        # scale pta marker size with noise rms: bigger markers for lower noise
+        else:
+            pulsar_sizes = 10 * (pta_data[:, 2] / 1.e-7)**(-0.4)
+            
+        for i, pulsar in enumerate(pta_data):
+            ra, dec = pulsar[:2]
+            ax.plot_coord(
+                SkyCoord(ra, dec, unit='deg'),
+                opts.pta_marker,
+                markerfacecolor=opts.pta_color,
+                markeredgecolor=opts.pta_ecolor,
+                markersize=pulsar_sizes[i])
 
     # Add a white outline to all text to make it stand out from the background.
     plot.outline_text(ax)

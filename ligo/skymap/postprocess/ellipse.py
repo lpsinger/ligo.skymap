@@ -201,16 +201,19 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...
 
     >>> prob = make_uniform_in_sin_theta(1)
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (225.0, 89.90862520480792, 0.8703361458208101, 0.8703357768874356, 0.0, 2.3788811576269793)
+    >>> ra, dec, a, b, pa, area = find_ellipse(prob)
+    >>> dec, a, b, area  # doctest: +FLOAT_CMP
+    (89.90862520480792, 0.8703361458208101, 0.8703357768874356, 2.3788811576269793)
 
     >>> prob = make_uniform_in_sin_theta(10)
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (225.0, 89.90827657529562, 9.024846562072119, 9.024842703023802, 0.0, 255.11972196535515)
+    >>> ra, dec, a, b, pa, area = find_ellipse(prob)
+    >>> dec, a, b, area  # doctest: +FLOAT_CMP
+    (89.90827657529562, 9.024846562072119, 9.024842703023802, 255.11972196535515)
 
     >>> prob = make_uniform_in_sin_theta(120)
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (179.99995257991023, 90.0, 107.9745037610576, 107.97450376105758, 0.0, 26988.70467497216)
+    >>> ra, dec, a, b, pa, area = find_ellipse(prob)
+    >>> dec, a, b, area  # doctest: +FLOAT_CMP
+    (90.0, 107.9745037610576, 107.97450376105758, 26988.70467497216)
 
     **Example 4**
 

@@ -22,7 +22,7 @@ def pytest_configure(config):
         # packages for which version numbers are displayed when running the tests.
         PYTEST_HEADER_MODULES.pop('Pandas', None)
         PYTEST_HEADER_MODULES.pop('astropy-helpers', None)
-        PYTEST_HEADER_MODULES['astropy-healpix'] = 'astropy-healpix'
+        PYTEST_HEADER_MODULES['astropy-healpix'] = 'astropy_healpix'
         PYTEST_HEADER_MODULES['healpy'] = 'healpy'
         PYTEST_HEADER_MODULES['reproject'] = 'reproject'
 

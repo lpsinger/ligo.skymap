@@ -81,3 +81,28 @@ You are now ready to get started using `ligo.skymap`.
           The following packages are optional for specific features:
 
           *  `pytest <https://docs.pytest.org>`_ for running the test suite
+
+Optional Data
+-------------
+
+The following instructions are only relevant if you are installing ligo.skymap
+for the purpose of generating localizations with BAYESTAR (e.g., for analysis
+of LIGO/Virgo data or for simulations).
+
+Some gravitational waveform approximants in LALSuite (notably, reduced order
+models) rely on external data files. These data files are part of
+lalsuite-extra, which must be installed separately. To install these data
+files, run the following commands::
+
+    $ curl -O https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
+    $ tar xf lalsuite-extra-1.3.0.tar.gz
+    $ cd lalsuite-extra-1.3.0
+    $ ./configure --prefix=$HOME/lalsuite-extra
+    $ make install
+
+Then, add the following line to your shell profile script (``~/.profile``,
+``~/.bashrc``, or similar)::
+
+    export LAL_DATA_PATH=$HOME/lalsuite-extra/lalsimulation
+
+Then log out and log back in.

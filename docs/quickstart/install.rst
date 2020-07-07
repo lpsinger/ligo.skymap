@@ -97,12 +97,12 @@ files, run the following commands::
     $ curl -O https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
     $ tar xf lalsuite-extra-1.3.0.tar.gz
     $ cd lalsuite-extra-1.3.0
-    $ ./configure --prefix=$HOME/lalsuite-extra
+    $ ./configure --prefix=$HOME/.local
     $ make install
 
 Then, add the following line to your shell profile script (``~/.profile``,
 ``~/.bashrc``, or similar)::
 
-    export LAL_DATA_PATH=$HOME/lalsuite-extra/lalsimulation
+    export LAL_DATA_PATH=$HOME/.local/share/lalsimulation
 
 Then log out and log back in.

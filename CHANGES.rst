@@ -5,7 +5,8 @@ Changelog
 0.3.2 (unreleased)
 ==================
 
-- No changes yet.
+- Normalize column names when an ascii file is passed to
+  ``ligo-skymap-from-samples``.
 
 0.3.1 (2020-05-28)
 ==================

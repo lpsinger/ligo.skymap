@@ -81,6 +81,7 @@ def main(args=None):
 
     # Late imports
     from .. import io
+    from ..io.hdf5 import _remap_colnames
     from ..bayestar import rasterize
     from .. import version
     from astropy.table import Table
@@ -101,6 +102,7 @@ def main(args=None):
     except IOError:
         # FIXME: remove this code path once we support only HDF5
         data = Table.read(args.samples, format='ascii')
+        _remap_colnames(data)
 
     if args.maxpts is not None and args.maxpts < len(data):
         log.info('taking random subsample of chain')

@@ -107,8 +107,11 @@ static PyTypeObject OmpType = {
 
 
 static void conditional_pdf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
@@ -132,8 +135,11 @@ static void conditional_pdf_loop(
 
 
 static void conditional_cdf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
@@ -157,8 +163,11 @@ static void conditional_cdf_loop(
 
 
 static void conditional_ppf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
@@ -182,8 +191,11 @@ static void conditional_ppf_loop(
 
 
 static void moments_to_parameters_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
@@ -208,8 +220,11 @@ static void moments_to_parameters_loop(
 
 
 static void parameters_to_moments_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
@@ -234,8 +249,11 @@ static void parameters_to_moments_loop(
 
 
 static void volume_render_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const long long nside = npix2nside64(dimensions[2]);
@@ -272,8 +290,11 @@ static void volume_render_loop(
 
 
 static void marginal_pdf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     /* Assert that array arguments are stored contiguously */
     if (steps[6] != sizeof(double))
     {
@@ -307,8 +328,11 @@ static void marginal_pdf_loop(
 
 
 static void marginal_cdf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     /* Assert that array arguments are stored contiguously */
     if (steps[6] != sizeof(double))
     {
@@ -342,8 +366,11 @@ static void marginal_cdf_loop(
 
 
 static void marginal_ppf_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
-{
+    char **args,
+    const npy_intp *dimensions,
+    const npy_intp *steps,
+    void *NPY_UNUSED(data)
+) {
     /* Assert that array arguments are stored contiguously */
     if (steps[6] != sizeof(double))
     {
@@ -1007,24 +1034,27 @@ static PyObject *test(
 /*****************************************************************************/
 
 
+/* FIXME: (PyUFuncGenericFunction) casts below work around possible mismatched
+ * const-ness of the dimensions and steps arguments, which became const in
+ * Numpy 1.19.0. Remove casts once we drop support for Numpy < 1.19.0. */
 static const PyUFuncGenericFunction
-    conditional_pdf_loops[] = {conditional_pdf_loop},
-    conditional_cdf_loops[] = {conditional_cdf_loop},
-    conditional_ppf_loops[] = {conditional_ppf_loop},
-    moments_to_parameters_loops[] = {moments_to_parameters_loop},
-    parameters_to_moments_loops[] = {parameters_to_moments_loop},
-    volume_render_loops[] = {volume_render_loop},
-    marginal_pdf_loops[] = {marginal_pdf_loop},
-    marginal_cdf_loops[] = {marginal_cdf_loop},
-    marginal_ppf_loops[] = {marginal_ppf_loop},
-    nest2uniq_loops[] = {nest2uniq_loop},
-    uniq2nest_loops[] = {uniq2nest_loop},
-    uniq2order_loops[] = {uniq2order_loop},
-    uniq2pixarea_loops[] = {uniq2pixarea_loop},
-    uniq2ang_loops[] = {uniq2ang_loop},
-    log_posterior_toa_phoa_snr_loops[] = {log_posterior_toa_phoa_snr_loop},
-    antenna_factor_loops[] = {antenna_factor_loop},
-    signal_amplitude_model_loops[] = {signal_amplitude_model_loop};
+    conditional_pdf_loops[] = {(PyUFuncGenericFunction) conditional_pdf_loop},
+    conditional_cdf_loops[] = {(PyUFuncGenericFunction) conditional_cdf_loop},
+    conditional_ppf_loops[] = {(PyUFuncGenericFunction) conditional_ppf_loop},
+    moments_to_parameters_loops[] = {(PyUFuncGenericFunction) moments_to_parameters_loop},
+    parameters_to_moments_loops[] = {(PyUFuncGenericFunction) parameters_to_moments_loop},
+    volume_render_loops[] = {(PyUFuncGenericFunction) volume_render_loop},
+    marginal_pdf_loops[] = {(PyUFuncGenericFunction) marginal_pdf_loop},
+    marginal_cdf_loops[] = {(PyUFuncGenericFunction) marginal_cdf_loop},
+    marginal_ppf_loops[] = {(PyUFuncGenericFunction) marginal_ppf_loop},
+    nest2uniq_loops[] = {(PyUFuncGenericFunction) nest2uniq_loop},
+    uniq2nest_loops[] = {(PyUFuncGenericFunction) uniq2nest_loop},
+    uniq2order_loops[] = {(PyUFuncGenericFunction) uniq2order_loop},
+    uniq2pixarea_loops[] = {(PyUFuncGenericFunction) uniq2pixarea_loop},
+    uniq2ang_loops[] = {(PyUFuncGenericFunction) uniq2ang_loop},
+    log_posterior_toa_phoa_snr_loops[] = {(PyUFuncGenericFunction) log_posterior_toa_phoa_snr_loop},
+    antenna_factor_loops[] = {(PyUFuncGenericFunction) antenna_factor_loop},
+    signal_amplitude_model_loops[] = {(PyUFuncGenericFunction) signal_amplitude_model_loop};
 
 static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,

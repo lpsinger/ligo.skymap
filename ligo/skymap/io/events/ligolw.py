@@ -77,7 +77,7 @@ class LigoLWEventSource(OrderedDict, EventSource):
 
     Parameters
     ----------
-    f : str, file-like object, or `glue.ligolw.utils.Document`
+    f : str, file-like object, or `glue.ligolw.ligolw.Document`
         The name of the file, or the file object, or the XML document object,
         containing the trigger tables.
     psd_file : str, file-like object, or `glue.ligolw.ligolw.Document`

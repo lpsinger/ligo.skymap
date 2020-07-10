@@ -85,9 +85,6 @@ class LigoLWEventSource(OrderedDict, EventSource):
         containing the PSDs. If not supplied, then PSDs will be read
         automatically from any files mentioned in ``--reference-psd`` command
         line arguments stored in the ProcessParams table.
-    psd_file : str, file-like object, or `glue.ligolw.ligolw.Document`
-        The name of the file, or the file object, or the XML document object,
-        containing the PSDs.
     coinc_def : `glue.ligolw.lsctables.CoincDef`, optional
         An optional coinc definer to limit which events are read.
     fallbackpath : str, optional

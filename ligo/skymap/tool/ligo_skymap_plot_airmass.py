@@ -90,7 +90,7 @@ def main(args=None):
     from ..io import fits
     from .. import moc
     from .. import plot  # noqa
-    from ..extern.quantile import percentile
+    from ..extern.numpy.quantile import percentile
 
     if opts.site is None:
         if opts.site_longitude is None or opts.site_latitude is None:

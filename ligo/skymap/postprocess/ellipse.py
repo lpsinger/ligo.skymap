@@ -22,7 +22,7 @@ import healpy as hp
 import numpy as np
 
 from .. import moc
-from ..extern.quantile import quantile
+from ..extern.numpy.quantile import quantile
 
 __all__ = ('find_ellipse',)
 

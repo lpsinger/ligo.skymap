@@ -1,7 +1,7 @@
 This project contains adaptations of the following parts of Numpy
 (https://numpy.org):
 
-ligo/skymap/extern/quantile.py:
+ligo/skymap/extern/numpy/quantile.py:
     The weighted quantile implementation from
     https://github.com/numpy/numpy/pull/9211
 

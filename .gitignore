@@ -24,6 +24,9 @@ docs/_build
 # Pycharm editor project files
 .idea
 
+# Visual Studio Code files
+.vscode
+
 # Floobits project files
 .floo
 .flooignore

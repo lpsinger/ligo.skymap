@@ -18,12 +18,13 @@
 
 import numpy as np
 
-from . import ArgumentParser, FileType
+from . import ArgumentParser, FileType, HelpChoicesAction
 from .matplotlib import figure_parser
 
 
 def parser():
     from astropy.coordinates import EarthLocation
+    site_names = EarthLocation.get_site_names()
     parser = ArgumentParser(parents=[figure_parser])
     parser.add_argument(
         '-v', '--verbose', action='store_true',
@@ -34,8 +35,9 @@ def parser():
     parser.add_argument(
         '--time', help='UTC time')
     parser.add_argument(
-        '--site', choices=EarthLocation.get_site_names(),
-        help='Observatory site')
+        '--site', metavar='SITE', choices=site_names, help='Observatory site')
+    parser.add_argument(
+        '--help-site', action=HelpChoicesAction, choices=site_names)
     parser.add_argument(
         '--site-longitude', metavar='DEG', type=float,
         help='Observatory longitude on the WGS84 ellipsoid. '

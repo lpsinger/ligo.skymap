@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-"""Functions that support the command line interface."""
+"""Functions that support the command line interface for plotting tools."""
 
 import argparse
 import os

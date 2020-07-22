@@ -20,7 +20,8 @@ import re
 
 import numpy as np
 
-from . import figure_parser, ArgumentParser, FileType
+from . import ArgumentParser, FileType
+from .matplotlib import figure_parser
 
 
 def fmt(x, sigfigs, force_scientific=False):

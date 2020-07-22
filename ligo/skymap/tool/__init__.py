@@ -26,24 +26,12 @@ import logging
 import os
 import sys
 
-import matplotlib
-from matplotlib import cm
 import numpy as np
 
-from ..plot import cmap  # noqa
 from ..util import sqlite
 from .. import version
 
 version_string = version.__package__ + ' ' + version.version
-
-# Set no-op Matplotlib backend to defer importing anything that requires a GUI
-# until we have determined that it is necessary based on the command line
-# arguments.
-if 'matplotlib.pyplot' in sys.modules:
-    from matplotlib import pyplot as plt
-    plt.switch_backend('Template')
-else:
-    matplotlib.use('Template', warn=False, force=True)
 
 
 class FileType(argparse.FileType):
@@ -184,47 +172,6 @@ group.add_argument(
 del group
 
 
-class MatplotlibFigureType(FileType):
-
-    def __init__(self):
-        super().__init__('wb')
-
-    @staticmethod
-    def __show():
-        from matplotlib import pyplot as plt
-        return plt.show()
-
-    @staticmethod
-    def get_savefig_metadata(format):
-        program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
-        cmdline = ' '.join([program] + sys.argv[1:])
-        metadata = {'Title': cmdline}
-        if format == 'png':
-            metadata['Software'] = version_string
-        elif format in {'pdf', 'ps', 'eps'}:
-            metadata['Creator'] = version_string
-        return metadata
-
-    def __save(self):
-        from matplotlib import pyplot as plt
-        _, ext = os.path.splitext(self.string)
-        format = ext.lower().lstrip('.')
-        metadata = self.get_savefig_metadata(format)
-        return plt.savefig(self.string, metadata=metadata)
-
-    def __call__(self, string):
-        from matplotlib import pyplot as plt
-        if string == '-':
-            plt.switch_backend(matplotlib.rcParamsOrig['backend'])
-            return self.__show
-        else:
-            with super().__call__(string):
-                pass
-            plt.switch_backend('agg')
-            self.string = string
-            return self.__save
-
-
 class HelpChoicesAction(argparse.Action):
 
     def __init__(self,
@@ -257,66 +204,6 @@ def type_with_sideeffect(type):
             return ret
         return func
     return decorator
-
-
-@type_with_sideeffect(str)
-def colormap(value):
-    from matplotlib import rcParams
-    rcParams['image.cmap'] = value
-
-
-@type_with_sideeffect(float)
-def figwidth(value):
-    from matplotlib import rcParams
-    rcParams['figure.figsize'][0] = float(value)
-
-
-@type_with_sideeffect(float)
-def figheight(value):
-    from matplotlib import rcParams
-    rcParams['figure.figsize'][1] = float(value)
-
-
-@type_with_sideeffect(int)
-def dpi(value):
-    from matplotlib import rcParams
-    rcParams['figure.dpi'] = rcParams['savefig.dpi'] = float(value)
-
-
-@type_with_sideeffect(int)
-def transparent(value):
-    from matplotlib import rcParams
-    rcParams['savefig.transparent'] = bool(value)
-
-
-figure_parser = argparse.ArgumentParser(add_help=False)
-colormap_choices = sorted(cm.cmap_d.keys())
-group = figure_parser.add_argument_group(
-    'figure options', 'Options that affect figure output format')
-group.add_argument(
-    '-o', '--output', metavar='FILE.{pdf,png}',
-    default='-', type=MatplotlibFigureType(),
-    help='output file, or - to plot to screen')
-group.add_argument(
-    '--colormap', default='cylon', choices=colormap_choices,
-    type=colormap, metavar='CMAP',
-    help='matplotlib colormap')
-group.add_argument(
-    '--help-colormap', action=HelpChoicesAction, choices=colormap_choices)
-group.add_argument(
-    '--figure-width', metavar='INCHES', type=figwidth, default='8',
-    help='width of figure in inches')
-group.add_argument(
-    '--figure-height', metavar='INCHES', type=figheight, default='6',
-    help='height of figure in inches')
-group.add_argument(
-    '--dpi', metavar='PIXELS', type=dpi, default=300,
-    help='resolution of figure in dots per inch')
-group.add_argument(
-    '--transparent', const='1', default='0', nargs='?', type=transparent,
-    help='Save image with transparent background')
-del colormap_choices
-del group
 
 
 @type_with_sideeffect(str)

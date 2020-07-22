@@ -21,7 +21,8 @@ cumulatively by false alarm rate or SNR.
 from distutils.dir_util import mkpath
 import os
 
-from . import ArgumentParser, FileType, MatplotlibFigureType
+from . import ArgumentParser, FileType
+from .matplotlib import MatplotlibFigureType
 
 
 def parser():

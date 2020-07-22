@@ -18,7 +18,8 @@
 
 import numpy as np
 
-from . import ArgumentParser, FileType, figure_parser
+from . import ArgumentParser, FileType
+from .matplotlib import figure_parser
 
 
 def parser():

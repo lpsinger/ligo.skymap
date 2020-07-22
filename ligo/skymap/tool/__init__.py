@@ -185,7 +185,7 @@ class HelpChoicesAction(argparse.Action):
             dest=dest,
             default=default,
             nargs=0,
-            help='show support values for --' + name + ' and exit')
+            help='show supported values for --' + name + ' and exit')
         self._name = name
         self._choices = choices
 

@@ -21,12 +21,9 @@ import os
 import sys
 
 import matplotlib
-from matplotlib import cm
 
 from ..plot import cmap  # noqa
 from . import FileType, HelpChoicesAction, type_with_sideeffect, version_string
-
-__all__ = ('figure_parser',)
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
 # until we have determined that it is necessary based on the command line
@@ -36,6 +33,9 @@ if 'matplotlib.pyplot' in sys.modules:
     plt.switch_backend('Template')
 else:
     matplotlib.use('Template', warn=False, force=True)
+    from matplotlib import pyplot as plt
+
+__all__ = ('figure_parser',)
 
 
 class MatplotlibFigureType(FileType):
@@ -110,7 +110,6 @@ def transparent(value):
 
 
 figure_parser = argparse.ArgumentParser(add_help=False)
-colormap_choices = sorted(cm.cmap_d.keys())
 group = figure_parser.add_argument_group(
     'figure options', 'Options that affect figure output format')
 group.add_argument(
@@ -118,11 +117,10 @@ group.add_argument(
     default='-', type=MatplotlibFigureType(),
     help='output file, or - to plot to screen')
 group.add_argument(
-    '--colormap', default='cylon', choices=colormap_choices,
-    type=colormap, metavar='CMAP',
-    help='matplotlib colormap')
+    '--colormap', default='cylon', choices=plt.colormaps(), type=colormap,
+    metavar='CMAP', help='matplotlib colormap')
 group.add_argument(
-    '--help-colormap', action=HelpChoicesAction, choices=colormap_choices)
+    '--help-colormap', action=HelpChoicesAction, choices=plt.colormaps())
 group.add_argument(
     '--figure-width', metavar='INCHES', type=figwidth, default='8',
     help='width of figure in inches')
@@ -135,5 +133,4 @@ group.add_argument(
 group.add_argument(
     '--transparent', const='1', default='0', nargs='?', type=transparent,
     help='Save image with transparent background')
-del colormap_choices
 del group

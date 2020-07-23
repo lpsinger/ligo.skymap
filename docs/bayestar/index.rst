@@ -12,6 +12,6 @@ Supporting Modules
 .. toctree::
    :maxdepth: 1
 
-   bayestar/ez_emcee
-   bayestar/filter
-   bayestar/interpolation
+   ez_emcee
+   filter
+   interpolation

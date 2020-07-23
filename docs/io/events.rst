@@ -6,7 +6,7 @@ This module provides a high-level interface for reading event records from
 LIGO/Virgo/KAGRA search pipelines.
 
 * To read offline events from GstLAL, PyCBC, or
-  :doc:`bayestar-realize-coincs </ligo/skymap/tool/bayestar_realize_coincs>`,
+  :doc:`bayestar-realize-coincs </tool/bayestar_realize_coincs>`,
   use :obj:`ligo.skymap.io.events.open`. It can read GstLAL's LIGO-LW XML or
   SQLite files and PyCBC's HDF5 files produced by PyCBC.
 

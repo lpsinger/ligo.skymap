@@ -7,16 +7,16 @@ visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
 the key features of this package are:
 
 *  Command line tool :doc:`bayestar-localize-coincs
-   <ligo/skymap/tool/bayestar_localize_coincs>`: BAYESTAR, providing rapid,
+   <tool/bayestar_localize_coincs>`: BAYESTAR, providing rapid,
    coherent, Bayesian, 3D position reconstruction for compact binary
    coalescence events
 
 *  Command line tool :doc:`ligo-skymap-from-samples
-   <ligo/skymap/tool/ligo_skymap_from_samples>`: Create 3D sky maps from
+   <tool/ligo_skymap_from_samples>`: Create 3D sky maps from
    posterior sample chains using kernel density estimation
 
 *  Command line tool :doc:`ligo-skymap-plot
-   <ligo/skymap/tool/ligo_skymap_plot>`: An everyday tool for plotting HEALPix
+   <tool/ligo_skymap_plot>`: An everyday tool for plotting HEALPix
    maps
 
 *  Module :mod:`ligo.skymap.plot.allsky`: Astronomical mapmaking tools for
@@ -55,8 +55,8 @@ Coordinate Frames (`ligo.skymap.coordinates`)
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/coordinates/detector
-   ligo/skymap/coordinates/eigenframe
+   coordinates/detector
+   coordinates/eigenframe
 
 I/O and Data Format Support (`ligo.skymap.io`)
 ----------------------------------------------
@@ -64,9 +64,9 @@ I/O and Data Format Support (`ligo.skymap.io`)
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/io/events
-   ligo/skymap/io/fits
-   ligo/skymap/io/hdf5
+   io/events
+   io/fits
+   io/hdf5
 
 Plotting and Visualization (`ligo.skymap.plot`)
 -----------------------------------------------
@@ -74,10 +74,10 @@ Plotting and Visualization (`ligo.skymap.plot`)
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/plot/allsky
-   ligo/skymap/plot/backdrop
-   ligo/skymap/plot/marker
-   ligo/skymap/plot/pp
+   plot/allsky
+   plot/backdrop
+   plot/marker
+   plot/pp
 
 Sky Map Postprocessing (`ligo.skymap.postprocess`)
 --------------------------------------------------
@@ -85,11 +85,11 @@ Sky Map Postprocessing (`ligo.skymap.postprocess`)
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/postprocess/contour
-   ligo/skymap/postprocess/cosmology
-   ligo/skymap/postprocess/crossmatch
-   ligo/skymap/postprocess/ellipse
-   ligo/skymap/postprocess/util
+   postprocess/contour
+   postprocess/cosmology
+   postprocess/crossmatch
+   postprocess/ellipse
+   postprocess/util
 
 Localization
 ------------
@@ -97,12 +97,12 @@ Localization
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/bayestar
-   ligo/skymap/bayestar/ez_emcee
-   ligo/skymap/distance
-   ligo/skymap/healpix_tree
-   ligo/skymap/kde
-   ligo/skymap/moc
+   bayestar/index
+   bayestar/ez_emcee
+   distance/index
+   healpix_tree/index
+   kde/index
+   moc/index
 
 Utilities
 ---------
@@ -110,11 +110,11 @@ Utilities
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/util/file
-   ligo/skymap/util/ilwd
-   ligo/skymap/util/numpy
-   ligo/skymap/util/sqlite
-   ligo/skymap/tool/index
+   util/file
+   util/ilwd
+   util/numpy
+   util/sqlite
+   tool/index
 
 ******************
 Command Line Tools
@@ -126,12 +126,12 @@ BAYESTAR Rapid Sky Localization
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/tool/bayestar_localize_coincs
-   ligo/skymap/tool/bayestar_localize_lvalert
-   ligo/skymap/tool/bayestar_mcmc
-   ligo/skymap/tool/bayestar_realize_coincs
-   ligo/skymap/tool/bayestar_sample_model_psd
-   ligo/skymap/tool/bayestar_inject
+   tool/bayestar_localize_coincs
+   tool/bayestar_localize_lvalert
+   tool/bayestar_mcmc
+   tool/bayestar_realize_coincs
+   tool/bayestar_sample_model_psd
+   tool/bayestar_inject
 
 Sky Map Visualization
 ---------------------
@@ -139,12 +139,12 @@ Sky Map Visualization
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/tool/ligo_skymap_contour
-   ligo/skymap/tool/ligo_skymap_contour_moc
-   ligo/skymap/tool/ligo_skymap_plot
-   ligo/skymap/tool/ligo_skymap_plot_airmass
-   ligo/skymap/tool/ligo_skymap_plot_observability
-   ligo/skymap/tool/ligo_skymap_plot_volume
+   tool/ligo_skymap_contour
+   tool/ligo_skymap_contour_moc
+   tool/ligo_skymap_plot
+   tool/ligo_skymap_plot_airmass
+   tool/ligo_skymap_plot_observability
+   tool/ligo_skymap_plot_volume
 
 Postprocessing
 --------------
@@ -152,13 +152,13 @@ Postprocessing
 .. toctree::
    :maxdepth: 1
 
-   ligo/skymap/tool/ligo_skymap_combine
-   ligo/skymap/tool/ligo_skymap_constellations
-   ligo/skymap/tool/ligo_skymap_from_samples
-   ligo/skymap/tool/ligo_skymap_plot_stats
-   ligo/skymap/tool/ligo_skymap_stats
-   ligo/skymap/tool/ligo_skymap_flatten
-   ligo/skymap/tool/ligo_skymap_unflatten
+   tool/ligo_skymap_combine
+   tool/ligo_skymap_constellations
+   tool/ligo_skymap_from_samples
+   tool/ligo_skymap_plot_stats
+   tool/ligo_skymap_stats
+   tool/ligo_skymap_flatten
+   tool/ligo_skymap_unflatten
 
 **************
 Developer Info

@@ -218,7 +218,7 @@ def crossmatch(sky_map, coordinates=None,
     Notes
     -----
     This function is also be used for injection finding; see
-    :doc:`/ligo/skymap/tool/ligo_skymap_stats`.
+    :doc:`/tool/ligo_skymap_stats`.
 
     Examples
     --------

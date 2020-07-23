@@ -4,13 +4,13 @@ Interface definition for online detection pipelines
 
 The BAYESTAR rapid localization algorithm is designed as a post-processing
 stage for compact binary merger search pipelines. The script
-:doc:`bayestar-localize-lvalert </ligo/skymap/tool/bayestar_localize_lvalert>`
+:doc:`bayestar-localize-lvalert </tool/bayestar_localize_lvalert>`
 provides rapid sky localization as a service.
 
 .. note::
     Other available modes of operation for BAYESTAR that are documented
     elsewhere include the script :doc:`bayestar-localize-coincs
-    </ligo/skymap/tool/bayestar_localize_coincs>` for offline batch processing
+    </tool/bayestar_localize_coincs>` for offline batch processing
     and the method :meth:`ligo.skymap.bayestar.localize` for directly calling
     BAYESTAR from Python code.
 
@@ -19,7 +19,7 @@ Sequence diagram
 
 In online operation, search pipelines upload candidates to the
 Gravitational-Wave Candidate Event Database (`GraceDB`_). The script
-:doc:`bayestar-localize-lvalert </ligo/skymap/tool/bayestar_localize_lvalert>`
+:doc:`bayestar-localize-lvalert </tool/bayestar_localize_lvalert>`
 (or the equivalent :doc:`Celery <celery:index>` task in :doc:`GWCelery
 <gwcelery:index>`) listens for and intercepts :doc:`LVAlert <gracedb:lvalert>`
 pubsub messages. For each event created, the script downloads the pipeline's

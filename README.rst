@@ -48,10 +48,10 @@ documentation`_.
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
    https://10.1126/science.aap9455
 
-.. _`Command line tool bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_coincs.html
-.. _`bayestar-localize-lvalert`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/bayestar_localize_lvalert.html
-.. _`Command line tool ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_from_samples.html
-.. _`Command line tool ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/ligo/skymap/tool/ligo_skymap_plot.html
+.. _`Command line tool bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_coincs.html
+.. _`bayestar-localize-lvalert`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_lvalert.html
+.. _`Command line tool ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/ligo_skymap_from_samples.html
+.. _`Command line tool ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/ligo_skymap_plot.html
 .. _`Module ligo.skymap.plot`: https://lscsoft.docs.ligo.org/ligo.skymap/#plotting-and-visualization-ligo-skymap-plot
 .. _`installation instructions`: https://lscsoft.docs.ligo.org/ligo.skymap/quickstart/install.html
 .. _`full documentation`: https://lscsoft.docs.ligo.org/ligo.skymap

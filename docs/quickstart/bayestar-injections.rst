@@ -55,7 +55,7 @@ The output is saved in LIGO-LW format to ``inj.xml``.
 -------------------
 
 Create discretely sampled noise PSDs for all of your detectors using
-:doc:`bayestar-sample-model-psd <../ligo/skymap/tool/bayestar_sample_model_psd>`::
+:doc:`bayestar-sample-model-psd <../tool/bayestar_sample_model_psd>`::
 
     bayestar-sample-model-psd \
     `# Write output to psd.xml.` \
@@ -105,7 +105,7 @@ The output is saved in LIGO-LW format to ``coinc.xml``.
 ---------------
 
 Finally, make sky maps for your simulated events using
-:doc:`bayestar-localize-coincs <../ligo/skymap/tool/bayestar_localize_coincs>`.
+:doc:`bayestar-localize-coincs <../tool/bayestar_localize_coincs>`.
 If you are working on a computing cluster that uses the
 `HTCondor <https://research.cs.wisc.edu/htcondor/>`_ job scheduler, then you
 can add the ``--condor-submit`` to automatically submit the BAYESTAR jobs to
@@ -139,7 +139,7 @@ The output is saved in SQLite format as ``coinc.sqlite``.
 6. Analyze Sky Maps
 -------------------
 
-Use the :doc:`ligo-skymap-stats <../ligo/skymap/tool/ligo_skymap_stats>` tool
+Use the :doc:`ligo-skymap-stats <../tool/ligo_skymap_stats>` tool
 to gather summary statistics including credible areas for each sky map::
 
     ligo-skymap-stats \
@@ -167,6 +167,6 @@ The output is saved in tab-separated value format as ``bayestar.tsv``.
 ---------------------
 
 Lastly, make summary graphs including histograms and P-P plots using
-:doc:`ligo-skymap-plot-stats <../ligo/skymap/tool/ligo_skymap_plot_stats>`::
+:doc:`ligo-skymap-plot-stats <../tool/ligo_skymap_plot_stats>`::
 
     ligo-skymap-plot-stats bayestar.tsv

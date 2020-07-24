@@ -91,7 +91,7 @@ Grid cluster.
 
 Some gravitational waveform approximants in LALSuite (notably, reduced order
 models) rely on external data files. These data files are part of
-lalsuite-extra, which must be installed separately. To install these data
+`lalsuite-extra`_, which must be installed separately. To install these data
 files, run the following commands::
 
     $ curl -O https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
@@ -106,3 +106,5 @@ Then, add the following line to your shell profile script (``~/.profile``,
     export LAL_DATA_PATH=$HOME/.local/share/lalsimulation
 
 Then log out and log back in.
+
+.. _`lalsuite-extra`: https://git.ligo.org/lscsoft/lalsuite-extra

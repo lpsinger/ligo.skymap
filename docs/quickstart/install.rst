@@ -81,8 +81,8 @@ You are now ready to get started using `ligo.skymap`.
 
           *  `pytest <https://docs.pytest.org>`_ for running the test suite
 
-Optional Data
--------------
+Optional LALSimulation Data
+---------------------------
 
 The following instructions are only relevant if you are installing ligo.skymap
 for the purpose of generating localizations with BAYESTAR (e.g., for analysis

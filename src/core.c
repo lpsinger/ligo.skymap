@@ -16,6 +16,23 @@
  */
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define Py_LIMITED_API 0x03060000
+
+/* FIXME:
+ * The Numpy C-API defines PyArrayDescr_Type as:
+ *
+ *   #define PyArrayDescr_Type (*(PyTypeObject *)PyArray_API[3])
+ *
+ * and then in some places we need to take its address, &PyArrayDescr_Type.
+ * This is fine in GCC 10 and Clang, but earlier versions of GCC complain:
+ *
+ *   error: dereferencing pointer to incomplete type 'PyTypeObject'
+ *   {aka 'struct _typeobject'}
+ *
+ * As a workaround, provide a faux forward declaration for PyTypeObject.
+ * See https://github.com/numpy/numpy/issues/16970.
+ */
+struct _typeobject {};
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -40,13 +57,8 @@ WARNINGS_POP
 #include "omp_interruptible.h"
 
 
-typedef struct {
-    PyObject_HEAD
-} Omp;
-
-
 static PyObject *
-Omp_get_num_threads(Omp *NPY_UNUSED(self), void *NPY_UNUSED(closure))
+get_num_threads(PyObject *NPY_UNUSED(module), void *NPY_UNUSED(args))
 {
     int ret;
 #ifdef _OPENMP
@@ -67,43 +79,24 @@ Omp_get_num_threads(Omp *NPY_UNUSED(self), void *NPY_UNUSED(closure))
 }
 
 
-static int Omp_set_num_threads(Omp *NPY_UNUSED(self), PyObject *value,
-                               void *NPY_UNUSED(closure))
+static PyObject *
+set_num_threads(PyObject *NPY_UNUSED(module), PyObject *value)
 {
     unsigned long value_ulong = PyLong_AsUnsignedLong(value);
-    if (value_ulong > INT_MAX)
+    if (PyErr_Occurred())
+        return NULL;
+    else if (value_ulong > INT_MAX)
     {
         PyErr_SetString(
             PyExc_OverflowError,
             "omp.num_threads must be less than or equal to INT_MAX");
-        return -1;
+        return NULL;
     }
 #ifdef _OPENMP
     omp_set_num_threads((int) value_ulong);
 #endif
-    return 0;
+    Py_RETURN_NONE;
 }
-
-
-static PyGetSetDef Omp_getsetdefs[] = {
-    {"num_threads", (getter)Omp_get_num_threads, (setter)Omp_set_num_threads,
-     "Number of OpenMP threads", NULL},
-    {NULL}
-};
-
-
-static PyTypeObject OmpType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "ligo.skymap.omp",
-    .tp_basicsize = sizeof(Omp),
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = "Global OpenMP settings",
-    .tp_getset = Omp_getsetdefs,
-};
-
-
-
-/*****************************************************************************/
 
 
 static void conditional_pdf_loop(
@@ -657,7 +650,7 @@ static void uniq2ang_loop(
     } \
     for (unsigned int iifo = 0; iifo < nifos; iifo ++) \
     { \
-        PyObject *obj = PySequence_ITEM(NAME##_obj, iifo); \
+        PyObject *obj = PySequence_GetItem(NAME##_obj, iifo); \
         if (!obj) goto fail; \
         PyArrayObject *npy = (PyArrayObject *) \
             PyArray_ContiguousFromAny(obj, NPYTYPE, DEPTH, DEPTH); \
@@ -1084,6 +1077,10 @@ static void *const no_ufunc_data[] = {NULL};
 static const char modulename[] = "core";
 
 static PyMethodDef methods[] = {
+    {"get_num_threads", (PyCFunction)get_num_threads,
+        METH_NOARGS, "fill me in"},
+    {"set_num_threads", (PyCFunction)set_num_threads,
+        METH_O, "fill me in"},
     {"rasterize", (PyCFunction)rasterize,
         METH_VARARGS | METH_KEYWORDS, "fill me in"},
     {"toa_phoa_snr", (PyCFunction)sky_map_toa_phoa_snr,
@@ -1125,10 +1122,6 @@ PyMODINIT_FUNC PyInit_core(void)
     import_array();
     import_umath();
 
-    OmpType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&OmpType) < 0)
-        return NULL;
-
     sky_map_descr = sky_map_create_descr();
     if (!sky_map_descr)
         return NULL;
@@ -1136,9 +1129,6 @@ PyMODINIT_FUNC PyInit_core(void)
     module = PyModule_Create(&moduledef);
     if (!module)
         return NULL;
-
-    MODULE_ADD_OBJECT("omp",
-        PyObject_CallFunctionObjArgs((PyObject *) &OmpType, NULL));
 
     /* Ignore warnings in Numpy API */
     WARNINGS_PUSH

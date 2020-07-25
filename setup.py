@@ -48,8 +48,8 @@ def get_extensions():
     if os.environ.get('LIGO_SKYMAP_USE_ITTNOTIFY'):
         kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
 
-    extension = Extension(
-        name='ligo.skymap.core', language='c', sources=sources, **kwargs)
+    extension = Extension(name='ligo.skymap.core', language='c',
+                          py_limited_api=True, sources=sources, **kwargs)
 
     if not os.environ.get('LIGO_SKYMAP_DISABLE_OPENMP'):
         add_openmp_flags_if_available(extension)

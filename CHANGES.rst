@@ -15,6 +15,10 @@ Changelog
 - Refactor ``ligo-skymap-stats`` to unify its multiprocessing and progress bar
   implementation with other command line tools.
 
+- Port the Python C extension to the limited stable Python API in order to
+  reduce the number of required binary builds. See
+  `PEP 384 <https://www.python.org/dev/peps/pep-0384/>`_.
+
 0.4.0 (2020-07-26)
 ==================
 
@@ -31,6 +35,10 @@ Changelog
   package's command line tools will now yield results in order as quickly as
   they arrive, rather than sorting all of the results at the end. This should
   provide a very modest speedup in some command line tools.
+
+- Use the `Python limited API <https://www.python.org/dev/peps/pep-0384/>`_
+  so that one binary wheel works for all supported Python versions for any
+  given operating system.
 
 0.3.1 (2020-05-28)
 ==================

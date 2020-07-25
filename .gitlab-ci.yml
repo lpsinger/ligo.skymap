@@ -52,7 +52,7 @@ sdist:
 # Build binary wheels for Linux and macOS.
 #
 
-.wheel/manylinux2014: &wheel-manylinux2014
+wheel/manylinux:
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
@@ -60,7 +60,7 @@ sdist:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/$(echo ${CI_JOB_NAME} | sed 's/.*\/\(.*\)-manylinux2014/\1/')
+    - PYPREFIX=/opt/python/cp36-cp36m
     - ${PYPREFIX}/bin/pip install pep517
     - ${PYPREFIX}/bin/python -m pep517.build -b .
     - auditwheel repair dist/*.whl
@@ -74,7 +74,7 @@ sdist:
       - ARTIFACTS_URL
     expire_in: 1 day
 
-.wheel/macos: &wheel-macos
+wheel/macosx:
   variables:
     CC: gcc-mp-8
     CXX: g++-mp-8
@@ -82,7 +82,7 @@ sdist:
     - macos_sierra
   stage: dist
   script:
-    - PYVERS=$(echo ${CI_JOB_NAME} | sed 's/.*\/cp\(.\)\(.\).*/\1.\2/')
+    - PYVERS=3.6
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -99,19 +99,6 @@ sdist:
     paths:
       - '*.whl'
     expire_in: 1 day
-
-wheel/cp36-cp36m-manylinux2014:
-  <<: *wheel-manylinux2014
-wheel/cp37-cp37m-manylinux2014:
-  <<: *wheel-manylinux2014
-wheel/cp38-cp38-manylinux2014:
-  <<: *wheel-manylinux2014
-wheel/cp36-cp36m-macosx:
-  <<: *wheel-macos
-wheel/cp37-cp37m-macosx:
-  <<: *wheel-macos
-wheel/cp38-cp38-macosx:
-  <<: *wheel-macos
 
 #
 # Build Docker containers for dependencies listed in requirements.txt,
@@ -193,21 +180,21 @@ test/python3.6:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   needs:
     - dependencies/python3.6
-    - wheel/cp36-cp36m-manylinux2014
+    - wheel/manylinux
 
 test/python3.7:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   needs:
     - dependencies/python3.7
-    - wheel/cp37-cp37m-manylinux2014
+    - wheel/manylinux
 
 test/python3.8:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
   needs:
     - dependencies/python3.8
-    - wheel/cp38-cp38-manylinux2014
+    - wheel/manylinux
 
 #
 # Measure test coverage:
@@ -330,7 +317,7 @@ tests/acceptance:
       --form "ref=master"
       "$CI_API_V4_URL/projects/lscsoft%2Fligo-skymap-acceptance-tests/trigger/pipeline"
   needs:
-    - wheel/cp37-cp37m-manylinux2014
+    - wheel/manylinux
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.
@@ -364,11 +351,7 @@ deploy/wheel:
     - twine upload *.whl *.tar.*
   needs:
     - sdist
-    - wheel/cp36-cp36m-manylinux2014
-    - wheel/cp37-cp37m-manylinux2014
-    - wheel/cp38-cp38-manylinux2014
-    - wheel/cp36-cp36m-macosx
-    - wheel/cp37-cp37m-macosx
-    - wheel/cp38-cp38-macosx
+    - wheel/manylinux
+    - wheel/macosx
   only:
     - tags

@@ -38,8 +38,7 @@ class WrappedFunc:
 
 
 def progress_map(func, *iterables, jobs=1, **kwargs):
-    r"""
-    Map a function across iterables of arguments.
+    """Map a function across iterables of arguments.
 
     This is comparable to :meth:`astropy.utils.console.ProgressBar.map`, except
     that it is implemented using :mod:`tqdm` and so provides more detailed and

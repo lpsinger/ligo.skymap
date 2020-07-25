@@ -177,11 +177,10 @@ def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
     return horizon, snr, phase, toa, tseries
 
 
-def simulate(seed_sim_inspiral, psds, responses, locations, measurement_error,
+def simulate(seed, sim_inspiral, psds, responses, locations, measurement_error,
              f_low=None, waveform=None):
     from ..bayestar import filter
 
-    seed, sim_inspiral = seed_sim_inspiral
     np.random.seed(seed)
 
     # Unpack some values from the row in the table.
@@ -265,6 +264,7 @@ def main(args=None):
     # BAYESTAR imports.
     from ..io.events.ligolw import ContentHandler
     from ..bayestar import filter
+    from ..util.progress import progress_map
 
     # Read PSDs.
     xmldoc = ligolw_utils.load_fileobj(
@@ -327,13 +327,9 @@ def main(args=None):
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 
-    if opts.jobs == 1:
-        pool_map = map
-    else:
+    if opts.jobs != 1:
         from .. import omp
-        from multiprocessing import Pool
         omp.num_threads = 1  # disable OpenMP parallelism
-        pool_map = Pool(opts.jobs).imap
 
     func = functools.partial(simulate, psds=psds,
                              responses=responses, locations=locations,
@@ -352,15 +348,13 @@ def main(args=None):
     seed = np.random.randint(0, 2 ** 32 - len(sim_inspiral_table) - 1)
     np.random.seed(seed)
 
-    count_coincs = 0
-
-    with tqdm(total=len(orig_sim_inspiral_table)) as progress:
+    with tqdm(desc='accepted') as progress:
         for sim_inspiral, simulation in zip(
                 orig_sim_inspiral_table,
-                pool_map(func, zip(np.arange(len(orig_sim_inspiral_table))
-                                   + seed + 1,
-                                   orig_sim_inspiral_table))):
-            progress.update()
+                progress_map(
+                    func,
+                    np.arange(len(orig_sim_inspiral_table)) + seed + 1,
+                    orig_sim_inspiral_table, jobs=opts.jobs)):
 
             sngl_inspirals = []
             used_snr_series = []
@@ -461,8 +455,7 @@ def main(args=None):
                 sim_inspiral.simulation_id = sim_inspiral_table.get_next_id()
             sim_inspiral_table.append(sim_inspiral)
 
-            count_coincs += 1
-            progress.set_postfix(saved=count_coincs)
+            progress.update()
 
     # Record coincidence associating injections with events.
     for i, sim_inspiral in enumerate(sim_inspiral_table):

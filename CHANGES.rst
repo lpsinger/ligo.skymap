@@ -14,6 +14,11 @@ Changelog
 - Teach BAYESTAR to accept either string row IDs (such as
   ``sngl_inspiral:event_id:1``) or integer row IDs (such as ``1``).
 
+- The parallel ``map()`` implementation that is used by a number of the
+  package's command line tools will now yield results in order as quickly as
+  they arrive, rather than sorting all of the results at the end. This should
+  provide a very modest speedup in some command line tools.
+
 0.3.1 (2020-05-28)
 ==================
 

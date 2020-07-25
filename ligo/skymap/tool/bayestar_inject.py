@@ -140,10 +140,10 @@ def get_max_z(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z,
               jobs=1):
     # Calculate the maximum distance on the grid.
     params = [mass1, mass2, spin1z, spin2z]
-    result = progress_map(
+    result = list(progress_map(
         partial(z_at_snr, cosmo, psds, waveform, f_low, snr),
         *(param.ravel() for param in np.meshgrid(*params, indexing='ij')),
-        jobs=jobs)
+        jobs=jobs))
     result = np.reshape(result, tuple(len(param) for param in params))
 
     assert np.all(result >= 0), 'some redshifts are negative'

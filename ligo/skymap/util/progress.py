@@ -20,7 +20,8 @@ try:
     from billiard import Pool
 except ImportError:
     from multiprocessing import Pool
-from operator import itemgetter
+from heapq import heappop, heappush
+from operator import length_hint
 
 from tqdm.auto import tqdm
 
@@ -37,6 +38,31 @@ class WrappedFunc:
         return i, self.func(*args)
 
 
+def _get_total_estimate(*iterables):
+    """Estimate total loop iterations for mapping over multiple iterables."""
+    estimates = (length_hint(iterable, -1) for iterable in iterables)
+    valid_estimates = (estimate for estimate in estimates if estimate != -1)
+    return min(valid_estimates, default=None)
+
+
+def _results_in_order(completed):
+    """Put results back into order and yield them as quickly as they arrive."""
+    heap = []
+    current = 0
+    for i_result in completed:
+        i, result = i_result
+        if i == current:
+            yield result
+            current += 1
+            while heap and heap[0][0] == current:
+                _, result = heappop(heap)
+                yield result
+                current += 1
+        else:
+            heappush(heap, i_result)
+    assert not heap, 'The heap must be empty'
+
+
 def progress_map(func, *iterables, jobs=1, **kwargs):
     """Map a function across iterables of arguments.
 
@@ -44,20 +70,17 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
     that it is implemented using :mod:`tqdm` and so provides more detailed and
     accurate progress information.
     """
-    total = min(len(iterable) for iterable in iterables)
+    total = _get_total_estimate(*iterables)
     if jobs == 1:
-        return list(tqdm(map(func, *iterables), total=total, **kwargs))
+        yield from tqdm(map(func, *iterables), total=total, **kwargs)
     else:
         with Pool(jobs) as pool:
-            return [
-                item[1] for item in sorted(
-                    tqdm(
-                        pool.imap_unordered(
-                            WrappedFunc(func),
-                            enumerate(zip(*iterables))
-                        ),
-                        total=total, **kwargs
+            yield from _results_in_order(
+                tqdm(
+                    pool.imap_unordered(
+                        WrappedFunc(func),
+                        enumerate(zip(*iterables))
                     ),
-                    key=itemgetter(0)
+                    total=total, **kwargs
                 )
-            ]
+            )

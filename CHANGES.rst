@@ -5,7 +5,7 @@ Changelog
 0.3.2 (unreleased)
 ==================
 
-- Normalize column names when an ascii file is passed to
+- Normalize column names when an ASCII file is passed to
   ``ligo-skymap-from-samples``.
 
 - Migrate LIGO-LW XML support from the ``glue.ligolw`` module to the newer and

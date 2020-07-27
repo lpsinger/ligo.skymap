@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.3.2 (unreleased)
+0.4.0 (2020-07-26)
 ==================
 
 - Normalize column names when an ASCII file is passed to

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2019  Leo Singer
+# Copyright (C) 2018-2020  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,22 +15,24 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Tools for reading and writing SQLite databases."""
+import copyreg
 import sqlite3
 _open = open
 
 
 def _open_a(string):
-    return sqlite3.connect(string)
+    return sqlite3.connect(string, check_same_thread=False)
 
 
 def _open_r(string):
-    return sqlite3.connect('file:{}?mode=ro'.format(string), uri=True)
+    return sqlite3.connect('file:{}?mode=ro'.format(string),
+                           check_same_thread=False, uri=True)
 
 
 def _open_w(string):
     with _open(string, 'wb'):
         pass
-    return sqlite3.connect(string)
+    return sqlite3.connect(string, check_same_thread=False)
 
 
 _openers = {'a': _open_a, 'r': _open_r, 'w': _open_w}
@@ -144,3 +146,10 @@ def get_filename(connection):
     except ValueError:
         raise RuntimeError('Expected exactly one attached database')
     return filename
+
+
+def pickle_sqlite3_connection(obj):
+    return _open_a, (get_filename(obj),)
+
+
+copyreg.pickle(sqlite3.Connection, pickle_sqlite3_connection)

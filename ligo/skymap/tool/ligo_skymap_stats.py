@@ -92,7 +92,7 @@ values with the following columns:
 
 """
 
-import sqlite3
+from functools import partial
 import sys
 
 from astropy.coordinates import SkyCoord
@@ -102,7 +102,6 @@ import numpy as np
 from . import ArgumentParser, FileType, SQLiteType
 from ..io import fits
 from ..postprocess import crossmatch
-from ..util import sqlite
 
 
 def parser():
@@ -137,19 +136,7 @@ def parser():
     return parser
 
 
-def startup(dbfilename, opts_contour, opts_modes, opts_area, opts_cosmology):
-    global db, contours, modes, areas, cosmology
-    if dbfilename is None:
-        db = None
-    else:
-        db = sqlite3.connect(dbfilename)
-    contours = opts_contour
-    modes = opts_modes
-    areas = opts_area
-    cosmology = opts_cosmology
-
-
-def process(fitsfilename):
+def process(fitsfilename, db, contours, modes, areas, cosmology):
     sky_map = fits.read_sky_map(fitsfilename, moc=True)
 
     coinc_event_id = sky_map.meta.get('objid')
@@ -227,23 +214,11 @@ def main(args=None):
     p = parser()
     opts = p.parse_args(args)
 
-    from tqdm import tqdm
+    from ..util.progress import progress_map
     from .. import omp
 
-    if opts.database is None:
-        dbfilename = None
-    else:
-        dbfilename = sqlite.get_filename(opts.database)
-    startupargs = (
-        dbfilename, opts.contour, opts.modes, opts.area, opts.cosmology)
-    if opts.jobs == 1:
-        pool_map = map
-    else:
+    if opts.jobs != 1:
         omp.num_threads = 1  # disable OpenMP parallelism
-
-        from multiprocessing import Pool
-        pool_map = Pool(opts.jobs, startup, startupargs).imap
-    startup(*startupargs)
 
     if args is None:
         print('#', *sys.argv, file=opts.output)
@@ -256,18 +231,18 @@ def main(args=None):
                      'searched_prob', 'searched_prob_dist', 'searched_vol',
                      'searched_prob_vol', 'offset']
     colnames += ['runtime', 'distmean', 'diststd', 'log_bci', 'log_bsn']
-    colnames += ['area({0:g})'.format(_) for _ in contours]
-    colnames += ['prob({0:g})'.format(_) for _ in areas]
-    colnames += ['dist({0:g})'.format(_) for _ in contours]
-    colnames += ['vol({0:g})'.format(_) for _ in contours]
-    if modes:
+    colnames += ['area({0:g})'.format(_) for _ in opts.contour]
+    colnames += ['prob({0:g})'.format(_) for _ in opts.area]
+    colnames += ['dist({0:g})'.format(_) for _ in opts.contour]
+    colnames += ['vol({0:g})'.format(_) for _ in opts.contour]
+    if opts.modes:
         if opts.database is not None:
             colnames += ['searched_modes']
-        colnames += ["modes({0:g})".format(p) for p in contours]
+        colnames += ["modes({0:g})".format(p) for p in opts.contour]
     print(*colnames, sep="\t", file=opts.output)
 
-    with tqdm(total=len(opts.fitsfilenames)) as progress:
-        for record in pool_map(process, opts.fitsfilenames):
-            if record is not None:
-                print(*record, sep="\t", file=opts.output)
-            progress.update()
+    func = partial(process, db=opts.database, contours=opts.contour,
+                   modes=opts.modes, areas=opts.area, cosmology=opts.cosmology)
+    for record in progress_map(func, opts.fitsfilenames, jobs=opts.jobs):
+        if record is not None:
+            print(*record, sep="\t", file=opts.output)

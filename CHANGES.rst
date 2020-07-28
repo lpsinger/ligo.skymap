@@ -5,7 +5,12 @@ Changelog
 0.4.1 (unreleased)
 ==================
 
-- No changes yet.
+- In sky maps produced by ``bayestar-realize-coincs``, the FITS headers now
+  contain ``OBJECT`` identifiers that are integer event IDs (such as ``1``)
+  rather than strings (such as ``coinc_event:coinc_event_id``).
+
+- The ``ligo-skymap-stats`` tool now recognizes FITS headers with either
+  integer or string ``OBJECT`` identifiers.
 
 0.4.0 (2020-07-26)
 ==================

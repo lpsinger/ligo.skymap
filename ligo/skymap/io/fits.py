@@ -63,7 +63,7 @@ import healpy as hp
 import numpy as np
 from astropy.io import fits
 from astropy import units as u
-from ligo.lw import lsctables
+from ligo.lw import lsctables, ilwd
 import itertools
 import time
 import lal
@@ -189,13 +189,23 @@ def metadata_for_version_module(version):
     return {'vcs_version': version.__spec__.parent + ' ' + version.version}
 
 
+def normalize_objid(objid):
+    try:
+        return int(objid)
+    except ValueError:
+        try:
+            return int(ilwd.ilwdchar(objid))
+        except ValueError:
+            return str(objid)
+
+
 DEFAULT_NUNIQ_NAMES = ('PROBDENSITY', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
 DEFAULT_NUNIQ_UNITS = (u.steradian**-1, u.Mpc, u.Mpc, u.Mpc**-2)
 DEFAULT_NESTED_NAMES = ('PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
 DEFAULT_NESTED_UNITS = (u.pix**-1, u.Mpc, u.Mpc, u.Mpc**-2)
 FITS_META_MAPPING = (
     ('objid', 'OBJECT', 'Unique identifier for this event',
-     str, identity),
+     normalize_objid, normalize_objid),
     ('url', 'REFERENC', 'URL of this event', identity, identity),
     ('instruments', 'INSTRUME', 'Instruments that triggered this event',
      instruments_to_fits, instruments_from_fits),

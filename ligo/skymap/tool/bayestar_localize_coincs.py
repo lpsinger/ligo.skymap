@@ -147,14 +147,11 @@ def main(args=None):
     count_sky_maps_failed = 0
 
     # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
-    for int_coinc_event_id, event in event_source.items():
-        coinc_event_id = 'coinc_event:coinc_event_id:{}'.format(
-            int_coinc_event_id)
-
+    for coinc_event_id, event in event_source.items():
         # Loop over sky localization methods
-        log.info('%s:computing sky map', coinc_event_id)
+        log.info('%d:computing sky map', coinc_event_id)
         if opts.chain_dump:
-            chain_dump = '%s.hdf5' % int_coinc_event_id
+            chain_dump = f'{coinc_event_id}.hdf5'
         else:
             chain_dump = None
         try:
@@ -169,13 +166,13 @@ def main(args=None):
                 f_high_truncate=opts.f_high_truncate)
             sky_map.meta['objid'] = coinc_event_id
         except (ArithmeticError, ValueError):
-            log.exception('%s:sky localization failed', coinc_event_id)
+            log.exception('%d:sky localization failed', coinc_event_id)
             count_sky_maps_failed += 1
             if not opts.keep_going:
                 raise
         else:
-            log.info('%s:saving sky map', coinc_event_id)
-            filename = '%d.fits' % int_coinc_event_id
+            log.info('%d:saving sky map', coinc_event_id)
+            filename = f'{coinc_event_id}.fits'
             fits.write_sky_map(
                 os.path.join(opts.output, filename), sky_map, nest=True)
 

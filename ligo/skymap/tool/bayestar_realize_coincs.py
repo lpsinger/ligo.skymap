@@ -240,27 +240,6 @@ def main(args=None):
     from lalinspiral.thinca import InspiralCoincDef
     from tqdm import tqdm
 
-    # FIXME: disable progress bar monitor thread.
-    #
-    # I was getting error messages that look like this:
-    #
-    # Traceback (most recent call last):
-    #   File "/tqdm/_tqdm.py", line 885, in __del__
-    #     self.close()
-    #   File "/tqdm/_tqdm.py", line 1090, in close
-    #     self._decr_instances(self)
-    #   File "/tqdm/_tqdm.py", line 454, in _decr_instances
-    #     cls.monitor.exit()
-    #   File "/tqdm/_monitor.py", line 52, in exit
-    #     self.join()
-    #   File "/usr/lib64/python3.6/threading.py", line 1053, in join
-    #     raise RuntimeError("cannot join current thread")
-    # RuntimeError: cannot join current thread
-    #
-    # I don't know what causes this... maybe a race condition in tqdm's cleanup
-    # code. Anyway, this should disable the tqdm monitor thread entirely.
-    tqdm.monitor_interval = 0
-
     # BAYESTAR imports.
     from ..io.events.ligolw import ContentHandler
     from ..bayestar import filter

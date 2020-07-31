@@ -139,7 +139,7 @@ wheel/cp38-cp38-macosx:
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl0-dev pkg-config && rm -rf /var/lib/apt/lists/*
       # FIXME: pinning pytest<6 due to https://github.com/astropy/pytest-doctestplus/pull/120, waiting for release
-      RUN pip --no-cache-dir install pytest<6 pytest-cov gcovr pycobertura flake8 coverage tox
+      RUN pip --no-cache-dir install 'pytest<6' pytest-cov gcovr pycobertura flake8 coverage tox
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF

@@ -16,11 +16,11 @@
 #
 """Rough-cut injection tool.
 
-The idea is to efficiently sample events, uniformly in comoving volume, and
-from a distribution of masses and spins, such that later detection cuts will
-not reject an excessive number of events. We divide the intrinsic parameter
-space into a very coarse grid and we calculate the maximum horizon distance in
-each grid cell.
+The idea is to efficiently sample events, uniformly in "sensitive volume"
+(differential comoving volume divided by 1 + z), and from a distribution of
+masses and spins, such that later detection cuts will not reject an excessive
+number of events. We divide the intrinsic parameter space into a very coarse
+grid and we calculate the maximum horizon distance in each grid cell.
 """
 
 from functools import partial

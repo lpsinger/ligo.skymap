@@ -88,7 +88,7 @@ sdist:
     - source env/bin/activate
     - pip install pep517
     # FIXME: https://github.com/matthew-brett/delocate/pull/38
-    - pip install git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate oldest-supported-numpy
+    - pip install git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate
     # Build and audit wheel
     - python -m pep517.build -b .
     - delocate-wheel -v -w wheelhouse dist/*.whl

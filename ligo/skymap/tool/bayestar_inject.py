@@ -226,11 +226,21 @@ def parser():
             'bns_astro', 'bns_broad', 'nsbh_astro', 'nsbh_broad',
             'bbh_astro', 'bbh_broad'))
     parser.add_argument('--reference-psd', type=FileType('rb'), required=True)
-    parser.add_argument('--f-low', type=float, default=25.0)
-    parser.add_argument('--min-snr', type=float, default=4)
-    parser.add_argument('--waveform', default='o2-uberbank')
-    parser.add_argument('--nsamples', type=int, default=100000)
-    parser.add_argument('-o', '--output', type=FileType('wb'), default='-')
+    parser.add_argument(
+        '--f-low', type=float, default=25.0,
+        help='Low frequency cutoff in Hz')
+    parser.add_argument(
+        '--min-snr', type=float, default=4.0,
+        help='Minimum decisive SNR of injections given the reference PSDs')
+    parser.add_argument(
+        '--waveform', default='o2-uberbank',
+        help='Waveform approximant')
+    parser.add_argument(
+        '--nsamples', type=int, default=100000,
+        help='Output this many injections')
+    parser.add_argument(
+        '-o', '--output', type=FileType('wb'), default='-',
+        metavar='INJ.xml[.gz]', help='Output file, optionally gzip-compressed')
     parser.add_argument(
         '-j', '--jobs', type=int, default=1, const=None, nargs='?',
         help='Number of threads')

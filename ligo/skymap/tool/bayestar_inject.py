@@ -19,8 +19,13 @@
 The idea is to efficiently sample events, uniformly in "sensitive volume"
 (differential comoving volume divided by 1 + z), and from a distribution of
 masses and spins, such that later detection cuts will not reject an excessive
-number of events. We divide the intrinsic parameter space into a very coarse
-grid and we calculate the maximum horizon distance in each grid cell.
+number of events.
+
+This occurs in two steps. First, we divide the intrinsic parameter space into a
+very coarse 10x10x10x10 grid and calculate the maximum horizon distance in each
+grid cell. Second, we directly sample injections jointly from the mass and spin
+distribution and a uniform and isotropic spatial distribution with a redshift
+cutoff that is piecewise constant in the masses and spins.
 """
 
 from functools import partial

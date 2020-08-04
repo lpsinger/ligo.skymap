@@ -1074,8 +1074,6 @@ static const char double_ufunc_types[] = {
 
 static void *const no_ufunc_data[] = {NULL};
 
-static const char modulename[] = "core";
-
 static PyMethodDef methods[] = {
     {"get_num_threads", (PyCFunction)get_num_threads,
         METH_NOARGS, "fill me in"},
@@ -1091,9 +1089,10 @@ static PyMethodDef methods[] = {
 };
 
 static PyModuleDef moduledef = {
-    PyModuleDef_HEAD_INIT,
-    modulename, NULL, -1, methods,
-    NULL, NULL, NULL, NULL
+    .m_base = PyModuleDef_HEAD_INIT,
+    .m_name = "core",
+    .m_methods = methods,
+    .m_size = -1
 };
 
 

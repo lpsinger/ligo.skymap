@@ -1074,25 +1074,23 @@ static const char double_ufunc_types[] = {
 
 static void *const no_ufunc_data[] = {NULL};
 
-static PyMethodDef methods[] = {
-    {"get_num_threads", (PyCFunction)get_num_threads,
-        METH_NOARGS, "fill me in"},
-    {"set_num_threads", (PyCFunction)set_num_threads,
-        METH_O, "fill me in"},
-    {"rasterize", (PyCFunction)rasterize,
-        METH_VARARGS | METH_KEYWORDS, "fill me in"},
-    {"toa_phoa_snr", (PyCFunction)sky_map_toa_phoa_snr,
-        METH_VARARGS | METH_KEYWORDS, "fill me in"},
-    {"test", (PyCFunction)test,
-        METH_NOARGS, "fill me in"},
-    {NULL, NULL, 0, NULL}
-};
-
 static PyModuleDef moduledef = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "core",
-    .m_methods = methods,
-    .m_size = -1
+    .m_size = -1,
+    .m_methods = (PyMethodDef []) {
+        {"get_num_threads", (PyCFunction)get_num_threads,
+            METH_NOARGS, "fill me in"},
+        {"set_num_threads", (PyCFunction)set_num_threads,
+            METH_O, "fill me in"},
+        {"rasterize", (PyCFunction)rasterize,
+            METH_VARARGS | METH_KEYWORDS, "fill me in"},
+        {"toa_phoa_snr", (PyCFunction)sky_map_toa_phoa_snr,
+            METH_VARARGS | METH_KEYWORDS, "fill me in"},
+        {"test", (PyCFunction)test,
+            METH_NOARGS, "fill me in"},
+        {/* terminal element, all NULL */}
+    }
 };
 
 

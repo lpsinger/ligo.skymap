@@ -1027,28 +1027,6 @@ static PyObject *test(
 /*****************************************************************************/
 
 
-/* FIXME: (PyUFuncGenericFunction) casts below work around possible mismatched
- * const-ness of the dimensions and steps arguments, which became const in
- * Numpy 1.19.0. Remove casts once we drop support for Numpy < 1.19.0. */
-static const PyUFuncGenericFunction
-    conditional_pdf_loops[] = {(PyUFuncGenericFunction) conditional_pdf_loop},
-    conditional_cdf_loops[] = {(PyUFuncGenericFunction) conditional_cdf_loop},
-    conditional_ppf_loops[] = {(PyUFuncGenericFunction) conditional_ppf_loop},
-    moments_to_parameters_loops[] = {(PyUFuncGenericFunction) moments_to_parameters_loop},
-    parameters_to_moments_loops[] = {(PyUFuncGenericFunction) parameters_to_moments_loop},
-    volume_render_loops[] = {(PyUFuncGenericFunction) volume_render_loop},
-    marginal_pdf_loops[] = {(PyUFuncGenericFunction) marginal_pdf_loop},
-    marginal_cdf_loops[] = {(PyUFuncGenericFunction) marginal_cdf_loop},
-    marginal_ppf_loops[] = {(PyUFuncGenericFunction) marginal_ppf_loop},
-    nest2uniq_loops[] = {(PyUFuncGenericFunction) nest2uniq_loop},
-    uniq2nest_loops[] = {(PyUFuncGenericFunction) uniq2nest_loop},
-    uniq2order_loops[] = {(PyUFuncGenericFunction) uniq2order_loop},
-    uniq2pixarea_loops[] = {(PyUFuncGenericFunction) uniq2pixarea_loop},
-    uniq2ang_loops[] = {(PyUFuncGenericFunction) uniq2ang_loop},
-    log_posterior_toa_phoa_snr_loops[] = {(PyUFuncGenericFunction) log_posterior_toa_phoa_snr_loop},
-    antenna_factor_loops[] = {(PyUFuncGenericFunction) antenna_factor_loop},
-    signal_amplitude_model_loops[] = {(PyUFuncGenericFunction) signal_amplitude_model_loop};
-
 static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
     NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE,
@@ -1133,109 +1111,109 @@ PyMODINIT_FUNC PyInit_core(void)
 
     MODULE_ADD_OBJECT(
         "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
-            log_posterior_toa_phoa_snr_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) log_posterior_toa_phoa_snr_loop}, no_ufunc_data,
             log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
             "log_posterior_toa_phoa_snr", NULL, 0,
             "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples,2),(nifos,3,3),(nifos,3),(nifos)->()"));
 
     MODULE_ADD_OBJECT(
         "conditional_pdf", PyUFunc_FromFuncAndData(
-            conditional_pdf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_pdf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 4, 1, PyUFunc_None,
             "conditional_pdf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "conditional_cdf", PyUFunc_FromFuncAndData(
-            conditional_cdf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_cdf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 4, 1, PyUFunc_None,
             "conditional_cdf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "conditional_ppf", PyUFunc_FromFuncAndData(
-            conditional_ppf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_ppf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 4, 1, PyUFunc_None,
             "conditional_ppf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "moments_to_parameters", PyUFunc_FromFuncAndData(
-            moments_to_parameters_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) moments_to_parameters_loop}, no_ufunc_data,
             double_ufunc_types, 1, 2, 3, PyUFunc_None,
             "moments_to_parameters", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "parameters_to_moments", PyUFunc_FromFuncAndData(
-            parameters_to_moments_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) parameters_to_moments_loop}, no_ufunc_data,
             double_ufunc_types, 1, 2, 3, PyUFunc_None,
             "parameters_to_moments", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "volume_render", PyUFunc_FromFuncAndDataAndSignature(
-            volume_render_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) volume_render_loop}, no_ufunc_data,
             volume_render_ufunc_types, 1, 11, 1, PyUFunc_None,
             "volume_render", NULL, 0,
             "(),(),(),(),(),(3,3),(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_pdf", PyUFunc_FromFuncAndDataAndSignature(
-            marginal_pdf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_pdf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 5, 1, PyUFunc_None,
             "marginal_pdf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_cdf", PyUFunc_FromFuncAndDataAndSignature(
-            marginal_cdf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_cdf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 5, 1, PyUFunc_None,
             "marginal_cdf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_ppf", PyUFunc_FromFuncAndDataAndSignature(
-            marginal_ppf_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_ppf_loop}, no_ufunc_data,
             double_ufunc_types, 1, 5, 1, PyUFunc_None,
             "marginal_ppf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "nest2uniq", PyUFunc_FromFuncAndData(
-            nest2uniq_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) nest2uniq_loop}, no_ufunc_data,
             nest2uniq_types, 1, 2, 1, PyUFunc_None,
             "nest2uniq", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2nest", PyUFunc_FromFuncAndData(
-            uniq2nest_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2nest_loop}, no_ufunc_data,
             uniq2nest_types, 1, 1, 2, PyUFunc_None,
             "uniq2nest", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2order", PyUFunc_FromFuncAndData(
-            uniq2order_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2order_loop}, no_ufunc_data,
             uniq2order_types, 1, 1, 1, PyUFunc_None,
             "uniq2order", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2pixarea", PyUFunc_FromFuncAndData(
-            uniq2pixarea_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2pixarea_loop}, no_ufunc_data,
             uniq2pixarea_types, 1, 1, 1, PyUFunc_None,
             "uniq2pixarea", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2ang", PyUFunc_FromFuncAndData(
-            uniq2ang_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2ang_loop}, no_ufunc_data,
             uniq2ang_types, 1, 1, 2, PyUFunc_None,
             "uniq2ang", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "antenna_factor", PyUFunc_FromFuncAndDataAndSignature(
-            antenna_factor_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) antenna_factor_loop}, no_ufunc_data,
             antenna_factor_types, 1, 4, 1, PyUFunc_None,
             "antenna_factor", NULL, 0,
             "(3,3),(),(),()->()"));
 
     MODULE_ADD_OBJECT(
         "signal_amplitude_model", PyUFunc_FromFuncAndData(
-            signal_amplitude_model_loops, no_ufunc_data,
+            (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) signal_amplitude_model_loop}, no_ufunc_data,
             signal_amplitude_model_ufunc_types, 1, 4, 1, PyUFunc_None,
             "signal_amplitude_model", NULL, 0));
 

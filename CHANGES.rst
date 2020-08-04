@@ -19,6 +19,10 @@ Changelog
   reduce the number of required binary builds. See
   `PEP 384 <https://www.python.org/dev/peps/pep-0384/>`_.
 
+- Eliminate global static variables from the Python C extension to enable
+  compatibility with Python subinterpreters. See
+  `PEP 3121 <https://www.python.org/dev/peps/pep-3121/>`_.
+
 0.4.0 (2020-07-26)
 ==================
 

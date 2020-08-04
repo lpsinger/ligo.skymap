@@ -684,9 +684,6 @@ static void uniq2ang_loop(
     INPUT_VECTOR_NIFOS(double, NAME, NPY_DOUBLE)
 
 
-static PyArray_Descr *sky_map_descr;
-
-
 static PyArray_Descr *sky_map_create_descr(void)
 {
     PyArray_Descr *dtype = NULL;
@@ -710,7 +707,7 @@ static PyArray_Descr *sky_map_create_descr(void)
 
 
 static PyObject *sky_map_toa_phoa_snr(
-    PyObject *NPY_UNUSED(module), PyObject *args, PyObject *kwargs)
+    PyObject *module, PyObject *args, PyObject *kwargs)
 {
     /* Input arguments */
     double min_inclination;
@@ -877,8 +874,11 @@ static PyObject *sky_map_toa_phoa_snr(
     if (!capsule)
         goto fail;
 
+    PyArray_Descr *sky_map_descr = (PyArray_Descr *) PyObject_GetAttrString(module, "sky_map_descr");
+    if (!sky_map_descr)
+        goto fail;
+
     npy_intp dims[] = {len};
-    Py_INCREF(sky_map_descr);
     out = PyArray_NewFromDescr(&PyArray_Type,
         sky_map_descr, 1, dims, NULL, pixels, NPY_ARRAY_DEFAULT, NULL);
     if (!out)
@@ -1077,7 +1077,6 @@ static void *const no_ufunc_data[] = {NULL};
 static PyModuleDef moduledef = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "core",
-    .m_size = -1,
     .m_methods = (PyMethodDef []) {
         {"get_num_threads", (PyCFunction)get_num_threads,
             METH_NOARGS, "fill me in"},
@@ -1119,10 +1118,6 @@ PyMODINIT_FUNC PyInit_core(void)
     import_array();
     import_umath();
 
-    sky_map_descr = sky_map_create_descr();
-    if (!sky_map_descr)
-        return NULL;
-
     module = PyModule_Create(&moduledef);
     if (!module)
         return NULL;
@@ -1130,6 +1125,9 @@ PyMODINIT_FUNC PyInit_core(void)
     /* Ignore warnings in Numpy API */
     WARNINGS_PUSH
     WARNINGS_IGNORE_DISCARDED_QUALIFIERS
+
+    MODULE_ADD_OBJECT(
+        "sky_map_descr", (PyObject *) sky_map_create_descr());
 
     MODULE_ADD_OBJECT(
         "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(

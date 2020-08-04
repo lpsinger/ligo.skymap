@@ -542,7 +542,7 @@ done:
 
 
 static void nest2uniq_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -561,7 +561,7 @@ static void nest2uniq_loop(
 
 
 static void uniq2nest_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -580,7 +580,7 @@ static void uniq2nest_loop(
 
 
 static void uniq2order_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -598,7 +598,7 @@ static void uniq2order_loop(
 
 
 static void uniq2pixarea_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -616,7 +616,7 @@ static void uniq2pixarea_loop(
 
 
 static void uniq2ang_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -908,7 +908,7 @@ fail: /* Cleanup */
 
 
 static void log_posterior_toa_phoa_snr_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0],
                nifos = dimensions[1],
@@ -962,7 +962,7 @@ static void log_posterior_toa_phoa_snr_loop(
 
 
 static void antenna_factor_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 
@@ -990,7 +990,7 @@ static void antenna_factor_loop(
 
 
 static void signal_amplitude_model_loop(
-    char **args, npy_intp *dimensions, npy_intp *steps, void *NPY_UNUSED(data))
+    char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
     const npy_intp n = dimensions[0];
 

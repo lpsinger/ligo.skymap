@@ -1027,29 +1027,6 @@ static PyObject *test(
 /*****************************************************************************/
 
 
-static const char log_posterior_toa_phoa_snr_types[] = {
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_FLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
-
-static const char volume_render_ufunc_types[] = {
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
-
-static const char double_ufunc_types[] = {
-                      NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
-                      NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
-                  nest2uniq_types[] = {NPY_INT8, NPY_INT64, NPY_INT64},
-                  uniq2nest_types[] = {NPY_INT64, NPY_INT8, NPY_INT64},
-                  uniq2order_types[] = {NPY_INT64, NPY_INT8},
-                  uniq2pixarea_types[] = {NPY_INT64, NPY_DOUBLE},
-                  uniq2ang_types[] = {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
-                  antenna_factor_types[] = {
-                      NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
-                  signal_amplitude_model_ufunc_types[] = {
-                      NPY_CFLOAT, NPY_CFLOAT, NPY_FLOAT,
-                      NPY_FLOAT, NPY_CFLOAT};
-
 static PyModuleDef moduledef = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "core",
@@ -1110,109 +1087,126 @@ PyMODINIT_FUNC PyInit_core(void)
     MODULE_ADD_OBJECT(
         "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) log_posterior_toa_phoa_snr_loop}, NULL,
-            log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_FLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 17, 1, PyUFunc_None,
             "log_posterior_toa_phoa_snr", NULL, 0,
             "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples,2),(nifos,3,3),(nifos,3),(nifos)->()"));
 
     MODULE_ADD_OBJECT(
         "conditional_pdf", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_pdf_loop}, NULL,
-            double_ufunc_types, 1, 4, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 4, 1, PyUFunc_None,
             "conditional_pdf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "conditional_cdf", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_cdf_loop}, NULL,
-            double_ufunc_types, 1, 4, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 4, 1, PyUFunc_None,
             "conditional_cdf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "conditional_ppf", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) conditional_ppf_loop}, NULL,
-            double_ufunc_types, 1, 4, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 4, 1, PyUFunc_None,
             "conditional_ppf", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "moments_to_parameters", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) moments_to_parameters_loop}, NULL,
-            double_ufunc_types, 1, 2, 3, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 2, 3, PyUFunc_None,
             "moments_to_parameters", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "parameters_to_moments", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) parameters_to_moments_loop}, NULL,
-            double_ufunc_types, 1, 2, 3, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 2, 3, PyUFunc_None,
             "parameters_to_moments", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "volume_render", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) volume_render_loop}, NULL,
-            volume_render_ufunc_types, 1, 11, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 11, 1, PyUFunc_None,
             "volume_render", NULL, 0,
             "(),(),(),(),(),(3,3),(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_pdf", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_pdf_loop}, NULL,
-            double_ufunc_types, 1, 5, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 5, 1, PyUFunc_None,
             "marginal_pdf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_cdf", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_cdf_loop}, NULL,
-            double_ufunc_types, 1, 5, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 5, 1, PyUFunc_None,
             "marginal_cdf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_ppf", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) marginal_ppf_loop}, NULL,
-            double_ufunc_types, 1, 5, 1, PyUFunc_None,
+            (char []) {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE},
+            1, 5, 1, PyUFunc_None,
             "marginal_ppf", NULL, 0,
             "(),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "nest2uniq", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) nest2uniq_loop}, NULL,
-            nest2uniq_types, 1, 2, 1, PyUFunc_None,
+            (char []) {NPY_INT8, NPY_INT64, NPY_INT64},
+            1, 2, 1, PyUFunc_None,
             "nest2uniq", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2nest", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2nest_loop}, NULL,
-            uniq2nest_types, 1, 1, 2, PyUFunc_None,
+            (char []) {NPY_INT64, NPY_INT8, NPY_INT64},
+            1, 1, 2, PyUFunc_None,
             "uniq2nest", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2order", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2order_loop}, NULL,
-            uniq2order_types, 1, 1, 1, PyUFunc_None,
+            (char []) {NPY_INT64, NPY_INT8},
+            1, 1, 1, PyUFunc_None,
             "uniq2order", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2pixarea", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2pixarea_loop}, NULL,
-            uniq2pixarea_types, 1, 1, 1, PyUFunc_None,
+            (char []) {NPY_INT64, NPY_DOUBLE},
+            1, 1, 1, PyUFunc_None,
             "uniq2pixarea", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "uniq2ang", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) uniq2ang_loop}, NULL,
-            uniq2ang_types, 1, 1, 2, PyUFunc_None,
+            (char []) {NPY_INT64, NPY_DOUBLE, NPY_DOUBLE},
+            1, 1, 2, PyUFunc_None,
             "uniq2ang", NULL, 0));
 
     MODULE_ADD_OBJECT(
         "antenna_factor", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) antenna_factor_loop}, NULL,
-            antenna_factor_types, 1, 4, 1, PyUFunc_None,
+            (char []) {NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
+            1, 4, 1, PyUFunc_None,
             "antenna_factor", NULL, 0,
             "(3,3),(),(),()->()"));
 
     MODULE_ADD_OBJECT(
         "signal_amplitude_model", PyUFunc_FromFuncAndData(
             (PyUFuncGenericFunction []) {(PyUFuncGenericFunction) signal_amplitude_model_loop}, NULL,
-            signal_amplitude_model_ufunc_types, 1, 4, 1, PyUFunc_None,
+            (char []) {NPY_CFLOAT, NPY_CFLOAT, NPY_FLOAT, NPY_FLOAT, NPY_CFLOAT},
+            1, 4, 1, PyUFunc_None,
             "signal_amplitude_model", NULL, 0));
 
     WARNINGS_POP

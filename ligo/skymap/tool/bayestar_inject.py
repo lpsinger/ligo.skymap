@@ -230,7 +230,9 @@ def parser():
         '--distribution', required=True, choices=(
             'bns_astro', 'bns_broad', 'nsbh_astro', 'nsbh_broad',
             'bbh_astro', 'bbh_broad'))
-    parser.add_argument('--reference-psd', type=FileType('rb'), required=True)
+    parser.add_argument(
+        '--reference-psd', type=FileType('rb'), metavar='PSD.xml[.gz]',
+        required=True, help='PSD file')
     parser.add_argument(
         '--f-low', type=float, default=25.0,
         help='Low frequency cutoff in Hz')

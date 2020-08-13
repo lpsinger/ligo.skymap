@@ -9,6 +9,8 @@ from ... import distance
 from . import run_entry_point
 
 
+# Suppress Healpy's printing of diagnostics when reading FITS files.
+@pytest.mark.filterwarnings('ignore::UserWarning:healpy.fitsfunc')
 def test_combine(tmpdir):
     """Test ligo-skymap-combine."""
     fn1 = str(tmpdir / 'skymap1.fits.gz')

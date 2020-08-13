@@ -105,7 +105,7 @@ Test against numerical integral of pdf.
 ...     (distmu, distsigma, distnorm))
 >>> result = conditional_cdf(
 ...     r, distmu, distsigma, distnorm)
->>> np.testing.assert_almost_equal(expected, result)
+>>> np.testing.assert_almost_equal(result, expected)
 
 """)
 conditional_cdf = require_contiguous_aligned(conditional_cdf)
@@ -142,7 +142,7 @@ Test against numerical estimate.
 >>> expected_r16 = scipy.optimize.brentq(
 ... lambda r: conditional_cdf(r, distmu, distsigma, distnorm) - p, 0.0, 100.0)
 >>> r16 = conditional_ppf(p, distmu, distsigma, distnorm)
->>> np.testing.assert_almost_equal(expected_r16, r16)
+>>> np.testing.assert_almost_equal(r16, expected_r16)
 
 """)
 conditional_ppf = require_contiguous_aligned(conditional_ppf)
@@ -289,7 +289,7 @@ The conditional distance distribution should be a chi distribution with
 >>> r = np.linspace(0, 10.0)
 >>> actual = conditional_pdf(r, distmu[0], distsigma[0], distnorm[0])
 >>> expected = chi(3).pdf(r)
->>> np.testing.assert_almost_equal(expected, actual)
+>>> np.testing.assert_almost_equal(actual, expected)
 
 Next, run the volume renderer.
 

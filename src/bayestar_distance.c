@@ -115,6 +115,22 @@ static double conditional_ppf_df(double r, void *params)
 }
 
 
+static double conditional_ppf_initial_guess(double p, double mu)
+{
+    /* Initial guess: ignore r^2 term;
+     * distribution becomes truncated Gaussian */
+    const double lo = gsl_cdf_ugaussian_P(-mu);
+    const double z = gsl_cdf_ugaussian_Pinv(p + (1 - p) * gsl_cdf_ugaussian_P(-mu)) + mu;
+
+    if (z > 0)
+        return z;
+    else if (mu > 0)
+        return mu;  /* Fallback 1: mean */
+    else
+        return 0.5;  /* Fallback 2: constant value */
+}
+
+
 double bayestar_distance_conditional_ppf(
     double p, double mu, double sigma, double norm)
 {
@@ -134,7 +150,7 @@ double bayestar_distance_conditional_ppf(
     static const int max_iter = 50;
     conditional_ppf_params params = {p, mu, norm};
     int iter = 0;
-    double z = mu > 0 ? mu : 0.5; /* FIXME: better initial guess? */
+    double z = conditional_ppf_initial_guess(p, mu);
     int status;
 
     /* Set up solver (on stack). */

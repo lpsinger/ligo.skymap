@@ -23,6 +23,43 @@ Changelog
   compatibility with Python subinterpreters. See
   `PEP 3121 <https://www.python.org/dev/peps/pep-3121/>`_.
 
+- Improve the numerical stability of the method
+  :meth:`ligo.skymap.distance.conditional_ppf` by reparametrizing the equation
+  that is being solved. This method, which calculates the inverse of the
+  distance CDF, works by solving the equation :math:`f(x) - p = 0` for
+  :math:`x`, where :math:`f(x)` is the distance CDF, and :math:`p` is the
+  desired probability.
+
+  The reparametrized equation is :math:`log(1 - f(x)) - log(1 - p) = 0` if
+  :math:`p > 1/2` and :math:`log(f(x)) - log(p) = 0` otherwise. This
+  reparametrization is effective because it improves the dynamic range in the
+  tails of the distribution. This same reparametrization had already proven
+  effective in the related method :meth:`ligo.skymap.distance.marginal_ppf`.
+
+  This change also fixes some rare corner cases where
+  :meth:`~ligo.skymap.distance.marginal_ppf` returned silly values becauses it
+  uses :meth:`~ligo.skymap.distance.conditional_ppf` internally to create its
+  own initial guess. One example was the median distance for the binary neutron
+  star candidate S191205ah. Before this patch, the result was negative and
+  invalid::
+
+      >>> from ligo.skymap.distance import marginal_ppf
+      >>> from ligo.skymap.moc import uniq2pixarea
+      >>> from ligo.skymap.io import read_sky_map
+      >>> url = 'https://gracedb.ligo.org/apiweb/superevents/S191205ah/files/bayestar.multiorder.fits'
+      >>> s = read_sky_map(url, moc=True)
+      >>> marginal_ppf(0.5, s['PROBDENSITY'] * uniq2pixarea(s['UNIQ']),
+      ...              s['DISTMU'], s['DISTSIGMA'], s['DISTNORM'])
+      /Users/lpsinger/src/ligo.skymap/ligo/skymap/util/numpy.py:46: RuntimeWarning: invalid value encountered in marginal_ppf
+        return func(*args, **kwargs)
+      -223357.8508233767
+
+  After this patch, the result is positive and sensible::
+
+      >>> marginal_ppf(0.5, s['PROBDENSITY'] * uniq2pixarea(s['UNIQ']),
+      ...              s['DISTMU'], s['DISTSIGMA'], s['DISTNORM'])
+      362.7485740018039
+
 0.4.0 (2020-07-26)
 ==================
 

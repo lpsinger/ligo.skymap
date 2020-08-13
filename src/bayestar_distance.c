@@ -78,13 +78,24 @@ double bayestar_distance_conditional_cdf(
 }
 
 
+typedef struct {
+    double p, mu, norm;
+} conditional_ppf_params;
+
+
 static void conditional_ppf_fdf(double r, void *params, double *f, double *df)
 {
-    const double p = ((double*) params)[0];
-    const double mu = ((double *) params)[1];
-    const double norm = ((double *) params)[2];
-    *f = bayestar_distance_conditional_cdf(r, mu, 1, norm) - p;
-    *df = bayestar_distance_conditional_pdf(r, mu, 1, norm);
+    const conditional_ppf_params *p = (conditional_ppf_params *)params;
+    const double _f = bayestar_distance_conditional_cdf(r, p->mu, 1, p->norm);
+    const double _df = bayestar_distance_conditional_pdf(r, p->mu, 1, p->norm);
+    if (p->p > 0.5)
+    {
+        *f = log(1 - _f) - log(1 - p->p);
+        *df = -_df / (1 - _f);
+    } else {
+        *f = log(_f) - log(p->p);
+        *df = _df / _f;
+    }
 }
 
 
@@ -121,7 +132,7 @@ double bayestar_distance_conditional_ppf(
 
     /* Set up variables for tracking progress toward the solution. */
     static const int max_iter = 50;
-    double params[] = {p, mu, norm};
+    conditional_ppf_params params = {p, mu, norm};
     int iter = 0;
     double z = mu > 0 ? mu : 0.5; /* FIXME: better initial guess? */
     int status;

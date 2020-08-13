@@ -131,8 +131,7 @@ double bayestar_distance_conditional_ppf(
     char state[algo->size];
     gsl_root_fdfsolver solver = {algo, NULL, 0, state};
     gsl_function_fdf fun = {
-        conditional_ppf_f, conditional_ppf_df, conditional_ppf_fdf,
-        &params};
+        conditional_ppf_f, conditional_ppf_df, conditional_ppf_fdf, &params};
     gsl_root_fdfsolver_set(&solver, &fun, z);
 
     do

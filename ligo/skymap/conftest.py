@@ -3,7 +3,10 @@
 # get picked up when running the tests inside an interpreter using
 # packagename.test
 
+import warnings
+
 from astropy.version import version as astropy_version
+import pytest
 
 try:
     from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
@@ -43,3 +46,16 @@ def pytest_configure(config):
 #     warnings_to_ignore_by_pyver={(MAJOR, MINOR): ['Message to ignore']}
 # from astropy.tests.helper import enable_deprecations_as_exceptions  # noqa
 # enable_deprecations_as_exceptions()
+
+
+@pytest.fixture(autouse=True)
+def ignore_unclosed_file_warnings():
+    """Ignore unclosed file warnings.
+
+    Many of the command-line tools in :mod:`ligo.skymap.tool` use
+    :class:`arparse.FileType` and therefore leave files opened. Suppress
+    warnings about unclosed files so that other more interesting warning types
+    are more noticable.
+
+    """
+    warnings.filterwarnings('ignore', 'unclosed file .*', ResourceWarning)

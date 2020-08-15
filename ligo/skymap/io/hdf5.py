@@ -287,7 +287,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
             table.meta[colname] = column[0]
             del table[colname]
     for i, column in enumerate(table.columns.values()):
-        table.meta['FIELD_{0}_VARY'.format(i)] = column.meta['vary']
+        table.meta['FIELD_{0}_VARY'.format(i)] = column.meta.pop('vary')
     table.write(filename, format='hdf5', **kwargs)
     if metadata:
         with h5py.File(filename, 'r+') as hdf:

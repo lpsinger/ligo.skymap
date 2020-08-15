@@ -66,12 +66,13 @@ wheel/manylinux:
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
-    - echo $CI_JOB_URL/artifacts/download > ARTIFACTS_URL
+    - echo ARTIFACTS_URL=\"$CI_JOB_URL/artifacts/download\" > dotenv
   needs: []
   artifacts:
+    reports:
+      dotenv: dotenv
     paths:
       - '*.whl'
-      - ARTIFACTS_URL
     expire_in: 1 day
 
 wheel/macosx:
@@ -312,7 +313,7 @@ tests/acceptance:
     - >
       curl --fail --request POST
       --form "token=$CI_JOB_TOKEN"
-      --form "variables[TRIGGERED_ARTIFACTS_URL]=$(cat ARTIFACTS_URL)"
+      --form "variables[TRIGGERED_ARTIFACTS_URL]=$ARTIFACTS_URL"
       --form "ref=master"
       "$CI_API_V4_URL/projects/lscsoft%2Fligo-skymap-acceptance-tests/trigger/pipeline"
   needs:

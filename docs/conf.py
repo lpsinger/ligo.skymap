@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # This file is adapted from the Astropy package template, which is licensed
 # under a 3-clause BSD style license - see licenses/TEMPLATE_LICENSE.rst
@@ -224,7 +225,7 @@ modindex_common_prefix = [package.__name__ + '.']
 
 intersphinx_mapping.update({
     'gracedb': ('https://gracedb.ligo.org/documentation/', None),
-    'gwcelery': ('https://gw.readthedocs.io/projects/gwcelery/en/latest/', None),
+    'gwcelery': ('http://gwcelery.readthedocs.io/en/latest/', None),
     'celery': ('https://docs.celeryproject.org/en/latest/', None),
     'ligo-lw': ('https://docs.ligo.org/kipp.cannon/python-ligo-lw/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None)

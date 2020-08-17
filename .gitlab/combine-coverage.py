@@ -19,7 +19,6 @@
 
 import argparse
 import lxml.etree
-import copy
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input1', required=True)

@@ -279,21 +279,21 @@ tests/review:
     GIT_STRATEGY: none
     REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
   environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://ldas-jobs.ligo.caltech.edu/~skymap.testing/$CI_COMMIT_REF_NAME
+    name: $CI_COMMIT_REF_NAME
+    url: https://ldas-jobs.ligo.caltech.edu/~skymap.testing/$CI_COMMIT_REF_SLUG
     on_stop: tests/review/cleanup
     auto_stop_in: 2 days
   script:
     - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
-    - gsissh -T $REMOTE_HOST "mkdir -p public_html/$CI_COMMIT_REF_NAME"
-    - gsiscp -r wheel $REMOTE_HOST:public_html/$CI_COMMIT_REF_NAME
+    - gsissh -T $REMOTE_HOST "mkdir -p public_html/$CI_COMMIT_REF_SLUG"
+    - gsiscp -r wheel $REMOTE_HOST:public_html/$CI_COMMIT_REF_SLUG
     - |
       gsissh -T $REMOTE_HOST bash -e <<EOF
-      cd public_html/$CI_COMMIT_REF_NAME
+      cd public_html/$CI_COMMIT_REF_SLUG
       python3 -m venv env
       source env/bin/activate
       pip install --upgrade pip wheel
-      pip 'astropy<4' public_html/$CI_COMMIT_REF_NAME/wheel/*.whl
+      pip 'astropy<4' public_html/$CI_COMMIT_REF_SLUG/wheel/*.whl
       EOF
     - echo -e "section_end:`date +%s`:remote_install\r\e[0K"
 
@@ -302,10 +302,10 @@ tests/review/cleanup:
   when: manual
   needs: []
   environment:
-    name: review/$CI_COMMIT_REF_NAME
+    name: $CI_COMMIT_REF_NAME
     action: stop
   script:
-    - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
+    - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_COMMIT_REF_SLUG"
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.

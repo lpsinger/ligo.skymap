@@ -303,6 +303,9 @@ tests/review/cleanup:
   extends: .ssh
   when: manual
   needs: []
+  variables:
+    GIT_STRATEGY: none
+    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
   environment:
     name: $CI_COMMIT_REF_NAME
     action: stop

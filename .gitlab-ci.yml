@@ -5,6 +5,8 @@ variables:
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml
+  - project: emfollow/gitlab-ci-templates
+    file: ssh.yml
 
 stages:
   - deps
@@ -265,23 +267,45 @@ lint:
 # Trigger acceptance tests.
 #
 
-tests/acceptance:
+tests/review:
   stage: test
-  image: python
-  only:
-    - schedules
-    - web
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - >
-      curl --fail --request POST
-      --form "token=$CI_JOB_TOKEN"
-      --form "variables[TRIGGERED_ARTIFACTS_URL]=$ARTIFACTS_URL"
-      --form "ref=master"
-      "$CI_API_V4_URL/projects/lscsoft%2Fligo-skymap-acceptance-tests/trigger/pipeline"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - when: manual
   needs:
     - wheel/manylinux
+  variables:
+    GIT_STRATEGY: none
+    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://ldas-jobs.ligo.caltech.edu/~skymap.testing/$CI_COMMIT_REF_NAME
+    on_stop: tests/review/cleanup
+    auto_stop_in: 2 days
+  script:
+    - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
+    - gsissh -T $REMOTE_HOST "mkdir -p public_html/$CI_COMMIT_REF_NAME"
+    - gsiscp -r wheel $REMOTE_HOST:public_html/$CI_COMMIT_REF_NAME
+    - |
+      gsissh -T $REMOTE_HOST bash -e <<EOF
+      cd public_html/$CI_COMMIT_REF_NAME
+      python3 -m venv env
+      source env/bin/activate
+      pip install --upgrade pip wheel
+      pip 'astropy<4' public_html/$CI_COMMIT_REF_NAME/wheel/*.whl
+      EOF
+    - echo -e "section_end:`date +%s`:remote_install\r\e[0K"
+
+tests/review/cleanup:
+  stage: test
+  when: manual
+  needs: []
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  script:
+    - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.

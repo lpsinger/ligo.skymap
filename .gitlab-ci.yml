@@ -272,6 +272,7 @@ tests/review:
   extends: .ssh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: on_success
     - when: manual
   needs:
     - wheel/manylinux

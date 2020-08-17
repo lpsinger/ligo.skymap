@@ -269,6 +269,7 @@ lint:
 
 tests/review:
   stage: test
+  extends: .ssh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
@@ -299,6 +300,7 @@ tests/review:
 
 tests/review/cleanup:
   stage: test
+  extends: .ssh
   when: manual
   needs: []
   environment:

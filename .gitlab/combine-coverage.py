@@ -21,9 +21,9 @@ import argparse
 import lxml.etree
 
 parser = argparse.ArgumentParser()
-parser.add_argument('input1', required=True)
-parser.add_argument('input2', required=True)
-parser.add_argument('output', required=True)
+parser.add_argument('input1')
+parser.add_argument('input2')
+parser.add_argument('output')
 args = parser.parse_args()
 
 doc1 = lxml.etree.parse(args.input1)

@@ -5,6 +5,8 @@ variables:
 include:
   - project: emfollow/gitlab-ci-templates
     file: lint.yml
+  - project: emfollow/gitlab-ci-templates
+    file: ssh.yml
 
 stages:
   - deps
@@ -262,26 +264,62 @@ lint:
     - dependencies/python3.7
 
 #
-# Trigger acceptance tests.
+# Acceptance tests.
 #
 
-tests/acceptance:
+tests/review:
   stage: test
-  image: python
-  only:
-    - schedules
-    - web
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - >
-      curl --fail --request POST
-      --form "token=$CI_JOB_TOKEN"
-      --form "variables[TRIGGERED_ARTIFACTS_URL]=$ARTIFACTS_URL"
-      --form "ref=master"
-      "$CI_API_V4_URL/projects/lscsoft%2Fligo-skymap-acceptance-tests/trigger/pipeline"
+  extends: .ssh
+  when: manual
   needs:
     - wheel/manylinux
+  variables:
+    GIT_STRATEGY: none
+    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+  script:
+    - echo -e "section_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
+    - gsissh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_PIPELINE_ID"
+    - echo -e "section_end:`date +%s`:remote_clone\r\e[0K"
+
+    - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
+    - gsiscp *.whl $REMOTE_HOST:public_html/$CI_PIPELINE_ID
+    - |
+      gsissh -T $REMOTE_HOST "bash -e" <<EOF
+      cd public_html/$CI_PIPELINE_ID
+      python3 -m venv env
+      source env/bin/activate
+      pip install --upgrade pip wheel
+      pip install 'astropy<4' *.whl
+      pip install -r requirements.txt
+      EOF
+    - echo -e "section_end:`date +%s`:remote_install\r\e[0K"
+
+    - echo -e "section_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
+    - |
+      gsissh -T $REMOTE_HOST "bash -e" <<EOF
+      cd public_html/$CI_PIPELINE_ID
+      source env/bin/activate
+      condor_submit_dag -append accounting_group_user=leo.singer -batch-name pipeline/$CI_PIPELINE_ID htcondor/acceptance-tests.dag
+      tail --follow=descriptor --retry htcondor/acceptance-tests.dag.dagman.out &
+      condor_wait htcondor/acceptance-tests.dag.dagman.log
+      kill %
+      EOF
+    - echo -e "section_end:`date +%s`:remote_submit\r\e[0K"
+
+    - echo -e "section_start:`date +%s`:remote_retrieve\r\e[0KRetrieving artifacts from cluster"
+    - gsiscp -r $REMOTE_HOST:public_html/$CI_PIPELINE_ID/site site
+    - echo -e "section_end:`date +%s`:remote_retrieve\r\e[0K"
+
+    - echo -e "section_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
+    - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
+    - echo -e "section_end:`date +%s`:remote_cleanup\r\e[0K"
+
+  artifacts:
+    paths:
+      - site
+      - site/index.html
+    expose_as: acceptance tests
+    expire_in: 1 week
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.

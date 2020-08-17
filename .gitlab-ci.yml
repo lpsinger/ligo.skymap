@@ -234,44 +234,8 @@ test/coverage:
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
-    # Merge coverage reports. They're just XML, after all.
-    - |
-      python - <<EOF
-      import lxml.etree
-      import copy
-
-      doc1 = lxml.etree.parse('py-coverage.xml')
-      doc2 = lxml.etree.parse('c-coverage.xml')
-      root1 = doc1.getroot()
-      root2 = doc2.getroot()
-      root1.attrib['lines-covered'] = str(
-          int(root1.attrib['lines-covered']) +
-          int(root2.attrib['lines-covered']))
-      root1.attrib['lines-valid'] = str(
-          int(root1.attrib['lines-valid']) +
-          int(root2.attrib['lines-valid']))
-      try:
-          root1.attrib['line-rate'] = str(
-              int(root1.attrib['lines-covered']) /
-              int(root1.attrib['lines-valid']))
-      except ZeroDivisionError:
-          root1.attrib['line-rate'] = '0'
-      root1.attrib['branches-covered'] = str(
-          int(root1.attrib['branches-covered']) +
-          int(root2.attrib['branches-covered']))
-      root1.attrib['branches-valid'] = str(
-          int(root1.attrib['branches-valid']) +
-          int(root2.attrib['branches-valid']))
-      try:
-          root1.attrib['branch-rate'] = str(
-              int(root1.attrib['branches-covered']) /
-              int(root1.attrib['branches-valid']))
-      except ZeroDivisionError:
-          root1.attrib['branch-rate'] = '0'
-      packages = root1.find('./packages')
-      packages.extend(root2.iterfind('./packages/package'))
-      doc1.write('coverage.xml')
-      EOF
+    # Merge coverage reports.
+    - ${CI_PROJECT_DIR}/.gitlab/combine-coverage.py py-coverage.xml c-coverage.xml coverage.xml
     # Write human-readable report.
     - pycobertura show coverage.xml -f html -o coverage.html
     - pycobertura show coverage.xml

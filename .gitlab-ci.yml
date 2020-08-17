@@ -264,7 +264,7 @@ lint:
     - dependencies/python3.7
 
 #
-# Trigger acceptance tests.
+# Acceptance tests.
 #
 
 tests/review:
@@ -272,7 +272,6 @@ tests/review:
   extends: .ssh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
     - when: manual
   needs:
     - wheel/manylinux
@@ -287,14 +286,14 @@ tests/review:
   script:
     - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
     - gsissh -T $REMOTE_HOST "mkdir -p public_html/$CI_COMMIT_REF_SLUG"
-    - gsiscp -r wheel $REMOTE_HOST:public_html/$CI_COMMIT_REF_SLUG
+    - gsiscp *.whl $REMOTE_HOST:public_html/$CI_COMMIT_REF_SLUG
     - |
       gsissh -T $REMOTE_HOST bash -e <<EOF
       cd public_html/$CI_COMMIT_REF_SLUG
       python3 -m venv env
       source env/bin/activate
       pip install --upgrade pip wheel
-      pip 'astropy<4' public_html/$CI_COMMIT_REF_SLUG/wheel/*.whl
+      pip 'astropy<4' public_html/$CI_COMMIT_REF_SLUG/*.whl
       EOF
     - echo -e "section_end:`date +%s`:remote_install\r\e[0K"
 

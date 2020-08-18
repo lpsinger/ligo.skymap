@@ -15,6 +15,9 @@ Changelog
 - Refactor ``ligo-skymap-stats`` to unify its multiprocessing and progress bar
   implementation with other command line tools.
 
+- Update the compiler version that is used to build Linux wheels to icc
+  19.1.2.254 from Intel Parallel Studio XE 2020u2.
+
 - Port the Python C extension to the limited stable Python API in order to
   reduce the number of required binary builds. See
   `PEP 384 <https://www.python.org/dev/peps/pep-0384/>`_.

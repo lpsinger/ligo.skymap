@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.4.1 (unreleased)
+0.5.0 (unreleased)
 ==================
 
 - In sky maps produced by ``bayestar-realize-coincs``, the FITS headers now

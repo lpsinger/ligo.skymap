@@ -119,7 +119,6 @@ static double conditional_ppf_initial_guess(double p, double mu)
 {
     /* Initial guess: ignore r^2 term;
      * distribution becomes truncated Gaussian */
-    const double lo = gsl_cdf_ugaussian_P(-mu);
     const double z = gsl_cdf_ugaussian_Pinv(p + (1 - p) * gsl_cdf_ugaussian_P(-mu)) + mu;
 
     if (z > 0)

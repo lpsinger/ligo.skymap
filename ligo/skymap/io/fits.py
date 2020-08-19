@@ -58,15 +58,13 @@ An example FITS header looks like this:
 """  # noqa: E501
 
 import logging
-import math
 import healpy as hp
 import numpy as np
 from astropy.io import fits
+from astropy.time import Time
 from astropy import units as u
 from ligo.lw import lsctables, ilwd
 import itertools
-import time
-import lal
 import astropy_healpix as ah
 from astropy.table import Table
 from .. import moc
@@ -105,18 +103,7 @@ def gps_to_iso8601(gps_time):
     '2011-09-14T02:00:00.000000'
 
     """
-    gps_seconds_fraction, gps_seconds = math.modf(gps_time)
-    gps_seconds_fraction = '{0:6f}'.format(gps_seconds_fraction)
-    if gps_seconds_fraction[0] == '1':
-        gps_seconds += 1
-    else:
-        assert gps_seconds_fraction[0] == '0'
-    assert gps_seconds_fraction[1] == '.'
-    gps_seconds_fraction = gps_seconds_fraction[1:]
-    year, month, day, hour, minute, second, _, _, _ = lal.GPSToUTC(
-        int(gps_seconds))
-    return '{0:04d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}:{5:02d}{6:s}'.format(
-        year, month, day, hour, minute, second, gps_seconds_fraction)
+    return Time(float(gps_time), format='gps', precision=6).utc.isot
 
 
 def iso8601_to_gps(iso8601):
@@ -140,11 +127,7 @@ def iso8601_to_gps(iso8601):
     1129501781.2
 
     """
-    iso8601, _, second_fraction = iso8601.partition('.')
-    second_fraction = float('0.' + second_fraction)
-    tm = time.strptime(iso8601, "%Y-%m-%dT%H:%M:%S")
-    gps_seconds = lal.UTCToGPS(tm)
-    return gps_seconds + second_fraction
+    return Time(iso8601, scale='utc').gps
 
 
 def gps_to_mjd(gps_time):
@@ -166,9 +149,7 @@ def gps_to_mjd(gps_time):
     '57316.937085648'
 
     """
-    gps_seconds_fraction, gps_seconds = math.modf(gps_time)
-    mjd = lal.ConvertCivilTimeToMJD(lal.GPSToUTC(int(gps_seconds)))
-    return mjd + gps_seconds_fraction / 86400.
+    return Time(gps_time, format='gps').utc.mjd
 
 
 def identity(x):

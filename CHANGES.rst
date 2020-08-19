@@ -12,6 +12,9 @@ Changelog
 - The ``ligo-skymap-stats`` tool now recognizes FITS headers with either
   integer or string ``OBJECT`` identifiers.
 
+- Use Astropy rather than LAL for GPS to UTC time conversion in FITS headers so
+  that LALSuite is not a requirement for reading and writing FITS files.
+
 - Refactor ``ligo-skymap-stats`` to unify its multiprocessing and progress bar
   implementation with other command line tools.
 

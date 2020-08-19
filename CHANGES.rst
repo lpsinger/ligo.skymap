@@ -66,6 +66,12 @@ Changelog
       ...              s['DISTMU'], s['DISTSIGMA'], s['DISTNORM'])
       362.7485740018039
 
+- Increase the range of validity of the solver used in
+  :meth:`ligo.skymap.distance.moments_to_parameters` for low-probability pixels
+  that are very prior dominated. Sky maps that have many such pixels could have
+  credible volumes repoted as infinity. The incidence of such cases should now
+  be decreased.
+
 0.4.0 (2020-07-26)
 ==================
 

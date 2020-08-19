@@ -1356,7 +1356,8 @@ static void test_log_radial_integral(
 
 static void test_distance_moments_to_parameters_round_trip(double mean, double std)
 {
-    static const double min_mean_std = M_SQRT3 + 0.1;
+    static const double min_mean_std = M_SQRT3 + 1e-2;
+    const double mean_std = mean / std;
     double mu, sigma, norm, mean2, std2, norm2;
 
     bayestar_distance_moments_to_parameters(
@@ -1364,15 +1365,18 @@ static void test_distance_moments_to_parameters_round_trip(double mean, double s
     bayestar_distance_parameters_to_moments(
         mu, sigma, &mean2, &std2, &norm2);
 
-    if (gsl_finite(mean / std) && mean / std >= min_mean_std)
+    if (gsl_finite(mean_std) && mean_std >= min_mean_std)
     {
-        gsl_test_rel(norm2, norm, 1e-9,
+        /* Precision degrades as we approach the singularity at
+         * mean/std=sqrt(3). Relax the tolerance of the test near there. */
+        const double rtol = mean_std >= min_mean_std + 0.1 ? 1e-9 : 4e-5;
+        gsl_test_rel(norm2, norm, rtol,
             "testing round-trip conversion of normalization for mean=%g, std=%g",
             mean, std);
-        gsl_test_rel(mean2, mean, 1e-9,
+        gsl_test_rel(mean2, mean, rtol,
             "testing round-trip conversion of mean for mean=%g, std=%g",
             mean, std);
-        gsl_test_rel(std2, std, 1e-9,
+        gsl_test_rel(std2, std, rtol,
             "testing round-trip conversion of std for mean=%g, std=%g",
             mean, std);
     } else {

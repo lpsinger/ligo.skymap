@@ -266,7 +266,7 @@ int bayestar_distance_moments_to_parameters(
      * because as (mu/sigma) becomes more and more negative the normalization
      * has to get very large.
      */
-    static const double min_mean_std = M_SQRT3 + 0.1;
+    static const double min_mean_std = M_SQRT3 + 1e-2;
     int status;
 
     if (gsl_finite(mean_std) && mean_std >= min_mean_std)

@@ -1373,7 +1373,7 @@ static void test_distance_moments_to_parameters_round_trip(double mean, double s
             "testing round-trip conversion of mean for mean=%g, std=%g",
             mean, std);
         gsl_test_rel(std2, std, 1e-9,
-            "testing round-trip conversion of mean for mean=%g, std=%g",
+            "testing round-trip conversion of std for mean=%g, std=%g",
             mean, std);
     } else {
         gsl_test_int(gsl_isinf(mu), 1,

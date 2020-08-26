@@ -29,6 +29,7 @@ References
 
 from astropy import table
 import numpy as np
+from numpy.lib.recfunctions import repack_fields
 
 from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
 from .core import rasterize as _rasterize
@@ -152,6 +153,10 @@ def rasterize(moc_data, order=None):
                 'UNIQ').groups.aggregate(np.sum)
 
             moc_data = table.vstack((to_keep, to_downsample))
+
+    # Ensure that moc_data has appropriate padding for each of its columns to
+    # be properly aligned in order to avoid undefined behavior.
+    moc_data = repack_fields(np.asarray(moc_data), align=True)
 
     return _rasterize(moc_data, order=order)
 

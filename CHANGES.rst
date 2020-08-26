@@ -72,6 +72,10 @@ Changelog
   credible volumes repoted as infinity. The incidence of such cases should now
   be decreased.
 
+- Correct the alignment of Numpy record arrays passed to
+  :func:`ligo.skymap.moc.rasterize` in order to avoid possibly undefined
+  behavior that was detected by UBSan.
+
 0.4.0 (2020-07-26)
 ==================
 

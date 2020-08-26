@@ -21,9 +21,9 @@ Changelog
 - Update the compiler version that is used to build Linux wheels to icc
   19.1.2.254 from Intel Parallel Studio XE 2020u2.
 
-- Port the Python C extension to the limited stable Python API in order to
-  reduce the number of required binary builds. See
-  `PEP 384 <https://www.python.org/dev/peps/pep-0384/>`_.
+- Port the Python C extension to the limited stable Python API so that one
+  binary wheel works for all supported Python versions for any given operating
+  system. See `PEP 384 <https://www.python.org/dev/peps/pep-0384/>`_.
 
 - Eliminate global static variables from the Python C extension to enable
   compatibility with Python subinterpreters. See
@@ -88,10 +88,6 @@ Changelog
   package's command line tools will now yield results in order as quickly as
   they arrive, rather than sorting all of the results at the end. This should
   provide a very modest speedup in some command line tools.
-
-- Use the `Python limited API <https://www.python.org/dev/peps/pep-0384/>`_
-  so that one binary wheel works for all supported Python versions for any
-  given operating system.
 
 0.3.1 (2020-05-28)
 ==================

@@ -5,7 +5,7 @@ Changelog
 0.5.0 (unreleased)
 ==================
 
-- Add --f-high option to ``bayestar-realize-coincs`` in order to simulate
+- Add ``--f-high`` option to ``bayestar-realize-coincs`` in order to simulate
   early warning triggers.
 
 - In sky maps produced by ``bayestar-realize-coincs``, the FITS headers now

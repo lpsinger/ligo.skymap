@@ -98,6 +98,9 @@ def parser():
         '--f-low', type=float,
         help='Override low frequency cutoff found in sim_inspiral table')
     parser.add_argument(
+        '--f-high', type=float,
+        help='Set high frequency cutoff to simulate early warning')
+    parser.add_argument(
         '--duty-cycle', type=float, default=1.0,
         help='Single-detector duty cycle')
     parser.add_argument(
@@ -178,7 +181,7 @@ def simulate_snr(ra, dec, psi, inc, distance, epoch, gmst, H, S,
 
 
 def simulate(seed, sim_inspiral, psds, responses, locations, measurement_error,
-             f_low=None, waveform=None):
+             f_low=None, f_high=None, waveform=None):
     from ..bayestar import filter
 
     np.random.seed(seed)
@@ -207,7 +210,8 @@ def simulate(seed, sim_inspiral, psds, responses, locations, measurement_error,
         spin2x=sim_inspiral.spin2x,
         spin2y=sim_inspiral.spin2y,
         spin2z=sim_inspiral.spin2z,
-        f_min=f_low)
+        f_min=f_low,
+        f_final=f_high)
 
     return [
         simulate_snr(
@@ -313,7 +317,8 @@ def main(args=None):
     func = functools.partial(simulate, psds=psds,
                              responses=responses, locations=locations,
                              measurement_error=opts.measurement_error,
-                             f_low=opts.f_low, waveform=opts.waveform)
+                             f_low=opts.f_low, f_high=opts.f_high,
+                             waveform=opts.waveform)
 
     # Make sure that each thread gets a different random number state.
     # We start by drawing a random integer s in the main thread, and
@@ -372,6 +377,7 @@ def main(args=None):
                         end=toa,
                         snr=abs_snr,
                         coa_phase=arg_snr,
+                        f_final=opts.f_high,
                         eff_distance=horizon / abs_snr)))
 
             net_snr = np.sqrt(net_snr)

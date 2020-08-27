@@ -4,6 +4,8 @@ Changelog
 
 0.5.0 (unreleased)
 ==================
+- Add --f-high option to ``bayestar-realize-coincs`` in order to simulate
+  early warning triggers.
 
 - In sky maps produced by ``bayestar-realize-coincs``, the FITS headers now
   contain ``OBJECT`` identifiers that are integer event IDs (such as ``1``)

@@ -4,6 +4,7 @@ Changelog
 
 0.5.0 (unreleased)
 ==================
+
 - Add --f-high option to ``bayestar-realize-coincs`` in order to simulate
   early warning triggers.
 

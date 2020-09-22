@@ -13,9 +13,9 @@ Changelog
 - Add ``--f-high`` option to ``bayestar-realize-coincs`` in order to simulate
   early warning triggers.
 
-- In sky maps produced by ``bayestar-realize-coincs``, the FITS headers now
+- In sky maps produced by ``bayestar-localize-coincs``, the FITS headers now
   contain ``OBJECT`` identifiers that are integer event IDs (such as ``1``)
-  rather than strings (such as ``coinc_event:coinc_event_id``).
+  rather than strings (such as ``coinc_event:coinc_event_id:1``).
 
 - The ``ligo-skymap-stats`` tool now recognizes FITS headers with either
   integer or string ``OBJECT`` identifiers.

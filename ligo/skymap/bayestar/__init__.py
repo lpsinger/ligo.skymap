@@ -20,8 +20,8 @@ Rapid sky localization with BAYESTAR [1]_.
 References
 ----------
 .. [1] Singer & Price, 2016. "Rapid Bayesian position reconstruction for
-       gravitational-wave transients." PRD, 93, 024013
-       <https://doi.org/10.1103/PhysRevD.93.024013>.
+       gravitational-wave transients." PRD, 93, 024013.
+       :doi:`10.1103/PhysRevD.93.024013`
 
 """
 import inspect

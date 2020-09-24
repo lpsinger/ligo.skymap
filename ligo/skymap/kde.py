@@ -331,7 +331,7 @@ class SkyKDE(ClusteredKDE):
     def _bayestar_adaptive_grid(self, top_nside=16, rounds=8):
         """Implement of the BAYESTAR adaptive mesh refinement scheme as
         described in Section VI of Singer & Price 2016, PRD, 93, 024013
-        (http://dx.doi.org/10.1103/PhysRevD.93.024013).
+        :doi:`10.1103/PhysRevD.93.024013`.
 
         FIXME: Consider refactoring BAYESTAR itself to perform the adaptation
         step in Python.

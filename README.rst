@@ -46,7 +46,7 @@ documentation`_.
 
 .. [#IlluminatingGravitationalWaves]
    Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
-   https://10.1126/science.aap9455
+   https://doi.org/10.1126/science.aap9455
 
 .. _`Command line tool bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_coincs.html
 .. _`bayestar-localize-lvalert`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_lvalert.html

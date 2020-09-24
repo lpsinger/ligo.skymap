@@ -58,8 +58,8 @@ Example
 References
 ----------
 .. [1] LSC/Virgo et al., 2016. "Localization and Broadband Follow-up of the
-       Gravitational-wave Transient GW150914." ApJL 826, L13
-       <https://doi.org/10.3847/2041-8205/826/1/L13>.
+       Gravitational-wave Transient GW150914." ApJL 826, L13.
+       :doi:`10.3847/2041-8205/826/1/L13`
 
 """  # noqa: E501
 from astropy.coordinates import (

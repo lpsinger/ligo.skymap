@@ -21,7 +21,7 @@ maps [2]_.
 References
 ----------
 .. [1] Reinecke & Hivon, 2015. "Efficient data structures for masks on 2D
-       grids." AA 580, A132 <https://doi.org/10.1051/0004-6361/201526549>.
+       grids." AA 580, A132. :doi:`10.1051/0004-6361/201526549`
 .. [2] Boch et al., 2014. "MOC - HEALPix Multi-Order Coverage map." IVOA
        Recommendation <http://ivoa.net/documents/MOC/>.
 

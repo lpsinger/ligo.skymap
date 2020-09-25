@@ -27,12 +27,20 @@ If the ``--min-distance`` argument is omitted, it defaults to zero. If the
 distance of the most sensitive detector.
 
 A FITS file is created for each sky map, having a filename of the form
-``X.fits`` where X is the LIGO-LW row id of the coinc.
+``X.fits`` where X is the integer LIGO-LW row ID of the coinc. The ``OBJECT``
+card in the FITS header is also set to the integer row ID.
 """
 
 from . import (
     ArgumentParser, FileType, mkpath,
     waveform_parser, prior_parser, mcmc_parser, random_parser)
+
+
+ROW_ID_COMMENT = [
+    '',
+    'The integer value in the OBJECT card in this FITS header is a row ID',
+    'that refers to a coinc_event table row in the input LIGO-LW document.',
+    '']
 
 
 def parser():
@@ -165,6 +173,8 @@ def main(args=None):
                 enable_snr_series=opts.enable_snr_series,
                 f_high_truncate=opts.f_high_truncate)
             sky_map.meta['objid'] = coinc_event_id
+            sky_map.meta['comment'] = ROW_ID_COMMENT
+
         except (ArithmeticError, ValueError):
             log.exception('%d:sky localization failed', coinc_event_id)
             count_sky_maps_failed += 1

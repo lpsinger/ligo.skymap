@@ -5,7 +5,10 @@ Changelog
 0.5.1 (unreleased)
 ==================
 
-- No changes yet.
+- In the command line help for ``bayestar-localize-coincs`` and in the
+  ``COMMENT`` card in the output FITS file, explain that the integer value in
+  the ``OBJECT`` card in the FITS header is a row ID that refers to a
+  coinc_event table row in the input LIGO-LW document.
 
 0.5.0 (2020-08-27)
 ==================

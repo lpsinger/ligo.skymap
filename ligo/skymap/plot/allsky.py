@@ -157,9 +157,6 @@ import numpy as np
 from reproject import reproject_from_healpix
 from scipy.optimize import minimize_scalar
 from .angle import reference_angle_deg
-from . import itrs_frame_monkeypatch
-
-itrs_frame_monkeypatch.install()
 
 __all__ = ['AutoScaledWCSAxes', 'ScaleBar']
 

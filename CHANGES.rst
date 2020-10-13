@@ -10,6 +10,8 @@ Changelog
   the ``OBJECT`` card in the FITS header is a row ID that refers to a
   coinc_event table row in the input LIGO-LW document.
 
+- Require astropy >= 4.0.2.
+
 0.5.0 (2020-08-27)
 ==================
 

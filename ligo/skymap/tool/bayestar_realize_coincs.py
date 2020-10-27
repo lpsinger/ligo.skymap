@@ -286,7 +286,8 @@ def main(args=None):
 
     # Write process metadata to output file.
     process = register_to_xmldoc(
-        xmldoc, p, opts, ifos=opts.detector, comment="Simulated coincidences")
+        xmldoc, p, opts, instruments=opts.detector,
+        comment="Simulated coincidences")
 
     # Add search summary to output file.
     all_time = segments.segment([lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9)])

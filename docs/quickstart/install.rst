@@ -71,7 +71,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `Numpy <http://www.numpy.org>`_ ≥ 1.14
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
           *  `ptemcee <https://github.com/willvousden/ptemcee>`_
-          *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_
+          *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_ ≥ 1.7.0
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
           *  `Scipy <https://www.scipy.org>`_ ≥ 0.14
           *  `tqdm <https://tqdm.github.io>`_ ≥ 4.27.0

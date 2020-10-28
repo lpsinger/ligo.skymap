@@ -10,7 +10,14 @@ Changelog
   the ``OBJECT`` card in the FITS header is a row ID that refers to a
   coinc_event table row in the input LIGO-LW document.
 
-- Require astropy >= 4.0.2.
+- Update the required version of Astropy to >= 4.0.2 and < 4.1. Astropy 4.0.2
+  includes a bug fix for cache handling on cluster filesystems (see
+  `astropy#9970`_). Astropy 4.1 caused some issues with Matplotlib projection
+  classes as a result of changes in hashing behavior of
+  ``astropy.coordinates.SkyCoord`` (see `matplotlib#18832`_).
+
+.. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
+.. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
 
 0.5.0 (2020-08-27)
 ==================

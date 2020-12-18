@@ -58,7 +58,7 @@ wheel/manylinux:
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
-  image: containers.ligo.org/leo-singer/lalsuite-manylinux/manylinux2014_x86_64:icc
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux/manylinux2014_x86_64:icc
   stage: dist
   script:
     # Build and install LALSuite

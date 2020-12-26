@@ -289,7 +289,7 @@ tests/review:
       python3 -m venv env
       source env/bin/activate
       pip install --upgrade pip wheel
-      pip install 'astropy<4' *.whl
+      pip install *.whl
       pip install -r requirements.txt
       EOF
     - echo -e "section_end:`date +%s`:remote_install\r\e[0K"

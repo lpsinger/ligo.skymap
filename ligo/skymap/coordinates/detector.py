@@ -63,24 +63,13 @@ References
 
 """  # noqa: E501
 from astropy.coordinates import (
-    CartesianRepresentation, DynamicMatrixTransform, EarthLocation,
-    EarthLocationAttribute, frame_transform_graph, ITRS,
-    SphericalRepresentation)
+    CartesianRepresentation, DynamicMatrixTransform, EarthLocationAttribute,
+    frame_transform_graph, ITRS, SphericalRepresentation)
 from astropy.coordinates.matrix_utilities import matrix_transpose
 from astropy import units as u
-import lal
 import numpy as np
 
 __all__ = ('DetectorFrame',)
-
-# Add gravitational-wave detectors to site registry
-registry = EarthLocation._get_site_registry()
-for detector in lal.CachedDetectors:
-    names = [detector.frDetector.name, detector.frDetector.prefix]
-    location = EarthLocation(*detector.location, unit=u.m)
-    registry.add_site(names, location)
-    del names, detector
-del lal, registry
 
 
 class DetectorFrame(ITRS):

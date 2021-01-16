@@ -3,10 +3,10 @@ variables:
   OMP_NUM_THREADS: 4
 
 include:
-  - project: emfollow/gitlab-ci-templates
-    file: lint.yml
-  - project: emfollow/gitlab-ci-templates
-    file: ssh.yml
+  - project: computing/gitlab-ci-templates
+    file: python/lint.yml
+  - project: computing/gitlab-ci-templates
+    file: cluster/ssh.yml
 
 stages:
   - deps

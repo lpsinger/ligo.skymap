@@ -77,6 +77,7 @@ Plotting and Visualization (`ligo.skymap.plot`)
    plot/allsky
    plot/backdrop
    plot/marker
+   plot/poly
    plot/pp
 
 Sky Map Postprocessing (`ligo.skymap.postprocess`)

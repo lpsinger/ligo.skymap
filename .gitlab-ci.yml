@@ -258,6 +258,8 @@ test/coverage:
 #
 
 lint:
+  extends:
+    - .python:flake8
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
   stage: test
   needs:

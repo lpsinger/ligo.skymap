@@ -18,11 +18,11 @@
 
 from . import (
     ArgumentParser, FileType, waveform_parser,
-    prior_parser, random_parser, mkpath)
+    posterior_parser, random_parser, mkpath)
 
 
 def parser():
-    parser = ArgumentParser(parents=[waveform_parser, prior_parser,
+    parser = ArgumentParser(parents=[waveform_parser, posterior_parser,
                                      random_parser])
     parser.add_argument(
         'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',

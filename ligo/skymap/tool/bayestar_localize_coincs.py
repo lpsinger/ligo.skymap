@@ -33,7 +33,7 @@ card in the FITS header is also set to the integer row ID.
 
 from . import (
     ArgumentParser, FileType, mkpath,
-    waveform_parser, prior_parser, mcmc_parser, random_parser)
+    waveform_parser, posterior_parser, mcmc_parser, random_parser)
 
 
 ROW_ID_COMMENT = [
@@ -45,7 +45,8 @@ ROW_ID_COMMENT = [
 
 def parser():
     parser = ArgumentParser(
-        parents=[waveform_parser, prior_parser, mcmc_parser, random_parser])
+        parents=[waveform_parser, posterior_parser, mcmc_parser,
+                 random_parser])
     parser.add_argument(
         '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
         help='disable certain detectors')

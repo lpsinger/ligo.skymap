@@ -703,10 +703,6 @@ static void logsumexp(const double *accum, double log_weight, double *result, un
 }
 
 
-/* Fudge factor for excess estimation error in gstlal_inspiral. */
-static const float FUDGE = 0.83;
-
-
 static void bayestar_sky_map_toa_phoa_snr_pixel(
     log_radial_integrator *integrators[],
     unsigned char nint,
@@ -722,7 +718,8 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     const float (**responses)[3],
     const double **locations,
     const double *horizons,
-    const float (*u_points_weights)[2]
+    const float (*u_points_weights)[2],
+    float rescale_loglikelihood
 ) {
     float complex F[nifos];
     float complex snrs_interp[nsamples][nifos];
@@ -773,7 +770,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                         F[iifo], exp_i_twopsi, u, u2));
             }
             p2 *= 0.5f;
-            p2 *= FUDGE * FUDGE;
+            p2 *= rescale_loglikelihood * rescale_loglikelihood;
             log_p[itwopsi][iu] = logf(p[itwopsi][iu] = sqrtf(p2));
 
             PRAGMA_LOOP_COUNT_NSAMPLES
@@ -784,7 +781,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                 PRAGMA_LOOP_COUNT_NIFOS
                 for (unsigned int iifo = 0; iifo < nifos; iifo ++)
                     I0arg_complex_times_r += conjf(z_times_r[iifo]) * snrs_interp[isample][iifo];
-                log_b[itwopsi][iu][isample] = logf(b[itwopsi][iu][isample] = cabsf(I0arg_complex_times_r) * FUDGE * FUDGE);
+                log_b[itwopsi][iu][isample] = logf(b[itwopsi][iu][isample] = cabsf(I0arg_complex_times_r) * rescale_loglikelihood * rescale_loglikelihood);
             }
         }
     }
@@ -868,7 +865,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
-    const double *horizons          /* SNR=1 horizon distances for each detector */
+    const double *horizons,         /* SNR=1 horizon distances for each detector */
+    float rescale_loglikelihood                     /* SNR rescale_loglikelihood factor */
 ) {
     /* Initialize precalculated tables. */
     bayestar_init();
@@ -991,7 +989,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             pmax += gsl_pow_2(horizons[iifo]);
         }
         pmax = sqrt(0.5 * pmax);
-        pmax *= FUDGE;
+        pmax *= rescale_loglikelihood;
 
         #pragma omp parallel for
         for (unsigned char k = 0; k < 3; k ++)
@@ -1051,7 +1049,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
                 pixels[i].value, gmst, nifos, nsamples, n_u_points,
                 sample_rate, epochs, snrs, responses, locations, horizons,
-                u_points_weights);
+                u_points_weights, rescale_loglikelihood);
 
             PRAGMA_LOOP_COUNT_NIFOS
             for (unsigned int iifo = 0; iifo < nifos; iifo ++)
@@ -1060,7 +1058,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                     pixels[i].uniq, &accum[i][iifo], gmst, 1, nsamples,
                     n_u_points, sample_rate, &epochs[iifo], &snrs[iifo],
                     &responses[iifo], &locations[iifo], &horizons[iifo],
-                    u_points_weights);
+                    u_points_weights, rescale_loglikelihood);
             }
         }
         ITT_TASK_END(itt_domain);
@@ -1094,7 +1092,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
                 pixels[i].value, gmst, nifos, nsamples, n_u_points,
                 sample_rate, epochs, snrs, responses, locations,
-                horizons, u_points_weights);
+                horizons, u_points_weights, rescale_loglikelihood);
         }
         ITT_TASK_END(itt_domain);
 
@@ -1116,7 +1114,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         bayestar_sky_map_toa_phoa_snr_pixel(&integrators[1], 2, pixels[i].uniq,
             &pixels[i].value[1], gmst, nifos, nsamples, n_u_points,
             sample_rate, epochs, snrs, responses, locations, horizons,
-            u_points_weights);
+            u_points_weights, rescale_loglikelihood);
     }
     ITT_TASK_END(itt_domain);
 
@@ -1211,7 +1209,8 @@ double bayestar_log_posterior_toa_phoa_snr(
     const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
-    const double *horizons          /* SNR=1 horizon distances for each detector */
+    const double *horizons,         /* SNR=1 horizon distances for each detector */
+    float rescale_loglikelihood                     /* SNR rescale_loglikelihood factor */
 ) {
     bayestar_init();
 
@@ -1250,8 +1249,8 @@ double bayestar_log_posterior_toa_phoa_snr(
 
     double i0arg_times_r = cabs(i0arg_complex_times_r);
 
-    A *= gsl_pow_2(FUDGE);
-    i0arg_times_r *= gsl_pow_2(FUDGE);
+    A *= gsl_pow_2(rescale_loglikelihood);
+    i0arg_times_r *= gsl_pow_2(rescale_loglikelihood);
 
     double result = (A * one_by_r + i0arg_times_r) * one_by_r
         + log(gsl_sf_bessel_I0_scaled(i0arg_times_r * one_by_r)

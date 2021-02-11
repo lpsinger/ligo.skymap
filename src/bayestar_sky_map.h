@@ -101,7 +101,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
-    const double *horizons          /* SNR=1 horizon distances for each detector */
+    const double *horizons,         /* SNR=1 horizon distances for each detector */
+    float rescale_loglikelihood                     /* SNR rescale_loglikelihood factor */
 );
 
 double bayestar_log_posterior_toa_phoa_snr(
@@ -126,7 +127,8 @@ double bayestar_log_posterior_toa_phoa_snr(
     const float (**snrs)[2],        /* SNR amplitude and phase arrays */
     const float (**responses)[3],   /* Detector responses */
     const double **locations,       /* Barycentered Cartesian geographic detector positions (light seconds) */
-    const double *horizons          /* SNR=1 horizon distances for each detector */
+    const double *horizons,         /* SNR=1 horizon distances for each detector */
+    float rescale_loglikelihood                     /* SNR rescale_loglikelihood factor */
 );
 
 /* Compute antenna factors from the detector response tensor and source

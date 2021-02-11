@@ -57,6 +57,8 @@ __all__ = ('derasterize', 'localize', 'rasterize', 'antenna_factor',
 
 log = logging.getLogger('BAYESTAR')
 
+_RESCALE_LOGLIKELIHOOD = 0.83
+
 antenna_factor = require_contiguous_aligned(antenna_factor)
 signal_amplitude_model = require_contiguous_aligned(signal_amplitude_model)
 _log_posterior_toa_phoa_snr = require_contiguous_aligned(
@@ -67,11 +69,12 @@ _log_posterior_toa_phoa_snr = require_contiguous_aligned(
 def log_posterior_toa_phoa_snr(
         ra, sin_dec, distance, u, twopsi, t, min_distance, max_distance,
         prior_distance_power, cosmology, gmst, sample_rate, epochs, snrs,
-        responses, locations, horizons):
+        responses, locations, horizons,
+        rescale_loglikelihood=_RESCALE_LOGLIKELIHOOD):
     return _log_posterior_toa_phoa_snr(
         ra, sin_dec, distance, u, twopsi, t, min_distance, max_distance,
         prior_distance_power, cosmology, gmst, sample_rate, epochs, snrs,
-        responses, locations, horizons)
+        responses, locations, horizons, rescale_loglikelihood)
 
 
 # Wrap so that fixed parameter values are pulled from keyword arguments
@@ -315,7 +318,8 @@ def localize(
         min_inclination=0, max_inclination=np.pi / 2,
         min_distance=None, max_distance=None, prior_distance_power=None,
         cosmology=False, mcmc=False, chain_dump=None,
-        enable_snr_series=True, f_high_truncate=0.95):
+        enable_snr_series=True, f_high_truncate=0.95,
+        rescale_loglikelihood=_RESCALE_LOGLIKELIHOOD):
     """Localize a compact binary signal using the BAYESTAR algorithm.
 
     Parameters
@@ -383,7 +387,8 @@ def localize(
         if min_inclination != 0 or max_inclination != np.pi / 2:
             log.warn('inclination limits are not supported for MCMC mode')
         args = (min_distance, max_distance, prior_distance_power, cosmology,
-                gmst, sample_rate, toas, snrs, responses, locations, horizons)
+                gmst, sample_rate, toas, snrs, responses, locations, horizons,
+                rescale_loglikelihood)
         skymap = localize_emcee(
             args=args,
             xmin=[0, -1, min_distance, -1, 0, 0],
@@ -392,7 +397,7 @@ def localize(
     else:
         args = (min_inclination, max_inclination, min_distance, max_distance,
                 prior_distance_power, cosmology, gmst, sample_rate, toas, snrs,
-                responses, locations, horizons)
+                responses, locations, horizons, rescale_loglikelihood)
         skymap, log_bci, log_bsn = core.toa_phoa_snr(*args)
         skymap = Table(skymap, copy=False)
         skymap.meta['log_bci'] = log_bci

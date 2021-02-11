@@ -720,6 +720,7 @@ static PyObject *sky_map_toa_phoa_snr(
     unsigned int nifos;
     unsigned long nsamples = 0;
     float sample_rate;
+    float rescale_loglikelihood;
     PyObject *epochs_obj;
     PyObject *snrs_obj;
     PyObject *responses_obj;
@@ -730,16 +731,17 @@ static PyObject *sky_map_toa_phoa_snr(
     static const char *keywords[] = {"min_inclination", "max_inclination",
         "min_distance", "max_distance", "prior_distance_power", "cosmology",
         "gmst", "sample_rate", "epochs", "snrs", "responses", "locations",
-        "horizons", NULL};
+        "horizons", "rescale_loglikelihood", NULL};
 
     /* Parse arguments */
     /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
     WARNINGS_PUSH
     WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiidfOOOOO",
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiidfOOOOOf",
         keywords, &min_inclination, &max_inclination, &min_distance,
         &max_distance, &prior_distance_power, &cosmology, &gmst, &sample_rate,
-        &epochs_obj, &snrs_obj, &responses_obj, &locations_obj, &horizons_obj))
+        &epochs_obj, &snrs_obj, &responses_obj, &locations_obj, &horizons_obj,
+        &rescale_loglikelihood))
         return NULL;
     WARNINGS_POP
 
@@ -839,7 +841,7 @@ static PyObject *sky_map_toa_phoa_snr(
     pixels = bayestar_sky_map_toa_phoa_snr(&len, &log_bci, &log_bsn,
         min_inclination, max_inclination, min_distance, max_distance,
         prior_distance_power, cosmology, gmst, nifos, nsamples, sample_rate,
-        epochs, snrs, responses, locations, horizons);
+        epochs, snrs, responses, locations, horizons, rescale_loglikelihood);
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
 
@@ -926,18 +928,18 @@ static void log_posterior_toa_phoa_snr_loop(
         for (npy_intp j = 0; j < nifos; j ++)
         {
             snrs[j] = (const float (*)[2])
-                &args[13][i * steps[13] + j * steps[19]];
+                &args[13][i * steps[13] + j * steps[20]];
             responses[j] = (const float (*)[3])
-                &args[14][i * steps[14] + j * steps[22]];
+                &args[14][i * steps[14] + j * steps[23]];
             locations[j] = (const double *)
-                &args[15][i * steps[15] + j * steps[25]];
+                &args[15][i * steps[15] + j * steps[26]];
         }
 
         /* Alignment of the ufunc arguments is enforced in Python by the
          * require_contiguous_aligned wrapper function. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
-        *(double *)   &args[17][i * steps[17]] = bayestar_log_posterior_toa_phoa_snr(
+        *(double *)   &args[18][i * steps[18]] = bayestar_log_posterior_toa_phoa_snr(
         *(double *)   &args[0][i * steps[0]],
         *(double *)   &args[1][i * steps[1]],
         *(double *)   &args[2][i * steps[2]],
@@ -953,7 +955,8 @@ static void log_posterior_toa_phoa_snr_loop(
         *(double *) &args[11][i * steps[11]],
          (const double *) &args[12][i * steps[12]],
          snrs, responses, locations,
-         (const double *) &args[16][i * steps[16]]);
+         (const double *) &args[16][i * steps[16]],
+        *(const float *) &args[17][i * steps[17]]);
         WARNINGS_POP
     }
 
@@ -1052,7 +1055,8 @@ static const PyUFuncGenericFunction
 static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
     NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_BOOL, NPY_DOUBLE, NPY_DOUBLE,
-    NPY_DOUBLE, NPY_FLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
+    NPY_DOUBLE, NPY_FLOAT, NPY_FLOAT, NPY_DOUBLE, NPY_DOUBLE, NPY_FLOAT,
+    NPY_DOUBLE};
 
 static const char volume_render_ufunc_types[] = {
     NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
@@ -1132,9 +1136,9 @@ PyMODINIT_FUNC PyInit_core(void)
     MODULE_ADD_OBJECT(
         "log_posterior_toa_phoa_snr", PyUFunc_FromFuncAndDataAndSignature(
             log_posterior_toa_phoa_snr_loops, no_ufunc_data,
-            log_posterior_toa_phoa_snr_types, 1, 17, 1, PyUFunc_None,
+            log_posterior_toa_phoa_snr_types, 1, 18, 1, PyUFunc_None,
             "log_posterior_toa_phoa_snr", NULL, 0,
-            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples,2),(nifos,3,3),(nifos,3),(nifos)->()"));
+            "(),(),(),(),(),(),(),(),(),(),(),(),(nifos),(nifos,nsamples,2),(nifos,3,3),(nifos,3),(nifos),()->()"));
 
     MODULE_ADD_OBJECT(
         "conditional_pdf", PyUFunc_FromFuncAndData(

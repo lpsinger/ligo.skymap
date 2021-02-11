@@ -157,6 +157,10 @@ group.add_argument(
 group.add_argument(
     '--enable-snr-series', action=EnableAction,
     help='Enable input of SNR time series')
+group.add_argument(
+    '--rescale-loglikelihood', type=float, default=0.83,
+    help='Rescale log likelihood by the square of this factor to account for '
+    'excess technical noise from search pipeline')
 del group
 
 

@@ -170,7 +170,8 @@ def main(args=None):
                 opts.max_distance, opts.prior_distance_power,
                 opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
-                f_high_truncate=opts.f_high_truncate)
+                f_high_truncate=opts.f_high_truncate,
+                rescale_loglikelihood=opts.rescale_loglikelihood)
             sky_map.meta['objid'] = coinc_event_id
             sky_map.meta['comment'] = ROW_ID_COMMENT
 

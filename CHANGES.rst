@@ -30,6 +30,12 @@ Changelog
 
 .. _`astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
 
+- Update the required version of LALSuite to >= 6.82 to work around an
+  incompatibility between Numpy >= 1.20.0 and older versions of LALSuite
+  (see `lalsuite#414`_).
+
+.. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
+
 0.5.0 (2020-08-27)
 ==================
 

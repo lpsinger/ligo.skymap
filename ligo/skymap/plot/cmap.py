@@ -16,11 +16,7 @@
 #
 """Register some extra Matplotlib color maps"""
 
-try:
-    from importlib import resources
-except ImportError:
-    # FIXME: remove after dropping support for Python < 3.7
-    import importlib_resources as resources
+from importlib import resources
 
 from matplotlib import cm
 from matplotlib import colors

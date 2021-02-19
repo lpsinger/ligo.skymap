@@ -85,7 +85,7 @@ wheel/macosx:
     - macos_sierra
   stage: dist
   script:
-    - PYVERS=3.6
+    - PYVERS=3.7
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -137,9 +137,6 @@ wheel/macosx:
   needs:
     - requirements
 
-dependencies/python3.6:
-  <<: *dependencies
-
 dependencies/python3.7:
   <<: *dependencies
 
@@ -179,13 +176,6 @@ docs:
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl astroquery
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
-
-test/python3.6:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_SLUG
-  needs:
-    - dependencies/python3.6
-    - wheel/manylinux
 
 test/python3.7:
   <<: *test

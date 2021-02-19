@@ -9,6 +9,9 @@ Changelog
   supports Python 3.9. (We were mostly waiting for LALSuite to be built for
   Python 3.9).
 
+- Drop support for Python 3.6 because it is no longer supported by many other
+  scientific Python packages like Matplotlib and Numpy.
+
 - In the command line help for ``bayestar-localize-coincs`` and in the
   ``COMMENT`` card in the output FITS file, explain that the integer value in
   the ``OBJECT`` card in the FITS header is a row ID that refers to a

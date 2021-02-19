@@ -104,9 +104,7 @@ def main(args=None):
             raise ValueError(
                 'must not set --coinc-event-id with --condor-submit')
         with subprocess.Popen(['condor_submit'],
-                              # FIXME: use text=True instead in Python >= 3.7
-                              encoding=sys.stdin.encoding,
-                              stdin=subprocess.PIPE) as proc:
+                              text=True, stdin=subprocess.PIPE) as proc:
             f = proc.stdin
             print('''
                   accounting_group = ligo.dev.o3.cbc.pe.bayestar

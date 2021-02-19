@@ -26,9 +26,9 @@ Changelog
 - Importing ligo.skymap no longer causes the
   ``astropy.coordinates.EarthLocation`` site registry to be populated with the
   locations of gravitational-wave observatories, because these sites are now
-  included in Astropy's own data repository (see `astropy/astropy-data#89`_).
+  included in Astropy's own data repository (see `astropy-data#89`_).
 
-.. _`astropy/astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
+.. _`astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
 
 0.5.0 (2020-08-27)
 ==================

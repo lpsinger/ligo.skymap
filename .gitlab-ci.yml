@@ -146,6 +146,9 @@ dependencies/python3.7:
 dependencies/python3.8:
   <<: *dependencies
 
+dependencies/python3.9:
+  <<: *dependencies
+
 #
 # Generate documentation.
 #
@@ -196,6 +199,13 @@ test/python3.8:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   needs:
     - dependencies/python3.8
+    - wheel/manylinux
+
+test/python3.9:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
+  needs:
+    - dependencies/python3.9
     - wheel/manylinux
 
 #

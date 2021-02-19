@@ -5,6 +5,10 @@ Changelog
 0.5.1 (unreleased)
 ==================
 
+- This is the first release of ligo.skymap that is tested under and officially
+  supports Python 3.9. (We were mostly waiting for LALSuite to be built for
+  Python 3.9).
+
 - In the command line help for ``bayestar-localize-coincs`` and in the
   ``COMMENT`` card in the output FITS file, explain that the integer value in
   the ``OBJECT`` card in the FITS header is a row ID that refers to a

@@ -117,12 +117,7 @@ def test_zoom_axes(rcparams):
     ax.scalebar((0.1, 0.1), 30 * u.arcmin)
     ax.grid()
     for key in ['ra', 'dec']:
-        try:
-            ax.coords[key].set_auto_axislabel(False)
-        except AttributeError:
-            # FIXME: CoordinateHelper.set_auto_axislabel was added in
-            # astropy-4.0, but we currently support astropy >= 3.1.
-            pass
+        ax.coords[key].set_auto_axislabel(False)
     return fig
 
 

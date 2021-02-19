@@ -19,12 +19,6 @@ Changelog
 .. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
 .. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
 
-- Temporarily require Numpy < 1.20.0 in order to work around a compatibility
-  issue with LALSuite that has been fixed upstream but is not yet in a release
-  (see `lalsuite#414`_).
-
-.. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
-
 - Importing ligo.skymap no longer causes the
   ``astropy.coordinates.EarthLocation`` site registry to be populated with the
   locations of gravitational-wave observatories, because these sites are now

@@ -251,7 +251,7 @@ def write_sky_map(filename, m, **kwargs):
     >>> order = 9
     >>> nside = 2 ** order
     >>> npix = ah.nside_to_npix(nside)
-    >>> prob = np.ones(npix, dtype=np.float) / npix
+    >>> prob = np.ones(npix, dtype=float) / npix
 
     >>> import tempfile
     >>> from ligo.skymap import version

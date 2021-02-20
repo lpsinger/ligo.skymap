@@ -12,11 +12,6 @@ Changelog
 - Drop support for Python 3.6 because it is no longer supported by many other
   scientific Python packages like Matplotlib and Numpy.
 
-- In the command line help for ``bayestar-localize-coincs`` and in the
-  ``COMMENT`` card in the output FITS file, explain that the integer value in
-  the ``OBJECT`` card in the FITS header is a row ID that refers to a
-  coinc_event table row in the input LIGO-LW document.
-
 - Update the required version of Astropy to >= 4.0.2 and < 4.2. Astropy 4.0.2
   included a bug fix for cache handling on cluster filesystems (see
   `astropy#9970`_), but Astropy 4.2 introduced a regression affecting Numpy
@@ -33,6 +28,12 @@ Changelog
 
 .. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
 
+- Update the required version of LALSuite to >= 6.82 to work around an
+  incompatibility between Numpy >= 1.20.0 and older versions of LALSuite
+  (see `lalsuite#414`_).
+
+.. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
+
 - Importing ligo.skymap no longer causes the
   ``astropy.coordinates.EarthLocation`` site registry to be populated with the
   locations of gravitational-wave observatories, because these sites are now
@@ -40,11 +41,10 @@ Changelog
 
 .. _`astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
 
-- Update the required version of LALSuite to >= 6.82 to work around an
-  incompatibility between Numpy >= 1.20.0 and older versions of LALSuite
-  (see `lalsuite#414`_).
-
-.. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
+- In the command line help for ``bayestar-localize-coincs`` and in the
+  ``COMMENT`` card in the output FITS file, explain that the integer value in
+  the ``OBJECT`` card in the FITS header is a row ID that refers to a
+  coinc_event table row in the input LIGO-LW document.
 
 0.5.0 (2020-08-27)
 ==================

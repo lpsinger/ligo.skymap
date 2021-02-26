@@ -12,7 +12,6 @@ Changelog
 - Drop support for Python 3.6 because it is no longer supported by many other
   scientific Python packages like Matplotlib and Numpy.
 
-
 - Update the required version of Astropy to >= 4.0.2 and < 4.1. Astropy 4.0.2
   includes a bug fix for cache handling on cluster filesystems (see
   `astropy#9970`_). Astropy 4.1 caused some issues with Matplotlib projection

@@ -17,7 +17,8 @@ Changelog
   includes a bug fix for cache handling on cluster filesystems (see
   `astropy#9970`_). Astropy 4.1 caused some issues with Matplotlib projection
   classes as a result of changes in hashing behavior of
-  ``astropy.coordinates.SkyCoord`` (see `matplotlib#18832`_).
+  ``astropy.coordinates.SkyCoord`` (see `matplotlib#18832`_), which should be
+  fixed in Matplotlib 3.4.0.
 
 .. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
 .. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832

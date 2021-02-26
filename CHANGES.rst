@@ -12,14 +12,11 @@ Changelog
 - Drop support for Python 3.6 because it is no longer supported by many other
   scientific Python packages like Matplotlib and Numpy.
 
-- Update the required version of Astropy to >= 4.0.2 and < 4.2. Astropy 4.0.2
-  included a bug fix for cache handling on cluster filesystems (see
-  `astropy#9970`_), but Astropy 4.2 introduced a regression affecting Numpy
-  and sky coordinates that is fixed on master but not yet in a release
-  (see `astropy#11133`_).
+
+- Update the required version of Astropy to >= 4.0.2. Astropy 4.0.2 included a
+  bug fix for cache handling on cluster filesystems (see `astropy#9970`_).
 
 .. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
-.. _`astropy#11133`: https://github.com/astropy/astropy/pull/11133
 
 - Update the required version of Matplotlib to >= 3.4.0. Matplotlib 3.4.0 fixed
   a compatibility issue with Astropy 4.1 which affected custom Matplotlib

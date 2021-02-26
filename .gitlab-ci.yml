@@ -288,7 +288,7 @@ tests/review:
     - |
       gsissh -T $REMOTE_HOST "bash -e" <<EOF
       cd public_html/$CI_PIPELINE_ID
-      python3 -m venv env
+      /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/bin/python -m venv env
       source env/bin/activate
       pip install --upgrade pip wheel
       pip install *.whl

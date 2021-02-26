@@ -13,16 +13,13 @@ Changelog
   scientific Python packages like Matplotlib and Numpy.
 
 
-- Update the required version of Astropy to >= 4.0.2. Astropy 4.0.2 included a
-  bug fix for cache handling on cluster filesystems (see `astropy#9970`_).
+- Update the required version of Astropy to >= 4.0.2 and < 4.1. Astropy 4.0.2
+  includes a bug fix for cache handling on cluster filesystems (see
+  `astropy#9970`_). Astropy 4.1 caused some issues with Matplotlib projection
+  classes as a result of changes in hashing behavior of
+  ``astropy.coordinates.SkyCoord`` (see `matplotlib#18832`_).
 
 .. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
-
-- Update the required version of Matplotlib to >= 3.4.0. Matplotlib 3.4.0 fixed
-  a compatibility issue with Astropy 4.1 which affected custom Matplotlib
-  projections that take ``astropy.coordinates.SkyCoord`` instances as arguments
-  (see `matplotlib#18832`_).
-
 .. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
 
 - Update the required version of LALSuite to >= 6.82 to work around an

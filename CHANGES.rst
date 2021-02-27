@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.5.1 (unreleased)
+0.5.1 (2021-02-27)
 ==================
 
 - This is the first release of ligo.skymap that is tested under and officially

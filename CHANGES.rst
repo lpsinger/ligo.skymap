@@ -40,7 +40,7 @@ Changelog
   the ``OBJECT`` card in the FITS header is a row ID that refers to a
   coinc_event table row in the input LIGO-LW document.
 
-- Add the ``--rescale-loglikelihood`` command line arguemnt to expose
+- Add the ``--rescale-loglikelihood`` command line argument to expose
   BAYESTAR's log likelihood factor that accounts for excess technical sources
   of noise from the matched filter pipeline.
 

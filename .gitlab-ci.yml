@@ -312,9 +312,10 @@ tests/review:
     - gsiscp -r $REMOTE_HOST:public_html/$CI_PIPELINE_ID/site site
     - echo -e "section_end:`date +%s`:remote_retrieve\r\e[0K"
 
-    - echo -e "section_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
-    - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
-    - echo -e "section_end:`date +%s`:remote_cleanup\r\e[0K"
+    # For now, do not delete the output directory, because GitLab CI artifacts are not uploading.
+    # - echo -e "section_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
+    # - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
+    # - echo -e "section_end:`date +%s`:remote_cleanup\r\e[0K"
 
   artifacts:
     paths:

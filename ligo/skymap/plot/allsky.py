@@ -140,7 +140,7 @@ The following example demonstrates most of the features of this module.
 """  # noqa: E501
 from itertools import product
 
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import SkyCoord, UnitSphericalRepresentation
 from astropy.io.fits import Header
 from astropy.time import Time
 from astropy.visualization.wcsaxes import WCSAxes
@@ -540,7 +540,8 @@ class Hours:
 class Globe(AutoScaledWCSAxes):
 
     def __init__(self, *args, center='0d 0d', rotate=None, **kwargs):
-        center = SkyCoord(center).icrs
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
         header = {
             'NAXIS': 2,
             'NAXIS1': 180,
@@ -564,7 +565,8 @@ class Zoom(AutoScaledWCSAxes):
 
     def __init__(self, *args, center='0d 0d', radius='1 deg', rotate=None,
                  **kwargs):
-        center = SkyCoord(center).icrs
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
         radius = u.Quantity(radius).to(u.deg).value
         header = {
             'NAXIS': 2,

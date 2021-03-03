@@ -1,5 +1,6 @@
 from itertools import chain, combinations, product
 
+from astropy.coordinates import CartesianRepresentation, SkyCoord
 import astropy_healpix as ah
 import matplotlib
 matplotlib.use('agg')
@@ -119,6 +120,14 @@ def test_zoom_axes(rcparams):
     for key in ['ra', 'dec']:
         ax.coords[key].set_auto_axislabel(False)
     return fig
+
+
+@pytest.mark.parametrize('projection', ['astro zoom', 'astro globe'])
+def test_center_cartesian(projection):
+    """Test that zoom axes accept coordinates in other representations."""
+    fig = plt.figure()
+    center = SkyCoord(0, 0, 1, representation_type=CartesianRepresentation)
+    fig.add_axes([0.2, 0.2, 0.6, 0.6], projection=projection, center=center)
 
 
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)

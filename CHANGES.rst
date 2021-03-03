@@ -5,7 +5,8 @@ Changelog
 0.5.2 (unreleased)
 ==================
 
-- No changes yet.
+- Teach the ``astro zoom`` and ``astro globe`` projections to accept sky
+  coordinates in any Astropy representation, including Cartesian coordinates.
 
 0.5.1 (2021-02-27)
 ==================

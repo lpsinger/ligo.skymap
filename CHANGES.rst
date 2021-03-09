@@ -13,6 +13,8 @@ Changelog
 - Update the required version of Matplotlib to >= 3.4.0, since it includes the
   bug fix for `matplotlib#18832`_.
 
+- Update the required version of Astropy to >= 4.0.2.
+
 0.5.1 (2021-02-27)
 ==================
 

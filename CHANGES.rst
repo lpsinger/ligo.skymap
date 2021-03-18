@@ -8,6 +8,8 @@ Changelog
 - Teach the ``astro zoom`` and ``astro globe`` projections to accept sky
   coordinates in any Astropy representation, including Cartesian coordinates.
 
+- Enable SNR time series by default in ``bayestar-realize-coincs``.
+
 0.5.1 (2021-02-27)
 ==================
 

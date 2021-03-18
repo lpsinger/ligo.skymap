@@ -89,7 +89,7 @@ def parser():
         choices=('zero-noise', 'gaussian-noise'),
         help='How to compute the measurement error')
     parser.add_argument(
-        '--enable-snr-series', action=EnableAction,
+        '--enable-snr-series', action=EnableAction, default=True,
         help='Enable output of SNR time series')
     parser.add_argument(
         '--reference-psd', metavar='PSD.xml[.gz]', type=FileType('rb'),

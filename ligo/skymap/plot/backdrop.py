@@ -16,6 +16,8 @@
 #
 """Backdrops for astronomical plots."""
 
+from importlib import resources
+import json
 import warnings
 
 from astropy.io import fits
@@ -27,7 +29,8 @@ import numpy as np
 from PIL.Image import DecompressionBombWarning
 from reproject import reproject_interp
 
-__all__ = ('bluemarble', 'blackmarble', 'mellinger', 'reproject_interp_rgb')
+__all__ = ('bluemarble', 'blackmarble', 'coastlines', 'mellinger',
+           'reproject_interp_rgb')
 
 
 def big_imread(*args, **kwargs):
@@ -212,3 +215,9 @@ def reproject_interp_rgb(input_data, *args, **kwargs):
         reproject_interp((data[:, :, i], wcs),
                          *args, **kwargs)[0].astype(data.dtype)
         for i in range(3)]), 0, -1)
+
+
+def coastlines():
+    with resources.open_text(__package__, 'ne_simplified_coastline.json') as f:
+        geoms = json.load(f)['geometries']
+    return [coord for geom in geoms for coord in zip(*geom['coordinates'])]

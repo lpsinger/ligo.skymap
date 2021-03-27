@@ -59,14 +59,14 @@ You are now ready to get started using `ligo.skymap`.
           automatically install the following required Python packages:
 
           *  `Astroplan <http://astroplan.readthedocs.io>`_ ≥ 0.7
-          *  `Astropy`_ ≥ 4.0.2, < 4.1
+          *  `Astropy`_ ≥ 4.0.2
           *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
-          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.0.2
+          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.4.0
           *  `NetworkX <https://networkx.github.io>`_
           *  `Numpy <http://www.numpy.org>`_ ≥ 1.14
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0

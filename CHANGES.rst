@@ -13,7 +13,12 @@ Changelog
 - Update the required version of Matplotlib to >= 3.4.0, since it includes the
   bug fix for `matplotlib#18832`_.
 
-- Update the required version of Astropy to >= 4.0.2.
+- Update the required version of Astropy to >= 4.0.2 and != 4.2. Astropy 4.1
+  now works with Matplotlib >= 3.4.0, but Astropy 4.2 introduced a bug
+  affecting Numpy and sky coordinates that will be fixed in Astropy 4.2.1
+  (see `astropy#11133`_).
+
+.. _`astropy#11133`: https://github.com/astropy/astropy/pull/11133
 
 0.5.1 (2021-02-27)
 ==================

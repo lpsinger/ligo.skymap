@@ -24,6 +24,7 @@ def pytest_configure(config):
         # Customize the following lines to add/remove entries from the list of
         # packages for which version numbers are displayed when running the tests.
         PYTEST_HEADER_MODULES.pop('Pandas', None)
+        PYTEST_HEADER_MODULES['astropy'] = 'astropy'
         PYTEST_HEADER_MODULES['astropy-healpix'] = 'astropy_healpix'
         PYTEST_HEADER_MODULES['healpy'] = 'healpy'
         PYTEST_HEADER_MODULES['reproject'] = 'reproject'

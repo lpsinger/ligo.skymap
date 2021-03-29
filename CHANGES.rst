@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.5.2 (unreleased)
+0.5.2 (2021-03-28)
 ==================
 
 - Teach the ``astro zoom`` and ``astro globe`` projections to accept sky

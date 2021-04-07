@@ -5,7 +5,13 @@ Changelog
 0.5.3 (unreleased)
 ==================
 
-- No changes yet.
+- Word-wrap the Python and command line arguments that are recorded in the
+  ``HISTORY`` cards. This makes the arguments more legible, because Astropy's
+  built-in FITS card wrapping behavior does not consider word breaks. It also
+  works around a FITS validation regression in Astropy 4.2.1
+  (see `astropy#11486`_).
+
+.. _`astropy#11486`: https://github.com/astropy/astropy/issues/11486
 
 0.5.2 (2021-03-28)
 ==================

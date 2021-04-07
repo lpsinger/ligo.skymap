@@ -45,6 +45,7 @@ def parser():
 def main(args=None):
     args = parser().parse_args(args)
 
+    from textwrap import wrap
     import numpy as np
     import astropy_healpix as ah
     from astropy.io import fits
@@ -137,7 +138,9 @@ def main(args=None):
         out_kwargs['HISTORY'].append(
             'Headers of HDUs 0 and 1 of input file {:d}:'.format(i))
         out_kwargs['HISTORY'].append('')
-        out_kwargs['HISTORY'] += [
-            '{} = {}'.format(k, v) for k, v in x[3].items()]
+        for line in x[3].tostring(sep='\n',
+                                  endcard=False,
+                                  padding=False).split('\n'):
+            out_kwargs['HISTORY'].extend(wrap(line, 72))
 
     write_sky_map(args.output, out_data, **out_kwargs)

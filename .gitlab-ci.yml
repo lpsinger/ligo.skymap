@@ -42,8 +42,8 @@ sdist:
   image: python
   stage: dist
   script:
-    - pip install pep517
-    - python -m pep517.build -s -o . .
+    - pip install build
+    - python -m build -s -o .
   needs: []
   artifacts:
     paths:
@@ -63,8 +63,8 @@ wheel/manylinux:
   script:
     # Build and install LALSuite
     - PYPREFIX=/opt/python/cp36-cp36m
-    - ${PYPREFIX}/bin/pip install pep517
-    - ${PYPREFIX}/bin/python -m pep517.build -b .
+    - ${PYPREFIX}/bin/pip install build
+    - ${PYPREFIX}/bin/python -m build -w
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
@@ -89,11 +89,11 @@ wheel/macosx:
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
-    - pip install pep517
+    - pip install build
     # FIXME: https://github.com/matthew-brett/delocate/pull/38
     - pip install git+https://github.com/lpsinger/delocate@namespace-packages#egg=delocate
     # Build and audit wheel
-    - python -m pep517.build -b .
+    - python -m build -w .
     - delocate-wheel -v -w wheelhouse dist/*.whl
     - rm -f *.whl
     - mv wheelhouse/* .

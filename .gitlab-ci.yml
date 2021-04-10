@@ -68,11 +68,8 @@ wheel/manylinux:
     - auditwheel repair dist/*.whl
     - rm dist/*
     - mv wheelhouse/* .
-    - echo ARTIFACTS_URL=\"$CI_JOB_URL/artifacts/download\" > dotenv
   needs: []
   artifacts:
-    reports:
-      dotenv: dotenv
     paths:
       - '*.whl'
     expire_in: 1 day

@@ -213,6 +213,7 @@ test/dev-dependencies:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
     - when: manual
+    - when: never
 
 #
 # Measure test coverage:

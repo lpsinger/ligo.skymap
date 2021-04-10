@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.5.3 (unreleased)
+0.5.3 (2021-04-10)
 ==================
 
 - Word-wrap the Python and command line arguments that are recorded in the

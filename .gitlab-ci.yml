@@ -195,6 +195,7 @@ test/python3.9:
     - dependencies/python3.9
     - wheel/manylinux
 
+# Test against development versions of certain upstream dependencies.
 test/dev-dependencies:
   <<: *test
   image: python

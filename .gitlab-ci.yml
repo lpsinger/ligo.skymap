@@ -209,6 +209,10 @@ test/dev-dependencies:
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
   needs:
     - wheel/manylinux
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - when: manual
 
 #
 # Measure test coverage:

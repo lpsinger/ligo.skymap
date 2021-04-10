@@ -250,8 +250,8 @@ def crossmatch(sky_map, coordinates=None,
     credible volume:
 
     >>> print(cat[result.searched_prob_vol < 0.9])
-       GWGC          _RAJ2000             _DEJ2000               Dist
-                       deg                  deg                  Mpc
+       GWGC          _RAJ2000             _DEJ2000               Dist        
+                       deg                  deg                  Mpc         
     ---------- -------------------- -------------------- --------------------
        NGC0171   9.3396699999999999 -19.9342460000000017    57.56212553960000
            ---  20.2009090000000064 -31.1146050000000010   137.16022925600001
@@ -276,7 +276,7 @@ def crossmatch(sky_map, coordinates=None,
            ---  23.1280999999999963 -31.1109199999999966   320.62700000000001
     Length = 1479 rows
 
-    """  # noqa: E501
+    """  # noqa: E501, W291
     # Astropy coordinates that are constructed without distance have
     # a distance field that is unity (dimensionless).
     if coordinates is None:

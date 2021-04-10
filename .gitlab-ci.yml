@@ -79,8 +79,8 @@ wheel/manylinux:
 
 wheel/macosx:
   variables:
-    CC: gcc-mp-8
-    CXX: g++-mp-8
+    CC: gcc-mp-10
+    CXX: g++-mp-10
   tags:
     - macos_sierra
   stage: dist

@@ -246,9 +246,10 @@ detector.
 * Each of the :class:`~ligo.lw.ligolw.LIGO_LW` elements for serialized SNR time
   series MUST contain a :class:`~ligo.lw.ligolw.Param` element to link it to a
   row in the :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>`. The
-  param name MUST be ``event_id:param`` and the param value must match the
-  :attr:`~ligo.lw.lsctables.SnglInspiral.event_id` column in the corresponding
-  :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>` row.
+  param name MUST be ``event_id:param`` and the param's type and value must
+  match the :attr:`~ligo.lw.lsctables.SnglInspiral.event_id` column in the
+  corresponding :class:`sngl_inspiral <ligo.lw.lsctables.SnglInspiralTable>`
+  row.
 
 * The SNR time series MUST have an odd number of samples, e.g., the length must
   be :math:`2 * n + 1` for some integer :math:`n`.

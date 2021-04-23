@@ -200,6 +200,8 @@ test/dev-dependencies:
   <<: *test
   image: python
   script:
+    # Qhull is needed to build Matplotlib from source
+    - apt-get update && apt-get install libqhull-dev
     - >
       pip install
       git+https://github.com/numpy/numpy

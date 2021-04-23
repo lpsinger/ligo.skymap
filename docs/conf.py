@@ -225,7 +225,7 @@ modindex_common_prefix = [package.__name__ + '.']
 
 intersphinx_mapping.update({
     'gracedb': ('https://gracedb.ligo.org/documentation/', None),
-    'gwcelery': ('http://gwcelery.readthedocs.io/en/latest/', None),
+    'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'celery': ('https://docs.celeryproject.org/en/latest/', None),
     'ligo-lw': ('https://docs.ligo.org/kipp.cannon/python-ligo-lw/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None)

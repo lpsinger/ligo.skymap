@@ -46,6 +46,18 @@ def parser():
         '--radec', nargs=2, metavar='deg', type=float, action='append',
         default=[], help='right ascension (deg) and declination (deg) to mark')
     parser.add_argument(
+        '--marker', metavar='matplotlib_marker', default='*',
+        help='symbol used when marking --radec (has to be one of the matplotlib marker strings)')
+    parser.add_argument(
+        '--marker-face-color', metavar='color_name', default='white',
+        help='face color for the --radec marker')
+    parser.add_argument(
+        '--marker-edge-color', metavar='color_name', default='black',
+        help='edge color for the --radec marker')
+    parser.add_argument(
+        '--marker-size', metavar='size_int', default=10, type=int,
+        help='size of the --radec marker symbol')
+    parser.add_argument(
         '--inj-database', metavar='FILE.sqlite', type=SQLiteType('r'),
         help='read injection positions from database')
     parser.add_argument(
@@ -54,7 +66,7 @@ def parser():
              'instead of the celestial frame with coordinates (RA, dec) '
              'and draw continents on the map')
     parser.add_argument(
-        '--projection', type=str, default='mollweide',
+        '--projection', default='mollweide',
         choices=['mollweide', 'aitoff', 'globe', 'zoom'],
         help='Projection style')
     parser.add_argument(
@@ -66,6 +78,33 @@ def parser():
     parser.add_argument(
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
+    
+    # separate display group for PTA related options
+    pta_group = parser.add_argument_group('PTA options', 
+                        'Options for plotting the pulsars of a Pulsar Timing Array')
+    pta_group.add_argument(
+        '--pta-file', metavar='pulsars.csv',
+        help='path to PTA pulsars file with columns ra, dec (in degrees), '
+        'and noise rms (in seconds). The rms column can be left out if '
+        'specifying the option --pta-fix-marker-size.')
+    pta_group.add_argument(
+        '--pta-size', metavar='int', type=int,
+        help='Optional when using --pta-file, only plot the first INT pulsar')
+    pta_group.add_argument(
+        '--pta-marker', metavar='matplotlib_marker', default='*',
+        help='symbol used when marking pulsars from --pta-file')
+    pta_group.add_argument(
+        '--pta-face-color', metavar='color_name', default='white',
+        help='face color for the --pta-file markers')
+    pta_group.add_argument(
+        '--pta-edge-color', metavar='color_name', default='black',
+        help='edge color for the --pta-file markers')
+    pta_group.add_argument(
+        '--pta-fix-marker-size', metavar='size_int', default=False,
+        help="Optional when using --pta-file. By default, the pulsar noise rms "
+        "area read from the PTA file and used to scale the pulsar markers' sizes. "
+        "Using this option fixes the markers' sizes instead.")
+    
     return parser
 
 
@@ -149,8 +188,42 @@ def main(args=None):
     # Add markers (e.g., for injections or external triggers).
     for ra, dec in radecs:
         ax.plot_coord(
-            SkyCoord(ra, dec, unit='deg'), '*',
-            markerfacecolor='white', markeredgecolor='black', markersize=10)
+            SkyCoord(ra, dec, unit='deg'), 
+            opts.marker,
+            markerfacecolor=opts.marker_face_color, 
+            markeredgecolor=opts.marker_edge_color,
+            markersize=opts.marker_size)
+        
+    # If given, add additional markers for the pulsars from a PTA
+    if opts.pta_file:
+        try:
+            with open(opts.pta_file, 'r') as f:
+                pta_data = np.loadtxt(f, comments='#', delimiter=',')
+            
+        except IOError:
+            print('Could not find PTA file, skipping')
+        except ValueError:
+            print('Could not read points from PTA file, skipping')
+            
+        
+        if opts.pta_size:
+            pta_data = pta_data[:opts.pta_size]
+        
+        # fixed pta marker sizes
+        if opts.pta_fix_marker_size:
+            pulsar_sizes = np.full(len(pta_data), opts.pta_fix_marker_size)
+        # scale pta marker size with noise rms: bigger markers for lower noise
+        else:
+            pulsar_sizes = 10 * (pta_data[:, 2] / 1.e-7)**(-0.4)
+            
+        for i, pulsar in enumerate(pta_data):
+            ra, dec = pulsar[:2]
+            ax.plot_coord(
+                SkyCoord(ra, dec, unit='deg'),
+                opts.pta_marker,
+                markerfacecolor=opts.pta_face_color,
+                markeredgecolor=opts.pta_edge_color,
+                markersize=pulsar_sizes[i])
 
     # Add a white outline to all text to make it stand out from the background.
     plot.outline_text(ax)

@@ -11,10 +11,11 @@ This package has a unit test suite that is set up following the Astropy
 every git push using `GitLab Continuous Integration (CI)`_. See the
 repository's `.gitlab-ci.yml`_ file for configuration details.
 
-You can also run the unit tests manually by running this command in the source
-directory::
+You can also run the unit tests manually by running these commands in the
+source directory::
 
-    $ python setup.py test
+    $ pip install -e .[test]
+    $ pytest
 
 There are many options available to adjust what tests are run or how test
 results are reported; see Astropy's documentation on

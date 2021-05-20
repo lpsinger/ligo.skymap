@@ -7,8 +7,8 @@ Unit tests
 ----------
 
 This package has a unit test suite that is set up following the Astropy
-:doc:`astropy:development/testguide`. The unit tests are run automatically on
-every git push using `GitLab Continuous Integration (CI)`_. See the
+:doc:`astropy-dev:development/testguide`. The unit tests are run automatically
+on every git push using `GitLab Continuous Integration (CI)`_. See the
 repository's `.gitlab-ci.yml`_ file for configuration details.
 
 You can also run the unit tests manually by running these commands in the
@@ -19,7 +19,7 @@ source directory::
 
 There are many options available to adjust what tests are run or how test
 results are reported; see Astropy's documentation on
-:ref:`astropy:running-tests` for details.
+:ref:`astropy-dev:running-tests` for details.
 
 Coverage analysis
 -----------------

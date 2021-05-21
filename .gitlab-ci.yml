@@ -199,19 +199,9 @@ test/python3.9:
 test/dev-dependencies:
   <<: *test
   image: python
-  variables:
-    MPLSETUPCFG: ${CI_PROJECT_DIR}/mplsetup.cfg
   script:
-    # Qhull and Freetype are needed to build Maptlotlib from source.
-    # The Maptlotlib setup.py script can download and build them for us,
-    # but the qhull download URL is a bit flaky.
-    - apt-get update && apt-get -y install --no-install-recommends libfreetype6-dev libqhull-dev
-    - |
-      cat <<EOF > ${MPLSETUPCFG}
-      [ libs ]
-      system_freetype = true
-      system_qhull = true
-      EOF
+    # Qhull is needed to build Matplotlib from source
+    - apt-get update && apt-get -y install --no-install-recommends libqhull-dev
     - >
       pip install
       git+https://github.com/numpy/numpy

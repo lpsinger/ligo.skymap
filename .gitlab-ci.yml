@@ -208,9 +208,9 @@ test/dev-dependencies:
     - apt-get update && apt-get -y install --no-install-recommends libfreetype6-dev libqhull-dev
     - |
       cat <<EOF > ${MPLSETUPCFG}
-      [ libs ]
-      system_freetype = true
-      system_qhull = true
+      [libs]
+      system_freetype = True
+      system_qhull = True
       EOF
     - >
       pip install

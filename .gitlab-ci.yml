@@ -241,7 +241,9 @@ test/coverage:
     # -fopenmp
     #     The -coverage breaks OpenMP detection in extension-helpers.
     #     See https://github.com/astropy/extension-helpers/issues/1
-    CFLAGS: -UNDEBUG -coverage -fsanitize=undefined -fopenmp
+    CC: gcc -coverage
+    LDSHARED: gcc -pthread -shared -coverage
+    CFLAGS: -UNDEBUG -fsanitize=undefined -fopenmp
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   <<: *in-tmpdir
   script:

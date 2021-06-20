@@ -68,7 +68,7 @@ def test_pp_plot_default(rcparams):
 
 @pytest.mark.parametrize('proj', ['aitoff', 'mollweide'])
 @pytest.mark.parametrize('units', ['degrees', 'hours'])
-@pytest.mark.parametrize('coordsys', ['astro', 'geo'])
+@pytest.mark.parametrize('coordsys', ['astro', 'geo', 'galactic'])
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_allsky_axes(rcparams, coordsys, units, proj):
     """Test projection of a HEALPix image onto allsky axes, either

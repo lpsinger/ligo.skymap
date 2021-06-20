@@ -19,10 +19,11 @@ Axes subclasses for astronomical mapmaking.
 
 This module adds several :class:`astropy.visualization.wcsaxes.WCSAxes`
 subclasses to the Matplotlib projection registry. The projections have names of
-the form :samp:`{astro_or_geo} [{lon_units}] {projection}`.
+the form :samp:`{astro_or_geo_or_galactic} [{lon_units}] {projection}`.
 
-:samp:`{astro_or_geo}` may be ``astro`` or ``geo``. It controls the
-reference frame, either celestial (ICRS) or terrestrial (ITRS).
+:samp:`{astro_or_geo_or_galactic}` may be ``astro``, ``geo``, or ``galactic``.
+It controls the reference frame, either celestial (ICRS), terrestrial (ITRS),
+or galactic.
 
 :samp:`{lon_units}` may be ``hours`` or ``degrees``. It controls the units of
 the longitude axis. If omitted, ``astro`` implies ``hours`` and ``geo`` implies
@@ -156,7 +157,7 @@ from matplotlib.projections import projection_registry
 import numpy as np
 from reproject import reproject_from_healpix
 from scipy.optimize import minimize_scalar
-from .angle import reference_angle_deg
+from .angle import reference_angle_deg, wrapped_angle_deg
 
 __all__ = ['AutoScaledWCSAxes', 'ScaleBar']
 
@@ -521,6 +522,30 @@ class Geo:
             format_unit=fl.format_unit)
 
 
+class GalacticAngleFormatterLocator(AngleFormatterLocator):
+
+    def formatter(self, values, spacing):
+        return super().formatter(
+            wrapped_angle_deg(values.to(u.deg).value) * u.deg, spacing)
+
+
+class Galactic:
+    _crval1 = 0
+    _radesys = 'GALACTIC'
+    _xcoord = 'GLON'
+    _ycoord = 'GLAT'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        fl = self.coords[0]._formatter_locator
+        self.coords[0]._formatter_locator = GalacticAngleFormatterLocator(
+            values=fl.values,
+            number=fl.number,
+            spacing=fl.spacing,
+            format=fl.format,
+            format_unit=fl.format_unit)
+
+
 class Degrees:
     """WCS axes with longitude axis in degrees."""
 
@@ -623,9 +648,9 @@ moddict = globals()
 
 #
 # Create subclasses and register all projections:
-# '{astro|geo} {hours|degrees} {aitoff|globe|mollweide|zoom}'
+# '{astro|geo|galactic} {hours|degrees} {aitoff|globe|mollweide|zoom}'
 #
-bases1 = (Astro, Geo)
+bases1 = (Astro, Geo, Galactic)
 bases2 = (Hours, Degrees)
 bases3 = (Aitoff, Globe, Mollweide, Zoom)
 for bases in product(bases1, bases2, bases3):
@@ -641,6 +666,8 @@ for bases in product(bases1, bases2, bases3):
 # 'astro' will be short for 'astro hours',
 # 'geo' will be short for 'geo degrees'
 #
+
+bases2 = (Hours, Degrees, Degrees)
 for base1, base2 in zip(bases1, bases2):
     for base3 in (Aitoff, Globe, Mollweide, Zoom):
         bases = (base1, base2, base3)

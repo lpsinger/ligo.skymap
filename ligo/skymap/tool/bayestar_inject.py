@@ -240,6 +240,9 @@ def parser():
         '--min-snr', type=float, default=4.0,
         help='Minimum decisive SNR of injections given the reference PSDs')
     parser.add_argument(
+        '--max-distance', type=float, metavar='Mpc',
+        help='Maximum luminosity distance for injections')
+    parser.add_argument(
         '--waveform', default='o2-uberbank',
         help='Waveform approximant')
     parser.add_argument(
@@ -379,6 +382,10 @@ def main(args=None):
     max_z = get_max_z(
         cosmo, psds, args.waveform, args.f_low, args.min_snr, m1, m2, x1, x2,
         jobs=args.jobs)
+    if args.max_distance is not None:
+        new_max_z = cosmology.z_at_value(cosmo.luminosity_distance,
+                                         args.max_distance * units.Mpc)
+        max_z[max_z > new_max_z] = new_max_z
     max_distance = sensitive_distance(cosmo, max_z).to_value(units.Mpc)
 
     # Find piecewise constant approximate upper bound on distance.

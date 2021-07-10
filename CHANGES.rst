@@ -5,7 +5,7 @@ Changelog
 0.5.4 (unreleased)
 ==================
 
-- No changes yet.
+- Add a ``max-distance`` option to ``bayestar-inject``.
 
 0.5.3 (2021-04-10)
 ==================

@@ -270,6 +270,7 @@ test/coverage:
       cobertura: coverage.xml
       junit: junit.xml
     expire_in: 1 day
+  timeout: 2 hours
 
 #
 # Run flake8 linter to enforce code style.

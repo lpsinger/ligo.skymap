@@ -99,10 +99,6 @@ def main(args=None):
     import subprocess
     import sys
 
-    # Squelch annoying and uninformative LAL log messages.
-    import lal
-    lal.ClobberDebugLevel(lal.LALNDEBUG)
-
     log.info('Using %d OpenMP thread(s)', omp.num_threads)
 
     # Read coinc file.

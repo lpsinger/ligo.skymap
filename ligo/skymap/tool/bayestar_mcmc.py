@@ -85,9 +85,7 @@ def main(args=None):
     import subprocess
     import sys
 
-    # Squelch annoying and uniformative LAL log messages.
     import lal
-    lal.ClobberDebugLevel(lal.LALNDEBUG)
 
     # Read coinc file.
     log.info(

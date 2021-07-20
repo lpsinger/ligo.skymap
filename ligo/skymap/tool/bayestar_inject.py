@@ -34,7 +34,6 @@ from astropy import cosmology
 from astropy.cosmology.core import vectorize_if_needed
 from astropy import units
 from astropy.units import dimensionless_unscaled
-import lal
 import numpy as np
 from scipy.integrate import quad, fixed_quad
 from scipy.interpolate import interp1d
@@ -45,8 +44,6 @@ from ..util import progress_map
 from ..bayestar.filter import sngl_inspiral_psd
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
-
-lal.ClobberDebugLevel(lal.LALNDEBUG)
 
 
 def get_decisive_snr(snrs):

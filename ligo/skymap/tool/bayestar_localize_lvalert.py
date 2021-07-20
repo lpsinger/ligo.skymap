@@ -79,10 +79,6 @@ def main(args=None):
     import ligo.gracedb.rest
     import numpy as np
 
-    # Squelch annoying and uniformative LAL log messages.
-    import lal
-    lal.ClobberDebugLevel(lal.LALNDEBUG)
-
     log = logging.getLogger('BAYESTAR')
 
     log.info('Using %d OpenMP thread(s)', omp.num_threads)

@@ -7,6 +7,9 @@ Changelog
 
 - Add a ``max-distance`` option to ``bayestar-inject``.
 
+- Increase verbosity of LAL error reporting so that the user gets more
+  information for invalid waveform arguments.
+
 0.5.3 (2021-04-10)
 ==================
 

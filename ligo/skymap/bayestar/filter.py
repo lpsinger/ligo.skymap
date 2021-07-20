@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Utility functions for BAYESTAR that are related to matched filtering."""
+from contextlib import contextmanager
 import logging
 import math
 
@@ -26,6 +27,21 @@ from scipy import fftpack as fft
 from scipy import linalg
 
 log = logging.getLogger('BAYESTAR')
+
+
+@contextmanager
+def lal_ndebug():
+    """Temporarily disable lal error messages, except for memory errors."""
+    mask = ~(lal.LALERRORBIT |
+             lal.LALWARNINGBIT |
+             lal.LALINFOBIT |
+             lal.LALTRACEBIT)
+    old_level = lal.GetDebugLevel()
+    lal.ClobberDebugLevel(old_level & mask)
+    try:
+        yield
+    finally:
+        lal.ClobberDebugLevel(old_level)
 
 
 def unwrap(y, *args, **kwargs):
@@ -216,6 +232,7 @@ def truncated_ifft(y, nsamples_out=None):
     return result / c
 
 
+@lal_ndebug()
 def get_approximant_and_orders_from_string(s):
     """Determine the approximant, amplitude order, and phase order for a string
     of the form "TaylorT4threePointFivePN". In this example, the waveform is

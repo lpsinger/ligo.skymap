@@ -24,7 +24,7 @@ ignored by your shell.
 Draw a sample of injections, or simulated events, from an astrophysical
 distribution using the ``lalapps_inspinj`` tool from LALSuite. This tool
 has many options to control the distribution of each parameter. To see all
-options, run ``lalapps_inpsinj --help``.
+options, run ``lalapps_inspinj --help``.
 
 Run the following command to generate a handful of BNS events::
 

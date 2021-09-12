@@ -20,11 +20,10 @@ All functions in this module use the Planck15 cosmological parameters.
 """
 
 import numpy as np
-import astropy.cosmology
+from astropy.cosmology import default_cosmology, z_at_value
 import astropy.units as u
 
-cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
-    'Planck15')
+cosmo = default_cosmology.get_cosmology_from_string('Planck15')
 
 
 def dVC_dVL_for_z(z):
@@ -65,8 +64,7 @@ def dVC_dVL_for_z(z):
 @np.vectorize
 def z_for_DL(DL):
     """Redshift as a function of luminosity distance in Mpc."""
-    return astropy.cosmology.z_at_value(
-        cosmo.luminosity_distance, DL * u.Mpc)
+    return z_at_value(cosmo.luminosity_distance, DL * u.Mpc)
 
 
 def dVC_dVL_for_DL(DL):

@@ -64,7 +64,13 @@ def dVC_dVL_for_z(z):
 @np.vectorize
 def z_for_DL(DL):
     """Redshift as a function of luminosity distance in Mpc."""
-    return z_at_value(cosmo.luminosity_distance, DL * u.Mpc)
+    # FIXME: In Astropy 4, `z_at_value` returns a float,
+    # but in Astropy 5, returns a quantity with dimensionless redshift units.
+    # Make sure it is a quantity before we convert it to a float.
+    # Remove the u.Quantity() call once we drop support for astropy < 5.
+    return u.Quantity(
+        z_at_value(cosmo.luminosity_distance, DL * u.Mpc)
+    ).to_value(u.dimensionless_unscaled)
 
 
 def dVC_dVL_for_DL(DL):

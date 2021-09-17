@@ -60,6 +60,6 @@ Here is the full list of environment variables.
 .. _`GCC`: https://gcc.gnu.org
 .. _`Clang`: https://clang.llvm.org
 .. _`Intel C/C++ Compiler`: https://software.intel.com/content/www/us/en/develop/tools/compilers/c-compilers.html
-.. _`bundled sources`: https://git.ligo.org/lscsoft/ligo.skymap/tree/master/cextern/chealpix
+.. _`bundled sources`: https://git.ligo.org/lscsoft/ligo.skymap/tree/main/cextern/chealpix
 .. _`Instrumentation and Tracing Technology (ITT)`: https://software.intel.com/content/www/us/en/develop/documentation/vtune-help/top/api-support/instrumentation-and-tracing-technology-apis.html
 .. _`VTune Profiler`: https://software.intel.com/content/www/us/en/develop/tools/vtune-profiler.html`

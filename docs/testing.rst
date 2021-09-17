@@ -36,7 +36,7 @@ GW170814 and GW170817 as well as populations of simulated events.
 
 .. _`Astropy Testing Guidelines`: https://docs.astropy.org/en/latest/development/testguide.html
 .. _`GitLab Continuous Integration (CI)`: https://docs.gitlab.com/ee/ci/
-.. _`.gitlab-ci.yml`: https://git.ligo.org/lscsoft/ligo.skymap/blob/master/.gitlab-ci.yml
+.. _`.gitlab-ci.yml`: https://git.ligo.org/lscsoft/ligo.skymap/blob/main/.gitlab-ci.yml
 .. _`Astropy's documentation on running-tests`: https://docs.astropy.org/en/latest/development/testguide.html#running-tests
 .. _`coverage report`: https://lscsoft.docs.ligo.org/ligo.skymap/coverage.html
 .. _`acceptance tests`: https://git.ligo.org/lscsoft/ligo-skymap-acceptance-tests

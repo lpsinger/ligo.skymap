@@ -5,8 +5,6 @@ variables:
 include:
   - project: computing/gitlab-ci-templates
     file: python/lint.yml
-  - project: computing/gitlab-ci-templates
-    file: cluster/ssh.yml
 
 stages:
   - deps
@@ -290,7 +288,7 @@ lint:
 
 tests/review:
   stage: test
-  extends: .ssh
+  image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
   needs:
     - wheel/manylinux
@@ -299,13 +297,13 @@ tests/review:
     REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
   script:
     - echo -e "section_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
-    - gsissh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_PIPELINE_ID"
+    - ssh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_PIPELINE_ID"
     - echo -e "section_end:`date +%s`:remote_clone\r\e[0K"
 
     - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
-    - gsiscp *.whl $REMOTE_HOST:public_html/$CI_PIPELINE_ID
+    - scp *.whl $REMOTE_HOST:public_html/$CI_PIPELINE_ID
     - |
-      gsissh -T $REMOTE_HOST "bash -e" <<EOF
+      ssh -T $REMOTE_HOST "bash -e" <<EOF
       cd public_html/$CI_PIPELINE_ID
       /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/bin/python -m venv env
       source env/bin/activate
@@ -316,7 +314,7 @@ tests/review:
 
     - echo -e "section_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
-      gsissh -T $REMOTE_HOST "bash -e" <<EOF
+      containers.ligo.org/emfollow/ssh-kerberosssh -T $REMOTE_HOST "bash -e" <<EOF
       cd public_html/$CI_PIPELINE_ID
       source env/bin/activate
       condor_submit_dag -append accounting_group_user=leo.singer -batch-name pipeline/$CI_PIPELINE_ID htcondor/acceptance-tests.dag
@@ -327,12 +325,12 @@ tests/review:
     - echo -e "section_end:`date +%s`:remote_submit\r\e[0K"
 
     - echo -e "section_start:`date +%s`:remote_retrieve\r\e[0KRetrieving artifacts from cluster"
-    - gsiscp -r $REMOTE_HOST:public_html/$CI_PIPELINE_ID/site site
+    - scp -r $REMOTE_HOST:public_html/$CI_PIPELINE_ID/site site
     - echo -e "section_end:`date +%s`:remote_retrieve\r\e[0K"
 
     # For now, do not delete the output directory, because GitLab CI artifacts are not uploading.
     # - echo -e "section_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
-    # - gsissh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
+    # - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_PIPELINE_ID"
     # - echo -e "section_end:`date +%s`:remote_cleanup\r\e[0K"
 
   artifacts:

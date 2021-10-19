@@ -14,9 +14,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Read events from either HDF or LIGO-LW files."""
-import os
+import builtins
 import sqlite3
-from subprocess import check_output
 
 from ligo.lw.ligolw import Element
 import h5py
@@ -26,8 +25,11 @@ from . import hdf, ligolw, sqlite
 __all__ = ('MagicEventSource', 'open')
 
 
-def _get_file_type(f):
-    """Determine the file type by calling the POSIX ``file`` utility.
+def _read_file_header(f, nbytes=16):
+    """Read the first 16 bytes of a file
+
+    This is presumed to include the characters that declare the
+    file type.
 
     Parameters
     ----------
@@ -36,21 +38,19 @@ def _get_file_type(f):
 
     Returns
     -------
-    filetype : bytes
-        A string describing the file type
+    header : bytes
+        A string (hopefully) describing the file type
 
     """
     try:
-        f.read
+        pos = f.tell()
     except AttributeError:
-        filetype = check_output(
-            ['file', f], env=dict(os.environ, POSIXLY_CORRECT='1'))
-    else:
-        filetype = check_output(
-            ['file', '-'], env=dict(os.environ, POSIXLY_CORRECT='1'), stdin=f)
-        f.seek(0)
-    _, _, filetype = filetype.partition(b': ')
-    return filetype.strip()
+        with builtins.open(f, "rb") as fobj:
+            return fobj.read(nbytes)
+    try:
+        return f.read(nbytes)
+    finally:
+        f.seek(pos)
 
 
 def MagicEventSource(f, *args, **kwargs):  # noqa: N802
@@ -71,12 +71,15 @@ def MagicEventSource(f, *args, **kwargs):  # noqa: N802
     elif isinstance(f, Element):
         opener = ligolw.open
     else:
-        filetype = _get_file_type(f)
-        if filetype == b'Hierarchical Data Format (version 5) data':
+        fileheader = _read_file_header(f)
+        if fileheader.startswith(b'\x89HDF\r\n\x1a\n'):
             opener = hdf.open
-        elif filetype.startswith(b'SQLite 3.x database'):
+        elif fileheader.startswith(b'SQLite format 3'):
             opener = sqlite.open
-        elif filetype.startswith(b'XML') or filetype.startswith(b'gzip'):
+        elif fileheader.startswith((
+                b'<?xml',  # XML
+                b'\x1f\x8b\x08',  # GZIP
+        )):
             opener = ligolw.open
         else:
             raise IOError('Unknown file format')

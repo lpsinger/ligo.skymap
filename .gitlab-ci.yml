@@ -194,7 +194,7 @@ test/python3.9:
 # Test against development versions of certain upstream dependencies.
 test/dev-dependencies:
   <<: *test
-  image: python
+  image: python:3.9
   script:
     # Qhull is needed to build Matplotlib from source
     - apt-get update && apt-get -y install --no-install-recommends libqhull-dev

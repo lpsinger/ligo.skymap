@@ -37,7 +37,7 @@ requirements:
 #
 
 sdist:
-  image: python
+  image: python:3.9
   stage: dist
   script:
     - pip install build

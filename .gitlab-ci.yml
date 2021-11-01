@@ -74,12 +74,13 @@ wheel/manylinux:
 
 wheel/macosx:
   variables:
-    CC: gcc-mp-10
-    CXX: g++-mp-10
+    CC: gcc-mp-11
+    CXX: g++-mp-11
   tags:
-    - macos_sierra
+    - macos_catalina_x86_64
   stage: dist
   script:
+    - . /opt/local/share/macports/setupenv.bash
     - PYVERS=3.7
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env

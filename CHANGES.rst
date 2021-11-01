@@ -10,6 +10,8 @@ Changelog
 - Increase verbosity of LAL error reporting so that the user gets more
   information for invalid waveform arguments.
 
+- Wheels for macOS are now built against macOS 10.15 (Catalina) using GCC 11.
+
 0.5.3 (2021-04-10)
 ==================
 

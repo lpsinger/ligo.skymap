@@ -31,7 +31,13 @@ cutoff that is piecewise constant in the masses and spins.
 from functools import partial
 
 from astropy import cosmology
-from astropy.cosmology.core import vectorize_if_needed
+try:
+    from astropy.cosmology.utils import vectorize_redshift_method
+except ImportError:
+    # FIXME: Remove once we drop support for astropy < 5.0.
+    # See https://github.com/astropy/astropy/pull/12176
+    from astropy.cosmology.utils import (
+        vectorize_if_needed as vectorize_redshift_method)
 from astropy import units
 from astropy.units import dimensionless_unscaled
 import numpy as np
@@ -165,7 +171,7 @@ def _sensitive_volume_integral(cosmo, z):
         result, _ = quad(integrand, 0, z)
         return result
 
-    return vectorize_if_needed(integral, z)
+    return vectorize_redshift_method(integral, z)
 
 
 def sensitive_volume(cosmo, z):

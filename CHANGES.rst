@@ -26,6 +26,9 @@ Changelog
 
 - Require astropy >= 5.0.
 
+- Add the ``mark_inset_circle`` and ``connect_inset_circle`` methods to
+  ``AutoScaledWCSAxes`` in order to support circular insets (loupes).
+
 0.5.3 (2021-04-10)
 ==================
 

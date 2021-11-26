@@ -88,6 +88,54 @@ Examples
     ax = plt.axes(projection='geo globe', center='-50d +23d')
     ax.grid()
 
+Insets
+------
+You can use insets to link zoom-in views between axes. There are two supported
+styles of insets: rectangular and circular (loupe). The example below shows
+both kinds of insets.
+
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    import ligo.skymap.plot
+    from matplotlib import pyplot as plt
+    fig = plt.figure(figsize=(9, 4), dpi=100)
+
+    ax_globe = plt.axes(
+        [0.1, 0.1, 0.8, 0.8],
+        projection='astro degrees globe',
+        center='120d +23d')
+
+    ax_zoom_rect = plt.axes(
+        [0.0, 0.2, 0.4, 0.4],
+        projection='astro degrees zoom',
+        center='150d +30d',
+        radius='9 deg')
+
+    ax_zoom_circle = plt.axes(
+        [0.55, 0.1, 0.6, 0.6],
+        projection='astro degrees zoom',
+        center='120d +10d',
+        radius='5 deg')
+
+    ax_globe.mark_inset_axes(ax_zoom_rect)
+    ax_globe.connect_inset_axes(ax_zoom_rect, 'upper left')
+    ax_globe.connect_inset_axes(ax_zoom_rect, 'lower right')
+
+    ax_globe.mark_inset_circle(ax_zoom_circle, '120d +10d', '4 deg')
+    ax_globe.connect_inset_circle(ax_zoom_circle, '120d +10d', '4 deg')
+
+    ax_globe.grid()
+    ax_zoom_rect.grid()
+    ax_zoom_circle.grid()
+
+    for ax in [ax_globe, ax_zoom_rect, ax_zoom_circle]:
+        ax.set_facecolor('none')
+        for key in ['ra', 'dec']:
+            ax.coords[key].set_auto_axislabel(False)
+
 Complete Example
 ----------------
 The following example demonstrates most of the features of this module.
@@ -144,7 +192,7 @@ from itertools import product
 from astropy.coordinates import SkyCoord, UnitSphericalRepresentation
 from astropy.io.fits import Header
 from astropy.time import Time
-from astropy.visualization.wcsaxes import WCSAxes
+from astropy.visualization.wcsaxes import SphericalCircle, WCSAxes
 from astropy.visualization.wcsaxes.formatter_locator import (
     AngleFormatterLocator)
 from astropy.visualization.wcsaxes.frame import EllipticalFrame
@@ -153,6 +201,7 @@ from astropy import units as u
 from matplotlib import rcParams
 from matplotlib.offsetbox import AnchoredOffsetbox
 from matplotlib.patches import ConnectionPatch, FancyArrowPatch, PathPatch
+from matplotlib.path import Path
 from matplotlib.projections import projection_registry
 import numpy as np
 from reproject import reproject_from_healpix
@@ -182,7 +231,13 @@ class WCSInsetPatch(PathPatch):
 
 
 class WCSInsetConnectionPatch(ConnectionPatch):
-    """Patch to connect an inset WCS axes inside another WCS axes."""
+    """Patch to connect an inset WCS axes inside another WCS axes.
+
+    Notes
+    -----
+    FIXME: This class assumes that the projection of the circle in figure-inch
+    coordinates *is* a circle. It will have noticable artifacts if the
+    projection is very distorted."""
 
     _corners_map = {1: 3, 2: 1, 3: 0, 4: 2}
 
@@ -201,6 +256,42 @@ class WCSInsetConnectionPatch(ConnectionPatch):
             color=ax_inset.coords.frame.get_color(),
             linewidth=ax_inset.coords.frame.get_linewidth(),
             **kwargs)
+
+
+class WCSCircleInsetConnectionPatch(PathPatch):
+    """Patch to connect a circular inset WCS axes inside another WCS axes."""
+
+    def __init__(self, ax1, ax2, coord, radius, sign, *args, **kwargs):
+        self._axs = (ax1, ax2)
+        self._coord = coord.icrs
+        self._radius = radius
+        self._sign = sign
+        super().__init__(None, *args, **kwargs, clip_on=False, transform=None)
+
+    def get_path(self):
+        # Calculate the position and radius of the inset in figure-inch
+        # coordinates.
+        offset = self._coord.directional_offset_by(0 * u.deg, self._radius)
+        transforms = [ax.get_transform('world') for ax in self._axs]
+        centers = np.asarray([
+            tx.transform_point((self._coord.ra.deg, self._coord.dec.deg))
+            for tx in transforms])
+        offsets = np.asarray([
+            tx.transform_point((offset.ra.deg, offset.dec.deg))
+            for tx in transforms])
+
+        # Plot outer tangents.
+        r0, r1 = np.sqrt(np.sum(np.square(centers - offsets), axis=-1))
+        dx, dy = np.diff(centers, axis=0).ravel()
+        gamma = -np.arctan(dy / dx)
+        beta = np.arcsin((r1 - r0) / np.sqrt(np.square(dx) + np.square(dy)))
+        alpha = gamma - self._sign * beta
+        p0 = centers[0] + self._sign * np.asarray([
+            r0 * np.sin(alpha), r0 * np.cos(alpha)])
+        p1 = centers[1] + self._sign * np.asarray([
+            r1 * np.sin(alpha), r1 * np.cos(alpha)])
+        return Path(np.row_stack((p0, p1)), np.asarray([
+            Path.MOVETO, Path.LINETO]))
 
 
 class AutoScaledWCSAxes(WCSAxes):
@@ -258,6 +349,44 @@ class AutoScaledWCSAxes(WCSAxes):
         return self.add_patch(WCSInsetPatch(
             ax, *args, transform=self.get_transform('world'), **kwargs))
 
+    def mark_inset_circle(self, ax, center, radius, *args, **kwargs):
+        """Outline a circle in this and another Axes to create a loupe.
+
+        Parameters
+        ----------
+        ax : `astropy.visualization.wcsaxes.WCSAxes`
+            The other axes.
+        coord : `astropy.coordinates.SkyCoord`
+            The center of the circle.
+        radius : `astropy.units.Quantity`
+            The radius of the circle in units that are compatible with degrees.
+
+        Other parameters
+        ----------------
+        args :
+            Extra arguments for `matplotlib.patches.PathPatch`
+        kwargs :
+            Extra keyword arguments for `matplotlib.patches.PathPatch`
+
+        Returns
+        -------
+        patch1 : `matplotlib.patches.PathPatch`
+            The outline of the circle in these Axes.
+        patch2 : `matplotlib.patches.PathPatch`
+            The outline of the circle in the other Axes.
+        """
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
+        radius = u.Quantity(radius)
+        args = ((center.ra, center.dec), radius, *args)
+        kwargs = {'facecolor': 'none',
+                  'edgecolor': rcParams['axes.edgecolor'],
+                  'linewidth': rcParams['axes.linewidth'],
+                  **kwargs}
+        for ax in (self, ax):
+            ax.add_patch(SphericalCircle(*args, **kwargs,
+                                         transform=ax.get_transform('world')))
+
     def connect_inset_axes(self, ax, loc, *args, **kwargs):
         """Connect a corner of another WCSAxes to the matching point inside
         this one.
@@ -284,6 +413,40 @@ class AutoScaledWCSAxes(WCSAxes):
         """
         return self.add_patch(WCSInsetConnectionPatch(
             self, ax, loc, *args, **kwargs))
+
+    def connect_inset_circle(self, ax, center, radius, *args, **kwargs):
+        """Connect a circle in this and another Axes to create a loupe.
+
+        Parameters
+        ----------
+        ax : `astropy.visualization.wcsaxes.WCSAxes`
+            The other axes.
+        coord : `astropy.coordinates.SkyCoord`
+            The center of the circle.
+        radius : `astropy.units.Quantity`
+            The radius of the circle in units that are compatible with degrees.
+
+        Other parameters
+        ----------------
+        args :
+            Extra arguments for `matplotlib.patches.PathPatch`
+        kwargs :
+            Extra keyword arguments for `matplotlib.patches.PathPatch`
+
+        Returns
+        -------
+        patch1, patch2 : `matplotlib.patches.ConnectionPatch`
+            The two connecting patches.
+        """
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
+        radius = u.Quantity(radius)
+        kwargs = {'color': rcParams['axes.edgecolor'],
+                  'linewidth': rcParams['axes.linewidth'],
+                  **kwargs}
+        for sign in (-1, 1):
+            self.add_patch(WCSCircleInsetConnectionPatch(
+                self, ax, center, radius, sign, *args, **kwargs))
 
     def compass(self, x, y, size):
         """Add a compass to indicate the north and east directions.

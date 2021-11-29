@@ -24,6 +24,8 @@ Changelog
 
 .. _`astropy#12176`: https://github.com/astropy/astropy/pull/12176
 
+- Require astropy >= 5.0.
+
 0.5.3 (2021-04-10)
 ==================
 

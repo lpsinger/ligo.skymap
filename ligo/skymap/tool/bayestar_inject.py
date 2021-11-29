@@ -31,13 +31,7 @@ cutoff that is piecewise constant in the masses and spins.
 from functools import partial
 
 from astropy import cosmology
-try:
-    from astropy.cosmology.utils import vectorize_redshift_method
-except ImportError:
-    # FIXME: Remove once we drop support for astropy < 5.0.
-    # See https://github.com/astropy/astropy/pull/12176
-    from astropy.cosmology.utils import (
-        vectorize_if_needed as vectorize_redshift_method)
+from astropy.cosmology.utils import vectorize_redshift_method
 from astropy import units
 from astropy.units import dimensionless_unscaled
 import numpy as np
@@ -83,118 +77,126 @@ def lo_hi_nonzero(x):
     return nonzero[0], nonzero[-1]
 
 
-def z_at_snr(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z):
-    """
-    Get redshift at which a waveform attains a given SNR.
+class GWCosmo:
+    """Evaluate GW distance figures of merit for a given cosmology.
 
     Parameters
     ----------
     cosmo : :class:`astropy.cosmology.FLRW`
         The cosmological model.
-    psds : list
-        List of :class:`lal.REAL8FrequencySeries` objects.
-    waveform : str
-        Waveform approximant name.
-    f_low : float
-        Low-frequency cutoff for template.
-    snr : float
-        Target SNR.
-    params : list
-        List of waveform parameters: mass1, mass2, spin1z, spin2z.
-
-    Returns
-    -------
-    comoving_distance : float
-        Comoving distance in Mpc.
 
     """
-    # Construct waveform
-    series = sngl_inspiral_psd(waveform, f_low=f_low,
-                               mass1=mass1, mass2=mass2,
-                               spin1z=spin1z, spin2z=spin2z)
-    i_lo, i_hi = lo_hi_nonzero(series.data.data)
-    log_f = np.log(series.f0 + series.deltaF * np.arange(i_lo, i_hi + 1))
-    log_f_lo = log_f[0]
-    log_f_hi = log_f[-1]
-    num = interp1d(
-        log_f, np.log(series.data.data[i_lo:i_hi + 1]),
-        fill_value=-np.inf, bounds_error=False, assume_sorted=True)
 
-    denoms = []
-    for series in psds:
-        i_lo, i_hi = lo_hi_nonzero(
-            np.isfinite(series.data.data) & (series.data.data != 0))
+    def __init__(self, cosmology):
+        self.cosmo = cosmology
+
+    def z_at_snr(self, psds, waveform, f_low, snr, mass1, mass2,
+                 spin1z, spin2z):
+        """
+        Get redshift at which a waveform attains a given SNR.
+
+        Parameters
+        ----------
+        psds : list
+            List of :class:`lal.REAL8FrequencySeries` objects.
+        waveform : str
+            Waveform approximant name.
+        f_low : float
+            Low-frequency cutoff for template.
+        snr : float
+            Target SNR.
+        params : list
+            List of waveform parameters: mass1, mass2, spin1z, spin2z.
+
+        Returns
+        -------
+        comoving_distance : float
+            Comoving distance in Mpc.
+
+        """
+        # Construct waveform
+        series = sngl_inspiral_psd(waveform, f_low=f_low,
+                                   mass1=mass1, mass2=mass2,
+                                   spin1z=spin1z, spin2z=spin2z)
+        i_lo, i_hi = lo_hi_nonzero(series.data.data)
         log_f = np.log(series.f0 + series.deltaF * np.arange(i_lo, i_hi + 1))
-        denom = interp1d(
-            log_f, log_f - np.log(series.data.data[i_lo:i_hi + 1]),
+        log_f_lo = log_f[0]
+        log_f_hi = log_f[-1]
+        num = interp1d(
+            log_f, np.log(series.data.data[i_lo:i_hi + 1]),
             fill_value=-np.inf, bounds_error=False, assume_sorted=True)
-        denoms.append(denom)
 
-    def snr_at_z(z):
-        logzp1 = np.log(z + 1)
-        integrand = lambda log_f: [
-            np.exp(num(log_f + logzp1) + denom(log_f)) for denom in denoms]
-        integrals, _ = fixed_quad(
-            integrand, log_f_lo, log_f_hi - logzp1, n=1024)
-        snr = get_decisive_snr(np.sqrt(4 * integrals))
-        with np.errstate(divide='ignore'):
-            snr /= cosmo.angular_diameter_distance(z).to_value(units.Mpc)
-        return snr
+        denoms = []
+        for series in psds:
+            i_lo, i_hi = lo_hi_nonzero(
+                np.isfinite(series.data.data) & (series.data.data != 0))
+            log_f = np.log(
+                series.f0 + series.deltaF * np.arange(i_lo, i_hi + 1))
+            denom = interp1d(
+                log_f, log_f - np.log(series.data.data[i_lo:i_hi + 1]),
+                fill_value=-np.inf, bounds_error=False, assume_sorted=True)
+            denoms.append(denom)
 
-    return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
+        def snr_at_z(z):
+            logzp1 = np.log(z + 1)
+            integrand = lambda log_f: [
+                np.exp(num(log_f + logzp1) + denom(log_f)) for denom in denoms]
+            integrals, _ = fixed_quad(
+                integrand, log_f_lo, log_f_hi - logzp1, n=1024)
+            snr = get_decisive_snr(np.sqrt(4 * integrals))
+            with np.errstate(divide='ignore'):
+                snr /= self.cosmo.angular_diameter_distance(z).to_value(
+                    units.Mpc)
+            return snr
 
+        return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
 
-def get_max_z(cosmo, psds, waveform, f_low, snr, mass1, mass2, spin1z, spin2z,
-              jobs=1):
-    # Calculate the maximum distance on the grid.
-    params = [mass1, mass2, spin1z, spin2z]
-    result = list(progress_map(
-        partial(z_at_snr, cosmo, psds, waveform, f_low, snr),
-        *(param.ravel() for param in np.meshgrid(*params, indexing='ij')),
-        jobs=jobs))
-    result = np.reshape(result, tuple(len(param) for param in params))
+    def get_max_z(self, psds, waveform, f_low, snr, mass1, mass2,
+                  spin1z, spin2z, jobs=1):
+        # Calculate the maximum distance on the grid.
+        params = [mass1, mass2, spin1z, spin2z]
+        result = list(progress_map(
+            partial(self.z_at_snr, psds, waveform, f_low, snr),
+            *(param.ravel() for param in np.meshgrid(*params, indexing='ij')),
+            jobs=jobs))
+        result = np.reshape(result, tuple(len(param) for param in params))
 
-    assert np.all(result >= 0), 'some redshifts are negative'
-    assert np.all(np.isfinite(result)), 'some redshifts are not finite'
-    return result
+        assert np.all(result >= 0), 'some redshifts are negative'
+        assert np.all(np.isfinite(result)), 'some redshifts are not finite'
+        return result
 
+    @vectorize_redshift_method
+    def _sensitive_volume_integral(self, z):
+        dh3_sr = self.cosmo.hubble_distance**3 / units.sr
 
-def _sensitive_volume_integral(cosmo, z):
-    dh3_sr = cosmo.hubble_distance**3 / units.sr
+        def integrand(z):
+            result = self.cosmo.differential_comoving_volume(z)
+            result /= (1 + z) * dh3_sr
+            return result.to_value(dimensionless_unscaled)
 
-    def integrand(z):
-        result = cosmo.differential_comoving_volume(z)
-        result /= (1 + z) * dh3_sr
-        return result.to_value(dimensionless_unscaled)
-
-    def integral(z):
         result, _ = quad(integrand, 0, z)
         return result
 
-    return vectorize_redshift_method(integral, z)
+    def sensitive_volume(self, z):
+        """Sensitive volume :math:`V(z)` out to redshift :math:`z`.
 
+        Given a population of events that occur at a constant rate density
+        :math:`R` per unit comoving volume per unit proper time, the number of
+        observed events out to a redshift :math:`N(z)` over an observation time
+        :math:`T` is :math:`N(z) = R T V(z)`.
+        """
+        dh3 = self.cosmo.hubble_distance**3
+        return 4 * np.pi * dh3 * self._sensitive_volume_integral(z)
 
-def sensitive_volume(cosmo, z):
-    """Sensitive volume :math:`V(z)` out to redshift :math:`z`.
+    def sensitive_distance(self, z):
+        r"""Sensitive distance as a function of redshift :math:`z`.
 
-    Given a population of events that occur at a constant rate density
-    :math:`R` per unit comoving volume per unit proper time, the number of
-    observed events out to a redshift :math:`N(z)` over an observation time
-    :math:`T` is :math:`N(z) = R T V(z)`.
-    """
-    dh3 = cosmo.hubble_distance**3
-    return 4 * np.pi * dh3 * _sensitive_volume_integral(cosmo, z)
-
-
-def sensitive_distance(cosmo, z):
-    r"""Sensitive distance as a function of redshift :math:`z`.
-
-    The sensitive distance is the distance :math:`d_s(z)` defined such that
-    :math:`V(z) = 4/3\pi {d_s(z)}^3`, where :math:`V(z)` is the sensitive
-    volume.
-    """
-    dh = cosmo.hubble_distance
-    return dh * np.cbrt(3 * _sensitive_volume_integral(cosmo, z))
+        The sensitive distance is the distance :math:`d_s(z)` defined such that
+        :math:`V(z) = 4/3\pi {d_s(z)}^3`, where :math:`V(z)` is the sensitive
+        volume.
+        """
+        dh = self.cosmo.hubble_distance
+        return dh * np.cbrt(3 * self._sensitive_volume_integral(z))
 
 
 def cell_max(values):
@@ -275,8 +277,8 @@ def main(args=None):
     xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
     process = register_to_xmldoc(xmldoc, p, args)
 
-    cosmo = cosmology.default_cosmology.get_cosmology_from_string(
-        args.cosmology)
+    gwcosmo = GWCosmo(cosmology.default_cosmology.get_cosmology_from_string(
+        args.cosmology))
 
     ns_mass_min = 1.0
     ns_mass_max = 2.0
@@ -382,14 +384,14 @@ def main(args=None):
     params = m1, m2, x1, x2
 
     # Calculate the maximum distance on the grid.
-    max_z = get_max_z(
-        cosmo, psds, args.waveform, args.f_low, args.min_snr, m1, m2, x1, x2,
+    max_z = gwcosmo.get_max_z(
+        psds, args.waveform, args.f_low, args.min_snr, m1, m2, x1, x2,
         jobs=args.jobs)
     if args.max_distance is not None:
-        new_max_z = cosmology.z_at_value(cosmo.luminosity_distance,
+        new_max_z = cosmology.z_at_value(gwcosmo.cosmo.luminosity_distance,
                                          args.max_distance * units.Mpc)
         max_z[max_z > new_max_z] = new_max_z
-    max_distance = sensitive_distance(cosmo, max_z).to_value(units.Mpc)
+    max_distance = gwcosmo.sensitive_distance(max_z).to_value(units.Mpc)
 
     # Find piecewise constant approximate upper bound on distance.
     max_distance = cell_max(max_distance)
@@ -437,8 +439,8 @@ def main(args=None):
     # Convert from sensitive distance to redshift and comoving distance.
     # FIXME: Replace this brute-force lookup table with a solver.
     z = np.linspace(0, max_z.max(), 10000)
-    ds = sensitive_distance(cosmo, z).to_value(units.Mpc)
-    dc = cosmo.comoving_distance(z).to_value(units.Mpc)
+    ds = gwcosmo.sensitive_distance(z).to_value(units.Mpc)
+    dc = gwcosmo.cosmo.comoving_distance(z).to_value(units.Mpc)
     z_for_ds = interp1d(ds, z, kind='cubic', assume_sorted=True)
     dc_for_ds = interp1d(ds, dc, kind='cubic', assume_sorted=True)
     zp1 = 1 + z_for_ds(cols['distance'])

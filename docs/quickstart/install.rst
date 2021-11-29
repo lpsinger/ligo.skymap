@@ -59,7 +59,7 @@ You are now ready to get started using `ligo.skymap`.
           automatically install the following required Python packages:
 
           *  `Astroplan <http://astroplan.readthedocs.io>`_ ≥ 0.7
-          *  `Astropy`_ ≥ 4.0.2, ≠ 4.2
+          *  `Astropy`_ ≥ 5.0
           *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_

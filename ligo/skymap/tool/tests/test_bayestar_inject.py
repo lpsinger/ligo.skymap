@@ -1,5 +1,3 @@
-from functools import partial
-
 from astropy.cosmology import default_cosmology
 from astropy import units as u
 import lal
@@ -8,9 +6,7 @@ import numpy as np
 import pytest
 from scipy.misc import derivative
 
-from ..bayestar_inject import (
-    get_decisive_snr, z_at_snr, get_max_z, cell_max, sensitive_distance,
-    sensitive_volume)
+from ..bayestar_inject import get_decisive_snr, cell_max, GWCosmo
 
 
 def test_get_decisive_snr():
@@ -37,7 +33,7 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
 @pytest.mark.parametrize('mtotal', [2.8, 10.0, 50.0, 100.0])
 @pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
 def test_z_at_snr(mtotal, z):
-    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
     f_low = 10
     f_high = 4096
     df = 0.1
@@ -48,15 +44,15 @@ def test_z_at_snr(mtotal, z):
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
 
     snr = get_snr_at_z_lalsimulation(
-        cosmo, z, mass1, mass2, f_low, f_high, psd)
-    z_solution = z_at_snr(
-        cosmo, [psd], 'IMRPhenomPv2', f_low, snr, mass1, mass2, 0, 0)
+        gwcosmo.cosmo, z, mass1, mass2, f_low, f_high, psd)
+    z_solution = gwcosmo.z_at_snr(
+        [psd], 'IMRPhenomPv2', f_low, snr, mass1, mass2, 0, 0)
 
     assert z_solution == pytest.approx(z, rel=1e-2)
 
 
 def test_get_max_z():
-    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
+    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
     f_low = 10
     f_high = 4096
     df = 0.1
@@ -71,8 +67,8 @@ def test_get_max_z():
         '', 0, f_low, df, lal.DimensionlessUnit, int((f_high - f_low) // df))
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
 
-    result = get_max_z(
-        cosmo, [psd], waveform, f_low, snr, m1, m2, x1, x2)
+    result = gwcosmo.get_max_z(
+        [psd], waveform, f_low, snr, m1, m2, x1, x2)
     # Check that shape matches
     assert result.shape == (1, 2, 3, 4)
     # Spot check some individual cells
@@ -80,32 +76,33 @@ def test_get_max_z():
         for im2, m2_ in enumerate(m2):
             for ix1, x1_ in enumerate(x1):
                 for ix2, x2_ in enumerate(x2):
-                    expected = z_at_snr(
-                        cosmo, [psd], waveform, f_low, snr, m1_, m2_, x1_, x2_)
+                    expected = gwcosmo.z_at_snr(
+                        [psd], waveform, f_low, snr, m1_, m2_, x1_, x2_)
                     assert result[im1, im2, ix1, ix2] == expected
 
 
 def test_sensitive_volume_0():
-    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
-    assert sensitive_volume(cosmo, 0) == 0
+    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    assert gwcosmo.sensitive_volume(0) == 0
 
 
 @pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
 def test_sensitive_volume(z):
     """Test that the sensitive volume has the correct derivative with z."""
-    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
-    dVC_dz = cosmo.differential_comoving_volume(z)
+    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    dVC_dz = gwcosmo.cosmo.differential_comoving_volume(z)
     expected = (dVC_dz / (1 + z) * 4 * np.pi * u.sr).to_value(u.Mpc**3)
     actual = derivative(
-        partial(sensitive_volume, cosmo), x0=z, dx=1e-6 * z).to_value(u.Mpc**3)
+        gwcosmo.sensitive_volume, x0=z, dx=1e-6 * z).to_value(u.Mpc**3)
     assert expected == pytest.approx(actual)
 
 
 @pytest.mark.parametrize('z', [0.0, 0.001, 0.01, 0.1, 1.0, 2.0])
 def test_sensitive_distance(z):
-    cosmo = default_cosmology.get_cosmology_from_string('Planck15')
-    expected = sensitive_volume(cosmo, z).to_value(u.Mpc**3)
-    actual = (4/3 * np.pi * sensitive_distance(cosmo, z)**3).to_value(u.Mpc**3)
+    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    expected = gwcosmo.sensitive_volume(z).to_value(u.Mpc**3)
+    actual = (
+        4/3 * np.pi * gwcosmo.sensitive_distance(z)**3).to_value(u.Mpc**3)
     assert expected == pytest.approx(actual)
 
 

@@ -81,7 +81,7 @@ wheel/macosx:
   stage: dist
   script:
     - . /opt/local/share/macports/setupenv.bash
-    - PYVERS=3.7
+    - PYVERS=3.8
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -131,9 +131,6 @@ wheel/macosx:
   needs:
     - requirements
 
-dependencies/python3.7:
-  <<: *dependencies
-
 dependencies/python3.8:
   <<: *dependencies
 
@@ -145,7 +142,7 @@ dependencies/python3.9:
 #
 
 docs:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   stage: test
   <<: *in-tmpdir
   script:
@@ -153,7 +150,7 @@ docs:
     - tox -e build_docs
     - mv docs/_build/html ${CI_PROJECT_DIR}/
   needs:
-    - dependencies/python3.7
+    - dependencies/python3.8
     - sdist
   artifacts:
     paths:
@@ -170,13 +167,6 @@ docs:
   script:
     - pip install ${CI_PROJECT_DIR}/*.whl astroquery
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
-
-test/python3.7:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
-  needs:
-    - dependencies/python3.7
-    - wheel/manylinux
 
 test/python3.8:
   <<: *test
@@ -228,7 +218,7 @@ test/dev-dependencies:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   variables:
     # -UNDEBUG
     #     enable C assertions
@@ -259,7 +249,7 @@ test/coverage:
     - pycobertura show coverage.xml
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
   needs:
-    - dependencies/python3.7
+    - dependencies/python3.8
     - sdist
   artifacts:
     paths:
@@ -277,10 +267,10 @@ test/coverage:
 lint:
   extends:
     - .python:flake8
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   stage: test
   needs:
-    - dependencies/python3.7
+    - dependencies/python3.8
 
 #
 # Acceptance tests.

@@ -12,6 +12,12 @@ Changelog
 
 - Wheels for macOS are now built against macOS 10.15 (Catalina) using GCC 11.
 
+- Require Python >= 3.8 due Astropy and Numpy deprecation policy.
+  See `APE 18`_ and `NEP 29`_.
+
+.. _`APE 18`: https://github.com/astropy/astropy-APEs/blob/main/APE18.rst
+.. _`NEP 29`: https://numpy.org/neps/nep-0029-deprecation_policy.html
+
 0.5.3 (2021-04-10)
 ==================
 

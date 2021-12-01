@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.5.4 (unreleased)
+0.6.0 (unreleased)
 ==================
 
 - Rename ``master`` branch to ``main``.

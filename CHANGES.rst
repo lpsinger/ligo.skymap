@@ -26,7 +26,9 @@ Changelog
 
 - Require astropy >= 5.0.
 
-- Add support for all-sky projections in Galactic coordinates.
+- Add support for all-sky projections in Galactic coordinates activated by
+  creating Matplotlib axes with the keyword arguments like
+  ``projection='galactic degrees mollweide'``.
 
 - Add the ``mark_inset_circle`` and ``connect_inset_circle`` methods to
   ``AutoScaledWCSAxes`` in order to support circular insets (loupes).

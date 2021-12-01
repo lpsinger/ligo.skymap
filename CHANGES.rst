@@ -26,6 +26,12 @@ Changelog
 
 - Require astropy >= 5.0.
 
+- Require python-ligo-lw <= 1.7.1 because of an API breaking change that will
+  occur in the next version of python-ligo-lw. Support for new versions of
+  python-ligo-lw will be added in an upcoming release. See `ligo.skymap#30`_.
+
+  .. _`ligo.skymap#30`: https://git.ligo.org/lscsoft/ligo.skymap/-/issues/30
+
 - Add support for all-sky projections in Galactic coordinates activated by
   creating Matplotlib axes with the keyword arguments like
   ``projection='galactic degrees mollweide'``.

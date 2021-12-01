@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.6.0 (unreleased)
+0.6.0 (2021-12-01)
 ==================
 
 - Rename ``master`` branch to ``main``.

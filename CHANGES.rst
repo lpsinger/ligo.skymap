@@ -26,6 +26,8 @@ Changelog
 
 - Require astropy >= 5.0.
 
+- Add support for all-sky projections in Galactic coordinates.
+
 - Add the ``mark_inset_circle`` and ``connect_inset_circle`` methods to
   ``AutoScaledWCSAxes`` in order to support circular insets (loupes).
 

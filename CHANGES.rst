@@ -5,6 +5,8 @@ Changelog
 0.5.4 (unreleased)
 ==================
 
+- Rename ``master`` branch to ``main``.
+
 - Add a ``max-distance`` option to ``bayestar-inject``.
 
 - Increase verbosity of LAL error reporting so that the user gets more

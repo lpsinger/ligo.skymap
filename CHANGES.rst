@@ -33,7 +33,7 @@ Changelog
 - Add the ``mark_inset_circle`` and ``connect_inset_circle`` methods to
   ``AutoScaledWCSAxes`` in order to support circular insets (loupes).
 
-- Determine input filetypes by reading the file header in python rather than
+- Determine input filetypes by reading the file header in Python rather than
   relying on a shell utility.
 
 0.5.3 (2021-04-10)

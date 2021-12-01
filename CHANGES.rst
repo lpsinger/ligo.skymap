@@ -15,14 +15,14 @@ Changelog
 - Require Python >= 3.8 due Astropy and Numpy deprecation policy.
   See `APE 18`_ and `NEP 29`_.
 
-.. _`APE 18`: https://github.com/astropy/astropy-APEs/blob/main/APE18.rst
-.. _`NEP 29`: https://numpy.org/neps/nep-0029-deprecation_policy.html
+  .. _`APE 18`: https://github.com/astropy/astropy-APEs/blob/main/APE18.rst
+  .. _`NEP 29`: https://numpy.org/neps/nep-0029-deprecation_policy.html
 
 - In ``bayestar_inject``, use the method ``vectorize_redshift_method`` instead
   of ``vectorize_if_needed`` from ``astropy.cosmology.utils``, because the
   latter was deprecated in Astropy 5.0 (see `astropy#12176`_).
 
-.. _`astropy#12176`: https://github.com/astropy/astropy/pull/12176
+  .. _`astropy#12176`: https://github.com/astropy/astropy/pull/12176
 
 - Require astropy >= 5.0.
 
@@ -40,7 +40,7 @@ Changelog
   works around a FITS validation regression in Astropy 4.2.1
   (see `astropy#11486`_).
 
-.. _`astropy#11486`: https://github.com/astropy/astropy/issues/11486
+  .. _`astropy#11486`: https://github.com/astropy/astropy/issues/11486
 
 0.5.2 (2021-03-28)
 ==================
@@ -58,7 +58,7 @@ Changelog
   affecting Numpy and sky coordinates that will be fixed in Astropy 4.2.1
   (see `astropy#11133`_).
 
-.. _`astropy#11133`: https://github.com/astropy/astropy/pull/11133
+  .. _`astropy#11133`: https://github.com/astropy/astropy/pull/11133
 
 0.5.1 (2021-02-27)
 ==================
@@ -77,21 +77,21 @@ Changelog
   ``astropy.coordinates.SkyCoord`` (see `matplotlib#18832`_), which should be
   fixed in Matplotlib 3.4.0.
 
-.. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
-.. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
+  .. _`astropy#9970`: https://github.com/astropy/astropy/issues/9970
+  .. _`matplotlib#18832`: https://github.com/matplotlib/matplotlib/issues/18832
 
 - Update the required version of LALSuite to >= 6.82 to work around an
   incompatibility between Numpy >= 1.20.0 and older versions of LALSuite
   (see `lalsuite#414`_).
 
-.. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
+  .. _`lalsuite#414`: https://git.ligo.org/lscsoft/lalsuite/-/issues/414
 
 - Importing ligo.skymap no longer causes the
   ``astropy.coordinates.EarthLocation`` site registry to be populated with the
   locations of gravitational-wave observatories, because these sites are now
   included in Astropy's own data repository (see `astropy-data#89`_).
 
-.. _`astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
+  .. _`astropy-data#89`: https://github.com/astropy/astropy-data/pull/89
 
 - In the command line help for ``bayestar-localize-coincs`` and in the
   ``COMMENT`` card in the output FITS file, explain that the integer value in
@@ -247,13 +247,13 @@ Changelog
   ``ligo-skymap-from-samples``) will no longer populate the ``VCSREV`` and
   ``DATE-BLD`` keys in FITS headers.
 
-.. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
-.. _`How fast is BAYESTAR?`: https://lscsoft.docs.ligo.org/ligo.skymap/performance.html
-.. _`APE 4`: https://github.com/astropy/astropy-APEs/blob/master/APE4.rst
-.. _`APE 17`: https://github.com/astropy/astropy-APEs/blob/master/APE17.rst
-.. _`PEP 517`: https://www.python.org/dev/peps/pep-0517/
-..  _`PEP 518`: https://www.python.org/dev/peps/pep-0518/
-.. _`setuptools_scm`: https://github.com/pypa/setuptools_scm
+  .. _`GCC vector extension`: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
+  .. _`How fast is BAYESTAR?`: https://lscsoft.docs.ligo.org/ligo.skymap/performance.html
+  .. _`APE 4`: https://github.com/astropy/astropy-APEs/blob/master/APE4.rst
+  .. _`APE 17`: https://github.com/astropy/astropy-APEs/blob/master/APE17.rst
+  .. _`PEP 517`: https://www.python.org/dev/peps/pep-0517/
+  .. _`PEP 518`: https://www.python.org/dev/peps/pep-0518/
+  .. _`setuptools_scm`: https://github.com/pypa/setuptools_scm
 
 0.2.2 (2020-05-12)
 ==================

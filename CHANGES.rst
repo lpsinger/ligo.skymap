@@ -10,6 +10,10 @@ Changelog
 
   .. _`astropy#12706`: https://github.com/astropy/astropy/issues/12706
 
+- Skip lalsuite 7.2 due to an upstream regression. See `lalsuite!1757`_.
+
+  .. _`lalsuite!1757`: https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/1757
+
 0.6.0 (2021-12-01)
 ==================
 

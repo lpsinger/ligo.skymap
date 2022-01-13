@@ -63,7 +63,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_
-          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53
+          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.4.0

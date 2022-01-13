@@ -5,7 +5,7 @@ Changelog
 0.6.2 (unreleased)
 ==================
 
-- No changes yet.
+- Run unit tests under Python 3.10.
 
 0.6.1 (2022-01-18)
 ==================

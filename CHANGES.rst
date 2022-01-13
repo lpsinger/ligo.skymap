@@ -14,6 +14,11 @@ Changelog
 
   .. _`lalsuite!1757`: https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/1757
 
+- Work around a regression in Numpy 1.22.0 that broke building third party
+  packages using the limited Python C API. See `numpy#20818`_.
+
+  .. _`numpy#20818`: https://github.com/numpy/numpy/pull/20818
+
 0.6.0 (2021-12-01)
 ==================
 

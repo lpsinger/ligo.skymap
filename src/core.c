@@ -19,6 +19,12 @@
 #define Py_LIMITED_API 0x03060000
 
 /* FIXME:
+ * Work around a regression in Numpy 1.22.0 that broke Py_LIMITED_API.
+ * See https://github.com/numpy/numpy/pull/20818.
+ */
+typedef void *vectorcallfunc;
+
+/* FIXME:
  * The Numpy C-API defines PyArrayDescr_Type as:
  *
  *   #define PyArrayDescr_Type (*(PyTypeObject *)PyArray_API[3])

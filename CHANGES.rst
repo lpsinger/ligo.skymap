@@ -19,6 +19,8 @@ Changelog
 
   .. _`numpy#20818`: https://github.com/numpy/numpy/pull/20818
 
+- Update to python-ligo-lw >= 1.8.0.
+
 0.6.0 (2021-12-01)
 ==================
 

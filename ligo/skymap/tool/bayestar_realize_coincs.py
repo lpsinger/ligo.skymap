@@ -224,7 +224,6 @@ def main(args=None):
     # LIGO-LW XML imports.
     from ligo.lw import ligolw
     from ligo.lw.param import Param
-    from ligo.lw.utils import process as ligolw_process
     from ligo.lw.utils.search_summary import append_search_summary
     from ligo.lw import utils as ligolw_utils
     from ligo.lw.lsctables import (
@@ -460,7 +459,7 @@ def main(args=None):
             event_id=CoincID(i))
 
     # Record process end time.
-    ligolw_process.set_process_end_time(process)
+    process.set_end_time_now()
 
     # Write output file.
     write_fileobj(xmldoc, opts.output)

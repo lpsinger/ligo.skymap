@@ -15,16 +15,30 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Tools for adapting LIGO-LW row ID formats."""
+import re
+
 from ligo.lw.ligolw import Param
 from ligo.lw.lsctables import TableByName
 from ligo.lw.table import Column, TableStream
-from ligo.lw.types import FormatFunc, FromPyType, IDTypes, ToPyType
+from ligo.lw.types import FormatFunc, FromPyType
 
 __all__ = ('use_in',)
+
+IDTypes = {'ilwd:char', 'ilwd:char_u'}
 
 ROWID_PYTYPE = int
 ROWID_TYPE = FromPyType[ROWID_PYTYPE]
 ROWID_FORMATFUNC = FormatFunc[ROWID_TYPE]
+
+
+_ilwd_regex = re.compile(r'\s*\w+:\w+:(\d+)\s*')
+
+
+def ilwd_to_int(ilwd):
+    match = _ilwd_regex.fullmatch(ilwd)
+    if not match:
+        raise ValueError(f'"{ilwd}" is not formatt like an ilwd')
+    return int(match[1])
 
 
 def use_in(ContentHandler):
@@ -62,8 +76,7 @@ def use_in(ContentHandler):
                      __orig_endElementNS=ContentHandler.endElementNS):
         """Convert values of <Param> elements from ilwdchar to int."""
         if isinstance(self.current, Param) and self.current.Type in IDTypes:
-            old_type = ToPyType[self.current.Type]
-            new_value = ROWID_PYTYPE(old_type(self.current.pcdata))
+            new_value = ilwd_to_int(self.current.pcdata)
             self.current.Type = ROWID_TYPE
             self.current.pcdata = ROWID_FORMATFUNC(new_value)
         __orig_endElementNS(self, uri_localname, qname)
@@ -85,12 +98,7 @@ def use_in(ContentHandler):
         # If this is an ilwdchar column, then create a function to convert its
         # rows' values for use in the startStream method below.
         if result.Type in IDTypes:
-            old_type = ToPyType[result.Type]
-
-            def converter(old_value):
-                return ROWID_PYTYPE(old_type(old_value))
-
-            remapped[(id(parent), result.Name)] = converter
+            remapped[(id(parent), result.Name)] = ilwd_to_int
             result.Type = ROWID_TYPE
 
         # If this is an ilwdchar column, then normalize the column name.

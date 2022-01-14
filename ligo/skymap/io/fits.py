@@ -63,11 +63,12 @@ import numpy as np
 from astropy.io import fits
 from astropy.time import Time
 from astropy import units as u
-from ligo.lw import lsctables, ilwd
+from ligo.lw import lsctables
 import itertools
 import astropy_healpix as ah
 from astropy.table import Table
 from .. import moc
+from ..util.ilwd import ilwd_to_int
 
 log = logging.getLogger()
 
@@ -175,7 +176,7 @@ def normalize_objid(objid):
         return int(objid)
     except ValueError:
         try:
-            return int(ilwd.ilwdchar(objid))
+            return ilwd_to_int(objid)
         except ValueError:
             return str(objid)
 

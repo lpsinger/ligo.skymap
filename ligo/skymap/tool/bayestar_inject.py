@@ -264,7 +264,6 @@ def parser():
 
 def main(args=None):
     from ligo.lw import lsctables
-    from ligo.lw.utils import process as ligolw_process
     from ligo.lw import utils as ligolw_utils
     from ligo.lw import ligolw
     import lal.series
@@ -465,7 +464,7 @@ def main(args=None):
 
     # Record process end time.
     process.comment = str(volumetric_rate)
-    ligolw_process.set_process_end_time(process)
+    process.set_end_time_now()
 
     # Write output file.
     write_fileobj(xmldoc, args.output)

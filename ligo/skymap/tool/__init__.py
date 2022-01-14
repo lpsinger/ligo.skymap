@@ -450,13 +450,19 @@ def iterlines(file, start_message=start_msg, stop_message=stop_msg):
         print(stop_message, file=sys.stderr)
 
 
-def should_gzip(filename):
-    _, ext = os.path.splitext(filename)
-    return ext == '.gz'
+_compress_arg_map = {
+    '.bz2': 'bz2',
+    '.gz': 'gz',
+    '.xz': 'xz',
+    '.zst': 'zst'
+}
 
 
 def write_fileobj(xmldoc, f):
     import ligo.lw.utils
 
+    _, ext = os.path.splitext(f.name)
+    compress = _compress_arg_map.get(ext.lower())
+
     with ligo.lw.utils.SignalsTrap():
-        ligo.lw.utils.write_fileobj(xmldoc, f, gz=should_gzip(f.name))
+        ligo.lw.utils.write_fileobj(xmldoc, f, compress=compress)

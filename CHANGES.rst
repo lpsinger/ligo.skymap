@@ -5,7 +5,7 @@ Changelog
 0.6.1 (unreleased)
 ==================
 
-- Require Numpy < 1.22.0 because of an issue with Astropy table aggregation.
+- Skip Numpy 1.22.0 because of an issue with Astropy table aggregation.
   See `astropy#12706`_.
 
   .. _`astropy#12706`: https://github.com/astropy/astropy/issues/12706

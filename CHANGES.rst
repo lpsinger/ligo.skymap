@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.6.1 (unreleased)
+0.6.1 (2022-01-18)
 ==================
 
 - Skip Numpy 1.22.0 because of an issue with Astropy table aggregation.

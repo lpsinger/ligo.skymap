@@ -7,10 +7,14 @@ Changelog
 
 - Run unit tests under Python 3.10.
 
-- Online CBC pipelines should now include their PSD files in the initial
-  ``coinc.xml`` upload, and should not upload a separate ``psd.xml.gz`` file.
+- Update the `BAYESTAR interface definition document`_ to state that online CBC
+  pipelines should now include their PSD files in the initial ``coinc.xml``
+  upload, and should not upload a separate ``psd.xml.gz`` file.
+
   ``bayestar-localize-lvalert`` will now download ``psd.xml.gz`` (and log a
   warning) only if the PSD was not present in the ``coinc.xml`` file.
+
+  .. _`BAYESTAR interface definition document`: https://lscsoft.docs.ligo.org/ligo.skymap/interface.html
 
 0.6.1 (2022-01-18)
 ==================

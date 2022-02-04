@@ -336,7 +336,7 @@ Example files
 -------------
 
 For a minimal example, see the mock :download:`coinc.xml <_static/coinc.xml>`
-and :download:`psd.xml.gz <_static/psd.xml.gz>` files.
+file.
 
 .. _`GraceDB`: https://gracedb.ligo.org
 .. _`sequence diagram`: https://en.wikipedia.org/wiki/Sequence_diagram

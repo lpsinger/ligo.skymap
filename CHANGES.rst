@@ -2,7 +2,7 @@
 Changelog
 #########
 
-0.6.2 (unreleased)
+1.0.0 (unreleased)
 ==================
 
 - Run unit tests under Python 3.10.

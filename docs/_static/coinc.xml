@@ -2,122 +2,122 @@
 <!DOCTYPE LIGO_LW SYSTEM "http://ldas-sw.ligo.caltech.edu/doc/ligolwAPI/html/ligolw_dtd.txt">
 <LIGO_LW>
 	<Table Name="coinc_inspiral:table">
-		<Column Name="coinc_inspiral:coinc_event_id" Type="ilwd:char"/>
-		<Column Name="coinc_inspiral:combined_far" Type="real_8"/>
-		<Column Name="coinc_inspiral:end_time" Type="int_4s"/>
-		<Column Name="coinc_inspiral:end_time_ns" Type="int_4s"/>
-		<Column Name="coinc_inspiral:false_alarm_rate" Type="real_8"/>
-		<Column Name="coinc_inspiral:ifos" Type="lstring"/>
-		<Column Name="coinc_inspiral:mass" Type="real_8"/>
-		<Column Name="coinc_inspiral:mchirp" Type="real_8"/>
-		<Column Name="coinc_inspiral:minimum_duration" Type="real_8"/>
-		<Column Name="coinc_inspiral:snr" Type="real_8"/>
+		<Column Name="coinc_event:coinc_event_id" Type="int_8s"/>
+		<Column Name="combined_far" Type="real_8"/>
+		<Column Name="end_time" Type="int_4s"/>
+		<Column Name="end_time_ns" Type="int_4s"/>
+		<Column Name="false_alarm_rate" Type="real_8"/>
+		<Column Name="ifos" Type="lstring"/>
+		<Column Name="mass" Type="real_8"/>
+		<Column Name="mchirp" Type="real_8"/>
+		<Column Name="minimum_duration" Type="real_8"/>
+		<Column Name="snr" Type="real_8"/>
 		<Stream Delimiter="," Name="coinc_inspiral:table" Type="Local">
-			"coinc_event:coinc_event_id:0",0,1000072000,7240415,,"H1,I1,K1,L1,V1",,,,58.06043849273824
+			0,0,1000072000,7240415,,"H1,I1,K1,L1,V1",,,,58.06043849273824
 		</Stream>
 	</Table>
 	<Table Name="coinc_event_map:table">
-		<Column Name="coinc_event_map:coinc_event_id" Type="ilwd:char"/>
-		<Column Name="coinc_event_map:event_id" Type="ilwd:char"/>
-		<Column Name="coinc_event_map:table_name" Type="char_v"/>
+		<Column Name="coinc_event:coinc_event_id" Type="int_8s"/>
+		<Column Name="event_id" Type="int_8s"/>
+		<Column Name="table_name" Type="char_v"/>
 		<Stream Delimiter="," Name="coinc_event_map:table" Type="Local">
-			"coinc_event:coinc_event_id:0","sngl_inspiral:event_id:1","sngl_inspiral",
-			"coinc_event:coinc_event_id:0","sngl_inspiral:event_id:2","sngl_inspiral",
-			"coinc_event:coinc_event_id:0","sngl_inspiral:event_id:3","sngl_inspiral",
-			"coinc_event:coinc_event_id:0","sngl_inspiral:event_id:4","sngl_inspiral",
-			"coinc_event:coinc_event_id:0","sngl_inspiral:event_id:5","sngl_inspiral"
+			0,1,"sngl_inspiral",
+			0,2,"sngl_inspiral",
+			0,3,"sngl_inspiral",
+			0,4,"sngl_inspiral",
+			0,5,"sngl_inspiral"
 		</Stream>
 	</Table>
 	<Table Name="coinc_event:table">
-		<Column Name="coinc_event:coinc_def_id" Type="ilwd:char"/>
-		<Column Name="coinc_event:coinc_event_id" Type="ilwd:char"/>
-		<Column Name="coinc_event:instruments" Type="lstring"/>
-		<Column Name="coinc_event:likelihood" Type="real_8"/>
-		<Column Name="coinc_event:nevents" Type="int_4u"/>
-		<Column Name="coinc_event:process_id" Type="ilwd:char"/>
-		<Column Name="coinc_event:time_slide_id" Type="ilwd:char"/>
+		<Column Name="coinc_definer:coinc_def_id" Type="int_8s"/>
+		<Column Name="coinc_event_id" Type="int_8s"/>
+		<Column Name="instruments" Type="lstring"/>
+		<Column Name="likelihood" Type="real_8"/>
+		<Column Name="nevents" Type="int_4u"/>
+		<Column Name="process:process_id" Type="int_8s"/>
+		<Column Name="time_slide:time_slide_id" Type="int_8s"/>
 		<Stream Delimiter="," Name="coinc_event:table" Type="Local">
-			,"coinc_event:coinc_event_id:0",,,,"process:process_id:1","time_slide:time_slide_id:0"
+			,0,,,,1,0
 		</Stream>
 	</Table>
 	<Table Name="process:table">
 		<Column Name="program" Type="lstring"/>
-		<Column Name="process_id" Type="ilwd:char"/>
+		<Column Name="process_id" Type="int_8s"/>
 		<Stream Delimiter="," Name="process:table" Type="Local">
-			"bayestar-realize-coincs","process:process_id:1"
+			"bayestar-realize-coincs",1
 		</Stream>
 	</Table>
 	<Table Name="sngl_inspiral:table">
-		<Column Name="sngl_inspiral:Gamma0" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma1" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma2" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma3" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma4" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma5" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma6" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma7" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma8" Type="real_4"/>
-		<Column Name="sngl_inspiral:Gamma9" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha1" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha2" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha3" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha4" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha5" Type="real_4"/>
-		<Column Name="sngl_inspiral:alpha6" Type="real_4"/>
-		<Column Name="sngl_inspiral:amplitude" Type="real_4"/>
-		<Column Name="sngl_inspiral:bank_chisq" Type="real_4"/>
-		<Column Name="sngl_inspiral:bank_chisq_dof" Type="int_4s"/>
-		<Column Name="sngl_inspiral:beta" Type="real_4"/>
-		<Column Name="sngl_inspiral:channel" Type="lstring"/>
-		<Column Name="sngl_inspiral:chi" Type="real_4"/>
-		<Column Name="sngl_inspiral:chisq" Type="real_4"/>
-		<Column Name="sngl_inspiral:chisq_dof" Type="int_4s"/>
-		<Column Name="sngl_inspiral:coa_phase" Type="real_4"/>
-		<Column Name="sngl_inspiral:cont_chisq" Type="real_4"/>
-		<Column Name="sngl_inspiral:cont_chisq_dof" Type="int_4s"/>
-		<Column Name="sngl_inspiral:eff_distance" Type="real_4"/>
-		<Column Name="sngl_inspiral:end_time" Type="int_4s"/>
-		<Column Name="sngl_inspiral:end_time_gmst" Type="real_8"/>
-		<Column Name="sngl_inspiral:end_time_ns" Type="int_4s"/>
-		<Column Name="sngl_inspiral:eta" Type="real_4"/>
-		<Column Name="sngl_inspiral:event_duration" Type="real_8"/>
-		<Column Name="sngl_inspiral:event_id" Type="ilwd:char"/>
-		<Column Name="sngl_inspiral:f_final" Type="real_4"/>
-		<Column Name="sngl_inspiral:ifo" Type="lstring"/>
-		<Column Name="sngl_inspiral:impulse_time" Type="int_4s"/>
-		<Column Name="sngl_inspiral:impulse_time_ns" Type="int_4s"/>
-		<Column Name="sngl_inspiral:kappa" Type="real_4"/>
-		<Column Name="sngl_inspiral:mass1" Type="real_4"/>
-		<Column Name="sngl_inspiral:mass2" Type="real_4"/>
-		<Column Name="sngl_inspiral:mchirp" Type="real_4"/>
-		<Column Name="sngl_inspiral:mtotal" Type="real_4"/>
-		<Column Name="sngl_inspiral:process_id" Type="ilwd:char"/>
-		<Column Name="sngl_inspiral:psi0" Type="real_4"/>
-		<Column Name="sngl_inspiral:psi3" Type="real_4"/>
-		<Column Name="sngl_inspiral:rsqveto_duration" Type="real_4"/>
-		<Column Name="sngl_inspiral:search" Type="lstring"/>
-		<Column Name="sngl_inspiral:sigmasq" Type="real_8"/>
-		<Column Name="sngl_inspiral:snr" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin1x" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin1y" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin1z" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin2x" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin2y" Type="real_4"/>
-		<Column Name="sngl_inspiral:spin2z" Type="real_4"/>
-		<Column Name="sngl_inspiral:tau0" Type="real_4"/>
-		<Column Name="sngl_inspiral:tau2" Type="real_4"/>
-		<Column Name="sngl_inspiral:tau3" Type="real_4"/>
-		<Column Name="sngl_inspiral:tau4" Type="real_4"/>
-		<Column Name="sngl_inspiral:tau5" Type="real_4"/>
-		<Column Name="sngl_inspiral:template_duration" Type="real_8"/>
-		<Column Name="sngl_inspiral:ttotal" Type="real_4"/>
+		<Column Name="Gamma0" Type="real_4"/>
+		<Column Name="Gamma1" Type="real_4"/>
+		<Column Name="Gamma2" Type="real_4"/>
+		<Column Name="Gamma3" Type="real_4"/>
+		<Column Name="Gamma4" Type="real_4"/>
+		<Column Name="Gamma5" Type="real_4"/>
+		<Column Name="Gamma6" Type="real_4"/>
+		<Column Name="Gamma7" Type="real_4"/>
+		<Column Name="Gamma8" Type="real_4"/>
+		<Column Name="Gamma9" Type="real_4"/>
+		<Column Name="alpha" Type="real_4"/>
+		<Column Name="alpha1" Type="real_4"/>
+		<Column Name="alpha2" Type="real_4"/>
+		<Column Name="alpha3" Type="real_4"/>
+		<Column Name="alpha4" Type="real_4"/>
+		<Column Name="alpha5" Type="real_4"/>
+		<Column Name="alpha6" Type="real_4"/>
+		<Column Name="amplitude" Type="real_4"/>
+		<Column Name="bank_chisq" Type="real_4"/>
+		<Column Name="bank_chisq_dof" Type="int_4s"/>
+		<Column Name="beta" Type="real_4"/>
+		<Column Name="channel" Type="lstring"/>
+		<Column Name="chi" Type="real_4"/>
+		<Column Name="chisq" Type="real_4"/>
+		<Column Name="chisq_dof" Type="int_4s"/>
+		<Column Name="coa_phase" Type="real_4"/>
+		<Column Name="cont_chisq" Type="real_4"/>
+		<Column Name="cont_chisq_dof" Type="int_4s"/>
+		<Column Name="eff_distance" Type="real_4"/>
+		<Column Name="end_time" Type="int_4s"/>
+		<Column Name="end_time_gmst" Type="real_8"/>
+		<Column Name="end_time_ns" Type="int_4s"/>
+		<Column Name="eta" Type="real_4"/>
+		<Column Name="event_duration" Type="real_8"/>
+		<Column Name="event_id" Type="int_8s"/>
+		<Column Name="f_final" Type="real_4"/>
+		<Column Name="ifo" Type="lstring"/>
+		<Column Name="impulse_time" Type="int_4s"/>
+		<Column Name="impulse_time_ns" Type="int_4s"/>
+		<Column Name="kappa" Type="real_4"/>
+		<Column Name="mass1" Type="real_4"/>
+		<Column Name="mass2" Type="real_4"/>
+		<Column Name="mchirp" Type="real_4"/>
+		<Column Name="mtotal" Type="real_4"/>
+		<Column Name="process:process_id" Type="int_8s"/>
+		<Column Name="psi0" Type="real_4"/>
+		<Column Name="psi3" Type="real_4"/>
+		<Column Name="rsqveto_duration" Type="real_4"/>
+		<Column Name="search" Type="lstring"/>
+		<Column Name="sigmasq" Type="real_8"/>
+		<Column Name="snr" Type="real_4"/>
+		<Column Name="spin1x" Type="real_4"/>
+		<Column Name="spin1y" Type="real_4"/>
+		<Column Name="spin1z" Type="real_4"/>
+		<Column Name="spin2x" Type="real_4"/>
+		<Column Name="spin2y" Type="real_4"/>
+		<Column Name="spin2z" Type="real_4"/>
+		<Column Name="tau0" Type="real_4"/>
+		<Column Name="tau2" Type="real_4"/>
+		<Column Name="tau3" Type="real_4"/>
+		<Column Name="tau4" Type="real_4"/>
+		<Column Name="tau5" Type="real_4"/>
+		<Column Name="template_duration" Type="real_8"/>
+		<Column Name="ttotal" Type="real_4"/>
 		<Stream Delimiter="," Name="sngl_inspiral:table" Type="Local">
-			,,,,,,,,,,,,,,,,,,,,,,,,,2.0306949,,,,1000072000,,21169555,,,"sngl_inspiral:event_id:1",,"H1",,,,1.4,1.4,,,,,,,,,38.104073,,,,,,,,,,,,,,
-			,,,,,,,,,,,,,,,,,,,,,,,,,-1.0999644,,,,1000072000,,19348190,,,"sngl_inspiral:event_id:2",,"L1",,,,1.4,1.4,,,,,,,,,33.166712,,,,,,,,,,,,,,
-			,,,,,,,,,,,,,,,,,,,,,,,,,0.36045699,,,,1000072000,,2135905,,,"sngl_inspiral:event_id:3",,"V1",,,,1.4,1.4,,,,,,,,,6.9704608,,,,,,,,,,,,,,
-			,,,,,,,,,,,,,,,,,,,,,,,,,-0.080017403,,,,1000071999,,988428084,,,"sngl_inspiral:event_id:4",,"I1",,,,1.4,1.4,,,,,,,,,20.39031,,,,,,,,,,,,,,
-			,,,,,,,,,,,,,,,,,,,,,,,,,1.6529436,,,,1000072000,,5119925,,,"sngl_inspiral:event_id:5",,"K1",,,,1.4,1.4,,,,,,,,,18.83378,,,,,,,,,,,,,,
+			,,,,,,,,,,,,,,,,,,,,,,,,,2.0306949,,,,1000072000,,21169555,,,1,,"H1",,,,1.4,1.4,,,,,,,,,38.104073,,,,,,,,,,,,,,
+			,,,,,,,,,,,,,,,,,,,,,,,,,-1.0999644,,,,1000072000,,19348190,,,2,,"L1",,,,1.4,1.4,,,,,,,,,33.166712,,,,,,,,,,,,,,
+			,,,,,,,,,,,,,,,,,,,,,,,,,0.36045699,,,,1000072000,,2135905,,,3,,"V1",,,,1.4,1.4,,,,,,,,,6.9704608,,,,,,,,,,,,,,
+			,,,,,,,,,,,,,,,,,,,,,,,,,-0.080017403,,,,1000071999,,988428084,,,4,,"I1",,,,1.4,1.4,,,,,,,,,20.39031,,,,,,,,,,,,,,
+			,,,,,,,,,,,,,,,,,,,,,,,,,1.6529436,,,,1000072000,,5119925,,,5,,"K1",,,,1.4,1.4,,,,,,,,,18.83378,,,,,,,,,,,,,,
 		</Stream>
 	</Table>
 	<LIGO_LW Name="COMPLEX8TimeSeries">
@@ -948,7 +948,7 @@
 				0.099853515625 2.530523300170898 1.117775321006775
 			</Stream>
 		</Array>
-		<Param Name="event_id:param" Type="ilwd:char">sngl_inspiral:event_id:1</Param>
+		<Param Name="event_id:param" Type="int_8s">1</Param>
 	</LIGO_LW>
 	<LIGO_LW Name="COMPLEX8TimeSeries">
 		<Time Name="epoch" Type="GPS">1000071999.969360352</Time>
@@ -1778,7 +1778,7 @@
 				0.099853515625 -1.53644073009491 -1.883005738258362
 			</Stream>
 		</Array>
-		<Param Name="event_id:param" Type="ilwd:char">sngl_inspiral:event_id:2</Param>
+		<Param Name="event_id:param" Type="int_8s">2</Param>
 	</LIGO_LW>
 	<LIGO_LW Name="COMPLEX8TimeSeries">
 		<Time Name="epoch" Type="GPS">1000071999.952270508</Time>
@@ -2608,7 +2608,7 @@
 				0.099853515625 -0.3934313654899597 -0.9705762267112732
 			</Stream>
 		</Array>
-		<Param Name="event_id:param" Type="ilwd:char">sngl_inspiral:event_id:3</Param>
+		<Param Name="event_id:param" Type="int_8s">3</Param>
 	</LIGO_LW>
 	<LIGO_LW Name="COMPLEX8TimeSeries">
 		<Time Name="epoch" Type="GPS">1000071999.938476562</Time>
@@ -3438,7 +3438,7 @@
 				0.099853515625 -0.03533061966300011 -1.551064133644104
 			</Stream>
 		</Array>
-		<Param Name="event_id:param" Type="ilwd:char">sngl_inspiral:event_id:4</Param>
+		<Param Name="event_id:param" Type="int_8s">4</Param>
 	</LIGO_LW>
 	<LIGO_LW Name="COMPLEX8TimeSeries">
 		<Time Name="epoch" Type="GPS">1000071999.955200195</Time>
@@ -4268,6 +4268,6 @@
 				0.099853515625 -0.05347306281328201 0.04831914976239204
 			</Stream>
 		</Array>
-		<Param Name="event_id:param" Type="ilwd:char">sngl_inspiral:event_id:5</Param>
+		<Param Name="event_id:param" Type="int_8s">5</Param>
 	</LIGO_LW>
 </LIGO_LW>

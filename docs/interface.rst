@@ -34,6 +34,27 @@ meanings:
 * Solid lines directed out of GraceDB represent HTTP responses.
 * Dashed lines represent LVAlert pubsub messages.
 
+Sequence diagram for unified ``coinc.xml`` file
+-----------------------------------------------
+
+.. mermaid::
+
+    sequenceDiagram
+
+        note over Search: New detection
+        Search ->>+ GraceDB: Upload coinc.xml
+        note over GraceDB: Create event G123
+        GraceDB -->>+ BAYESTAR: LVAlert: coinc.xml added to G123
+        deactivate GraceDB
+        BAYESTAR ->>+ GraceDB: Get coinc.xml from G123
+        GraceDB ->>- BAYESTAR: coinc.xml
+        note over BAYESTAR: Perform sky localization
+        BAYESTAR ->> GraceDB: Upload bayestar.fits to G123
+        deactivate BAYESTAR
+
+Sequence diagram for separate ``coinc.xml`` and ``psd.xml.gz`` files
+--------------------------------------------------------------------
+
 .. mermaid::
 
     sequenceDiagram
@@ -63,12 +84,22 @@ key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in :rfc:`2119`.
 
-The following two files MUST be uploaded to GraceDB:
+The following file MUST be uploaded to GraceDB:
 
 * :file:`coinc.xml`: The event file, which SHOULD be the initial upload that
   creates the event.
+
+The contents of the :file:`coinc.xml` file MUST conform to the
+:ref:`coinc-data` section below. The :file:`coinc.xml` file SHOULD also contain
+the data described in the :ref:`psd-data` section below. If the
+:file:`coinc.xml` file does not include the PSD data, then the following
+additional file MUST be uploaded to GraceDB:
+
 * :file:`psd.xml.gz`: The power spectral density data file,
   which MUST be uploaded with the :samp:`psd` tag.
+
+If the :file:`psd.xml.gz` is uploaded, then its contents MUST conform to the
+:ref:`psd-data` section below.
 
 The format of both files MUST be LIGO-LW (see :dcc:`T990023`). LIGO-LW is a
 legacy XML-based format used by a variety of LIGO/Virgo/KAGRA software and
@@ -82,21 +113,24 @@ either the :mod:`ligo.lw` module or GWPy's :ref:`tabular LIGO-LW I/O
     There are two variants of the LIGO-LW format, an old format implemented by
     :mod:`glue.ligolw` that uses string ("ilwdchar") row IDs, and a new format
     implemented by :mod:`ligo.lw` that uses integer row IDs. GraceDB and
-    BAYESTAR can accept *either* format.
+    BAYESTAR can accept *either* format, but pipelines SHOULD upload files in
+    the new format.
 
     The :program:`ligolw_no_ilwdchar` command-line tool provided by
     :mod:`ligo.lw` can convert from the new format to the old format.
 
-The :file:`coinc.xml` file
---------------------------
+.. _coinc-data:
 
-This file describes the search pipeline's matched filter output. It MUST
-contain the point estimates of the time, phase, and amplitude on arrival in
+Coinc data
+----------
+
+This coinc data describes the search pipeline's matched filter output. It MUST
+include the point estimates of the time, phase, and amplitude on arrival in
 each detector. It MUST provide the intrinsic template parameters (masses and
-spins). It SHOULD contain a signal-to-noise time series for each detector.
+spins). It SHOULD include a signal-to-noise time series for each detector.
 
-The :file:`coinc.xml` file MUST contain at least the following LIGO-LW tables
-(in any order):
+The coinc data MUST include at least the following LIGO-LW tables (in any
+order):
 
 :class:`process <ligo.lw.lsctables.ProcessTable>`
     * The :class:`process <ligo.lw.lsctables.ProcessTable>` table MUST contain
@@ -272,11 +306,13 @@ detector.
   corresponding row of the :class:`sngl_inspiral
   <ligo.lw.lsctables.SnglInspiralTable>` table.
 
-The :file:`psd.xml.gz` file
----------------------------
+.. _psd-data:
 
-This file contains each analyzed detectors' estimated noise power spectral
-density (PSD) series.
+PSD data
+--------
+
+The PSD data consists of each analyzed detectors' estimated noise power
+spectral density (PSD) series.
 
 * There MUST be exactly one PSD per detector analyzed.
 

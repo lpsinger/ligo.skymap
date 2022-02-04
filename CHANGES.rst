@@ -7,6 +7,11 @@ Changelog
 
 - Run unit tests under Python 3.10.
 
+- Online CBC pipelines should now include their PSD files in the initial
+  ``coinc.xml`` upload, and should not upload a separate ``psd.xml.gz`` file.
+  ``bayestar-localize-lvalert`` will now download ``psd.xml.gz`` (and log a
+  warning) only if the PSD was not present in the ``coinc.xml`` file.
+
 0.6.1 (2022-01-18)
 ==================
 

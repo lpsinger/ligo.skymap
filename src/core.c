@@ -16,7 +16,7 @@
  */
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#define Py_LIMITED_API 0x03070000
+#define Py_LIMITED_API 0x03080000
 
 /* FIXME:
  * Work around a regression in Numpy 1.22.0 that broke Py_LIMITED_API.

@@ -60,7 +60,7 @@ wheel/manylinux:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/cp36-cp36m
+    - PYPREFIX=/opt/python/cp38-cp38
     - ${PYPREFIX}/bin/pip install build
     - ${PYPREFIX}/bin/python -m build -w
     - auditwheel repair dist/*.whl

@@ -90,7 +90,7 @@ The following file MUST be uploaded to GraceDB:
   creates the event.
 
 The contents of the :file:`coinc.xml` file MUST conform to the
-:ref:`coinc-data` section below. The :file:`coinc.xml` file SHOULD also contain
+:ref:`event-data` section below. The :file:`coinc.xml` file SHOULD also contain
 the data described in the :ref:`psd-data` section below. If the
 :file:`coinc.xml` file does not include the PSD data, then the following
 additional file MUST be uploaded to GraceDB:
@@ -119,17 +119,17 @@ either the :mod:`ligo.lw` module or GWPy's :ref:`tabular LIGO-LW I/O
     The :program:`ligolw_no_ilwdchar` command-line tool provided by
     :mod:`ligo.lw` can convert from the new format to the old format.
 
-.. _coinc-data:
+.. _event-data:
 
-Coinc data
+Event data
 ----------
 
-This coinc data describes the search pipeline's matched filter output. It MUST
+This event data describes the search pipeline's matched filter output. It MUST
 include the point estimates of the time, phase, and amplitude on arrival in
 each detector. It MUST provide the intrinsic template parameters (masses and
 spins). It SHOULD include a signal-to-noise time series for each detector.
 
-The coinc data MUST include at least the following LIGO-LW tables (in any
+The event data MUST include at least the following LIGO-LW tables (in any
 order):
 
 :class:`process <ligo.lw.lsctables.ProcessTable>`

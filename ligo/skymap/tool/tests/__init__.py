@@ -1,4 +1,6 @@
 import distutils.spawn
+from importlib import metadata
+from importlib import resources
 import multiprocessing
 import os
 import shutil
@@ -7,18 +9,18 @@ import subprocess
 import sys
 import tempfile
 
-import pkg_resources
-
 dist = 'ligo.skymap'
 group = 'console_scripts'
 
 __all__ = ('entry_points', 'run_entry_point', 'run_ligolw', 'run_lalsuite')
 
-entry_points = sorted(pkg_resources.get_entry_map(dist, group).keys())
+entry_points = {entry_point.name: entry_point
+                for entry_point in metadata.distribution(dist).entry_points
+                if entry_point.group == group}
 
 
 def run_entry_point(name, *args):
-    main = pkg_resources.load_entry_point(dist, group, name)
+    main = entry_points[name].load()
     try:
         main(args)
     except SystemExit as e:
@@ -27,9 +29,11 @@ def run_entry_point(name, *args):
 
 
 def exec_ligolw(name, *args):
-    provider = pkg_resources.get_provider('python-ligo-lw')
+    main, = (entry_point.load() for entry_point
+             in metadata.distribution('python-ligo-lw').entry_points
+             if entry_point.name == name)
     sys.argv = [name, *args]
-    provider.run_script(name, {'__name__': '__main__'})
+    main()
 
 
 def run_ligolw(name, *args):
@@ -45,7 +49,7 @@ def run_ligolw(name, *args):
         subprocess.check_call([path, *args])
     else:
         # The tool has not been installed, so we have to try to run it using
-        # pkg_resources.
+        # importlib.metadata.
         process = multiprocessing.Process(
             target=exec_ligolw, args=[name, *args])
         process.start()
@@ -70,18 +74,16 @@ def run_lalsuite(name, *args):
     else:
         # The tool has not been installed, so we have to find the underlying
         # binary inside the lalapps module.
-        path = pkg_resources.resource_filename(
-            'lalapps', os.path.join('bin', name))
-
-        # Copy to a temporary file so that we can make it executable.
-        # For some reason, when eggs are extracted, permissions are not
-        # preserved.
-        with tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as temp:
-            with open(path, 'rb') as orig:
-                shutil.copyfileobj(orig, temp)
-            temp.flush()
-            fd = temp.fileno()
-            stat_result = os.fstat(fd)
-            mode = stat_result.st_mode | stat.S_IXUSR
-            os.fchmod(fd, mode)
-            subprocess.check_call([temp.name, *args])
+        with resources.path('lalapps.bin', name) as path:
+            # Copy to a temporary file so that we can make it executable.
+            # For some reason, when eggs are extracted, permissions are not
+            # preserved.
+            with tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as tmp:
+                with open(path, 'rb') as orig:
+                    shutil.copyfileobj(orig, tmp)
+                tmp.flush()
+                fd = tmp.fileno()
+                stat_result = os.fstat(fd)
+                mode = stat_result.st_mode | stat.S_IXUSR
+                os.fchmod(fd, mode)
+                subprocess.check_call([tmp.name, *args])

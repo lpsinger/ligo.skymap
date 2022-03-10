@@ -16,6 +16,9 @@ Changelog
 
   .. _`BAYESTAR interface definition document`: https://lscsoft.docs.ligo.org/ligo.skymap/interface.html
 
+- In ``bayestar-inject``, swap component masses if necessary so that
+  mass1 >= mass2 always.
+
 0.6.1 (2022-01-18)
 ==================
 

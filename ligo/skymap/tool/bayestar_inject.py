@@ -419,6 +419,15 @@ def main(args=None):
         dist.ppf(stats.uniform(cdf_lo[i], cdf[i]).rvs(size=args.nsamples))
         for i, dist, cdf_lo, cdf in zip(indices, dists, cdf_los, cdfs)]
 
+    # Swap binary components as needed to ensure that mass1 >= mass2.
+    # Note that the .copy() is important.
+    # See https://github.com/numpy/numpy/issues/14428
+    swap = cols['mass1'] < cols['mass2']
+    cols['mass1'][swap], cols['mass2'][swap] = \
+        cols['mass2'][swap].copy(), cols['mass1'][swap].copy()
+    cols['spin1z'][swap], cols['spin2z'][swap] = \
+        cols['spin2z'][swap].copy(), cols['spin1z'][swap].copy()
+
     # Draw random extrinsic parameters
     cols['distance'] = stats.powerlaw(a=3, scale=max_distance[indices]).rvs(
         size=args.nsamples)

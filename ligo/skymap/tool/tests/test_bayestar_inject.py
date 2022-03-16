@@ -72,7 +72,8 @@ def test_get_max_z():
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
 
     result = gwcosmo.get_max_z(
-        [psd], waveform, f_low, snr, 1, m1, m2, x1, x2)
+        [psd], waveform, f_low, snr, 1,
+        *np.meshgrid(m1, m2, x1, x2, indexing='ij'))
     # Check that shape matches
     assert result.shape == (1, 2, 3, 4)
     # Spot check some individual cells

@@ -29,6 +29,9 @@ Changelog
     minimum number of triggers to form a coincidence, for consistency with
     ``bayestar-realize-coincs``.
 
+  - Add the ``--distribution-samples`` option to load samples for the intrinsic
+    mass and spin distribution from an external file.
+
 - Linux wheels are now built against cfitsio 4.1.0. See
   https://github.com/lpsinger/ligo.skymap/issues/12.
 

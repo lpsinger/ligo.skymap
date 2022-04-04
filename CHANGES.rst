@@ -19,6 +19,9 @@ Changelog
 - In ``bayestar-inject``, swap component masses if necessary so that
   mass1 >= mass2 always.
 
+- Linux wheels are now built against cfitsio 4.1.0. See
+  https://github.com/lpsinger/ligo.skymap/issues/12.
+
 0.6.1 (2022-01-18)
 ==================
 

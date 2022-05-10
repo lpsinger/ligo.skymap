@@ -10,9 +10,13 @@ from ..bayestar_inject import get_decisive_snr, cell_max, GWCosmo
 
 
 def test_get_decisive_snr():
-    assert get_decisive_snr([]) == 0.0
-    assert get_decisive_snr([1.0, 3.0, 2.0, 4.0]) == 3.0
-    assert get_decisive_snr([4.0]) == 4.0
+    snrs = [1.0, 3.0, 2.0, 4.0]
+    assert get_decisive_snr(snrs, 1) == 4.0
+    assert get_decisive_snr(snrs, 2) == 3.0
+    assert get_decisive_snr(snrs, 3) == 2.0
+    assert get_decisive_snr(snrs, 4) == 1.0
+    with pytest.raises(IndexError):
+        get_decisive_snr(snrs, 5)
 
 
 def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
@@ -46,7 +50,7 @@ def test_z_at_snr(mtotal, z):
     snr = get_snr_at_z_lalsimulation(
         gwcosmo.cosmo, z, mass1, mass2, f_low, f_high, psd)
     z_solution = gwcosmo.z_at_snr(
-        [psd], 'IMRPhenomPv2', f_low, snr, mass1, mass2, 0, 0)
+        [psd], 'IMRPhenomPv2', f_low, snr, 1, mass1, mass2, 0, 0)
 
     assert z_solution == pytest.approx(z, rel=1e-2)
 
@@ -68,7 +72,7 @@ def test_get_max_z():
     lalsimulation.SimNoisePSDaLIGODesignSensitivityP1200087(psd, f_low)
 
     result = gwcosmo.get_max_z(
-        [psd], waveform, f_low, snr, m1, m2, x1, x2)
+        [psd], waveform, f_low, snr, 1, m1, m2, x1, x2)
     # Check that shape matches
     assert result.shape == (1, 2, 3, 4)
     # Spot check some individual cells
@@ -77,7 +81,7 @@ def test_get_max_z():
             for ix1, x1_ in enumerate(x1):
                 for ix2, x2_ in enumerate(x2):
                     expected = gwcosmo.z_at_snr(
-                        [psd], waveform, f_low, snr, m1_, m2_, x1_, x2_)
+                        [psd], waveform, f_low, snr, 1, m1_, m2_, x1_, x2_)
                     assert result[im1, im2, ix1, ix2] == expected
 
 

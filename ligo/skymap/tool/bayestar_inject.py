@@ -46,30 +46,22 @@ from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
 
 
-def get_decisive_snr(snrs):
+def get_decisive_snr(snrs, min_triggers):
     """Return the SNR for the trigger that decides if an event is detectable.
-
-    If there are two or more detectors, then the decisive SNR is the SNR of the
-    second loudest detector (since a coincidence of two or more events is
-    required). If there is only one detector, then the decisive SNR is just the
-    SNR of that detector. If there are no detectors, then 0 is returned.
 
     Parameters
     ----------
     snrs : list
         List of SNRs (floats).
+    min_triggers : int
+        Minimum number of triggers to form a coincidence.
 
     Returns
     -------
     decisive_snr : float
 
     """
-    if len(snrs) > 1:
-        return sorted(snrs)[-2]
-    elif len(snrs) == 1:
-        return snrs[0]
-    else:
-        return 0.0
+    return sorted(snrs)[-min_triggers]
 
 
 def lo_hi_nonzero(x):
@@ -90,8 +82,8 @@ class GWCosmo:
     def __init__(self, cosmology):
         self.cosmo = cosmology
 
-    def z_at_snr(self, psds, waveform, f_low, snr, mass1, mass2,
-                 spin1z, spin2z):
+    def z_at_snr(self, psds, waveform, f_low, snr_threshold, min_triggers,
+                 mass1, mass2, spin1z, spin2z):
         """
         Get redshift at which a waveform attains a given SNR.
 
@@ -103,8 +95,10 @@ class GWCosmo:
             Waveform approximant name.
         f_low : float
             Low-frequency cutoff for template.
-        snr : float
-            Target SNR.
+        snr_threshold : float
+            Minimum single-detector SNR.
+        min_triggers : int
+            Minimum number of triggers to form a coincidence.
         params : list
             List of waveform parameters: mass1, mass2, spin1z, spin2z.
 
@@ -143,20 +137,24 @@ class GWCosmo:
                 np.exp(num(log_f + logzp1) + denom(log_f)) for denom in denoms]
             integrals, _ = fixed_quad(
                 integrand, log_f_lo, log_f_hi - logzp1, n=1024)
-            snr = get_decisive_snr(np.sqrt(4 * integrals))
+            snr = get_decisive_snr(np.sqrt(4 * integrals), min_triggers)
             with np.errstate(divide='ignore'):
                 snr /= self.cosmo.angular_diameter_distance(z).to_value(
                     units.Mpc)
             return snr
 
-        return root_scalar(lambda z: snr_at_z(z) - snr, bracket=(0, 1e3)).root
+        def root_func(z):
+            return snr_at_z(z) - snr_threshold
 
-    def get_max_z(self, psds, waveform, f_low, snr, mass1, mass2,
-                  spin1z, spin2z, jobs=1):
+        return root_scalar(root_func, bracket=(0, 1e3)).root
+
+    def get_max_z(self, psds, waveform, f_low, snr_threshold, min_triggers,
+                  mass1, mass2, spin1z, spin2z, jobs=1):
         # Calculate the maximum distance on the grid.
         params = [mass1, mass2, spin1z, spin2z]
         result = list(progress_map(
-            partial(self.z_at_snr, psds, waveform, f_low, snr),
+            partial(self.z_at_snr, psds, waveform, f_low,
+                    snr_threshold, min_triggers),
             *(param.ravel() for param in np.meshgrid(*params, indexing='ij')),
             jobs=jobs))
         result = np.reshape(result, tuple(len(param) for param in params))
@@ -244,6 +242,10 @@ def parser():
     parser.add_argument(
         '--snr-threshold', type=float, default=4.,
         help='Single-detector SNR threshold')
+    parser.add_argument(
+        '--min-triggers', type=int, default=2,
+        help='Emit coincidences only when at least this many triggers '
+        'are found')
     parser.add_argument(
         '--min-snr', type=float,
         help='Minimum decisive SNR of injections given the reference PSDs. '
@@ -388,6 +390,11 @@ def main(args=None):
                 args.reference_psd,
                 contenthandler=lal.series.PSDContentHandler)).values())
 
+    if len(psds) < args.min_triggers:
+        parser.error(
+            f'The number of PSDs ({len(psds)}) must be greater than or equal '
+            f'to the value of --min-triggers ({args.min_triggers}).')
+
     # Construct mass1, mass2, spin1z, spin2z grid.
     m1 = np.geomspace(m1_min, m1_max, 10)
     m2 = np.geomspace(m2_min, m2_max, 10)
@@ -397,8 +404,8 @@ def main(args=None):
 
     # Calculate the maximum distance on the grid.
     max_z = gwcosmo.get_max_z(
-        psds, args.waveform, args.f_low, args.snr_threshold, m1, m2, x1, x2,
-        jobs=args.jobs)
+        psds, args.waveform, args.f_low, args.snr_threshold, args.min_triggers,
+        m1, m2, x1, x2, jobs=args.jobs)
     if args.max_distance is not None:
         new_max_z = cosmology.z_at_value(gwcosmo.cosmo.luminosity_distance,
                                          args.max_distance * units.Mpc)

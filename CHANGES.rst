@@ -16,12 +16,18 @@ Changelog
 
   .. _`BAYESTAR interface definition document`: https://lscsoft.docs.ligo.org/ligo.skymap/interface.html
 
-- In ``bayestar-inject``, swap component masses if necessary so that
-  mass1 >= mass2 always.
+- Several enhancements and bug fixes in ``bayestar-inject``:
 
-- The ``--min-snr`` option for ``bayestar-inject`` has been renamed to
-  ``--snr-threshold``. The old ``--min-snr`` spelling is deprecated and will be
-  removed in a future release.
+  - Swap component masses if necessary so that mass1 >= mass2 always.
+
+  - Rename the ``--min-snr`` option to ``--snr-threshold`` for consistency with
+    the same option for ``bayestar-realize-coincs`. The old ``--min-snr``
+    spelling is deprecated and will be
+    removed in a future release.
+
+  - Add the ``--min-triggers`` option to ``bayestar-inject`` to control the
+    minimum number of triggers to form a coincidence, for consistency with
+    ``bayestar-realize-coincs``.
 
 - Linux wheels are now built against cfitsio 4.1.0. See
   https://github.com/lpsinger/ligo.skymap/issues/12.

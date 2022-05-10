@@ -242,8 +242,12 @@ def parser():
         '--f-low', type=float, default=25.0,
         help='Low frequency cutoff in Hz')
     parser.add_argument(
-        '--min-snr', type=float, default=4.0,
-        help='Minimum decisive SNR of injections given the reference PSDs')
+        '--snr-threshold', type=float, default=4.,
+        help='Single-detector SNR threshold')
+    parser.add_argument(
+        '--min-snr', type=float,
+        help='Minimum decisive SNR of injections given the reference PSDs. '
+             'Deprecated; use the synonymous --snr-threshold option instead.')
     parser.add_argument(
         '--max-distance', type=float, metavar='Mpc',
         help='Maximum luminosity distance for injections')
@@ -263,6 +267,8 @@ def parser():
 
 
 def main(args=None):
+    import warnings
+
     from ligo.lw import lsctables
     from ligo.lw import utils as ligolw_utils
     from ligo.lw import ligolw
@@ -271,6 +277,13 @@ def main(args=None):
 
     p = parser()
     args = p.parse_args(args)
+
+    if args.min_snr is not None:
+        warnings.warn(
+            'The --min-snr threshold option is deprecated. '
+            'Please use the synonymous --snr-threshold option instead.',
+            UserWarning)
+        args.snr_threshold = args.min_snr
 
     xmldoc = ligolw.Document()
     xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
@@ -384,7 +397,7 @@ def main(args=None):
 
     # Calculate the maximum distance on the grid.
     max_z = gwcosmo.get_max_z(
-        psds, args.waveform, args.f_low, args.min_snr, m1, m2, x1, x2,
+        psds, args.waveform, args.f_low, args.snr_threshold, m1, m2, x1, x2,
         jobs=args.jobs)
     if args.max_distance is not None:
         new_max_z = cosmology.z_at_value(gwcosmo.cosmo.luminosity_distance,

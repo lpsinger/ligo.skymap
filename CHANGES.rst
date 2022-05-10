@@ -19,6 +19,10 @@ Changelog
 - In ``bayestar-inject``, swap component masses if necessary so that
   mass1 >= mass2 always.
 
+- The ``--min-snr`` option for ``bayestar-inject`` has been renamed to
+  ``--snr-threshold``. The old ``--min-snr`` spelling is deprecated and will be
+  removed in a future release.
+
 - Linux wheels are now built against cfitsio 4.1.0. See
   https://github.com/lpsinger/ligo.skymap/issues/12.
 

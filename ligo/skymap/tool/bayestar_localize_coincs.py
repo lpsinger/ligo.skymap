@@ -130,6 +130,7 @@ def main(args=None):
                     ? strcat("The job exited with signal ", ExitSignal) \
                     : strcat("The job exited with code ", ExitCode))
                   request_memory = 1000 MB
+                  request_disk = 100 MB
                   universe = vanilla
                   getenv = true
                   executable = /usr/bin/env

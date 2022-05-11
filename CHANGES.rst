@@ -32,6 +32,9 @@ Changelog
 - Linux wheels are now built against cfitsio 4.1.0. See
   https://github.com/lpsinger/ligo.skymap/issues/12.
 
+- Add the ``request_disk`` flag when submitting ``bayestar-localize-coincs`` jobs to HTCondor.
+  This is now required on LIGO Data Grid clusters.
+
 0.6.1 (2022-01-18)
 ==================
 

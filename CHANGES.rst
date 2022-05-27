@@ -35,6 +35,8 @@ Changelog
 - Add the ``request_disk`` flag when submitting ``bayestar-localize-coincs`` jobs to HTCondor.
   This is now required on LIGO Data Grid clusters.
 
+- Fix compatibility with Astropy 5.1.
+
 0.6.1 (2022-01-18)
 ==================
 

@@ -45,6 +45,12 @@ from ..bayestar.filter import sngl_inspiral_psd
 from . import (
     ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
 
+try:
+    from astropy.cosmology import available as available_cosmologies
+except ImportError:
+    # FIXME: Remove once we drop support for Astropy < 5.1
+    from astropy.cosmology.parameters import available as available_cosmologies
+
 
 def get_decisive_snr(snrs, min_triggers):
     """Return the SNR for the trigger that decides if an event is detectable.
@@ -227,7 +233,7 @@ def assert_not_reached():  # pragma: no cover
 def parser():
     parser = ArgumentParser(parents=[random_parser])
     parser.add_argument(
-        '--cosmology', choices=cosmology.parameters.available,
+        '--cosmology', choices=available_cosmologies,
         default='Planck15', help='Cosmological model')
     parser.add_argument(
         '--distribution', required=True, choices=(

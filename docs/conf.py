@@ -212,9 +212,9 @@ extensions += ['sphinx.ext.doctest']
 # -- Options for extlinks extension ------------------------------------------
 
 extlinks = {
-    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:'),
-    'dcc': ('https://dcc.ligo.org/LIGO-%s/public', 'LIGO-'),
-    'doi': ('https://doi.org/%s', 'doi:')
+    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:%s'),
+    'dcc': ('https://dcc.ligo.org/LIGO-%s/public', 'LIGO-%s'),
+    'doi': ('https://doi.org/%s', 'doi:%s')
 }
 
 # -- Options for the module index ---------------------------------------------

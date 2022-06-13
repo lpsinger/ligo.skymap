@@ -53,8 +53,7 @@ parser.add_argument(
     default='Planck15', nargs='?', help='Cosmological model')
 args = parser.parse_args()
 
-cosmo = astropy.cosmology.default_cosmology.get_cosmology_from_string(
-    args.cosmology)
+cosmo = getattr(astropy.cosmology, args.cosmology)
 
 DL = np.logspace(0, 6, 32)
 log_DL = np.log(DL)

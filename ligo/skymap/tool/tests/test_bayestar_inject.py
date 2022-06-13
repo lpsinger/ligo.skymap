@@ -1,4 +1,4 @@
-from astropy.cosmology import default_cosmology
+from astropy.cosmology import Planck15 as cosmo
 from astropy import units as u
 import lal
 import lalsimulation
@@ -37,7 +37,7 @@ def get_snr_at_z_lalsimulation(cosmo, z, mass1, mass2, f_low, f_high, psd):
 @pytest.mark.parametrize('mtotal', [2.8, 10.0, 50.0, 100.0])
 @pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
 def test_z_at_snr(mtotal, z):
-    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    gwcosmo = GWCosmo(cosmo)
     f_low = 10
     f_high = 4096
     df = 0.1
@@ -56,7 +56,7 @@ def test_z_at_snr(mtotal, z):
 
 
 def test_get_max_z():
-    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    gwcosmo = GWCosmo(cosmo)
     f_low = 10
     f_high = 4096
     df = 0.1
@@ -87,14 +87,14 @@ def test_get_max_z():
 
 
 def test_sensitive_volume_0():
-    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    gwcosmo = GWCosmo(cosmo)
     assert gwcosmo.sensitive_volume(0) == 0
 
 
 @pytest.mark.parametrize('z', [0.001, 0.01, 0.1, 1.0, 2.0])
 def test_sensitive_volume(z):
     """Test that the sensitive volume has the correct derivative with z."""
-    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    gwcosmo = GWCosmo(cosmo)
     dVC_dz = gwcosmo.cosmo.differential_comoving_volume(z)
     expected = (dVC_dz / (1 + z) * 4 * np.pi * u.sr).to_value(u.Mpc**3)
     actual = derivative(
@@ -104,7 +104,7 @@ def test_sensitive_volume(z):
 
 @pytest.mark.parametrize('z', [0.0, 0.001, 0.01, 0.1, 1.0, 2.0])
 def test_sensitive_distance(z):
-    gwcosmo = GWCosmo(default_cosmology.get_cosmology_from_string('Planck15'))
+    gwcosmo = GWCosmo(cosmo)
     expected = gwcosmo.sensitive_volume(z).to_value(u.Mpc**3)
     actual = (
         4/3 * np.pi * gwcosmo.sensitive_distance(z)**3).to_value(u.Mpc**3)

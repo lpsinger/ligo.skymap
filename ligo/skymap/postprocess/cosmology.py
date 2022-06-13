@@ -20,10 +20,8 @@ All functions in this module use the Planck15 cosmological parameters.
 """
 
 import numpy as np
-from astropy.cosmology import default_cosmology, z_at_value
+from astropy.cosmology import Planck15 as cosmo, z_at_value
 import astropy.units as u
-
-cosmo = default_cosmology.get_cosmology_from_string('Planck15')
 
 
 def dVC_dVL_for_z(z):

@@ -319,8 +319,7 @@ def main(args=None):
             f'The number of PSDs ({len(psds)}) must be greater than or equal '
             f'to the value of --min-triggers ({args.min_triggers}).')
 
-    gwcosmo = GWCosmo(cosmology.default_cosmology.get_cosmology_from_string(
-        args.cosmology))
+    gwcosmo = GWCosmo(getattr(cosmology, args.cosmology))
 
     if args.distribution:
         ns_mass_min = 1.0

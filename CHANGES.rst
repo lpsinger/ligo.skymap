@@ -5,7 +5,8 @@ Changelog
 1.0.1 (unreleased)
 ==================
 
-- No changes yet.
+- Replace deprecated
+  ``astropy.cosmology.default_cosmology.get_cosmology_from_string``.
 
 1.0.0 (2022-06-01)
 ==================

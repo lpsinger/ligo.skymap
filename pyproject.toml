@@ -4,6 +4,7 @@ requires = ["setuptools",
             "setuptools_scm",
             "wheel",
             "extension-helpers",
-            "oldest-supported-numpy"]
+            "oldest-supported-numpy; platform_machine!='arm64' or platform_system!='Darwin'",
+            "numpy==1.22.2; platform_machine=='arm64' and platform_system=='Darwin'"]
 
 build-backend = 'setuptools.build_meta'

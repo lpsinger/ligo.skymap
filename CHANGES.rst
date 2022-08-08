@@ -8,6 +8,8 @@ Changelog
 - Replace deprecated
   ``astropy.cosmology.default_cosmology.get_cosmology_from_string``.
 
+- Build wheels for arm64 on macOS.
+
 1.0.0 (2022-06-01)
 ==================
 

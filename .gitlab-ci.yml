@@ -72,12 +72,10 @@ wheel/manylinux:
       - '*.whl'
     expire_in: 1 day
 
-wheel/macosx:
+.wheel-macos: &wheel-macos
   variables:
     CC: gcc-mp-11
     CXX: g++-mp-11
-  tags:
-    - macos_catalina_x86_64
   stage: dist
   script:
     - . /opt/local/share/macports/setupenv.bash
@@ -96,6 +94,16 @@ wheel/macosx:
     paths:
       - '*.whl'
     expire_in: 1 day
+
+wheel/macos/x86_64:
+  <<: *wheel-macos
+  tags:
+    - macos_catalina_x86_64
+
+wheel/macos/arm64:
+  <<: *wheel-macos
+  tags:
+    - macos_monterey_arm64
 
 #
 # Build Docker containers for dependencies listed in requirements.txt,
@@ -375,6 +383,7 @@ deploy/pypi:
   needs:
     - sdist
     - wheel/manylinux
-    - wheel/macosx
+    - wheel/macos/x86_64
+    - wheel/macos/arm64
   only:
     - tags

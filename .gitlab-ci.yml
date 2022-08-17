@@ -255,6 +255,9 @@ test/coverage:
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Run tests.
+    # FIXME: C coverage relies on in-tree build/ directory.
+    # pip 21.3 uses an out-of-tree temporary directory.
+    - pip install 'pip<21.3'
     - pip install -ve .[test]
     - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml
     # Write coverage reports in Cobertura format.

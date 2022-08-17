@@ -10,6 +10,8 @@ Changelog
 
 - Build wheels for arm64 on macOS.
 
+- Add fast path for arm64 in ``uniq2order``.
+
 1.0.0 (2022-06-01)
 ==================
 

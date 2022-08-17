@@ -107,10 +107,10 @@ def main(args=None):
             location.info.meta = {'timezone': opts.site_timezone}
         observer = Observer(location)
     else:
-        if not((opts.site_longitude is None) and
-               (opts.site_latitude is None) and
-               (opts.site_height is None) and
-               (opts.site_timezone is None)):
+        if not ((opts.site_longitude is None) and
+                (opts.site_latitude is None) and
+                (opts.site_height is None) and
+                (opts.site_timezone is None)):
             p.error('argument --site not allowed with arguments '
                     '--site-longitude, --site-latitude, '
                     '--site-height, or --site-timezone')

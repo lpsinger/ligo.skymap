@@ -5,7 +5,7 @@ Changelog
 1.0.2 (unreleased)
 ==================
 
-- Add fast path for PowerPC in ``uniq2order``.
+- Add fast path for PowerPC and other architectures in ``uniq2order``.
 
 1.0.1 (2022-08-17)
 ==================

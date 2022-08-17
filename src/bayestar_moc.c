@@ -46,21 +46,8 @@ int8_t uniq2order64(int64_t uniq)
         : "=r" (o)
         : "rm" (uniq));
     order = o;
-#elif defined(__aarch64__)
-    int64_t o;
-    asm("clz %0, %1\n\t"
-        : "=r" (o)
-        : "r" (uniq));
-    order = 63 - o;
-#elif defined(__powerpc64__)
-    int64_t o;
-    asm("cntlzd %0, %1\n\t"
-        : "=r" (o)
-        : "r" (uniq));
-    order = 63 - o;
 #else
-    for (order = -1; uniq; uniq >>= 1, order ++)
-        /* noop */;
+    order = 63 - __builtin_clzll(uniq);
 #endif
     return (order >> 1) - 1;
 }

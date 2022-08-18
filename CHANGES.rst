@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.2 (unreleased)
+1.0.2 (2022-08-18)
 ==================
 
 - Add fast path for PowerPC and other architectures in ``uniq2order``.

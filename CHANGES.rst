@@ -5,7 +5,8 @@ Changelog
 1.0.3 (unreleased)
 ==================
 
-- No changes yet.
+- Update condor accounting group in ``bayestar-localize-coincs`` and
+  ``bayestar-mcmc`` to ``ligo.dev.o4.cbc.pe.bayestar``.
 
 1.0.2 (2022-08-18)
 ==================

@@ -123,7 +123,7 @@ def main(args=None):
                               text=True, stdin=subprocess.PIPE) as proc:
             f = proc.stdin
             print('''
-                  accounting_group = ligo.dev.o3.cbc.pe.bayestar
+                  accounting_group = ligo.dev.o4.cbc.pe.bayestar
                   on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
                   on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
                   on_exit_hold_reason = (ExitBySignal == True \

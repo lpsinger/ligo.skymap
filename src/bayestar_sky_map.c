@@ -115,17 +115,14 @@ static __itt_string_handle
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 #define PRAGMA_LOOP_COUNT_NINT _Pragma("loop count min(1), max(2), avg(2)")
 #define PRAGMA_LOOP_COUNT_NIFOS _Pragma("loop count min(1), max(5), avg(2)")
-#define PRAGMA_LOOP_COUNT_NU _Pragma("loop count min(1), max(20), avg(10)")
 #define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("loop count min(1), max(128), avg(16)")
 #elif defined(__clang__) || defined(__llvm__)
 #define PRAGMA_LOOP_COUNT_NINT _Pragma("unroll 2")
 #define PRAGMA_LOOP_COUNT_NIFOS _Pragma("unroll 2")
-#define PRAGMA_LOOP_COUNT_NU _Pragma("unroll 10")
 #define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("unroll 16")
 #else /* assume GCC */
 #define PRAGMA_LOOP_COUNT_NINT _Pragma("GCC unroll 2")
 #define PRAGMA_LOOP_COUNT_NIFOS _Pragma("GCC unroll 2")
-#define PRAGMA_LOOP_COUNT_NU _Pragma("GCC unroll 10")
 #define PRAGMA_LOOP_COUNT_NSAMPLES _Pragma("GCC unroll 16")
 #endif
 
@@ -579,7 +576,43 @@ float complex bayestar_signal_amplitude_model(
 }
 
 
+#define nu 10
 static const unsigned int ntwopsi = 10;
+static float u_points_weights[nu][2];
+
+
+static void u_points_weights_init(void)
+{
+    /* Look up Gauss-Legendre quadrature rule for integral over cos(i). */
+    gsl_integration_glfixed_table *gltable
+        = gsl_integration_glfixed_table_alloc(nu);
+
+    /* Don't bother checking the return value. GSL has static, precomputed
+     * values for certain orders, and for the order I have picked it will
+     * return a pointer to one of these. See:
+     *
+     * http://git.savannah.gnu.org/cgit/gsl.git/tree/integration/glfixed.c
+     */
+    assert(gltable);
+    assert(gltable->precomputed); /* We don't have to free it. */
+
+    for (unsigned int iu = 0; iu < nu; iu++)
+    {
+        double point, weight;
+
+        /* Look up Gauss-Legendre abscissa and weight. */
+        int ret = gsl_integration_glfixed_point(
+            -1, 1, iu, &point, &weight, gltable);
+
+        /* Don't bother checking return value; the only
+         * possible failure is in index bounds checking. */
+        assert(ret == GSL_SUCCESS);
+		(void)ret; /* Silence unused variable warning */
+
+        u_points_weights[iu][0] = point;
+        u_points_weights[iu][1] = log(weight);
+    }
+}
 
 
 /* Compare two pixels by contained probability. */
@@ -711,14 +744,12 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
     double gmst,
     unsigned int nifos,
     unsigned long nsamples,
-    unsigned int n_u_points,
     float sample_rate,
     const double *epochs,
     const float (**snrs)[2],
     const float (**responses)[3],
     const double **locations,
     const double *horizons,
-    const float (*u_points_weights)[2],
     float rescale_loglikelihood
 ) {
     float complex F[nifos];
@@ -747,15 +778,14 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
                     isample - dt[iifo] * sample_rate - 0.5 * (nsamples - 1));
     }
 
-    float p[ntwopsi][n_u_points], log_p[ntwopsi][n_u_points];
-    float b[ntwopsi][n_u_points][nsamples], log_b[ntwopsi][n_u_points][nsamples];
+    float p[ntwopsi][nu], log_p[ntwopsi][nu];
+    float b[ntwopsi][nu][nsamples], log_b[ntwopsi][nu][nsamples];
     for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
     {
         const float twopsi = (2 * M_PI / ntwopsi) * itwopsi;
         const float complex exp_i_twopsi = exp_i(twopsi);
 
-        PRAGMA_LOOP_COUNT_NU
-        for (unsigned int iu = 0; iu < n_u_points; iu++)
+        for (unsigned int iu = 0; iu < nu; iu++)
         {
             const float u = u_points_weights[iu][0];
             const float u2 = u * u;
@@ -786,12 +816,11 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         }
     }
 
-    double accum[nint][ntwopsi][n_u_points][nsamples];
+    double accum[nint][ntwopsi][nu][nsamples];
     PRAGMA_LOOP_COUNT_NINT
     for (unsigned int iint = 0; iint < nint; iint ++)
         for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
-            PRAGMA_LOOP_COUNT_NU
-            for (unsigned int iu = 0; iu < n_u_points; iu++)
+            for (unsigned int iu = 0; iu < nu; iu++)
                 PRAGMA_LOOP_COUNT_NSAMPLES
                 for (unsigned long isample = 0; isample < nsamples; isample++)
                     accum[iint][itwopsi][iu][isample] = u_points_weights[iu][1] + log_radial_integrator_eval(integrators[iint], p[itwopsi][iu], b[itwopsi][iu][isample], log_p[itwopsi][iu], log_b[itwopsi][iu][isample]);
@@ -802,8 +831,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         double max_accum = -INFINITY;
 
         for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
-            PRAGMA_LOOP_COUNT_NU
-            for (unsigned int iu = 0; iu < n_u_points; iu++)
+            for (unsigned int iu = 0; iu < nu; iu++)
                 PRAGMA_LOOP_COUNT_NSAMPLES
                 for (unsigned long isample = 0; isample < nsamples; isample++)
                     if (accum[iint][itwopsi][iu][isample] > max_accum)
@@ -812,8 +840,7 @@ static void bayestar_sky_map_toa_phoa_snr_pixel(
         double accum1 = 0;
 
         for (unsigned int itwopsi = 0; itwopsi < ntwopsi; itwopsi++)
-            PRAGMA_LOOP_COUNT_NU
-            for (unsigned int iu = 0; iu < n_u_points; iu++)
+            for (unsigned int iu = 0; iu < nu; iu++)
                 PRAGMA_LOOP_COUNT_NSAMPLES
                 for (unsigned long isample = 0; isample < nsamples; isample++)
                     accum1 += exp(accum[iint][itwopsi][iu][isample] - max_accum);
@@ -827,6 +854,7 @@ static pthread_once_t bayestar_init_once = PTHREAD_ONCE_INIT;
 static void bayestar_init_func(void)
 {
     dVC_dVL_init();
+    u_points_weights_init();
 
 #ifdef WITH_ITTNOTIFY
     itt_domain = __itt_domain_create("ligo.skymap.bayestar");
@@ -850,8 +878,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     double *out_log_bci,            /* log Bayes factor: coherent vs. incoherent */
     double *out_log_bsn,            /* log Bayes factor: signal vs. noise */
     /* Prior */
-    double min_inclination,
-    double max_inclination,
     double min_distance,            /* Minimum distance */
     double max_distance,            /* Maximum distance */
     int prior_distance_power,       /* Power of distance in prior */
@@ -877,107 +903,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             "BAYESTAR supports cosmological priors only for for prior_distance_power=2",
             GSL_EINVAL);
     }
-    unsigned int n_u_points;
-    const unsigned int n_gauss_quad_points = 10;
-    if (min_inclination == max_inclination)
-        /* for a prior of one single inclination angle, collapse integral to
-         * 2 values */
-    {
-        n_u_points = 2;
-    }
-    else if (max_inclination == M_PI_2)
-        /* for a prior with a max inclination of pi/2, collapse to one
-         * integral */
-    {
-        n_u_points = n_gauss_quad_points;
-    }
-    else
-        /* for the general case, perform 2 integrals */
-    {
-        n_u_points = 2 * n_gauss_quad_points;
-    }
-    const float umin = cosf(max_inclination);
-    const float umax = cosf(min_inclination);
-    float u_points_weights[n_u_points][2];
-    float (*u_points_weights1)[2] = &u_points_weights[0];
-    float (*u_points_weights2)[2] = &u_points_weights[n_u_points / 2];
-    float u_norm;
-
-    /* Look up Gauss-Legendre quadrature rule for integral over cos(i). */
-    gsl_integration_glfixed_table *gltable
-        = gsl_integration_glfixed_table_alloc(n_gauss_quad_points);
-
-    /* Don't bother checking the return value. GSL has static, precomputed
-     * values for certain orders, and for the order I have picked it will
-     * return a pointer to one of these. See:
-     *
-     * http://git.savannah.gnu.org/cgit/gsl.git/tree/integration/glfixed.c
-     */
-    assert(gltable);
-    assert(gltable->precomputed); /* We don't have to free it. */
-
-    if (min_inclination > max_inclination || min_inclination > M_PI_2 ||
-        max_inclination > M_PI_2 || min_inclination < 0 || max_inclination <0)
-    {
-        GSL_ERROR_NULL("Inclinations must be in the range [0,90] with max > min.",
-                       GSL_EINVAL);
-    }
-    else if (min_inclination == max_inclination)
-        /* perform integral over single value inclination at +,- the
-         * inclination */
-    {
-        u_points_weights1[0][0] = -(u_points_weights2[0][0] = cosf(max_inclination));
-        u_points_weights1[0][1] = u_points_weights2[0][1] = 0;
-        u_norm = 2;
-    }
-    else if (min_inclination < max_inclination && max_inclination == M_PI_2)
-        /* when max_inclination = pi/2, collapse into one gaussian quadrature
-         * integral over the middle of [0,pi] */
-    {
-        for (unsigned int iu = 0; iu < n_gauss_quad_points; iu++)
-        {
-            double point, weight;
-
-            /* Look up Gauss-Legendre abscissa and weight. */
-            int ret = gsl_integration_glfixed_point(
-                -umax, umax, iu, &point, &weight, gltable);
-
-            /* Don't bother checking return value; the only
-             * possible failure is in index bounds checking. */
-            assert(ret == GSL_SUCCESS);
-            (void)ret; /* Silence unused variable warning */
-
-            u_points_weights[iu][0] = point;
-            u_points_weights[iu][1] = logf(weight);
-        }
-
-        u_norm = 2 * umax;
-    }
-    else
-        /* this is the general case with 2 integrals; 2 separate gaussian
-         * quadratures, combined to be added in the future: it could be worth
-         * switching from integral(left)+integral(right)
-         *  to integral(outer) - integral(inner) */
-    {
-        for (unsigned int iu = 0; iu < n_gauss_quad_points; iu++)
-        {
-            double point, weight;
-
-            int ret = gsl_integration_glfixed_point(
-                umin, umax, iu, &point, &weight, gltable);
-
-            /* Don't bother checking return value; the only
-             * possible failure is in index bounds checking. */
-            assert(ret == GSL_SUCCESS);
-            (void)ret; /* Silence unused variable warning */
-
-            u_points_weights1[iu][0] = -(u_points_weights2[iu][0] = point);
-            u_points_weights1[iu][1] = u_points_weights2[iu][1] = logf(weight);
-        }
-
-        u_norm = 2 * (umax - umin);
-    }
-
     log_radial_integrator *integrators[] = {NULL, NULL, NULL};
     ITT_TASK_BEGIN(itt_domain, itt_task_lookup_table);
     {
@@ -1025,7 +950,7 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
 
     /* Logarithm of the normalization factor for the prior. */
     const double log_norm = -log(
-            u_norm                      /* inclination */
+            2                           /* inclination */
             * (2 * M_PI)                /* coalescence phase? */
             * (4 * M_PI) * ntwopsi      /* polarization angle */
             * nsamples                  /* time samples */
@@ -1047,18 +972,16 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 OMP_EXIT_LOOP_EARLY;
 
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
-                pixels[i].value, gmst, nifos, nsamples, n_u_points,
-                sample_rate, epochs, snrs, responses, locations, horizons,
-                u_points_weights, rescale_loglikelihood);
+                pixels[i].value, gmst, nifos, nsamples, sample_rate, epochs,
+                snrs, responses, locations, horizons, rescale_loglikelihood);
 
             PRAGMA_LOOP_COUNT_NIFOS
             for (unsigned int iifo = 0; iifo < nifos; iifo ++)
             {
                 bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1,
                     pixels[i].uniq, &accum[i][iifo], gmst, 1, nsamples,
-                    n_u_points, sample_rate, &epochs[iifo], &snrs[iifo],
-                    &responses[iifo], &locations[iifo], &horizons[iifo],
-                    u_points_weights, rescale_loglikelihood);
+                    sample_rate, &epochs[iifo], &snrs[iifo], &responses[iifo],
+                    &locations[iifo], &horizons[iifo], rescale_loglikelihood);
             }
         }
         ITT_TASK_END(itt_domain);
@@ -1090,9 +1013,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
                 OMP_EXIT_LOOP_EARLY;
 
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
-                pixels[i].value, gmst, nifos, nsamples, n_u_points,
-                sample_rate, epochs, snrs, responses, locations,
-                horizons, u_points_weights, rescale_loglikelihood);
+                pixels[i].value, gmst, nifos, nsamples, sample_rate, epochs,
+                snrs, responses, locations, horizons, rescale_loglikelihood);
         }
         ITT_TASK_END(itt_domain);
 
@@ -1112,9 +1034,8 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             OMP_EXIT_LOOP_EARLY;
 
         bayestar_sky_map_toa_phoa_snr_pixel(&integrators[1], 2, pixels[i].uniq,
-            &pixels[i].value[1], gmst, nifos, nsamples, n_u_points,
-            sample_rate, epochs, snrs, responses, locations, horizons,
-            u_points_weights, rescale_loglikelihood);
+            &pixels[i].value[1], gmst, nifos, nsamples, sample_rate, epochs,
+            snrs, responses, locations, horizons, rescale_loglikelihood);
     }
     ITT_TASK_END(itt_domain);
 

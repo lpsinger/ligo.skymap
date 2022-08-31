@@ -77,7 +77,6 @@ def main(args=None):
     from ..util.file import rename
     import ligo.gracedb.logging
     import ligo.gracedb.rest
-    import numpy as np
 
     log = logging.getLogger('BAYESTAR')
 
@@ -136,11 +135,8 @@ def main(args=None):
             # perform sky localization
             log.info("starting sky localization")
             sky_map = localize(
-                event, opts.waveform, opts.f_low,
-                np.deg2rad(opts.min_inclination),
-                np.deg2rad(opts.max_inclination),
-                opts.min_distance, opts.max_distance,
-                opts.prior_distance_power, opts.cosmology,
+                event, opts.waveform, opts.f_low, opts.min_distance,
+                opts.max_distance, opts.prior_distance_power, opts.cosmology,
                 mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,
                 f_high_truncate=opts.f_high_truncate,

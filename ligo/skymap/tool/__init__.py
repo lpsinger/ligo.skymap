@@ -137,12 +137,6 @@ def get_posterior_parser():
     group = parser.add_argument_group(
         'posterior options', 'Options that affect the BAYESTAR posterior')
     group.add_argument(
-        '--min-inclination', type=float, metavar='deg', default=0.0,
-        help='Minimum inclination in degrees')
-    group.add_argument(
-        '--max-inclination', type=float, metavar='deg', default=90.0,
-        help='Maximum inclination in degrees')
-    group.add_argument(
         '--min-distance', type=float, metavar='Mpc',
         help='Minimum distance of prior in megaparsecs')
     group.add_argument(

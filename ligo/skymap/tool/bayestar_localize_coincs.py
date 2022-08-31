@@ -95,7 +95,6 @@ def main(args=None):
     # Other imports.
     import os
     from collections import OrderedDict
-    import numpy as np
     import subprocess
     import sys
 
@@ -160,10 +159,7 @@ def main(args=None):
             chain_dump = None
         try:
             sky_map = localize(
-                event, opts.waveform, opts.f_low,
-                np.deg2rad(opts.min_inclination),
-                np.deg2rad(opts.max_inclination),
-                opts.min_distance,
+                event, opts.waveform, opts.f_low, opts.min_distance,
                 opts.max_distance, opts.prior_distance_power,
                 opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
                 enable_snr_series=opts.enable_snr_series,

@@ -705,8 +705,6 @@ static PyObject *sky_map_toa_phoa_snr(
     PyObject *module, PyObject *args, PyObject *kwargs)
 {
     /* Input arguments */
-    double min_inclination;
-    double max_inclination;
     double min_distance;
     double max_distance;
     int prior_distance_power;
@@ -723,20 +721,19 @@ static PyObject *sky_map_toa_phoa_snr(
     PyObject *horizons_obj;
 
     /* Names of arguments */
-    static const char *keywords[] = {"min_inclination", "max_inclination",
-        "min_distance", "max_distance", "prior_distance_power", "cosmology",
-        "gmst", "sample_rate", "epochs", "snrs", "responses", "locations",
-        "horizons", "rescale_loglikelihood", NULL};
+    static const char *keywords[] = {"min_distance", "max_distance",
+        "prior_distance_power", "cosmology", "gmst", "sample_rate", "epochs",
+        "snrs", "responses", "locations", "horizons", "rescale_loglikelihood",
+        NULL};
 
     /* Parse arguments */
     /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
     WARNINGS_PUSH
     WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddddiidfOOOOOf",
-        keywords, &min_inclination, &max_inclination, &min_distance,
-        &max_distance, &prior_distance_power, &cosmology, &gmst, &sample_rate,
-        &epochs_obj, &snrs_obj, &responses_obj, &locations_obj, &horizons_obj,
-        &rescale_loglikelihood))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddiidfOOOOOf",
+        keywords, &min_distance, &max_distance, &prior_distance_power,
+        &cosmology, &gmst, &sample_rate, &epochs_obj, &snrs_obj,
+        &responses_obj, &locations_obj, &horizons_obj, &rescale_loglikelihood))
         return NULL;
     WARNINGS_POP
 
@@ -744,27 +741,6 @@ static PyObject *sky_map_toa_phoa_snr(
     {
         PyErr_SetString(PyExc_ValueError,
             "BAYESTAR supports cosmological priors only for for prior_distance_power=2");
-        return NULL;
-    }
-
-    if (min_inclination < 0)
-    {
-        PyErr_SetString(PyExc_ValueError,
-            "min_inclination must be >= 0");
-        return NULL;
-    }
-
-    if (max_inclination > M_PI_2)
-    {
-        PyErr_SetString(PyExc_ValueError,
-            "max_inclination must be <= 90 (deg)");
-        return NULL;
-    }
-
-    if (min_inclination > max_inclination)
-    {
-        PyErr_SetString(PyExc_ValueError,
-            "min_inclination must be <= max_inclination");
         return NULL;
     }
 
@@ -834,9 +810,9 @@ static PyObject *sky_map_toa_phoa_snr(
     bayestar_pixel *pixels;
     Py_BEGIN_ALLOW_THREADS
     pixels = bayestar_sky_map_toa_phoa_snr(&len, &log_bci, &log_bsn,
-        min_inclination, max_inclination, min_distance, max_distance,
-        prior_distance_power, cosmology, gmst, nifos, nsamples, sample_rate,
-        epochs, snrs, responses, locations, horizons, rescale_loglikelihood);
+        min_distance, max_distance, prior_distance_power, cosmology, gmst,
+        nifos, nsamples, sample_rate, epochs, snrs, responses, locations,
+        horizons, rescale_loglikelihood);
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
 

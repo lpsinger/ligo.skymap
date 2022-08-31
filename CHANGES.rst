@@ -12,6 +12,11 @@ Changelog
 
 - Check for more invalid input corner cases in ``ligo.skymap.moc.rasterize``.
 
+- Remove the ``--min-inclination`` and ``max-inclination`` options from
+  ``bayestar-localize-coincs`` and ``bayestar-localize-lvalert``. These options
+  are rarely used, and will be made obsolete by a future release that adds
+  inclination posteriors to sky map output.
+
 1.1.2 (2023-10-03)
 ==================
 

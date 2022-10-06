@@ -368,7 +368,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     # If the credible level is not within the projection,
     # then stop here and return all nans.
     if 1e-2 * cl > cls[-1]:
-        return np.nan, np.nan, np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     # Find the eigendecomposition of the covariance matrix.
     w, v = np.linalg.eigh(c)

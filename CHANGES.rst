@@ -13,6 +13,9 @@ Changelog
 
   __ https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.6.0.html#pending-deprecation-top-level-cmap-registration-and-access-functions-in-mpl-cm
 
+- The function ``ligo.skymap.postprocess.ellipse.find_ellipse`` will now return
+  a tuple of the same length in all circumstances, even under error conditions.
+
 1.0.2 (2022-08-18)
 ==================
 

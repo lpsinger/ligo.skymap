@@ -8,6 +8,11 @@ Changelog
 - Update condor accounting group in ``bayestar-localize-coincs`` and
   ``bayestar-mcmc`` to ``ligo.dev.o4.cbc.pe.bayestar``.
 
+- Track `pending deprecation of matplotlib.cm.register_cmap`__.
+  Require matplotlib >= 3.5.0.
+
+  __ https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.6.0.html#pending-deprecation-top-level-cmap-registration-and-access-functions-in-mpl-cm
+
 1.0.2 (2022-08-18)
 ==================
 

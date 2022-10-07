@@ -18,7 +18,7 @@
 
 from importlib import resources
 
-from matplotlib import cm
+from matplotlib import colormaps
 from matplotlib import colors
 import numpy as np
 
@@ -35,7 +35,7 @@ for name in ['cylon']:
     # Assign in module.
     locals().update({name: cmap})
     # Register with Matplotlib.
-    cm.register_cmap(cmap=cmap)
+    colormaps.register(cmap=cmap)
 
     # Generate reversed color map.
     name += '_r'
@@ -44,4 +44,4 @@ for name in ['cylon']:
     # Assign in module.
     locals().update({name: cmap})
     # Register with Matplotlib.
-    cm.register_cmap(cmap=cmap)
+    colormaps.register(cmap=cmap)

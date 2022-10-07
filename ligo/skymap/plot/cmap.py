@@ -35,7 +35,7 @@ for name in ['cylon']:
     # Assign in module.
     locals().update({name: cmap})
     # Register with Matplotlib.
-    colormaps.register(cmap=cmap)
+    colormaps.register(cmap=cmap, force=True)
 
     # Generate reversed color map.
     name += '_r'
@@ -44,4 +44,4 @@ for name in ['cylon']:
     # Assign in module.
     locals().update({name: cmap})
     # Register with Matplotlib.
-    colormaps.register(cmap=cmap)
+    colormaps.register(cmap=cmap, force=True)

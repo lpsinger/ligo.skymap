@@ -176,7 +176,7 @@ docs:
   <<: *in-tmpdir
   stage: test
   script:
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test] astroquery
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
 
 test/linux/python3.8:
@@ -209,7 +209,7 @@ test/linux/python3.10:
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test] astroquery
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
 
 

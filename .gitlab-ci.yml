@@ -287,7 +287,7 @@ test/coverage:
     # pip 21.3 uses an out-of-tree temporary directory.
     - pip install 'pip<21.3'
     - pip install -ve .[test]
-    - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path pytest-mpl-results --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml
+    - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
     # Write coverage reports in Cobertura format.
     - gcovr build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
@@ -297,7 +297,7 @@ test/coverage:
     - pycobertura show coverage.xml -f html -o coverage.html
     - pycobertura show coverage.xml
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
-    - cp -r pytest-mpl-results ${CI_PROJECT_DIR}
+    - if [[ "$FAILED" ]]; then false; fi
   needs:
     - dependencies/python3.8
     - sdist

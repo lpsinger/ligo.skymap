@@ -101,6 +101,7 @@ def test_allsky_obstime(rcparams):
     return fig
 
 
+@pytest.mark.skip('Flaky test, tick label positions vary by operating system')
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_globe_axes(rcparams):
     fig = plt.figure(figsize=(4, 4))

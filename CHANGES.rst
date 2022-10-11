@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.3 (unreleased)
+1.0.3 (2022-10-11)
 ==================
 
 - Update condor accounting group in ``bayestar-localize-coincs`` and

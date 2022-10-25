@@ -160,6 +160,9 @@ dependencies/python3.9:
 dependencies/python3.10:
   <<: *dependencies
 
+dependencies/python3.11:
+  <<: *dependencies
+
 #
 # Generate documentation.
 #
@@ -210,6 +213,13 @@ test/linux/python3.10:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.10:$CI_COMMIT_REF_SLUG
   needs:
     - dependencies/python3.10
+    - wheel/manylinux/x86_64
+
+test/linux/python3.11:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.11:$CI_COMMIT_REF_SLUG
+  needs:
+    - dependencies/python3.11
     - wheel/manylinux/x86_64
 
 .test/macos: &test-macos

@@ -86,8 +86,8 @@ Optional LALSimulation Data
 
 The following instructions are only relevant if you are installing ligo.skymap
 for the purpose of generating localizations with BAYESTAR (e.g., for analysis
-of LIGO/Virgo data or for simulations) and you are **not** using a LIGO Data
-Grid cluster.
+of LIGO/Virgo/KAGRA data or for simulations) and you are **not** using a LIGO
+Data Grid cluster.
 
 Some gravitational waveform approximants in LALSuite (notably, reduced order
 models) rely on external data files. These data files are part of

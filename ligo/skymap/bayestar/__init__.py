@@ -433,7 +433,7 @@ def localize(
     program, _ = os.path.splitext(os.path.basename(sys.argv[0]))
     skymap.meta.update(metadata_for_version_module(version))
     skymap.meta['creator'] = 'BAYESTAR'
-    skymap.meta['origin'] = 'LIGO/Virgo'
+    skymap.meta['origin'] = 'LIGO/Virgo/KAGRA'
     skymap.meta['gps_time'] = float(epoch)
     skymap.meta['runtime'] = stopwatch.real
     skymap.meta['instruments'] = {single.detector for single in event.singles}

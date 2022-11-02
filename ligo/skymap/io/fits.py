@@ -386,8 +386,8 @@ def write_sky_map(filename, m, **kwargs):
 
 
 def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
-    """Read a LIGO/Virgo-type sky map and return a tuple of the HEALPix array
-    and a dictionary of metadata from the header.
+    """Read a LIGO/Virgo/KAGRA-type sky map and return a tuple of the HEALPix
+    array and a dictionary of metadata from the header.
 
     Parameters
     ----------
@@ -470,7 +470,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
                     m.meta[key] = from_fits(value)
 
     # FIXME: Fermi GBM HEALPix maps use the column name 'PROBABILITY',
-    # instead of the LIGO/Virgo convention of 'PROB'.
+    # instead of the LIGO/Virgo/KAGRA convention of 'PROB'.
     #
     # Fermi may change to our convention in the future, but for now we
     # rename the column.

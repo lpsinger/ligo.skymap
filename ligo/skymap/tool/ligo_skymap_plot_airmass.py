@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""Make an airmass chart for a LIGO/Virgo probability sky map."""
+"""Make an airmass chart for a LIGO/Virgo/KAGRA probability sky map."""
 
 import numpy as np
 

@@ -21,10 +21,10 @@ In online operation, search pipelines upload candidates to the
 Gravitational-Wave Candidate Event Database (`GraceDB`_). The script
 :doc:`bayestar-localize-lvalert </tool/bayestar_localize_lvalert>`
 (or the equivalent :doc:`Celery <celery:index>` task in :doc:`GWCelery
-<gwcelery:index>`) listens for and intercepts :doc:`LVAlert <gracedb:lvalert>`
-pubsub messages. For each event created, the script downloads the pipeline's
-output data products from GraceDB, performs rapid sky localization, and uploads
-the resulting FITS file back to GraceDB.
+<gwcelery:index>`) listens for and intercepts
+:doc:`IGWN Alert <gracedb:igwn_alert>` messages. For each event created, the
+script downloads the pipeline's output data products from GraceDB, performs
+rapid sky localization, and uploads the resulting FITS file back to GraceDB.
 
 The interactions between the search pipeline, GraceDB, and BAYESTAR are
 illustrated in the `sequence diagram`_ below. Line styles have the following
@@ -32,7 +32,7 @@ meanings:
 
 * Solid lines directed into GraceDB represent HTTP requests.
 * Solid lines directed out of GraceDB represent HTTP responses.
-* Dashed lines represent LVAlert pubsub messages.
+* Dashed lines represent IGWN Alert messages.
 
 Sequence diagram for unified ``coinc.xml`` file
 -----------------------------------------------
@@ -44,7 +44,7 @@ Sequence diagram for unified ``coinc.xml`` file
         note over Search: New detection
         Search ->>+ GraceDB: Upload coinc.xml
         note over GraceDB: Create event G123
-        GraceDB -->>+ BAYESTAR: LVAlert: coinc.xml added to G123
+        GraceDB -->>+ BAYESTAR: IGWN Alert: coinc.xml added to G123
         deactivate GraceDB
         BAYESTAR ->>+ GraceDB: Get coinc.xml from G123
         GraceDB ->>- BAYESTAR: coinc.xml
@@ -66,7 +66,7 @@ Sequence diagram for separate ``coinc.xml`` and ``psd.xml.gz`` files
         GraceDB ->>- Search: GraceDB ID: G123
         Search ->>+ GraceDB: Upload psd.xml.gz to G123
         deactivate Search
-        GraceDB -->>- BAYESTAR: LVAlert: psd.xml.gz added to G123
+        GraceDB -->>- BAYESTAR: IGWN Alert: psd.xml.gz added to G123
         activate BAYESTAR
         BAYESTAR ->>+ GraceDB: Get coinc.xml from G123
         GraceDB ->>- BAYESTAR: coinc.xml

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 r"""
-Listen for new events from LVAlert and perform sky localization.
+Listen for new events from IGWN Alert and perform sky localization.
 
 `bayestar-localize-lvalert` supports two modes of operation. You can
 explicitly specify the GraceDb ID on the command line, as in::

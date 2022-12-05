@@ -9,6 +9,8 @@ Changelog
   BAYESTAR and ``ligo-skymap-from-samples`` from ``LIGO/Virgo`` to
   ``LIGO/Virgo/KAGRA``.
 
+- Build binary wheels for the aarch64 (Arm64) architecture on Linux.
+
 1.0.3 (2022-10-11)
 ==================
 

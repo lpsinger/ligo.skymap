@@ -52,11 +52,7 @@ sdist:
 # Build binary wheels for Linux and macOS.
 #
 
-wheel/manylinux:
-  # This container is derived from the official manylinux image provided by
-  # python.org (see PEP 513), and includes all of the LALSuite
-  # build-dependencies.
-  image: containers.ligo.org/lscsoft/lalsuite-manylinux/manylinux2014_x86_64:icc
+.wheel-manylinux: &wheel-manylinux
   stage: dist
   script:
     # Build and install LALSuite
@@ -71,6 +67,22 @@ wheel/manylinux:
     paths:
       - '*.whl'
     expire_in: 1 day
+
+wheel/manylinux/x86_64:
+  <<: *wheel-manylinux
+  # This container is derived from the official manylinux image provided by
+  # python.org (see PEP 513), and includes all of the LALSuite
+  # build-dependencies.
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux/manylinux2014_x86_64:icc
+
+wheel/manylinux/aarch64:
+  <<: *wheel-manylinux
+  # This container is derived from the official manylinux image provided by
+  # python.org (see PEP 513), and includes all of the LALSuite
+  # build-dependencies.
+  image: containers.ligo.org/lscsoft/lalsuite-manylinux/manylinux2014_aarch64
+  tags:
+    - aarch64
 
 .wheel-macos: &wheel-macos
   variables:
@@ -184,21 +196,21 @@ test/linux/python3.8:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   needs:
     - dependencies/python3.8
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
 
 test/linux/python3.9:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
   needs:
     - dependencies/python3.9
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
 
 test/linux/python3.10:
   <<: *test
   image: $CI_REGISTRY_IMAGE/dependencies/python3.10:$CI_COMMIT_REF_SLUG
   needs:
     - dependencies/python3.10
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
 
 .test/macos: &test-macos
   <<: *in-tmpdir
@@ -244,7 +256,7 @@ test/dev-dependencies:
       $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
   needs:
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
 
@@ -335,7 +347,7 @@ tests/review:
   image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
   needs:
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
   variables:
     GIT_STRATEGY: none
     REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
@@ -416,7 +428,8 @@ deploy/pypi:
     - twine upload *.whl *.tar.*
   needs:
     - sdist
-    - wheel/manylinux
+    - wheel/manylinux/x86_64
+    - wheel/manylinux/aarch64
     - wheel/macos/x86_64
     - wheel/macos/arm64
   only:

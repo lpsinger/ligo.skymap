@@ -9,9 +9,6 @@ Changelog
   BAYESTAR and ``ligo-skymap-from-samples`` from ``LIGO/Virgo`` to
   ``LIGO/Virgo/KAGRA``.
 
-- Strip debug symbols from Linux wheels to reduce archive size. This will make
-  installing ligo.skymap on Linux using pip a little faster.
-
 1.0.3 (2022-10-11)
 ==================
 

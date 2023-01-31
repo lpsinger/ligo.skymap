@@ -5,7 +5,11 @@ Changelog
 1.0.4 (unreleased)
 ==================
 
-- No changes yet.
+- Require scipy < 1.10.0 due to removal of ``multivariate_normal_gen.cov`` in
+  that version. A future version of Scipy may add it back as a property; see
+  `scipy/scipy#17896`__.
+
+  __ https://github.com/scipy/scipy/issues/17896
 
 1.0.4 (2022-12-06)
 ==================

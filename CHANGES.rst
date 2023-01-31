@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.4 (unreleased)
+1.0.5 (unreleased)
 ==================
 
 - Require scipy < 1.10.0 due to removal of ``multivariate_normal_gen.cov`` in

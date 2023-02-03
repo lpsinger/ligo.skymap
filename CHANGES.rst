@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.6 (unreleased)
+1.0.6 (2023-02-03)
 ==================
 
 - Fix an issue with OpenMP and Python multiprocessing that caused

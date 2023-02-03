@@ -25,6 +25,8 @@ from operator import length_hint
 
 from tqdm.auto import tqdm
 
+from .. import omp
+
 __all__ = ('progress_map',)
 
 
@@ -63,6 +65,11 @@ def _results_in_order(completed):
     assert not heap, 'The heap must be empty'
 
 
+def _init_process():
+    """Disable OpenMP when using multiprocessing."""
+    omp.num_threads = 1
+
+
 def progress_map(func, *iterables, jobs=1, **kwargs):
     """Map a function across iterables of arguments.
 
@@ -74,7 +81,7 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
     if jobs == 1:
         yield from tqdm(map(func, *iterables), total=total, **kwargs)
     else:
-        with Pool(jobs) as pool:
+        with Pool(jobs, _init_process) as pool:
             yield from _results_in_order(
                 tqdm(
                     pool.imap_unordered(

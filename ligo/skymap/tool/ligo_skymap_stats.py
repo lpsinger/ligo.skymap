@@ -215,10 +215,6 @@ def main(args=None):
     opts = p.parse_args(args)
 
     from ..util.progress import progress_map
-    from .. import omp
-
-    if opts.jobs != 1:
-        omp.num_threads = 1  # disable OpenMP parallelism
 
     if args is None:
         print('#', *sys.argv, file=opts.output)

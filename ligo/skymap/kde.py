@@ -31,7 +31,6 @@ from scipy.stats import gaussian_kde
 
 from . import distance
 from . import moc
-from . import omp
 from .coordinates import EigenFrame
 from .util import progress_map
 
@@ -215,11 +214,6 @@ def k_means(pts, k):
 
 
 def _cluster(cls, pts, trials, i, seed, jobs):
-    # FIXME: This is an inelegant hack to disable OpenMP inside subprocesses.
-    # See https://git.ligo.org/lscsoft/ligo.skymap/issues/7.
-    if jobs != 1:
-        omp.num_threads = 1
-
     k = i // trials
     if k == 0:
         raise ValueError('Expected at least one cluster')

@@ -307,10 +307,6 @@ def main(args=None):
     responses = [det.response for det in detectors]
     locations = [det.location for det in detectors]
 
-    if opts.jobs != 1:
-        from .. import omp
-        omp.num_threads = 1  # disable OpenMP parallelism
-
     func = functools.partial(simulate, psds=psds,
                              responses=responses, locations=locations,
                              measurement_error=opts.measurement_error,

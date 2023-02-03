@@ -5,7 +5,8 @@ Changelog
 1.0.6 (unreleased)
 ==================
 
-- No changes yet.
+- Fix an issue with OpenMP and Python multiprocessing that caused
+  ``ligo-skymap-stats`` to parallelize inefficiently on Linux.
 
 1.0.5 (2023-01-31)
 ==================

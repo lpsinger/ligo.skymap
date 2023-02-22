@@ -7,6 +7,9 @@ Changelog
 
 - Require matplotlib < 3.7.0 due to some API changes.
 
+- Require scipy ≠ 1.10.0 due to an unplanned API change in that version, which
+  was fixed in 1.10.1.
+
 1.0.6 (2023-02-03)
 ==================
 

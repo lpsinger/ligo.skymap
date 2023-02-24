@@ -66,7 +66,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
-          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.5.0
+          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.5.0, < 3.7.0
           *  `NetworkX <https://networkx.github.io>`_
           *  `Numpy <http://www.numpy.org>`_ ≥ 1.19.3, ≠ 1.22.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0

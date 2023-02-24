@@ -5,7 +5,7 @@ Changelog
 1.0.7 (unreleased)
 ==================
 
-- No changes yet.
+- Require matplotlib < 3.7.0 due to some API changes.
 
 1.0.6 (2023-02-03)
 ==================

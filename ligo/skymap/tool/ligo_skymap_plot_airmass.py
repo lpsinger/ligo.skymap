@@ -124,7 +124,8 @@ def main(args=None):
     ax = plot_airmass([], observer, t0, altitude_yaxis=True)
 
     # Remove the fake source and determine times that were used for the plot.
-    del ax.lines[:]
+    for artist in ax.lines:
+        artist.remove()
     times = Time(np.linspace(*ax.get_xlim()), format='plot_date')
 
     theta, phi = moc.uniq2ang(m['UNIQ'])

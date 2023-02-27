@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.7 (unreleased)
+1.0.7 (2023-02-27)
 ==================
 
 - Track an API change in Matplotlib 3.7.0. Update test baseline images.

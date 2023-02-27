@@ -7,6 +7,8 @@ Changelog
 
 - Track an API change in Matplotlib 3.7.0. Update test baseline images.
 
+- Update Linux wheels from manylinux2014 to manylinux_2_28.
+
 - Require scipy ≠ 1.10.0 due to an unplanned API change in that version, which
   was fixed in 1.10.1.
 

@@ -5,6 +5,8 @@ Changelog
 1.0.7 (unreleased)
 ==================
 
+- Track an API change in Matplotlib 3.7.0. Update test baseline images.
+
 - Require scipy ≠ 1.10.0 due to an unplanned API change in that version, which
   was fixed in 1.10.1.
 

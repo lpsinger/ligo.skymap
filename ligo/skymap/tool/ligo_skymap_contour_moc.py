@@ -70,7 +70,8 @@ def main(args=None):
     # Create MOC
     contour_decimal = opts.contour / 100
     moc = MOC.from_valued_healpix_cells(
-        uniq, prob, cumul_from=0.0, cumul_to=contour_decimal)
+        uniq, prob, max_depth=level.max(),
+        cumul_from=0.0, cumul_to=contour_decimal)
 
     # Write MOC
     moc.write(opts.output, format='fits', overwrite=True)

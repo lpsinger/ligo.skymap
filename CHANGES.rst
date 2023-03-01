@@ -5,7 +5,9 @@ Changelog
 1.0.8 (unreleased)
 ==================
 
-- No changes yet.
+- Add ``max_depth`` keyword argument to the call to
+  ``MOC.from_valued_healpix_cells`` in ``ligo-skymap-contour-moc``.
+  Contributed by [@parkma99](https://github.com/parkma99).
 
 1.0.7 (2023-02-27)
 ==================

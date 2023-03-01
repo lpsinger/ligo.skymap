@@ -46,7 +46,7 @@ def main(args=None):
 
     import astropy_healpix as ah
     import astropy.units as u
-
+    import numpy as np
     try:
         from mocpy import MOC
     except ImportError:
@@ -66,11 +66,12 @@ def main(args=None):
         ah.level_to_nside(level)).to_value(u.steradian)
 
     prob = probdensity * area
+    max_depth = np.max(level)
 
     # Create MOC
     contour_decimal = opts.contour / 100
     moc = MOC.from_valued_healpix_cells(
-        uniq, prob, cumul_from=0.0, cumul_to=contour_decimal)
+        uniq, prob, max_depth = max_depth, cumul_from=0.0, cumul_to=contour_decimal)
 
     # Write MOC
     moc.write(opts.output, format='fits', overwrite=True)

@@ -9,6 +9,16 @@ Changelog
   ``MOC.from_valued_healpix_cells`` in ``ligo-skymap-contour-moc``.
   Contributed by [@parkma99](https://github.com/parkma99).
 
+- Improve handling of the ``--output`` command line argument for
+  ``ligo-skymap-contour-moc``:
+
+  - Add ``-o`` as a short form.
+
+  - Don't write to stdout by default; it does not make sense to write a binary
+    FITS file to stdout.
+
+  - Make the argument required.
+
 1.0.7 (2023-02-27)
 ==================
 

@@ -26,8 +26,8 @@ def parser():
     parser = ArgumentParser()
 
     parser.add_argument(
-        '--output', metavar='FILE.fits',
-        default='-', type=str, help='output file [default: stdout]')
+        '-o', '--output', metavar='FILE.fits', required=True,
+        help='output file')
     parser.add_argument(
         '-c', '--contour', metavar='PERCENT', type=float, required=True,
         help='MOC region enclosing this percentage of probability \

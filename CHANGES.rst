@@ -22,6 +22,8 @@ Changelog
 - Drop dependency on distutils to prepare for its removal in Python 3.12.
   See `PEP 632 <https://peps.python.org/pep-0632/>`_.
 
+- Drop support for Python 3.8.
+
 1.0.7 (2023-02-27)
 ==================
 

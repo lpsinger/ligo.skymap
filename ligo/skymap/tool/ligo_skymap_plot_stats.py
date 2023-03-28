@@ -18,7 +18,6 @@
 cumulatively by false alarm rate or SNR.
 """
 
-from distutils.dir_util import mkpath
 import os
 
 from . import ArgumentParser, FileType
@@ -165,7 +164,7 @@ def main(args=None):
                 nsamples = None
 
             subdir = os.path.join(opts.output, key_to_dir(key))
-            mkpath(subdir)
+            os.makedirs(subdir, exist_ok=True)
 
             # Make several different kinds of P-P plots
             for suffix, xlabel in pp_plot_settings:

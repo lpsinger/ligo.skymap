@@ -32,7 +32,7 @@ card in the FITS header is also set to the integer row ID.
 """
 
 from . import (
-    ArgumentParser, FileType, mkpath,
+    ArgumentParser, FileType,
     waveform_parser, posterior_parser, mcmc_parser, random_parser)
 
 
@@ -110,7 +110,7 @@ def main(args=None):
         event_source = events.detector_disabled.open(
             event_source, opts.disable_detector)
 
-    mkpath(opts.output)
+    os.makedirs(opts.output, exist_ok=True)
 
     if opts.condor_submit:
         if opts.seed is not None:

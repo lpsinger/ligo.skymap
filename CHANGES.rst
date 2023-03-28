@@ -19,6 +19,9 @@ Changelog
 
   - Make the argument required.
 
+- Drop dependency on distutils to prepare for its removal in Python 3.12.
+  See `PEP 632 <https://peps.python.org/pep-0632/>`_.
+
 1.0.7 (2023-02-27)
 ==================
 

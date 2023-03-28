@@ -18,7 +18,7 @@
 
 from . import (
     ArgumentParser, FileType, waveform_parser,
-    posterior_parser, random_parser, mkpath)
+    posterior_parser, random_parser)
 
 
 def parser():
@@ -92,7 +92,7 @@ def main(args=None):
         '%s:reading input files', ','.join(file.name for file in opts.input))
     event_source = events.open(*opts.input, sample=opts.pycbc_sample)
 
-    mkpath(opts.output)
+    os.makedirs(opts.output, exist_ok=True)
 
     if opts.condor_submit:
         if opts.seed is not None:

@@ -1,4 +1,3 @@
-import distutils.spawn
 from importlib import metadata
 from importlib import resources
 import multiprocessing
@@ -43,7 +42,7 @@ def run_ligolw(name, *args):
     is in the PATH. If python-ligo-lw is not installed and is only present as
     an egg, then things get more complicated.
     """
-    path = distutils.spawn.find_executable(name)
+    path = shutil.which(name)
     if path:
         # The tool has been installed, so we can just call it.
         subprocess.check_call([path, *args])
@@ -67,7 +66,7 @@ def run_lalsuite(name, *args):
     more complicated because of how the LALSuite wheel packs binaries as
     package data.
     """
-    path = distutils.spawn.find_executable(name)
+    path = shutil.which(name)
     if path:
         # The tool has been installed, so we can just call it.
         subprocess.check_call([path, *args])

@@ -11,7 +11,7 @@ from setuptools import setup
 
 
 def get_extensions():
-    from distutils.core import Extension
+    from setuptools import Extension
     import os
 
     from extension_helpers import add_openmp_flags_if_available, pkg_config

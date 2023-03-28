@@ -17,8 +17,6 @@
 """Functions that support the command line interface."""
 
 import argparse
-from distutils.dir_util import mkpath
-from distutils.errors import DistutilsFileError
 import glob
 import inspect
 import itertools
@@ -314,8 +312,8 @@ class DirType:
     def __call__(self, string):
         if self._create:
             try:
-                mkpath(string)
-            except DistutilsFileError as e:
+                os.makedirs(string, exist_ok=True)
+            except OSError as e:
                 raise argparse.ArgumentTypeError(e.message)
         else:
             try:

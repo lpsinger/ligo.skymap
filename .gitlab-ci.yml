@@ -311,7 +311,7 @@ test/coverage:
     - pip install -ve .[test]
     - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
     # Write coverage reports in Cobertura format.
-    - gcovr build/temp*/src -r . -x -o c-coverage.xml
+    - gcovr --gcov-ignore-errors no_working_dir_found build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
     # Merge coverage reports.
     - ${CI_PROJECT_DIR}/.gitlab/combine-coverage.py py-coverage.xml c-coverage.xml coverage.xml

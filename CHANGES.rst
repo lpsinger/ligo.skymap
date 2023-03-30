@@ -7,7 +7,7 @@ Changelog
 
 - Add ``max_depth`` keyword argument to the call to
   ``MOC.from_valued_healpix_cells`` in ``ligo-skymap-contour-moc``.
-  Contributed by [@parkma99](https://github.com/parkma99).
+  Contributed by `@parkma99 <https://github.com/parkma99>`_.
 
 - Improve handling of the ``--output`` command line argument for
   ``ligo-skymap-contour-moc``:

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2020  Will M. Farr <will.farr@ligo.org>
+# Copyright (C) 2011-2023  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,14 @@
 """
 Generate a FITS sky map file from posterior samples using clustering and
 kernel density estimation.
+
+The input file should be an HDF5 file with the following columns:
+
+*  ``ra``, ``rightascension``, or ``right_ascension``: J2000 right ascension in
+    radians
+*  ``dec`` or ``declination``: J200 declination in radians
+*  ``dist``, ``distance``, or ``luminosity_distance``: luminosity distance in
+   Mpc (optional)
 
 The output consist of two files:
 

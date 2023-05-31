@@ -15,8 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#define Py_LIMITED_API 0x03080000
+#define NPY_NO_DEPRECATED_API NPY_1_19_API_VERSION
+#define Py_LIMITED_API 0x03090000
 
 /* FIXME:
  * The Numpy C-API defines PyArrayDescr_Type as:

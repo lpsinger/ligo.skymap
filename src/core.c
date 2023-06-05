@@ -1123,7 +1123,9 @@ PyMODINIT_FUNC PyInit_core(void)
     if (!module)
         return NULL;
 
-    /* Ignore warnings in Numpy API */
+    /* Ignore warnings in Numpy API.
+     * FIXME: remove once https://github.com/numpy/numpy/pull/23847 is merged.
+     */
     WARNINGS_PUSH
     WARNINGS_IGNORE_DISCARDED_QUALIFIERS
 

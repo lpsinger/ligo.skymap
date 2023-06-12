@@ -333,7 +333,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     w.wcs.crval = [ra, dec]
     w.wcs.ctype = ['RA---' + projection, 'DEC--' + projection]
 
-    # Transform HEALPix to zenithal equidistant coordinates.
+    # Transform HEALPix to the specified projection.
     xy = w.wcs_world2pix(
         np.transpose(
             hp.pix2ang(

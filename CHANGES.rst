@@ -24,6 +24,8 @@ Changelog
 
 - Drop support for Python 3.8.
 
+- Vectorize ``find_ellipse`` over the ``cl`` argument.
+
 1.0.7 (2023-02-27)
 ==================
 

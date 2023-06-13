@@ -44,8 +44,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     prob : np.ndarray, astropy.table.Table
         The HEALPix probability map, either as a full rank explicit array
         or as a multi-order map.
-    cl : float
-        The desired credible level (default: 90).
+    cl : float, np.ndarray
+        The desired credible level or levels (default: 90).
     projection : str, optional
         The WCS projection (default: 'ARC', or zenithal equidistant).
         For a list of possible values, see the Astropy documentation [3]_.
@@ -58,13 +58,13 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         The ellipse center right ascension in degrees.
     dec : float
         The ellipse center right ascension in degrees.
-    a : float
+    a : float, np.ndarray
         The lenth of the semimajor axis in degrees.
-    b : float
+    b : float, np.ndarray
         The length of the semiminor axis in degrees.
     pa : float
         The orientation of the ellipse axis on the plane of the sky in degrees.
-    area : float
+    area : float, np.ndarray
         The area of the ellipse in square degrees.
 
     Notes
@@ -86,6 +86,10 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     The function returns a tuple of the right ascension, declination,
     semi-major distance, semi-minor distance, and orientation angle, all in
     degrees.
+
+    If no ellipse can be found that contains integrated probability greater
+    than or equal to the desired credible level ``cl``, then the return values
+    ``a``, ``b``, and ``area`` will be set to nan.
 
     References
     ----------
@@ -305,6 +309,15 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
     (0.0, 0.0, 64.77564486039148, 33.50986301851987, 9.217477126726322, 6372.42573159241)
 
+    ***Example 5***
+
+    You can ask for other credible levels:
+    >>> find_ellipse(prob, cl=50)  # doctest: +FLOAT_CMP
+    (0.0, 0.0, 37.054207653285076, 19.168955020015982, 9.217477126726322, 2182.5580135410632)
+
+    Or even for multiple credible levels:
+    >>> find_ellipse(prob, cl=[50, 90])  # doctest: +FLOAT_CMP
+    (0.0, 0.0, array([37.05420765, 64.77564486]), array([19.16895502, 33.50986302]), 9.217477126726322, array([2182.55801354, 6372.42573159]))
     """  # noqa: E501
     try:
         prob['UNIQ']
@@ -362,19 +375,16 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
         careas = np.arange(1, len(i) + 1) * area
     else:
         careas = np.cumsum(area[i])
-    nsigma = np.interp(1e-2 * cl, cls, nsigmas)
-    area = np.interp(1e-2 * cl, cls, careas)
-
-    # If the credible level is not within the projection,
-    # then stop here and return all nans.
-    if 1e-2 * cl > cls[-1]:
-        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+    # np.multiply rather than * to automatically convert to ndarray if needed
+    cl = np.multiply(cl, 1e-2)
+    nsigma = np.interp(cl, cls, nsigmas, right=np.nan)
+    area = np.interp(cl, cls, careas, right=np.nan)
 
     # Find the eigendecomposition of the covariance matrix.
     w, v = np.linalg.eigh(c)
 
     # Find the semi-minor and semi-major axes.
-    b, a = nsigma * np.sqrt(w)
+    b, a = (nsigma * root_w for root_w in np.sqrt(w))
 
     # Find the position angle.
     pa = np.rad2deg(np.arctan2(*v[0]))

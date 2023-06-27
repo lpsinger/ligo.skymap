@@ -42,6 +42,7 @@ def get_extensions():
     kwargs = pkg_config(pkg_config_packages, [])
     kwargs['include_dirs'].extend(include_dirs)
     kwargs['extra_compile_args'].extend(['-std=gnu11',
+                                         '-fvisibility=hidden',
                                          '-DGSL_RANGE_CHECK_OFF',
                                          '-DHAVE_INLINE'])
 

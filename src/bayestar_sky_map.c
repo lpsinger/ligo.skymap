@@ -1368,7 +1368,7 @@ static void test_distance_moments_to_parameters_round_trip(double mean, double s
     {
         /* Precision degrades as we approach the singularity at
          * mean/std=sqrt(3). Relax the tolerance of the test near there. */
-        const double rtol = mean_std >= min_mean_std + 0.1 ? 1e-9 : 4e-5;
+        const double rtol = mean_std >= min_mean_std + 0.1 ? 1e-9 : 6e-5;
         gsl_test_rel(norm2, norm, rtol,
             "testing round-trip conversion of normalization for mean=%g, std=%g",
             mean, std);

@@ -26,6 +26,12 @@ Changelog
 
 - Vectorize ``find_ellipse`` over the ``cl`` argument.
 
+- Tune compiler settings used to build wheels for PyPI:
+
+  - Add the option ``-fvisibility=hidden`` to hide all symbols except for the
+    Python entry point. This improves the efficiency of link-time optimization.
+    On average, it speeds up BAYESTAR by about 5%.
+
 1.0.7 (2023-02-27)
 ==================
 

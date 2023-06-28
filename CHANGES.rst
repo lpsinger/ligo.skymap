@@ -32,6 +32,11 @@ Changelog
     Python entry point. This improves the efficiency of link-time optimization.
     On average, it speeds up BAYESTAR by about 5%.
 
+  - Add the options ``-Ofast -fno-finite-math-only -flto`` on Linux aarch64
+    and macOS, the targets on which we use gcc. These options approximate the
+    configuration that we use for icc on Linux x86_64. On average, this change
+    speeds up BAYESTAR on macOS by about 30%.
+
 1.0.7 (2023-02-27)
 ==================
 

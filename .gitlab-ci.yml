@@ -77,6 +77,8 @@ wheel/manylinux/x86_64:
 
 wheel/manylinux/aarch64:
   <<: *wheel-manylinux
+  variables:
+    CFLAGS: -Ofast -fno-finite-math-only -flto
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
@@ -88,6 +90,7 @@ wheel/manylinux/aarch64:
   variables:
     CC: gcc-mp-11
     CXX: g++-mp-11
+    CFLAGS: -Ofast -fno-finite-math-only -flto
   stage: dist
   script:
     - . /opt/local/share/macports/setupenv.bash

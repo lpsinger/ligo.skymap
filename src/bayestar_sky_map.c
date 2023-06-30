@@ -47,7 +47,7 @@
 
 
 /*
- * Copyright (C) 2013-2020  Leo Singer
+ * Copyright (C) 2013-2023  Leo Singer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

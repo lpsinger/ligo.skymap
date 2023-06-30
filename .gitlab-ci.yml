@@ -52,7 +52,7 @@ sdist:
 # Build binary wheels for Linux and macOS.
 #
 
-.wheel-manylinux: &wheel-manylinux
+.wheel-linux: &wheel-linux
   stage: dist
   script:
     # Build and install LALSuite
@@ -68,15 +68,15 @@ sdist:
       - '*.whl'
     expire_in: 1 day
 
-wheel/manylinux/x86_64:
-  <<: *wheel-manylinux
+wheel/linux/x86_64:
+  <<: *wheel-linux
   # This container is derived from the official manylinux image provided by
   # python.org (see PEP 513), and includes all of the LALSuite
   # build-dependencies.
   image: containers.ligo.org/lscsoft/lalsuite-manylinux/manylinux_2_28_x86_64:icc
 
-wheel/manylinux/aarch64:
-  <<: *wheel-manylinux
+wheel/linux/aarch64:
+  <<: *wheel-linux
   variables:
     CFLAGS: -Ofast -fno-finite-math-only -flto
   # This container is derived from the official manylinux image provided by
@@ -134,7 +134,7 @@ wheel/macos/arm64:
     - cd "${CI_PROJECT_DIR}"
     - rm -rf "${WORKING_DIRECTORY}"
 
-.dependencies: &dependencies
+.deps: &deps
   stage: dist
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_SLUG
@@ -154,21 +154,26 @@ wheel/macos/arm64:
   needs:
     - requirements
 
-dependencies/python3.9:
-  <<: *dependencies
+deps-aarch64/python3.9:
+  <<: *deps
+  tags:
+    - aarch64
 
-dependencies/python3.10:
-  <<: *dependencies
+deps-x86_64/python3.9:
+  <<: *deps
 
-dependencies/python3.11:
-  <<: *dependencies
+deps-x86_64/python3.10:
+  <<: *deps
+
+deps-x86_64/python3.11:
+  <<: *deps
 
 #
 # Generate documentation.
 #
 
 docs:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
   stage: test
   <<: *in-tmpdir
   script:
@@ -176,7 +181,7 @@ docs:
     - tox -e build_docs
     - mv docs/_build/html ${CI_PROJECT_DIR}/
   needs:
-    - dependencies/python3.9
+    - deps-x86_64/python3.9
     - sdist
   artifacts:
     paths:
@@ -194,26 +199,35 @@ docs:
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
 
-test/linux/python3.9:
+test/linux/aarch64/python3.9:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.9:$CI_COMMIT_REF_SLUG
   needs:
-    - dependencies/python3.9
-    - wheel/manylinux/x86_64
+    - deps-aarch64/python3.9
+    - wheel/linux/aarch64
+  tags:
+    - aarch64
 
-test/linux/python3.10:
+test/linux/x86_64/python3.9:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.10:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
   needs:
-    - dependencies/python3.10
-    - wheel/manylinux/x86_64
+    - deps-x86_64/python3.9
+    - wheel/linux/x86_64
 
-test/linux/python3.11:
+test/linux/x86_64/python3.10:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.11:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
   needs:
-    - dependencies/python3.11
-    - wheel/manylinux/x86_64
+    - deps-x86_64/python3.10
+    - wheel/linux/x86_64
+
+test/linux/x86_64/python3.11:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11:$CI_COMMIT_REF_SLUG
+  needs:
+    - deps-x86_64/python3.11
+    - wheel/linux/x86_64
 
 .test/macos: &test-macos
   <<: *in-tmpdir
@@ -244,7 +258,7 @@ test/macos/arm64:
     - wheel/macos/arm64
 
 # Test against development versions of certain upstream dependencies.
-test/dev-dependencies:
+test/dev-deps:
   <<: *test
   image: python:3.9
   script:
@@ -259,7 +273,7 @@ test/dev-dependencies:
       $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
   needs:
-    - wheel/manylinux/x86_64
+    - wheel/linux/x86_64
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
 
@@ -279,7 +293,7 @@ test/dev-dependencies:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
   variables:
     # -UNDEBUG
     #     enable C assertions
@@ -314,7 +328,7 @@ test/coverage:
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
     - if [[ "$FAILED" ]]; then false; fi
   needs:
-    - dependencies/python3.9
+    - deps-x86_64/python3.9
     - sdist
   artifacts:
     paths:
@@ -336,10 +350,10 @@ test/coverage:
 lint:
   extends:
     - .python:flake8
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
   stage: test
   needs:
-    - dependencies/python3.9
+    - deps-x86_64/python3.9
 
 #
 # Acceptance tests.
@@ -350,7 +364,7 @@ tests/review:
   image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
   needs:
-    - wheel/manylinux/x86_64
+    - wheel/linux/x86_64
   variables:
     GIT_STRATEGY: none
     REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
@@ -431,8 +445,8 @@ deploy/pypi:
     - twine upload *.whl *.tar.*
   needs:
     - sdist
-    - wheel/manylinux/x86_64
-    - wheel/manylinux/aarch64
+    - wheel/linux/x86_64
+    - wheel/linux/aarch64
     - wheel/macos/x86_64
     - wheel/macos/arm64
   only:

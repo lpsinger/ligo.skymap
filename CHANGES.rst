@@ -37,6 +37,10 @@ Changelog
     configuration that we use for icc on Linux x86_64. On average, this change
     speeds up BAYESTAR on macOS by about 30%.
 
+- Factor out the Python implementation of the BAYESTAR adaptive mesh refinement
+  algorithm so that other libraries can use it. It is exposed as
+  ``ligo.skymap.moc.bayestar_adaptive_grid``.
+
 1.0.7 (2023-02-27)
 ==================
 

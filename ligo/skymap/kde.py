@@ -19,10 +19,7 @@
 import copyreg
 from functools import partial
 
-import astropy_healpix as ah
 from astropy.coordinates import SkyCoord
-from astropy.table import Table
-from astropy import units as u
 from astropy.utils.misc import NumpyRNGContext
 import healpy as hp
 import logging
@@ -322,48 +319,9 @@ class SkyKDE(ClusteredKDE):
     def __call__(self, pts):
         return super().__call__(self.transform(pts))
 
-    def _bayestar_adaptive_grid(self, top_nside=16, rounds=8):
-        """Implement of the BAYESTAR adaptive mesh refinement scheme as
-        described in Section VI of Singer & Price 2016, PRD, 93, 024013
-        :doi:`10.1103/PhysRevD.93.024013`.
-
-        FIXME: Consider refactoring BAYESTAR itself to perform the adaptation
-        step in Python.
-        """
-        top_npix = ah.nside_to_npix(top_nside)
-        nrefine = top_npix // 4
-        cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
-        for iround in range(rounds - 1):
-            print('adaptive refinement round {} of {} ...'.format(
-                  iround + 1, rounds - 1))
-            cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1]**2)
-            new_nside, new_ipix = np.transpose([
-                (nside * 2, ipix * 4 + i)
-                for _, nside, ipix in cells[-nrefine:] for i in range(4)])
-            theta, phi = hp.pix2ang(new_nside, new_ipix, nest=True)
-            ra = phi
-            dec = 0.5 * np.pi - theta
-            p = self(np.column_stack((ra, dec)))
-            cells[-nrefine:] = zip(p, new_nside, new_ipix)
-        return cells
-
-    def as_healpix(self, top_nside=16):
-        """Return a HEALPix multi-order map of the posterior density."""
-        post, nside, ipix = zip(*self._bayestar_adaptive_grid(
-            top_nside=top_nside))
-        post = np.asarray(list(post))
-        nside = np.asarray(list(nside))
-        ipix = np.asarray(list(ipix))
-
-        # Make sure that sky map is normalized (it should be already)
-        post /= np.sum(post * ah.nside_to_pixel_area(nside).to_value(u.sr))
-
-        # Convert from NESTED to UNIQ pixel indices
-        order = np.log2(nside).astype(int)
-        uniq = moc.nest2uniq(order.astype(np.int8), ipix)
-
-        # Done!
-        return Table([uniq, post], names=['UNIQ', 'PROBDENSITY'], copy=False)
+    def as_healpix(self, top_nside=16, rounds=8):
+        return moc.bayestar_adaptive_grid(self, top_nside=top_nside,
+                                          rounds=rounds)
 
 
 # We have to put in some hooks to make instances of Clustered2DSkyKDE picklable

@@ -130,3 +130,19 @@ def test_rasterize_default(order):
     skymap_in = input_skymap(order, 0, 0)
     skymap_out = moc.rasterize(skymap_in)
     assert len(skymap_out) == npix
+
+
+def prob_test(pts):
+    ras, decs = np.hsplit(pts, 2)
+    return ras + decs
+
+
+@pytest.mark.parametrize('order', range(1, 4))
+@pytest.mark.parametrize('round', range(3))
+def test_bayestar_adaptive_grid(order, round):
+    nside = ah.level_to_nside(order)
+    npix = ah.nside_to_npix(nside) * (1 + .75 * round)
+
+    skymap_out = moc.bayestar_adaptive_grid(
+        prob_test, top_nside=nside, rounds=round)
+    assert len(skymap_out) == npix

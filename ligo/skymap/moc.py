@@ -28,6 +28,8 @@ References
 """
 
 from astropy import table
+from astropy import units as u
+import astropy_healpix as ah
 import numpy as np
 from numpy.lib.recfunctions import repack_fields
 
@@ -159,6 +161,66 @@ def rasterize(moc_data, order=None):
     moc_data = repack_fields(np.asarray(moc_data), align=True)
 
     return _rasterize(moc_data, order=order)
+
+
+def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
+                           **kwargs):
+    """Implement of the BAYESTAR adaptive mesh refinement scheme as
+    described in Section VI of Singer & Price 2016, PRD, 93, 024013
+    :doi:`10.1103/PhysRevD.93.024013`. This computes the sky map
+    using a provided analytic function and refines the grid, dividing the
+    highest 25% into subpixels and then recalculating their values. The extra
+    given args and kwargs will be passed to the given probdensity function.
+
+    Parameters
+    ----------
+    probdensity : callable
+        Probability density function. The first argument consists of
+        column-stacked array of right ascension and declination in radians.
+        The return value must be a 1D array of the probability density in
+        inverse steradians with the same length as the argument.
+    top_nside : int
+        HEALPix NSIDE resolution of initial evaluation of the sky map
+    rounds : int
+        Number of refinement rounds, including the initial sky map evaluation
+
+    Returns
+    -------
+    skymap : astropy.table.Table
+        An astropy Table with UNIQ and PROBDENSITY columns, representing
+        a multi-ordered sky map
+    """
+    top_npix = ah.nside_to_npix(top_nside)
+    nrefine = top_npix // 4
+    cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
+    for iround in range(rounds + 1):
+        print('adaptive refinement round {} of {} ...'.format(
+            iround, rounds))
+        cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1]**2)
+        new_nside, new_ipix = np.transpose([
+            (nside * 2, ipix * 4 + i)
+            for _, nside, ipix in cells[-nrefine:] for i in range(4)])
+        ra, dec = ah.healpix_to_lonlat(new_ipix, new_nside, order='nested')
+        p = probdensity(np.column_stack((ra.value, dec.value)),
+                        *args, **kwargs)
+        cells[-nrefine:] = zip(p, new_nside, new_ipix)
+
+    """Return a HEALPix multi-order map of the posterior density."""
+    post, nside, ipix = zip(*cells)
+    post = np.asarray(list(post))
+    nside = np.asarray(list(nside))
+    ipix = np.asarray(list(ipix))
+
+    # Make sure that sky map is normalized (it should be already)
+    post /= np.sum(post * ah.nside_to_pixel_area(nside).to_value(u.sr))
+
+    # Convert from NESTED to UNIQ pixel indices
+    order = np.log2(nside).astype(int)
+    uniq = nest2uniq(order.astype(np.int8), ipix)
+
+    # Done!
+    return table.Table([uniq, post], names=['UNIQ', 'PROBDENSITY'],
+                       copy=False)
 
 
 del add_newdoc_ufunc, require_contiguous_aligned

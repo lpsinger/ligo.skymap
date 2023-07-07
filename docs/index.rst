@@ -76,6 +76,7 @@ Plotting and Visualization (`ligo.skymap.plot`)
 
    plot/allsky
    plot/backdrop
+   plot/bayes_factor
    plot/marker
    plot/poly
    plot/pp
@@ -144,6 +145,7 @@ Sky Map Visualization
    tool/ligo_skymap_contour_moc
    tool/ligo_skymap_plot
    tool/ligo_skymap_plot_airmass
+   tool/ligo_skymap_plot_coherence
    tool/ligo_skymap_plot_observability
    tool/ligo_skymap_plot_volume
 

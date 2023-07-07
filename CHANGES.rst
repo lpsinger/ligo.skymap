@@ -44,6 +44,8 @@ Changelog
 - Fix incorrectly rendered default values for some command line arguments in
   the documentation.
 
+- Move coherence plots from GWCelery to ligo.skymap.
+
 1.0.7 (2023-02-27)
 ==================
 

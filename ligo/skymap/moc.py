@@ -38,7 +38,7 @@ from .core import rasterize as _rasterize
 from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
 
 __all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea',
-           'uniq2ang', 'rasterize')
+           'uniq2ang', 'rasterize', 'bayestar_adaptive_grid')
 
 
 add_newdoc_ufunc(nest2uniq, """\

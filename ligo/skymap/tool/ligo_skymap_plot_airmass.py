@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2020  Leo Singer
+# Copyright (C) 2018-2023  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 import numpy as np
 
 from . import ArgumentParser, FileType, HelpChoicesAction
-from .matplotlib import figure_parser
+from .matplotlib import get_figure_parser
 
 
 def parser():
     from astropy.coordinates import EarthLocation
     site_names = EarthLocation.get_site_names()
-    parser = ArgumentParser(parents=[figure_parser])
+    parser = ArgumentParser(parents=[get_figure_parser()])
     parser.add_argument(
         '-v', '--verbose', action='store_true',
         help='Print airmass table to stdout')

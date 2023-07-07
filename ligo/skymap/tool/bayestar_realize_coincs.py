@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2022  Leo Singer
+# Copyright (C) 2013-2023  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ import lal
 import numpy as np
 
 from . import (
-    ArgumentParser, EnableAction, FileType, random_parser, register_to_xmldoc,
-    write_fileobj)
+    ArgumentParser, EnableAction, FileType, get_random_parser,
+    register_to_xmldoc, write_fileobj)
 
 
 def parser():
@@ -44,7 +44,7 @@ def parser():
     available_ifos = sorted(det.frDetector.prefix
                             for det in lal.CachedDetectors)
 
-    parser = ArgumentParser(parents=[random_parser])
+    parser = ArgumentParser(parents=[get_random_parser()])
     parser.add_argument(
         'input', metavar='IN.xml[.gz]', type=FileType('rb'),
         default='-', help='Name of input file')

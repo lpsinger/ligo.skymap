@@ -27,11 +27,11 @@ Public-domain cartographic data is courtesy of `Natural Earth
 """
 
 from . import ArgumentParser, FileType, SQLiteType
-from .matplotlib import figure_parser
+from .matplotlib import get_figure_parser
 
 
 def parser():
-    parser = ArgumentParser(parents=[figure_parser])
+    parser = ArgumentParser(parents=[get_figure_parser()])
     parser.add_argument(
         '--annotate', default=False, action='store_true',
         help='annotate plot with information about the event')

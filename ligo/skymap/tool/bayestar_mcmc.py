@@ -17,13 +17,14 @@
 """Markov-Chain Monte Carlo sky localization."""
 
 from . import (
-    ArgumentParser, FileType, waveform_parser,
-    posterior_parser, random_parser)
+    ArgumentParser, FileType, get_waveform_parser,
+    get_posterior_parser, get_random_parser)
 
 
 def parser():
-    parser = ArgumentParser(parents=[waveform_parser, posterior_parser,
-                                     random_parser])
+    parser = ArgumentParser(parents=[get_waveform_parser(),
+                                     get_posterior_parser(),
+                                     get_random_parser()])
     parser.add_argument(
         'input', metavar='INPUT.{hdf,xml,xml.gz,sqlite}', default='-',
         nargs='+', type=FileType('rb'),

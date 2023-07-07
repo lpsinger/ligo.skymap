@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2020  Leo Singer
+# Copyright (C) 2013-2023  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ else:
     matplotlib.use('Template', warn=False, force=True)
     from matplotlib import pyplot as plt
 
-__all__ = ('figure_parser',)
+__all__ = ('get_figure_parser',)
 
 
 class MatplotlibFigureType(FileType):
@@ -109,28 +109,29 @@ def transparent(value):
     rcParams['savefig.transparent'] = bool(value)
 
 
-figure_parser = argparse.ArgumentParser(add_help=False)
-group = figure_parser.add_argument_group(
-    'figure options', 'Options that affect figure output format')
-group.add_argument(
-    '-o', '--output', metavar='FILE.{pdf,png}',
-    default='-', type=MatplotlibFigureType(),
-    help='output file, or - to plot to screen')
-group.add_argument(
-    '--colormap', default='cylon', choices=plt.colormaps(), type=colormap,
-    metavar='CMAP', help='matplotlib colormap')
-group.add_argument(
-    '--help-colormap', action=HelpChoicesAction, choices=plt.colormaps())
-group.add_argument(
-    '--figure-width', metavar='INCHES', type=figwidth, default='8',
-    help='width of figure in inches')
-group.add_argument(
-    '--figure-height', metavar='INCHES', type=figheight, default='6',
-    help='height of figure in inches')
-group.add_argument(
-    '--dpi', metavar='PIXELS', type=dpi, default=300,
-    help='resolution of figure in dots per inch')
-group.add_argument(
-    '--transparent', const='1', default='0', nargs='?', type=transparent,
-    help='Save image with transparent background')
-del group
+def get_figure_parser():
+    parser = argparse.ArgumentParser(add_help=False)
+    group = parser.add_argument_group(
+        'figure options', 'Options that affect figure output format')
+    group.add_argument(
+        '-o', '--output', metavar='FILE.{pdf,png}',
+        default='-', type=MatplotlibFigureType(),
+        help='output file, or - to plot to screen')
+    group.add_argument(
+        '--colormap', default='cylon', choices=plt.colormaps(), type=colormap,
+        metavar='CMAP', help='matplotlib colormap')
+    group.add_argument(
+        '--help-colormap', action=HelpChoicesAction, choices=plt.colormaps())
+    group.add_argument(
+        '--figure-width', metavar='INCHES', type=figwidth, default='8',
+        help='width of figure in inches')
+    group.add_argument(
+        '--figure-height', metavar='INCHES', type=figheight, default='6',
+        help='height of figure in inches')
+    group.add_argument(
+        '--dpi', metavar='PIXELS', type=dpi, default=300,
+        help='resolution of figure in dots per inch')
+    group.add_argument(
+        '--transparent', const='1', default='0', nargs='?', type=transparent,
+        help='Save image with transparent background')
+    return parser

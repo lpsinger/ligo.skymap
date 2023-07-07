@@ -41,6 +41,9 @@ Changelog
   algorithm so that other libraries can use it. It is exposed as
   ``ligo.skymap.moc.bayestar_adaptive_grid``.
 
+- Fix incorrectly rendered default values for some command line arguments in
+  the documentation.
+
 1.0.7 (2023-02-27)
 ==================
 

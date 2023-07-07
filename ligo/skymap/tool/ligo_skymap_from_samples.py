@@ -36,12 +36,13 @@ The output consist of two files:
 
 from argparse import SUPPRESS
 
-from . import ArgumentParser, DirType, EnableAction, FileType, random_parser
+from . import (
+    ArgumentParser, DirType, EnableAction, FileType, get_random_parser)
 
 
 def parser():
     # Command line interface.
-    parser = ArgumentParser(parents=[random_parser])
+    parser = ArgumentParser(parents=[get_random_parser()])
     parser.add_argument('samples', type=FileType('rb'), metavar='SAMPLES.hdf5',
                         help='posterior samples file')
     # Only present for backward compatibility with --samples syntax

@@ -21,7 +21,7 @@ import re
 import numpy as np
 
 from . import ArgumentParser, FileType
-from .matplotlib import figure_parser
+from .matplotlib import get_figure_parser
 
 
 def fmt(x, sigfigs, force_scientific=False):
@@ -36,7 +36,7 @@ def fmt(x, sigfigs, force_scientific=False):
 
 
 def parser():
-    parser = ArgumentParser(parents=[figure_parser])
+    parser = ArgumentParser(parents=[get_figure_parser()])
     parser.add_argument(
         'skymap', metavar='SKYMAP.fits[.gz]', type=FileType('rb'),
         help='FITS sky map file')

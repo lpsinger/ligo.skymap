@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2022  Leo Singer
+# Copyright (C) 2013-2023  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,65 +113,68 @@ class GlobAction(argparse._StoreAction):
             raise argparse.ArgumentError(self, msg)
 
 
-waveform_parser = argparse.ArgumentParser(add_help=False)
-group = waveform_parser.add_argument_group(
-    'waveform options', 'Options that affect template waveform generation')
-# FIXME: The O1 uberbank high-mass template, SEOBNRv2_ROM_DoubleSpin, does
-# not support frequencies less than 30 Hz.
-group.add_argument(
-    '--f-low', type=float, metavar='Hz', default=30,
-    help='Low frequency cutoff')
-group.add_argument(
-    '--f-high-truncate', type=float, default=0.95,
-    help='Truncate waveform at this fraction of the maximum frequency of the '
-    'PSD')
-group.add_argument(
-    '--waveform', default='o2-uberbank',
-    help='Template waveform approximant: e.g., TaylorF2threePointFivePN')
-del group
+def get_waveform_parser():
+    parser = argparse.ArgumentParser(add_help=False)
+    group = parser.add_argument_group(
+        'waveform options', 'Options that affect template waveform generation')
+    # FIXME: The O1 uberbank high-mass template, SEOBNRv2_ROM_DoubleSpin, does
+    # not support frequencies less than 30 Hz.
+    group.add_argument(
+        '--f-low', type=float, metavar='Hz', default=30,
+        help='Low frequency cutoff')
+    group.add_argument(
+        '--f-high-truncate', type=float, default=0.95,
+        help='Truncate waveform at this fraction of the maximum frequency of '
+        'the PSD')
+    group.add_argument(
+        '--waveform', default='o2-uberbank',
+        help='Template waveform approximant: e.g., TaylorF2threePointFivePN')
+    return parser
 
 
-posterior_parser = argparse.ArgumentParser(add_help=False)
-group = posterior_parser.add_argument_group(
-    'posterior options', 'Options that affect the BAYESTAR posterior')
-group.add_argument(
-    '--min-inclination', type=float, metavar='deg', default=0.0,
-    help='Minimum inclination in degrees')
-group.add_argument(
-    '--max-inclination', type=float, metavar='deg', default=90.0,
-    help='Maximum inclination in degrees')
-group.add_argument(
-    '--min-distance', type=float, metavar='Mpc',
-    help='Minimum distance of prior in megaparsecs')
-group.add_argument(
-    '--max-distance', type=float, metavar='Mpc',
-    help='Maximum distance of prior in megaparsecs')
-group.add_argument(
-    '--prior-distance-power', type=int, metavar='-1|2', default=2,
-    help='Distance prior: -1 for uniform in log, 2 for uniform in volume')
-group.add_argument(
-    '--cosmology', action='store_true',
-    help='Use cosmological comoving volume prior')
-group.add_argument(
-    '--enable-snr-series', action=EnableAction,
-    help='Enable input of SNR time series')
-group.add_argument(
-    '--rescale-loglikelihood', type=float, default=0.83,
-    help='Rescale log likelihood by the square of this factor to account for '
-    'excess technical noise from search pipeline')
-del group
+def get_posterior_parser():
+    parser = argparse.ArgumentParser(add_help=False)
+    group = parser.add_argument_group(
+        'posterior options', 'Options that affect the BAYESTAR posterior')
+    group.add_argument(
+        '--min-inclination', type=float, metavar='deg', default=0.0,
+        help='Minimum inclination in degrees')
+    group.add_argument(
+        '--max-inclination', type=float, metavar='deg', default=90.0,
+        help='Maximum inclination in degrees')
+    group.add_argument(
+        '--min-distance', type=float, metavar='Mpc',
+        help='Minimum distance of prior in megaparsecs')
+    group.add_argument(
+        '--max-distance', type=float, metavar='Mpc',
+        help='Maximum distance of prior in megaparsecs')
+    group.add_argument(
+        '--prior-distance-power', type=int, metavar='-1|2', default=2,
+        help='Distance prior: -1 for uniform in log, 2 for uniform in volume')
+    group.add_argument(
+        '--cosmology', action='store_true',
+        help='Use cosmological comoving volume prior')
+    group.add_argument(
+        '--enable-snr-series', action=EnableAction,
+        help='Enable input of SNR time series')
+    group.add_argument(
+        '--rescale-loglikelihood', type=float, default=0.83,
+        help='Rescale log likelihood by the square of this factor to account '
+        'for excess technical noise from search pipeline')
+    return parser
 
 
-mcmc_parser = argparse.ArgumentParser(add_help=False)
-group = mcmc_parser.add_argument_group(
-    'BAYESTAR MCMC options', 'BAYESTAR options for MCMC sampling')
-group.add_argument(
-    '--mcmc', action='store_true',
-    help='Use MCMC sampling instead of Gaussian quadrature')
-group.add_argument(
-    '--chain-dump', action='store_true',
-    help='For MCMC methods, dump the sample chain to disk')
-del group
+def get_mcmc_parser():
+    parser = argparse.ArgumentParser(add_help=False)
+    group = parser.add_argument_group(
+        'BAYESTAR MCMC options', 'BAYESTAR options for MCMC sampling')
+    group.add_argument(
+        '--mcmc', action='store_true',
+        help='Use MCMC sampling instead of Gaussian quadrature')
+    group.add_argument(
+        '--chain-dump', action='store_true',
+        help='For MCMC methods, dump the sample chain to disk')
+    return parser
 
 
 class HelpChoicesAction(argparse.Action):
@@ -236,13 +239,15 @@ def seed(value):
     np.random.seed(value)
 
 
-random_parser = argparse.ArgumentParser(add_help=False)
-group = random_parser.add_argument_group(
-    'random number generator options',
-    'Options that affect the Numpy pseudo-random number genrator')
-group.add_argument(
-    '--seed', type=seed, help='Pseudo-random number generator seed '
-    '[default: initialized from /dev/urandom or clock]')
+def get_random_parser():
+    parser = argparse.ArgumentParser(add_help=False)
+    group = parser.add_argument_group(
+        'random number generator options',
+        'Options that affect the Numpy pseudo-random number genrator')
+    group.add_argument(
+        '--seed', type=seed, help='Pseudo-random number generator seed '
+        '[default: initialized from /dev/urandom or clock]')
+    return parser
 
 
 class HelpFormatter(argparse.RawDescriptionHelpFormatter,

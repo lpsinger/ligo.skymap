@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2022  Leo Singer
+# Copyright (C) 2019-2023  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,8 @@ from scipy.ndimage import maximum_filter
 from ..util import progress_map
 from ..bayestar.filter import sngl_inspiral_psd
 from . import (
-    ArgumentParser, FileType, random_parser, register_to_xmldoc, write_fileobj)
+    ArgumentParser, FileType, get_random_parser, register_to_xmldoc,
+    write_fileobj)
 
 try:
     from astropy.cosmology import available as available_cosmologies
@@ -232,7 +233,7 @@ def assert_not_reached():  # pragma: no cover
 
 
 def parser():
-    parser = ArgumentParser(parents=[random_parser])
+    parser = ArgumentParser(parents=[get_random_parser()])
     parser.add_argument(
         '--cosmology', choices=available_cosmologies,
         default='Planck15', help='Cosmological model')

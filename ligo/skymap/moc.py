@@ -165,8 +165,10 @@ def rasterize(moc_data, order=None):
 
 def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
                            **kwargs):
-    """Implement of the BAYESTAR adaptive mesh refinement scheme as
-    described in Section VI of Singer & Price 2016, PRD, 93, 024013
+    """Create a sky map by evaluating a function on an adaptive grid.
+
+    Perform the BAYESTAR adaptive mesh refinement scheme as described in
+    Section VI of Singer & Price 2016, PRD, 93, 024013
     :doi:`10.1103/PhysRevD.93.024013`. This computes the sky map
     using a provided analytic function and refines the grid, dividing the
     highest 25% into subpixels and then recalculating their values. The extra

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.0.8 (unreleased)
+1.1.0 (2023-07-07)
 ==================
 
 - Add ``max_depth`` keyword argument to the call to

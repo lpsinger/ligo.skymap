@@ -5,7 +5,9 @@ Changelog
 1.1.1 (unreleased)
 ==================
 
-- No changes yet.
+- Fix a typo in the ``setup.cfg`` file that prevented correct interpretation of
+  the minimum Python version. Contributed by
+  `@ahnitz <https://github.com/ahnitz>`_.
 
 1.1.0 (2023-07-07)
 ==================

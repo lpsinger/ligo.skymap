@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.1.1 (unreleased)
+1.1.1 (2023-07-08)
 ==================
 
 - Fix a typo in the ``setup.cfg`` file that prevented correct interpretation of

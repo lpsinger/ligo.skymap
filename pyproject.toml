@@ -4,6 +4,6 @@ requires = ["setuptools>=42.0.0",
             "setuptools_scm",
             "wheel",
             "extension-helpers",
-            "numpy==1.25.1"]
+            "numpy>=1.25"]
 
 build-backend = 'setuptools.build_meta'

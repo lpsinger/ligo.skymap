@@ -7,3 +7,4 @@ Multi-Order HEALPix Maps (`ligo.skymap.moc`)
 .. autofunction:: uniq2order
 .. autofunction:: uniq2pixarea
 .. autofunction:: rasterize
+.. autofunction:: bayestar_adaptive_grid

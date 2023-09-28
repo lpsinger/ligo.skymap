@@ -129,7 +129,7 @@ def main(args=None):
                   on_exit_hold_reason = (ExitBySignal == True \
                     ? strcat("The job exited with signal ", ExitSignal) \
                     : strcat("The job exited with code ", ExitCode))
-                  request_memory = 1000 MB
+                  request_memory = 2000 MB
                   request_disk = 100 MB
                   universe = vanilla
                   getenv = true

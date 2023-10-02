@@ -67,7 +67,7 @@ def plot_bayes_factor(logb,
         plot_bayes_factor(6.3, title='BAYESTAR is awesome')
 
     """
-    with plt.style.context('seaborn-notebook'):
+    with plt.style.context('seaborn-v0_8-notebook'):
         fig, ax = plt.subplots(figsize=(6, 1.7), tight_layout=True)
         ax.set_xlim(-xlim, xlim)
         ax.set_ylim(-0.5, 0.5)

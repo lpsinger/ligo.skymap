@@ -48,6 +48,6 @@ def test_plot(tmpdir, skymap, geo, proj):
 def test_plot_volume(tmpdir, skymap):
     """Test ligo-skymap-plot-volume (at super-low resolution for speed)."""
     pngfilename = str(tmpdir / 'skymap3d.png')
-    args = ['ligo-skymap-plot-volume', skymap, '-o', pngfilename, '--dpi', '8',
+    args = ['ligo-skymap-plot-volume', skymap, '-o', pngfilename, '--dpi', '9',
             '--annotate', '--contour', '90', '--radecdist', '320', '45', '100']
     run_entry_point(*args)

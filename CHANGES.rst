@@ -5,7 +5,10 @@ Changelog
 1.1.1 (unreleased)
 ==================
 
-- No changes yet.
+- Require matplotlib < 3.8.0 due to an upstream regression; see
+  `matplotlib/matplotlib/issues/26971`__.
+
+  __ https://github.com/matplotlib/matplotlib/issues/26971
 
 1.1.1 (2023-07-08)
 ==================

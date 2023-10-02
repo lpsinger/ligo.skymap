@@ -5,10 +5,7 @@ Changelog
 1.1.1 (unreleased)
 ==================
 
-- Require matplotlib < 3.8.0 due to an upstream regression; see
-  `matplotlib/matplotlib/issues/26971`__.
-
-  __ https://github.com/matplotlib/matplotlib/issues/26971
+- No changes yet.
 
 - Binary wheels for macOS x86_64 are now built against Big Sur (10.15), because
   Catalina (11) is past end of life.

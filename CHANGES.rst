@@ -10,6 +10,9 @@ Changelog
 
   __ https://github.com/matplotlib/matplotlib/issues/26971
 
+- Binary wheels for macOS x86_64 are now built against Big Sur (10.15), because
+  Catalina (11) is past end of life.
+
 1.1.1 (2023-07-08)
 ==================
 

@@ -113,7 +113,7 @@ wheel/linux/aarch64:
 wheel/macos/x86_64:
   <<: *wheel-macos
   tags:
-    - macos_catalina_x86_64
+    - macos_bigsur_x86_64
 
 wheel/macos/arm64:
   <<: *wheel-macos

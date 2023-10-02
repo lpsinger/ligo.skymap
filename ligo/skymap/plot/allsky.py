@@ -241,7 +241,7 @@ class WCSInsetConnectionPatch(ConnectionPatch):
 
     _corners_map = {1: 3, 2: 1, 3: 0, 4: 2}
 
-    def __init__(self, ax, ax_inset, loc, *args, **kwargs):
+    def __init__(self, ax, ax_inset, loc, **kwargs):
         try:
             loc = AnchoredOffsetbox.codes[loc]
         except KeyError:
@@ -252,7 +252,7 @@ class WCSInsetConnectionPatch(ConnectionPatch):
         xy_inset = corners[self._corners_map[loc]]
         xy = transform.transform_point(xy_inset)
         super().__init__(
-            xy, xy_inset, 'data', 'data', ax, ax_inset, *args,
+            xy, xy_inset, 'data', 'data', axesA=ax, axesB=ax_inset,
             color=ax_inset.coords.frame.get_color(),
             linewidth=ax_inset.coords.frame.get_linewidth(),
             **kwargs)

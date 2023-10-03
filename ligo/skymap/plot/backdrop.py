@@ -16,7 +16,7 @@
 #
 """Backdrops for astronomical plots."""
 
-from importlib import resources
+from importlib.resources import files
 import json
 import warnings
 
@@ -218,6 +218,7 @@ def reproject_interp_rgb(input_data, *args, **kwargs):
 
 
 def coastlines():
-    with resources.open_text(__package__, 'ne_simplified_coastline.json') as f:
+    with files(__package__).joinpath(
+            'ne_simplified_coastline.json').open() as f:
         geoms = json.load(f)['geometries']
     return [coord for geom in geoms for coord in zip(*geom['coordinates'])]

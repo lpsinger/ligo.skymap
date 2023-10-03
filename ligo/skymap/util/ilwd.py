@@ -54,7 +54,7 @@ def use_in(ContentHandler):
 
     Examples
     --------
-    >>> from importlib import resources
+    >>> from importlib.resources import as_file, files
     >>> from ligo.lw import array, ligolw, lsctables, param, table, utils
     >>> from ligo.skymap.util import ilwd
     >>> @ilwd.use_in
@@ -63,9 +63,9 @@ def use_in(ContentHandler):
     ... @table.use_in
     ... class ContentHandler(ligolw.LIGOLWContentHandler):
     ...     pass
-    >>> with resources.path('ligo.skymap.io.tests.data',
-    ...                     'G197392_coinc.xml.gz') as path:
-    ...     xmldoc = utils.load_filename(path, contenthandler=ContentHandler)
+    >>> with as_file(files('ligo.skymap.io.tests.data').joinpath(
+    ...         'G197392_coinc.xml.gz')) as f:
+    ...     xmldoc = utils.load_filename(f, contenthandler=ContentHandler)
     >>> table = lsctables.SnglInspiralTable.get_table(xmldoc)
     >>> table[0].process_id
     0

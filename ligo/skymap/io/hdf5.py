@@ -180,9 +180,10 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     Test reading a file that was written using the LAL HDF5 C API:
 
-    >>> from importlib import resources
-    >>> with resources.path('ligo.skymap.io.tests.data', 'test.hdf5') as path:
-    ...     table = read_samples(path)
+    >>> from importlib.resources import files
+    >>> with files('ligo.skymap.io.tests.data').joinpath(
+    ...         'test.hdf5').open('rb') as f:
+    ...     table = read_samples(f)
     >>> table.colnames
     ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'ghi', 'rst']
 

@@ -1,5 +1,5 @@
 from importlib import metadata
-from importlib import resources
+from importlib.resources import as_file, files
 import multiprocessing
 import os
 import shutil
@@ -73,7 +73,7 @@ def run_lalsuite(name, *args):
     else:
         # The tool has not been installed, so we have to find the underlying
         # binary inside the lalapps module.
-        with resources.path('lalapps.bin', name) as path:
+        with as_file(files('lalapps.bin').joinpath(name)) as path:
             # Copy to a temporary file so that we can make it executable.
             # For some reason, when eggs are extracted, permissions are not
             # preserved.

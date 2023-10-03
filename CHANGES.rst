@@ -10,6 +10,8 @@ Changelog
 - Binary wheels for macOS x86_64 are now built against Big Sur (10.15), because
   Catalina (11) is past end of life.
 
+- Fix deprecation warnings from importlib.resources.
+
 1.1.1 (2023-07-08)
 ==================
 

@@ -16,7 +16,7 @@
 #
 """Register some extra Matplotlib color maps"""
 
-from importlib import resources
+from importlib.resources import files
 
 from matplotlib import colormaps
 from matplotlib import colors
@@ -27,7 +27,7 @@ __all__ = ()
 
 for name in ['cylon']:
     # Read in color map RGB data.
-    with resources.open_text(__package__, name + '.csv') as f:
+    with files(__package__).joinpath(f'{name}.csv').open() as f:
         data = np.loadtxt(f, delimiter=',')
 
     # Create color map.

@@ -244,7 +244,6 @@ test/linux/x86_64/python3.11:
 
 test/macos/x86_64:
   <<: *test-macos
-  allow_failure: true  # failing due to matplotlib font differences
   tags:
     - macos_bigsur_x86_64
   needs:

@@ -5,7 +5,7 @@ Changelog
 1.1.1 (unreleased)
 ==================
 
-- Update tests and sample code for compatibility with Matplotlib 3.8.0.
+- Update for compatibility with Matplotlib 3.8.0.
 
 - Binary wheels for macOS x86_64 are now built against Big Sur (10.15), because
   Catalina (11) is past end of life.

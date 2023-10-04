@@ -2,7 +2,7 @@
 Changelog
 #########
 
-1.1.1 (unreleased)
+1.1.2 (2023-10-03)
 ==================
 
 - Update for compatibility with Matplotlib 3.8.0.

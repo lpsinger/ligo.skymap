@@ -259,7 +259,7 @@ def parser():
         '--snr-threshold', type=float, default=4.,
         help='Single-detector SNR threshold')
     parser.add_argument(
-        '--min-triggers', type=int, default=2,
+        '--min-triggers', type=int, default=1,
         help='Emit coincidences only when at least this many triggers '
         'are found')
     parser.add_argument(

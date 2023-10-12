@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2023  Leo Singer
+# Copyright (C) 2012-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -188,6 +188,7 @@ The following example demonstrates most of the features of this module.
 
 """  # noqa: E501
 from itertools import product
+from warnings import warn
 
 from astropy.coordinates import SkyCoord, UnitSphericalRepresentation
 from astropy.io.fits import Header
@@ -206,7 +207,9 @@ from matplotlib.projections import projection_registry
 import numpy as np
 from reproject import reproject_from_healpix
 from scipy.optimize import minimize_scalar
+
 from .angle import reference_angle_deg, wrapped_angle_deg
+from .reproject_from_healpix_moc import reproject_from_healpix_moc
 
 __all__ = ['AutoScaledWCSAxes', 'ScaleBar']
 
@@ -504,9 +507,19 @@ class AutoScaledWCSAxes(WCSAxes):
         # It's normal for reproject_from_healpix to produce some Numpy invalid
         # value warnings for points that land outside the projection.
         with np.errstate(invalid='ignore'):
-            img, mask = reproject_from_healpix(
-                data, self.header, hdu_in=hdu_in, order=order, nested=nested,
-                field=field)
+            try:
+                # Check if the input is a multiorder sky map
+                data[0]['UNIQ']
+            except (IndexError, KeyError, TypeError):
+                img, mask = reproject_from_healpix(
+                    data, self.header, hdu_in=hdu_in, order=order,
+                    nested=nested, field=field)
+            else:
+                if order != 'nearest-neighbor':
+                    warn('You requested bilinear interpolation of a '
+                         'multi-order sky map, but only nearest-neighbor '
+                         'interpolation is currently spported', UserWarning)
+                img, mask = reproject_from_healpix_moc(data, self.header)
         img = np.ma.array(img, mask=~mask.astype(bool))
 
         if smooth is not None:

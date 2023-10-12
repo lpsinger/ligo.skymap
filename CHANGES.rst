@@ -14,6 +14,17 @@ Changelog
   same process, then only one of the invocations will stop early due the
   interrupt, because signal handlers are process-wide.
 
+- Enhancements to the command-line tool ``ligo-skymap-plot``:
+
+  - Read in and reproject sky maps in multi-resolution format. This
+    significantly decreases memory consumption when plotting high-resolution
+    sky maps.
+
+  - The algorithm that calculates credible areas printed in the plot legend
+    now matches the algorithm in ``ligo.skymap.postprocess.crossmatch``: it
+    does linear interpolation of area when the credible level falls between
+    pixels.
+
 2.0.1 (2024-05-30)
 ==================
 

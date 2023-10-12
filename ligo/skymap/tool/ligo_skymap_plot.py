@@ -76,24 +76,22 @@ def main(args=None):
         import matplotlib.pyplot as plt
         from matplotlib import rcParams
         from ..io import fits
+        from .. import moc
         from .. import plot
         from .. import postprocess
-        import astropy_healpix as ah
         from astropy.coordinates import SkyCoord
+        from astropy.table import Table
         from astropy.time import Time
         from astropy import units as u
 
-        skymap, metadata = fits.read_sky_map(opts.input.name, nest=None)
-        nside = ah.npix_to_nside(len(skymap))
+        sr_to_deg2 = u.sr.to(u.deg**2)
 
-        # Convert sky map from probability to probability per square degree.
-        deg2perpix = ah.nside_to_pixel_area(nside).to_value(u.deg**2)
-        probperdeg2 = skymap / deg2perpix
+        skymap = fits.read_sky_map(opts.input.name, moc=True)
 
         axes_args = {}
         if opts.geo:
             axes_args['projection'] = 'geo'
-            obstime = Time(metadata['gps_time'], format='gps').utc.isot
+            obstime = Time(skymap.meta['gps_time'], format='gps').utc.isot
             axes_args['obstime'] = obstime
         else:
             axes_args['projection'] = 'astro'
@@ -105,22 +103,17 @@ def main(args=None):
         ax = plt.axes(**axes_args)
         ax.grid()
 
-        # Plot sky map.
-        vmax = probperdeg2.max()
-        img = ax.imshow_hpx(
-            (probperdeg2, 'ICRS'), nested=metadata['nest'], vmin=0., vmax=vmax)
-
-        # Add colorbar.
-        if opts.colorbar:
-            cb = plot.colorbar(img)
-            cb.set_label(r'prob. per deg$^2$')
-
         # Add contours.
         if opts.contour:
-            cls = 100 * postprocess.find_greedy_credible_levels(skymap)
+            dA = moc.uniq2pixarea(skymap['UNIQ'])
+            dP = skymap['PROBDENSITY'] * dA
+            cls = 100 * postprocess.find_greedy_credible_levels(
+                dP, skymap['PROBDENSITY'])
+
+            table = Table({'UNIQ': skymap['UNIQ'], 'CLS': cls})
             cs = ax.contour_hpx(
-                (cls, 'ICRS'), nested=metadata['nest'],
-                colors='k', linewidths=0.5, levels=opts.contour)
+                (table, 'ICRS'), colors='k', linewidths=0.5,
+                levels=opts.contour, order='nearest-neighbor')
             fmt = r'%g\%%' if rcParams['text.usetex'] else '%g%%'
             plt.clabel(cs, fmt=fmt, fontsize=6, inline=True)
 
@@ -142,7 +135,7 @@ def main(args=None):
                        AND cm2.table_name = 'coinc_event'
                     '''
             (ra, dec), = opts.inj_database.execute(
-                query, (metadata['objid'],)).fetchall()
+                query, (skymap.meta['objid'],)).fetchall()
             radecs.append(np.rad2deg([ra, dec]).tolist())
 
         # Add markers (e.g., for injections or external triggers).
@@ -159,20 +152,32 @@ def main(args=None):
         if opts.annotate:
             text = []
             try:
-                objid = metadata['objid']
+                objid = skymap.meta['objid']
             except KeyError:
                 pass
             else:
                 text.append('event ID: {}'.format(objid))
             if opts.contour:
+                i = np.flipud(np.argsort(skymap['PROBDENSITY']))
+                areas = np.interp(
+                    opts.contour, cls[i], np.cumsum(dA[i]),
+                    left=0, right=4*np.pi)
                 pp = np.round(opts.contour).astype(int)
-                ii = np.round(np.searchsorted(np.sort(cls), opts.contour) *
-                              deg2perpix).astype(int)
+                ii = np.round(areas * sr_to_deg2).astype(int)
                 for i, p in zip(ii, pp):
                     # FIXME: use Unicode symbol instead of TeX '$^2$'
                     # because of broken fonts on Scientific Linux 7.
                     text.append('{:d}% area: {:,d} deg²'.format(p, i))
             ax.text(1, 1, '\n'.join(text), transform=ax.transAxes, ha='right')
+
+        # Plot sky map.
+        skymap['PROBDENSITY'] *= 1 / sr_to_deg2
+        img = ax.imshow_hpx((skymap, 'ICRS'), vmin=0, order='nearest-neighbor')
+
+        # Add colorbar.
+        if opts.colorbar:
+            cb = plot.colorbar(img)
+            cb.set_label(r'prob. per deg$^2$')
 
         # Show or save output.
         opts.output()

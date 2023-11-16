@@ -777,15 +777,17 @@ class Zoom(AutoScaledWCSAxes):
 class AllSkyAxes(AutoScaledWCSAxes):
     """Base class for a multi-purpose all-sky projection."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, center='180d 0d', **kwargs):
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
         header = {
             'NAXIS': 2,
             'NAXIS1': 360,
             'NAXIS2': 180,
             'CRPIX1': 180.5,
             'CRPIX2': 90.5,
-            'CRVAL1': self._crval1,
-            'CRVAL2': 0.0,
+            'CRVAL1': center.ra.deg,
+            'CRVAL2': center.dec.deg,
             'CDELT1': -2 * np.sqrt(2) / np.pi,
             'CDELT2': 2 * np.sqrt(2) / np.pi,
             'CTYPE1': self._xcoord + '-' + self._wcsprj,

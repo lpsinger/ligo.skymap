@@ -19,38 +19,44 @@ def get_extensions():
 
     pkg_config_packages = ['gsl']
 
-    sources = [
-        'src/bayestar_distance.c',
-        'src/bayestar_moc.c',
-        'src/bayestar_sky_map.c',
-        'src/core.c',
-        'src/cubic_interp.c',
-        'src/cubic_interp_test.c',
-    ]
-
-    include_dirs = [np.get_include()]
+    orig_kwargs = {
+        'sources': [
+            'src/bayestar_distance.c',
+            'src/bayestar_moc.c',
+            'src/bayestar_sky_map.c',
+            'src/core.c',
+            'src/cubic_interp.c',
+            'src/cubic_interp_test.c',
+        ],
+        'include_dirs': [
+            np.get_include()
+        ],
+        'define_macros': [
+            ('GSL_RANGE_CHECK_OFF', None),
+            ('HAVE_INLINE', None),
+        ],
+        'extra_compile_args': [
+            '-std=gnu11',
+            '-fvisibility=hidden'
+        ],
+    }
 
     if os.environ.get('LIGO_SKYMAP_USE_SYSTEM_CHEALPIX'):
         pkg_config_packages.append('chealpix')
     else:
-        include_dirs.append('cextern/chealpix')
-        sources.append('cextern/chealpix/chealpix.c')
+        orig_kwargs['include_dirs'].append('cextern/chealpix')
+        orig_kwargs['sources'].append('cextern/chealpix/chealpix.c')
 
     if os.environ.get('LIGO_SKYMAP_USE_ITTNOTIFY'):
         pkg_config_packages.append('ittnotify')
+        orig_kwargs['define_macros'].append(('WITH_ITTNOTIFY', 1))
 
     kwargs = pkg_config(pkg_config_packages, [])
-    kwargs['include_dirs'].extend(include_dirs)
-    kwargs['extra_compile_args'].extend(['-std=gnu11',
-                                         '-fvisibility=hidden',
-                                         '-DGSL_RANGE_CHECK_OFF',
-                                         '-DHAVE_INLINE'])
-
-    if os.environ.get('LIGO_SKYMAP_USE_ITTNOTIFY'):
-        kwargs.setdefault('define_macros', []).append(('WITH_ITTNOTIFY', 1))
+    for key, orig_value in orig_kwargs.items():
+        kwargs.setdefault(key, []).extend(orig_value)
 
     extension = Extension(name='ligo.skymap.core', language='c',
-                          py_limited_api=True, sources=sources, **kwargs)
+                          py_limited_api=True, **kwargs)
 
     if not os.environ.get('LIGO_SKYMAP_DISABLE_OPENMP'):
         add_openmp_flags_if_available(extension)

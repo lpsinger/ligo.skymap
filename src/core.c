@@ -24,13 +24,9 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_nan.h>
 #include <Python.h>
-#include "warnings.h"
-/* Ignore warnings in Numpy API itself */
-WARNINGS_PUSH
-#pragma GCC diagnostic ignored "-Wcast-qual"
 #include <numpy/arrayobject.h>
 #include <numpy/ufuncobject.h>
-WARNINGS_POP
+#include "warnings.h"
 #include "bayestar_distance.h"
 #include "bayestar_moc.h"
 #include "bayestar_sky_map.h"

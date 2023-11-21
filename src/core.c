@@ -15,25 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define NPY_NO_DEPRECATED_API NPY_1_19_API_VERSION
-#define Py_LIMITED_API 0x03090000
-
-/* FIXME:
- * The Numpy C-API defines PyArrayDescr_Type as:
- *
- *   #define PyArrayDescr_Type (*(PyTypeObject *)PyArray_API[3])
- *
- * and then in some places we need to take its address, &PyArrayDescr_Type.
- * This is fine in GCC 10 and Clang, but earlier versions of GCC complain:
- *
- *   error: dereferencing pointer to incomplete type 'PyTypeObject'
- *   {aka 'struct _typeobject'}
- *
- * As a workaround, provide a faux forward declaration for PyTypeObject.
- * See https://github.com/numpy/numpy/issues/16970.
- */
-struct _typeobject {};
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -55,6 +36,24 @@ WARNINGS_POP
 #include "bayestar_sky_map.h"
 #include "cubic_interp.h"
 #include "omp_interruptible.h"
+
+/* FIXME:
+ * The Numpy C-API defines PyArrayDescr_Type as:
+ *
+ *   #define PyArrayDescr_Type (*(PyTypeObject *)PyArray_API[3])
+ *
+ * and then in some places we need to take its address, &PyArrayDescr_Type.
+ * This is fine in GCC 10 and Clang, but earlier versions of GCC complain:
+ *
+ *   error: dereferencing pointer to incomplete type 'PyTypeObject'
+ *   {aka 'struct _typeobject'}
+ *
+ * As a workaround, provide a faux forward declaration for PyTypeObject.
+ * See https://github.com/numpy/numpy/issues/16970.
+ */
+#ifndef PYPY_VERSION
+struct _typeobject {};
+#endif
 
 
 static PyObject *

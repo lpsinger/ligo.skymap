@@ -5,7 +5,7 @@ Changelog
 1.1.3 (unreleased)
 ==================
 
-- Added options to center `mollweide` and `aitoff` projections.
+- Added options to center ``mollweide`` and ``aitoff`` projections.
 
 1.1.2 (2023-10-03)
 ==================

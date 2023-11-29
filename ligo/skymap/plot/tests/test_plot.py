@@ -169,4 +169,3 @@ def test_center_projections(rcparams, proj, cent):
                       center=cent)
     ax.grid()
     return fig
-    

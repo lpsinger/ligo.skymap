@@ -123,7 +123,14 @@ def test_zoom_axes(rcparams):
     return fig
 
 
-@pytest.mark.parametrize('projection', ['astro zoom', 'astro globe', 'astro mollweide', 'astro aitoff'])
+@pytest.mark.parametrize(
+    'projection', [
+        'astro zoom',
+        'astro globe',
+        'astro mollweide',
+        'astro aitoff'
+    ]
+)
 def test_center_cartesian(projection):
     """Test that zoom axes accept coordinates in other representations."""
     fig = plt.figure()

@@ -780,7 +780,7 @@ class AllSkyAxes(AutoScaledWCSAxes):
 
     def __init__(self, *args, center=None, **kwargs):
         if center is None:
-            center=f"{self._crval1}d 0d"
+            center = f"{self._crval1}d 0d"
         center = SkyCoord(
             center, representation_type=UnitSphericalRepresentation).icrs
         header = {

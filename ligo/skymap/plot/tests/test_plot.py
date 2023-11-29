@@ -123,7 +123,7 @@ def test_zoom_axes(rcparams):
     return fig
 
 
-@pytest.mark.parametrize('projection', ['astro zoom', 'astro globe'])
+@pytest.mark.parametrize('projection', ['astro zoom', 'astro globe', 'astro mollweide', 'astro aitoff'])
 def test_center_cartesian(projection):
     """Test that zoom axes accept coordinates in other representations."""
     fig = plt.figure()
@@ -150,4 +150,15 @@ def test_reticle():
         for which, y in zip(which_list,
                             np.linspace(0.1, 0.9, len(which_list))):
             ax.plot(x, y, marker=reticle(*args, which=which))
+    return fig
+
+
+@pytest.mark.parametrize('proj', ['aitoff', 'mollweide'])
+@pytest.mark.parametrize('cent', ['197.45d -23.38d', None])
+@pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
+def test_center_projections(rcparams, proj, cent):
+    fig = plt.figure(figsize=(4, 4))
+    ax = fig.add_axes(111, projection=f'astro {proj}',
+                      center=cent)
+    ax.grid()
     return fig

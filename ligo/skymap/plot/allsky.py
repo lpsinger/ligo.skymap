@@ -316,6 +316,7 @@ class AutoScaledWCSAxes(WCSAxes):
         h['CDELT1'] /= scale1
         h['CDELT2'] /= scale2
         if obstime is not None:
+            h['MJD-OBS'] = Time(obstime).utc.mjd
             h['DATE-OBS'] = Time(obstime).utc.isot
         self.reset_wcs(WCS(h))
         self.set_xlim(-0.5, h['NAXIS1'] - 0.5)
@@ -777,7 +778,9 @@ class Zoom(AutoScaledWCSAxes):
 class AllSkyAxes(AutoScaledWCSAxes):
     """Base class for a multi-purpose all-sky projection."""
 
-    def __init__(self, *args, center='180d 0d', **kwargs):
+    def __init__(self, *args, center=None, **kwargs):
+        if center is None:
+            center=f"{self._crval1}d 0d"
         center = SkyCoord(
             center, representation_type=UnitSphericalRepresentation).icrs
         header = {

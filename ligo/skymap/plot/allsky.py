@@ -41,9 +41,9 @@ degrees.
 * ``zoom`` for a gnomonic projection suitable for visualizing small zoomed-in
   patches
 
-Some of the projections support additional optional arguments. The ``globe``
-projections support the options ``center`` and ``rotate``. The ``zoom``
-projections support the options ``center``, ``radius``, and ``rotate``.
+All projections support the ``center`` argument, while some support additional
+arguments. The ``globe`` projections also support the ``rotate`` argument, and
+the ``zoom`` projections also supports the ``radius`` and ``rotate`` arguments.
 
 Examples
 --------
@@ -316,6 +316,7 @@ class AutoScaledWCSAxes(WCSAxes):
         h['CDELT1'] /= scale1
         h['CDELT2'] /= scale2
         if obstime is not None:
+            h['MJD-OBS'] = Time(obstime).utc.mjd
             h['DATE-OBS'] = Time(obstime).utc.isot
         self.reset_wcs(WCS(h))
         self.set_xlim(-0.5, h['NAXIS1'] - 0.5)
@@ -777,15 +778,19 @@ class Zoom(AutoScaledWCSAxes):
 class AllSkyAxes(AutoScaledWCSAxes):
     """Base class for a multi-purpose all-sky projection."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, center=None, **kwargs):
+        if center is None:
+            center = f"{self._crval1}d 0d"
+        center = SkyCoord(
+            center, representation_type=UnitSphericalRepresentation).icrs
         header = {
             'NAXIS': 2,
             'NAXIS1': 360,
             'NAXIS2': 180,
             'CRPIX1': 180.5,
             'CRPIX2': 90.5,
-            'CRVAL1': self._crval1,
-            'CRVAL2': 0.0,
+            'CRVAL1': center.ra.deg,
+            'CRVAL2': center.dec.deg,
             'CDELT1': -2 * np.sqrt(2) / np.pi,
             'CDELT2': 2 * np.sqrt(2) / np.pi,
             'CTYPE1': self._xcoord + '-' + self._wcsprj,

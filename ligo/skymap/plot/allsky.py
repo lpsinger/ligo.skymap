@@ -41,8 +41,8 @@ degrees.
 * ``zoom`` for a gnomonic projection suitable for visualizing small zoomed-in
   patches
 
-All projections support the ``center`` argument, while some support additional 
-arguments. The ``globe`` projections also support the ``rotate`` argument, and 
+All projections support the ``center`` argument, while some support additional
+arguments. The ``globe`` projections also support the ``rotate`` argument, and
 the ``zoom`` projections also supports the ``radius`` and ``rotate`` arguments.
 
 Examples

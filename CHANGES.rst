@@ -8,6 +8,8 @@ Changelog
 - Added options to center ``mollweide`` and ``aitoff`` projections. Thanks go
   to Sam Wyatt for this contribution.
 
+- Added support for ``os.PathLike`` filenames when reading ligolw files.
+
 1.1.2 (2023-10-03)
 ==================
 

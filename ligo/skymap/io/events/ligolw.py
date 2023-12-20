@@ -20,7 +20,7 @@ from functools import lru_cache
 import itertools
 import logging
 import operator
-import os.path
+import os
 
 from ligo.lw import array, lsctables, param, table
 from ligo.lw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
@@ -55,7 +55,7 @@ def _read_xml(f, fallbackpath=None):
     elif isinstance(f, Element):
         doc = f
         filename = ''
-    elif isinstance(f, str):
+    elif isinstance(f, (str, os.PathLike)):
         try:
             doc = load_filename(f, contenthandler=ContentHandler)
         except IOError as e:

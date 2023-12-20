@@ -1,6 +1,7 @@
 import errno
 import gzip
 import os
+from pathlib import Path
 import re
 import subprocess
 from unittest.mock import patch
@@ -96,6 +97,12 @@ def test_ligolw_document():
         os.path.join(DATA_PATH, '2016_subset.xml.gz'),
         contenthandler=ContentHandler)
     source = events.open(xmldoc, fallbackpath=DATA_PATH)
+    ligolw_assertions(source)
+
+
+def test_ligolw_pathlib():
+    """Test reading file provided with Pathlib instead of string"""
+    source = events.open(Path(DATA_PATH, '2016_subset.xml.gz'))
     ligolw_assertions(source)
 
 

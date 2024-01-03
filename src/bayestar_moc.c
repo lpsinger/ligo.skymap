@@ -24,6 +24,8 @@
 #include <string.h>
 #include <chealpix.h>
 
+#include "branch_prediction.h"
+
 
 int64_t nest2uniq64(uint8_t order, int64_t nest)
 {
@@ -111,6 +113,9 @@ void *moc_rasterize64(
         }
         max_order = uniq2order64(max_uniq);
     }
+    if (UNLIKELY(max_order < 0)) {
+        GSL_ERROR_NULL("invalid UNIQ value", GSL_EINVAL);
+    }
 
     /* Don't handle downsampling here, because we don't know how to do
      * reduction across pixels without more knowledge of the pixel datatype and
@@ -132,6 +137,10 @@ void *moc_rasterize64(
         const void *pixel = (const char *) pixels + i * pixelsize;
         int64_t nest;
         order = uniq2nest64(*(const int64_t *) pixel, &nest);
+        if (UNLIKELY(order < 0)) {
+            free(ret);
+            GSL_ERROR_NULL("invalid UNIQ value", GSL_EINVAL);
+        }
         const size_t reps = (size_t) 1 << 2 * (max_order - order);
         for (size_t j = 0; j < reps; j ++)
             memcpy((char *) ret + (nest * reps + j) * itemsize,

@@ -134,7 +134,9 @@ def rasterize(moc_data, order=None):
         that were in moc_data, with the exception of the UNIQ column.
 
     """
-    if order is None or order < 0:
+    if np.ndim(moc_data) != 1:
+        raise ValueError('expected 1D structured array or Astropy table')
+    elif order is None or order < 0:
         order = -1
     else:
         orig_order, orig_nest = uniq2nest(moc_data['UNIQ'])

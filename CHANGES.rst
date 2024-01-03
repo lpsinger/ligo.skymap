@@ -10,6 +10,8 @@ Changelog
 
 - Added support for ``os.PathLike`` filenames when reading ligolw files.
 
+- Check for more invalid input corner cases in ``ligo.skymap.moc.rasterize``.
+
 1.1.2 (2023-10-03)
 ==================
 

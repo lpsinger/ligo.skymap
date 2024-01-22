@@ -375,7 +375,7 @@ tests/review:
     - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"
     - scp *.whl $REMOTE_HOST:public_html/$CI_PIPELINE_ID
     - |
-      ssh -T $REMOTE_HOST "bash -e" <<EOF
+      ssh -T $REMOTE_HOST "bash -el" <<EOF
       cd public_html/$CI_PIPELINE_ID
       /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/bin/python -m venv env
       source env/bin/activate
@@ -386,7 +386,7 @@ tests/review:
 
     - echo -e "section_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
-      ssh -T $REMOTE_HOST "bash -e" <<EOF
+      ssh -T $REMOTE_HOST "bash -el" <<EOF
       cd public_html/$CI_PIPELINE_ID
       source env/bin/activate
       condor_submit_dag -append accounting_group_user=leo.singer -batch-name pipeline/$CI_PIPELINE_ID htcondor/acceptance-tests.dag

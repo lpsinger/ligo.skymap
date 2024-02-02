@@ -389,7 +389,7 @@ tests/review:
       ssh -T $REMOTE_HOST "bash -e" <<EOF
       cd public_html/$CI_PIPELINE_ID
       source env/bin/activate
-      condor_submit_dag -append accounting_group_user=leo.singer -batch-name pipeline/$CI_PIPELINE_ID htcondor/acceptance-tests.dag
+      condor_submit_dag -include_env LAL_DATA_PATH -append accounting_group_user=leo.singer -batch-name pipeline/$CI_PIPELINE_ID htcondor/acceptance-tests.dag
       tail --follow=descriptor --retry htcondor/acceptance-tests.dag.dagman.out &
       condor_wait htcondor/acceptance-tests.dag.dagman.log
       kill %

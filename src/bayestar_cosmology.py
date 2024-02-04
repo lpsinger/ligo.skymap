@@ -43,7 +43,6 @@ import os
 import astropy.cosmology
 import astropy.units as u
 import numpy as np
-import scipy.misc
 
 from ligo.skymap.postprocess.cosmology import z_for_DL, dVC_dVL_for_DL
 
@@ -65,9 +64,13 @@ def func(x):
     return np.log(dVC_dVL_for_DL(np.exp(x)))
 
 
+def derivative(func, x0, dx=1.0):
+    return 0.5 * dx * (func(x0 + dx) - func(x0 - dx))
+
+
 high_z_x0 = np.log(1e6)
 high_z_y0 = func(high_z_x0)
-high_z_slope = scipy.misc.derivative(func, high_z_x0)
+high_z_slope = derivative(func, high_z_x0)
 high_z_intercept = high_z_y0 - high_z_slope * high_z_x0
 
 filename = os.path.basename(__file__)

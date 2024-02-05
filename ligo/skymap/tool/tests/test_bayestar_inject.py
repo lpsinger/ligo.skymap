@@ -4,8 +4,8 @@ import lal
 import lalsimulation
 import numpy as np
 import pytest
-from scipy.misc import derivative
 
+from ...util.math import derivative
 from ..bayestar_inject import get_decisive_snr, cell_max, GWCosmo
 
 

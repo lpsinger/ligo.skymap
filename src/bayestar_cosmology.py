@@ -45,6 +45,7 @@ import astropy.units as u
 import numpy as np
 
 from ligo.skymap.postprocess.cosmology import z_for_DL, dVC_dVL_for_DL
+from ligo.skymap.util.math import derivative
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -62,10 +63,6 @@ log_dVC_dVL = np.log(dVC_dVL)
 
 def func(x):
     return np.log(dVC_dVL_for_DL(np.exp(x)))
-
-
-def derivative(func, x0, dx=1.0):
-    return 0.5 * dx * (func(x0 + dx) - func(x0 - dx))
 
 
 high_z_x0 = np.log(1e6)

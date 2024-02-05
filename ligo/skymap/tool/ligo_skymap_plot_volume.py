@@ -100,7 +100,7 @@ def main(args=None):
             0.5 * np.pi - chain['dec'], chain['ra']) *
             np.atleast_2d(chain['dist']).T).T)
 
-    fig = plt.figure(frameon=False)
+    fig = plt.figure()
     n = 1 if opts.projection else 2
     gs = gridspec.GridSpec(
         n, n, left=0.01, right=0.99, bottom=0.01, top=0.99,

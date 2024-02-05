@@ -17,6 +17,10 @@ Changelog
   are rarely used, and will be made obsolete by a future release that adds
   inclination posteriors to sky map output.
 
+- Remove ``frameon=False`` in ``ligo-skymap-plot-volume`` so that it respects
+  the (lack of the) ``--transparent`` option. This improves text and label 
+  readability against dark backgrounds when transparent mode is not on.
+
 1.1.2 (2023-10-03)
 ==================
 

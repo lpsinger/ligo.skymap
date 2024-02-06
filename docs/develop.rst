@@ -13,6 +13,7 @@ also need:
 *  `GSL`_ ≥ 1.15
 *  `chealpix`_
    (note: if missing, will be built automatically from `bundled sources`_)
+*  `pkg-config`_
 
 You also need a C compiler with good support for the C11 standard. The
 following compilers are known to work:
@@ -57,6 +58,7 @@ Here is the full list of environment variables.
 
 .. _`GSL`: https://www.gnu.org/software/gsl
 .. _`chealpix`: https://sourceforge.net/projects/healpix/files/Healpix_3.30/
+.. _`pkg-config`: https://www.freedesktop.org/wiki/Software/pkg-config/
 .. _`GCC`: https://gcc.gnu.org
 .. _`Clang`: https://clang.llvm.org
 .. _`Intel C/C++ Compiler`: https://software.intel.com/content/www/us/en/develop/tools/compilers/c-compilers.html

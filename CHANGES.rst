@@ -8,7 +8,8 @@ Changelog
 - Added options to center ``mollweide`` and ``aitoff`` projections. Thanks go
   to Sam Wyatt for this contribution.
 
-- Added support for ``os.PathLike`` filenames when reading ligolw files.
+- Added support for ``os.PathLike`` filenames when reading ligolw files. Thanks
+  go to Thomas Sainrat for this contribution.
 
 - Check for more invalid input corner cases in ``ligo.skymap.moc.rasterize``.
 
@@ -19,7 +20,8 @@ Changelog
 
 - Remove ``frameon=False`` in ``ligo-skymap-plot-volume`` so that it respects
   the (lack of the) ``--transparent`` option. This improves text and label 
-  readability against dark backgrounds when transparent mode is not on.
+  readability against dark backgrounds when transparent mode is not on. Thanks
+  go to Geoffrey Mo for this contribution.
 
 1.1.2 (2023-10-03)
 ==================

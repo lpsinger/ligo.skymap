@@ -227,7 +227,7 @@ intersphinx_mapping.update({
     'gracedb': ('https://gracedb.ligo.org/documentation/', None),
     'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'celery': ('https://docs.celeryq.dev/en/stable/', None),
-    'ligo-lw': ('https://docs.ligo.org/kipp.cannon/python-ligo-lw/', None),
+    'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None)
 })
 

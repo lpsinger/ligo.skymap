@@ -228,7 +228,9 @@ intersphinx_mapping.update({
     'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'celery': ('https://docs.celeryq.dev/en/stable/', None),
     'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
-    'gwpy': ('https://gwpy.github.io/docs/latest/', None)
+    'gwpy': ('https://gwpy.github.io/docs/latest/', None),
+    'pytest': ('https://docs.pytest.org/en/latest/', None),
+    'gsl': ('https://www.gnu.org/software/gsl/doc/html/', None),
 })
 
 # -- Options for mermaid ------------------------------------------------------

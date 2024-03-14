@@ -22,7 +22,7 @@ import logging
 import operator
 import os
 
-from ligo.lw import array, lsctables, param, table
+from ligo.lw import array, lsctables, param
 from ligo.lw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
 from ligo.lw.lsctables import (
     CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
@@ -44,7 +44,6 @@ log = logging.getLogger('BAYESTAR')
 @array.use_in
 @lsctables.use_in
 @param.use_in
-@table.use_in
 class ContentHandler(LIGOLWContentHandler):
     pass
 

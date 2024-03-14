@@ -2,10 +2,22 @@ from astropy import units as u
 import numpy as np
 import pytest
 
-from ..cosmology import cosmo, dVC_dVL_for_DL, dVC_dVL_for_z
+from ..cosmology import cosmo, dVC_dVL_for_DL, dVC_dVL_for_z, dDL_dz_for_z
+from ...util.math import derivative
+
+redshift_range = pytest.mark.parametrize('z', np.logspace(-6, 2))
 
 
-@pytest.mark.parametrize('z', np.logspace(-6, 2))
+@redshift_range
+def test_dDL_dz(z):
+    expected = derivative(
+        cosmo.luminosity_distance, z, dx=0.001 * z
+    ).to_value(u.Mpc)
+    result = dDL_dz_for_z(z).to_value(u.Mpc)
+    assert expected == pytest.approx(result)
+
+
+@redshift_range
 def test_dVC_dVL(z):
     dVC_dz = cosmo.differential_comoving_volume(z)
 

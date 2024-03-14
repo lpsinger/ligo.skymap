@@ -24,6 +24,22 @@ from astropy.cosmology import Planck15 as cosmo, z_at_value
 import astropy.units as u
 
 
+def dDL_dz_for_z(z):
+    """Derivative of luminosity distance with respect to redshift."""
+    Ok0 = cosmo.Ok0
+    DH = cosmo.hubble_distance
+    DC_by_DH = (cosmo.comoving_distance(z) / DH).value
+    if Ok0 == 0.0:
+        ret = 1.0
+    elif Ok0 > 0.0:
+        ret = np.cosh(np.sqrt(Ok0) * DC_by_DH)
+    else:  # Ok0 < 0.0 or Ok0 is nan
+        ret = np.cos(np.sqrt(-Ok0) * DC_by_DH)
+    ret *= (1 + z) * DH * cosmo.inv_efunc(z)
+    ret += cosmo.comoving_transverse_distance(z)
+    return ret
+
+
 def dVC_dVL_for_z(z):
     r"""Ratio, :math:`\mathrm{d}V_C / \mathrm{d}V_L`, between the comoving
     volume element and a naively Euclidean volume element in luminosity

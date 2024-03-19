@@ -107,7 +107,7 @@ number ``N``) until the latest release candidate satisfies all of the tests and
 is verbally approved by the review team. Then we do a stable release. The
 review team indicates its formal assent to the release by approving the
 corresponding ticket in the LSC
-`Software Change Control Board (SCCB) issue tracker`_.
+`Software Change Control Board (SCCB) issue tracker (private link)`_.
 
 .. _`Astropy Testing Guidelines`: https://docs.astropy.org/en/latest/development/testguide.html
 .. _`GitLab Continuous Integration (CI)`: https://docs.gitlab.com/ee/ci/
@@ -124,4 +124,4 @@ corresponding ticket in the LSC
 .. _`scientific review (private wiki link)`: https://git.ligo.org/cbc-review/review/-/wikis/CBC-review-guidelines
 .. _`private wiki`: https://git.ligo.org/lscsoft/ligo.skymap/-/wikis/home
 .. _`Review label`: https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests?label_name%5B%5D=Review
-.. _`Software Change Control Board (SCCB) issue tracker`: https://git.ligo.org/computing/sccb/-/issues
+.. _`Software Change Control Board (SCCB) issue tracker (private link)`: https://git.ligo.org/computing/sccb/-/issues

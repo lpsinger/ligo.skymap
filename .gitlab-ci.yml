@@ -168,6 +168,9 @@ deps-x86_64/python3.10:
 deps-x86_64/python3.11:
   <<: *deps
 
+deps-x86_64/python3.12:
+  <<: *deps
+
 #
 # Generate documentation.
 #
@@ -231,6 +234,13 @@ test/linux/x86_64/python3.11:
   image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11:$CI_COMMIT_REF_SLUG
   needs:
     - deps-x86_64/python3.11
+    - wheel/linux/x86_64
+
+test/linux/x86_64/python3.12:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12:$CI_COMMIT_REF_SLUG
+  needs:
+    - deps-x86_64/python3.12
     - wheel/linux/x86_64
 
 .test/macos: &test-macos

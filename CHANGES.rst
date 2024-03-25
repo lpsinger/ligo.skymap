@@ -28,6 +28,8 @@ Changelog
 
 - Require Numpy >= 1.23.0.
 
+- Add unit tests for Python 3.12.
+
 1.1.2 (2023-10-03)
 ==================
 

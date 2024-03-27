@@ -197,7 +197,11 @@ docs:
   stage: test
   script:
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
+  artifacts:
+    paths:
+      - pytest-mpl-results/
+    when: always
 
 test/linux/aarch64/python3.9:
   <<: *test
@@ -239,8 +243,11 @@ test/linux/x86_64/python3.11:
     - python${PYVERS} -m venv env
     - source env/bin/activate
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
-
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
+  artifacts:
+    paths:
+      - pytest-mpl-results/
+    when: always
 
 test/macos/x86_64:
   <<: *test-macos
@@ -270,7 +277,7 @@ test/dev-deps:
       git+https://github.com/astropy/astropy
       git+https://git.ligo.org/kipp.cannon/python-ligo-lw
       $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --omp-get-num-threads --durations=10"))'
+    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
   needs:
     - wheel/linux/x86_64
   rules:
@@ -315,7 +322,7 @@ test/coverage:
     # pip 21.3 uses an out-of-tree temporary directory.
     - pip install 'pip<21.3'
     - pip install -ve .[test]
-    - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
+    - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
     # Write coverage reports in Cobertura format.
     - gcovr --gcov-ignore-errors no_working_dir_found build/temp*/src -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml

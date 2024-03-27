@@ -23,6 +23,9 @@ Changelog
   readability against dark backgrounds when transparent mode is not on. Thanks
   go to Geoffrey Mo for this contribution.
 
+- Add documentation on the LIGO Scientific Collaboration (LSC) review process
+  to the Testing section of the manual.
+
 1.1.2 (2023-10-03)
 ==================
 

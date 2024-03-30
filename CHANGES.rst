@@ -26,6 +26,8 @@ Changelog
 - Add documentation on the LIGO Scientific Collaboration (LSC) review process
   to the Testing section of the manual.
 
+- Require Numpy >= 1.23.0.
+
 1.1.2 (2023-10-03)
 ==================
 

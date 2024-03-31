@@ -5,12 +5,17 @@ Installation
 
 .. important:: The `ligo.skymap` package requires `Python`_ 3.9 or later.
 
-On Linux or macOS x86_64 systems, we recommend installing `ligo.skymap` using
-`pip`_ or `conda`_, either of which will automatically install all of the
-additional :ref:`Python dependencies <python-dependencies>`.
+On the Linux or macOS operating systems and on x86_64 or aarch64/arm64 systems,
+we recommend installing `ligo.skymap` using `pip`_ or `conda`_, either of which
+will automatically install all of the additional
+:ref:`Python dependencies <python-dependencies>`.
 
-(On other operating systems and architectures, you can :doc:`install from
-source <../develop>`.)
+On other operating systems and architectures, you can :doc:`install from
+source <../develop>`.
+
+ligo.skymap does not support Windows. If you need to install ligo.skymap on
+Windows, we suggest using a Linux virtual machine such as
+`Windows Subsystem for Linux (WSL)`_.
 
 Option 1: pip
 -------------
@@ -52,6 +57,7 @@ You are now ready to get started using `ligo.skymap`.
 .. _`pip`: https://pip.pypa.io
 .. _`Python package index`: https://pypi.org/project/ligo.skymap/
 .. _`conda`: https://conda.io
+.. _`Windows Subsystem for Linux (WSL)`: https://learn.microsoft.com/en-us/windows/wsl/
 .. _`conda-forge`: https://conda-forge.org
 
 .. _python-dependencies:

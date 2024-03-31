@@ -1,4 +1,5 @@
 from itertools import chain, combinations, product
+import platform
 
 from astropy.coordinates import CartesianRepresentation, SkyCoord
 import astropy_healpix as ah
@@ -11,6 +12,12 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pytest  # noqa: E402
 
 from ..marker import reticle  # noqa: E402
+
+skip_if_macos = pytest.mark.skipif(
+    platform.system() == 'Darwin', reason='Tick labels vary on macOS')
+skip_if_macos_arm64 = pytest.mark.skipif(
+    platform.system() == 'Darwin' and platform.machine() == 'arm64',
+    reason='Tick labels vary on macOS arm64')
 
 
 def pp_plot():
@@ -68,7 +75,10 @@ def test_pp_plot_default(rcparams):
 
 @pytest.mark.parametrize('proj', ['aitoff', 'mollweide'])
 @pytest.mark.parametrize('units', ['degrees', 'hours'])
-@pytest.mark.parametrize('coordsys', ['astro', 'geo', 'galactic'])
+@pytest.mark.parametrize('coordsys', [
+    'astro',
+    pytest.param('geo', marks=skip_if_macos_arm64),
+    pytest.param('galactic', marks=skip_if_macos_arm64)])
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_allsky_axes(rcparams, coordsys, units, proj):
     """Test projection of a HEALPix image onto allsky axes, either
@@ -101,7 +111,7 @@ def test_allsky_obstime(rcparams):
     return fig
 
 
-@pytest.mark.skip('Flaky test, tick label positions vary by operating system')
+@skip_if_macos
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_globe_axes(rcparams):
     fig = plt.figure(figsize=(4, 4))

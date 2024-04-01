@@ -13,8 +13,6 @@ import pytest  # noqa: E402
 
 from ..marker import reticle  # noqa: E402
 
-skip_if_macos = pytest.mark.skipif(
-    platform.system() == 'Darwin', reason='Tick labels vary on macOS')
 skip_if_macos_arm64 = pytest.mark.skipif(
     platform.system() == 'Darwin' and platform.machine() == 'arm64',
     reason='Tick labels vary on macOS arm64')
@@ -111,7 +109,9 @@ def test_allsky_obstime(rcparams):
     return fig
 
 
-@skip_if_macos
+@pytest.mark.skipif(
+    not (platform.system() == 'Linux' and platform.machine == 'x86_64'),
+    reason='Tick label positions vary on different operating systems')
 @pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
 def test_globe_axes(rcparams):
     fig = plt.figure(figsize=(4, 4))

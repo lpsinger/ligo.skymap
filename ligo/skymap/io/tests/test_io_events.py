@@ -79,8 +79,8 @@ def test_ligolw():
     source = events.open(os.path.join(DATA_PATH, '2016_subset.xml.gz'))
     ligolw_assertions(source)
 
-    assert str(source) == '<LigoLWEventSource({...250 items...})>'
-    assert repr(source).startswith('LigoLWEventSource([(288172, <LigoLWEvent(')
+    assert str(source).startswith('<LigoLWEventSource({288172: <LigoLWEvent(')
+    assert repr(source).startswith('LigoLWEventSource({288172: <LigoLWEvent(')
     event, *_ = source.values()
     assert str(event).startswith(
         "<LigoLWEvent(singles=(<LigoLWSingleEvent(detector='H1', snr=12.")

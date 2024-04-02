@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020  Leo Singer
+# Copyright (C) 2017-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Read events from pipedown/GstLal-style XML output."""
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 import errno
 from functools import lru_cache
 import itertools
@@ -74,7 +74,7 @@ def _read_xml(f, fallbackpath=None):
     return doc, filename
 
 
-class LigoLWEventSource(OrderedDict, EventSource):
+class LigoLWEventSource(dict, EventSource):
     """Read events from LIGO-LW XML files.
 
     Parameters
@@ -107,6 +107,14 @@ class LigoLWEventSource(OrderedDict, EventSource):
             os.path.dirname(filename) if filename else fallbackpath)
         self._psds_for_file = lru_cache(maxsize=None)(self._psds_for_file)
         super().__init__(self._make_events(doc, psd_file, coinc_def))
+
+    def __str__(self):
+        contents = repr(self)
+        return '<{}>'.format(contents)
+
+    def __repr__(self):
+        contents = super().__repr__()
+        return '{}({})'.format(self.__class__.__name__, contents)
 
     _template_keys = '''mass1 mass2
                         spin1x spin1y spin1z spin2x spin2y spin2z

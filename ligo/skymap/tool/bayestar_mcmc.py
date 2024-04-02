@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2023  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ def main(args=None):
     from astropy.table import Table
     import numpy as np
     import os
-    from collections import OrderedDict
     import subprocess
     import sys
 
@@ -128,8 +127,7 @@ def main(args=None):
         sys.exit(proc.returncode)
 
     if opts.coinc_event_id:
-        event_source = OrderedDict(
-            (key, event_source[key]) for key in opts.coinc_event_id)
+        event_source = {key: event_source[key] for key in opts.coinc_event_id}
 
     # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
     for int_coinc_event_id, event in event_source.items():

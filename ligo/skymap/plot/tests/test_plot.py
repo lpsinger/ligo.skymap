@@ -11,6 +11,7 @@ import healpy as hp  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import pytest  # noqa: E402
 
+from ..bayes_factor import plot_bayes_factor  # noqa: E402
 from ..marker import reticle  # noqa: E402
 
 skip_if_macos_arm64 = pytest.mark.skipif(
@@ -178,4 +179,10 @@ def test_center_projections(rcparams, proj, cent):
     ax = fig.add_axes(111, projection=f'astro {proj}',
                       center=cent)
     ax.grid()
+    return fig
+
+
+@pytest.mark.mpl_image_compare(tolerance=1.5)
+def test_plot_bayes_factor():
+    fig, ax = plot_bayes_factor(6.3, title='BAYESTAR is awesome')
     return fig

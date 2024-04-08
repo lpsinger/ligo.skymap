@@ -338,8 +338,10 @@ test/coverage:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Install without build isolation so that we don't delete the .gcno files.
     # See https://gcc.gnu.org/onlinedocs/gcc/Gcov-Data-Files.html.
-    - pip install 'setuptools>=64' 'setuptools_scm>=8' extension-helpers
+    - pip install 'setuptools>=64' 'setuptools_scm>=8' extension-helpers 'numpy>=2.0.0rc1'
     - pip install --no-deps --no-build-isolation -ve .
+    - pip uninstall -y 'setuptools_scm>=8' extension-helpers 'numpy>=2.0.0rc1'
+    - pip install 'numpy<2.0.0'
     # Run tests.
     - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
     # Write coverage reports in Cobertura format.

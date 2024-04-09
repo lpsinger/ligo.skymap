@@ -160,7 +160,9 @@ deps-aarch64/python3.9:
   <<: *deps
   tags:
     - aarch64
-    - executor-docker
+    # FIXME: Uncomment after the following issue is fixed.
+    # https://git.ligo.org/computing/helpdesk/-/issues/5775
+    # - executor-docker
 
 deps-x86_64/python3.9:
   <<: *deps

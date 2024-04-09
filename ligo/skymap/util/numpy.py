@@ -16,17 +16,28 @@
 #
 import functools
 import numpy as np
+from numpy.core.umath import _add_newdoc_ufunc
 
 __all__ = ('add_newdoc_ufunc', 'require_contiguous_aligned')
 
 
 def add_newdoc_ufunc(func, doc):  # pragma: no cover
-    """The function `np.lib.add_newdoc_ufunc` can only change a ufunc's
-    docstring if it is `NULL`. This workaround avoids an exception when the
-    user tries to `reload()` this module.
+    """Set the docstring for a Numpy ufunc.
+
+    The function :func:`numpy.core.umath._add_newdoc_ufunc` can only change a
+    ufunc's docstring if it is `NULL`. This workaround avoids an exception when
+    the user tries to `reload()` this module.
+
+    Notes
+    -----
+    :func:`numpy.core.umath._add_newdoc_ufunc` is not part of Numpy's public
+    API, but according to upstream developers it is unlikely to go away any
+    time soon.
+
+    See https://github.com/numpy/numpy/issues/26233.
     """
     try:
-        np.lib.add_newdoc_ufunc(func, doc)
+        _add_newdoc_ufunc(func, doc)
     except ValueError as e:
         msg = 'Cannot change docstring of ufunc with non-NULL docstring'
         if e.args[0] == msg:

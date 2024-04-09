@@ -153,11 +153,14 @@ wheel/macos/arm64:
     - docker push $IMAGE_TAG
   needs:
     - requirements
+  tags:
+    - executor-docker
 
 deps-aarch64/python3.9:
   <<: *deps
   tags:
     - aarch64
+    - executor-docker
 
 deps-x86_64/python3.9:
   <<: *deps

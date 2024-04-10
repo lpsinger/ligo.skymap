@@ -170,10 +170,14 @@ deps-x86_64/python3.9:
 deps-x86_64/python3.10:
   <<: *deps
 
-deps-x86_64/python3.11:
+# FIXME: Temporarily pin Python patch version due to bug affecting doctests.
+# See https://github.com/python/cpython/issues/117692.
+deps-x86_64/python3.11.8:
   <<: *deps
 
-deps-x86_64/python3.12:
+# FIXME: Temporarily pin Python patch version due to bug affecting doctests.
+# See https://github.com/python/cpython/issues/117692.
+deps-x86_64/python3.12.2:
   <<: *deps
 
 #
@@ -234,18 +238,18 @@ test/linux/x86_64/python3.10:
     - deps-x86_64/python3.10
     - wheel/linux/x86_64
 
-test/linux/x86_64/python3.11:
+test/linux/x86_64/python3.11.8:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11.8:$CI_COMMIT_REF_SLUG
   needs:
-    - deps-x86_64/python3.11
+    - deps-x86_64/python3.11.8
     - wheel/linux/x86_64
 
-test/linux/x86_64/python3.12:
+test/linux/x86_64/python3.12.2:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12.2:$CI_COMMIT_REF_SLUG
   needs:
-    - deps-x86_64/python3.12
+    - deps-x86_64/python3.12.2
     - wheel/linux/x86_64
 
 .test/macos: &test-macos

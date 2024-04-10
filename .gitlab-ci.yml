@@ -145,7 +145,8 @@ wheel/macos/arm64:
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage tox 'pip>=24'
+      # FIXME: Install h5py<3.11.0 on aarch64 because h5py has not released aarch64 wheels for 3.11.0.
+      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage tox 'pip>=24' 'h5py<3.11.0;platform_machine=="aarch64"'
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF

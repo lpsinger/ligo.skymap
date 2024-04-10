@@ -338,7 +338,7 @@ test/coverage:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     # Install without build isolation so that we don't delete the .gcno files.
     # See https://gcc.gnu.org/onlinedocs/gcc/Gcov-Data-Files.html.
-    - pip install setuptools setuptools-scm extension-helpers
+    - pip install 'setuptools>=64' 'setuptools_scm>=8' extension-helpers
     - pip install --no-deps --no-build-isolation -ve .
     # Run tests.
     - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true

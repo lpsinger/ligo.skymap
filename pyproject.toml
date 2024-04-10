@@ -1,7 +1,7 @@
 [build-system]
 
-requires = ["setuptools>=42.0.0",
-            "setuptools_scm",
+requires = ["setuptools>=64",
+            "setuptools_scm>=8",
             "extension-helpers",
             "numpy>=1.25,<2"]
 

@@ -145,7 +145,7 @@ wheel/macos/arm64:
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage tox
+      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage tox 'pip>=24'
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF
@@ -336,16 +336,14 @@ test/coverage:
   <<: *in-tmpdir
   script:
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    # Install without build isolation so that we don't delete the .gcno files.
-    # See https://gcc.gnu.org/onlinedocs/gcc/Gcov-Data-Files.html.
-    - pip install 'setuptools>=64' 'setuptools_scm>=8' extension-helpers 'numpy>=2.0.0rc1'
-    - pip install --no-deps --no-build-isolation -ve .
-    - pip uninstall -y 'setuptools_scm>=8' extension-helpers 'numpy>=2.0.0rc1'
-    - pip install 'numpy<2.0.0'
+    # Build and install package with pip, but save the intermediate files which
+    # include gcov's .gcno data files.
+    - mkdir obj
+    - pip install --no-deps -C--global-option=build_ext -C--global-option=--build-temp=$(pwd)/obj -ve .
     # Run tests.
     - pytest --capture=sys --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --durations=10 --cov ligo/skymap --junit-xml=${CI_PROJECT_DIR}/junit.xml || FAILED=true
     # Write coverage reports in Cobertura format.
-    - gcovr --gcov-ignore-errors no_working_dir_found build/temp*/src -r . -x -o c-coverage.xml
+    - gcovr --gcov-ignore-errors no_working_dir_found obj -r . -x -o c-coverage.xml
     - coverage xml -o py-coverage.xml
     # Merge coverage reports.
     - ${CI_PROJECT_DIR}/.gitlab/combine-coverage.py py-coverage.xml c-coverage.xml coverage.xml

@@ -60,7 +60,6 @@ log = logging.getLogger('BAYESTAR')
 
 _RESCALE_LOGLIKELIHOOD = 0.83
 
-antenna_factor = require_contiguous_aligned(antenna_factor)
 signal_amplitude_model = require_contiguous_aligned(signal_amplitude_model)
 _log_posterior_toa_phoa_snr = require_contiguous_aligned(
     _log_posterior_toa_phoa_snr)

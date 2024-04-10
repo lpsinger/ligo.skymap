@@ -69,7 +69,6 @@ pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
 
 """)
-conditional_pdf = require_contiguous_aligned(conditional_pdf)
 
 
 add_newdoc_ufunc(conditional_cdf, """\
@@ -108,7 +107,6 @@ Test against numerical integral of pdf.
 >>> np.testing.assert_almost_equal(result, expected)
 
 """)
-conditional_cdf = require_contiguous_aligned(conditional_cdf)
 
 
 add_newdoc_ufunc(conditional_ppf, """\
@@ -145,7 +143,6 @@ Test against numerical estimate.
 >>> np.testing.assert_almost_equal(r16, expected_r16)
 
 """)
-conditional_ppf = require_contiguous_aligned(conditional_ppf)
 
 
 add_newdoc_ufunc(moments_to_parameters, """\
@@ -170,7 +167,6 @@ distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
 
 """)
-moments_to_parameters = require_contiguous_aligned(moments_to_parameters)
 
 
 add_newdoc_ufunc(parameters_to_moments, """\
@@ -234,7 +230,6 @@ Check some more arbitrary values using numerical quadrature:
 ...     np.testing.assert_approx_equal(norm, expected_norm, 5)
 
 """)
-parameters_to_moments = require_contiguous_aligned(parameters_to_moments)
 
 
 add_newdoc_ufunc(volume_render, """\

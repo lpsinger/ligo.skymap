@@ -18,6 +18,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <assert.h>
 #include <limits.h>
 #include <stddef.h>
 #include <chealpix.h>
@@ -106,8 +107,8 @@ static void conditional_pdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_pdf(
@@ -134,8 +135,8 @@ static void conditional_cdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_cdf(
@@ -162,8 +163,8 @@ static void conditional_ppf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[4][i * steps[4]] = bayestar_distance_conditional_ppf(
@@ -190,8 +191,8 @@ static void moments_to_parameters_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         bayestar_distance_moments_to_parameters(
@@ -219,8 +220,8 @@ static void parameters_to_moments_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         bayestar_distance_parameters_to_moments(
@@ -242,6 +243,18 @@ static void volume_render_loop(
     const npy_intp *steps,
     void *NPY_UNUSED(data)
 ) {
+    /* Check core dimensions. */
+    assert(dimensions[1] == 3);
+    /* The arguments with core dimensions must be C contiguous.
+     * This is enforced in Python by the require_contiguous_aligned wrapper.
+     * This ufunc loop must NOT be called without that wrapper. */
+    assert(steps[12] == sizeof(double) * 3);
+    assert(steps[13] == sizeof(double));
+    assert(steps[14] == sizeof(double));
+    assert(steps[15] == sizeof(double));
+    assert(steps[16] == sizeof(double));
+    assert(steps[17] == sizeof(double));
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
     const long long nside = npix2nside64(dimensions[2]);
@@ -252,8 +265,8 @@ static void volume_render_loop(
     {
         if (OMP_WAS_INTERRUPTED)
             OMP_EXIT_LOOP_EARLY
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[11][i * steps[11]] = bayestar_volume_render(
@@ -283,12 +296,13 @@ static void marginal_pdf_loop(
     const npy_intp *steps,
     void *NPY_UNUSED(data)
 ) {
-    /* Assert that array arguments are stored contiguously */
-    if (steps[6] != sizeof(double))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
-        return;
-    }
+    /* The arguments with core dimensions must be C contiguous.
+     * This is enforced in Python by the require_contiguous_aligned wrapper.
+     * This ufunc loop must NOT be called without that wrapper. */
+    assert(steps[6] == sizeof(double));
+    assert(steps[7] == sizeof(double));
+    assert(steps[8] == sizeof(double));
+    assert(steps[9] == sizeof(double));
 
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
@@ -297,8 +311,8 @@ static void marginal_pdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
@@ -321,12 +335,13 @@ static void marginal_cdf_loop(
     const npy_intp *steps,
     void *NPY_UNUSED(data)
 ) {
-    /* Assert that array arguments are stored contiguously */
-    if (steps[6] != sizeof(double))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
-        return;
-    }
+    /* The arguments with core dimensions must be C contiguous.
+     * This is enforced in Python by the require_contiguous_aligned wrapper.
+     * This ufunc loop must NOT be called without that wrapper. */
+    assert(steps[6] == sizeof(double));
+    assert(steps[7] == sizeof(double));
+    assert(steps[8] == sizeof(double));
+    assert(steps[9] == sizeof(double));
 
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
@@ -335,8 +350,8 @@ static void marginal_cdf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
@@ -359,12 +374,13 @@ static void marginal_ppf_loop(
     const npy_intp *steps,
     void *NPY_UNUSED(data)
 ) {
-    /* Assert that array arguments are stored contiguously */
-    if (steps[6] != sizeof(double))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Invalid dimension");
-        return;
-    }
+    /* The arguments with core dimensions must be C contiguous.
+     * This is enforced in Python by the require_contiguous_aligned wrapper.
+     * This ufunc loop must NOT be called without that wrapper. */
+    assert(steps[6] == sizeof(double));
+    assert(steps[7] == sizeof(double));
+    assert(steps[8] == sizeof(double));
+    assert(steps[9] == sizeof(double));
 
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
@@ -373,8 +389,8 @@ static void marginal_ppf_loop(
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *) &args[5][i * steps[5]] =
@@ -543,8 +559,8 @@ static void nest2uniq_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(int64_t *) &args[2][i * steps[2]] = nest2uniq64(
@@ -562,8 +578,8 @@ static void uniq2nest_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(int8_t *)  &args[1][i * steps[1]] = uniq2nest64(
@@ -581,8 +597,8 @@ static void uniq2order_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(int8_t *)  &args[1][i * steps[1]] = uniq2order64(
@@ -599,8 +615,8 @@ static void uniq2pixarea_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *)  &args[1][i * steps[1]] = uniq2pixarea64(
@@ -617,8 +633,8 @@ static void uniq2ang_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         uniq2ang64(
@@ -887,6 +903,19 @@ static void log_posterior_toa_phoa_snr_loop(
                nifos = dimensions[1],
             nsamples = dimensions[2];
 
+    /* Check core dimensions. */
+    assert(dimensions[3] == 2);
+    assert(dimensions[4] == 3);
+    /* The arguments with core dimensions must be C contiguous.
+     * This is enforced in Python by the require_contiguous_aligned wrapper.
+     * This ufunc loop must NOT be called without that wrapper. */
+    assert(steps[19] == sizeof(double));
+    assert(steps[21] == sizeof(float) * 2);
+    assert(steps[22] == sizeof(float));
+    assert(steps[24] == sizeof(float) * 3);
+    assert(steps[25] == sizeof(float));
+    assert(steps[27] == sizeof(double));
+
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
 
     #pragma omp parallel for
@@ -906,8 +935,8 @@ static void log_posterior_toa_phoa_snr_loop(
                 &args[15][i * steps[15] + j * steps[26]];
         }
 
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(double *)   &args[18][i * steps[18]] = bayestar_log_posterior_toa_phoa_snr(
@@ -938,14 +967,17 @@ static void log_posterior_toa_phoa_snr_loop(
 static void antenna_factor_loop(
     char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
+    /* Check core dimensions. */
+    assert(dimensions[1] == 3);
+
     const npy_intp n = dimensions[0];
 
     for (npy_intp i = 0; i < n; i ++)
     {
         float response[3][3];
 
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         for (int j = 0; j < 3; j ++)
@@ -970,8 +1002,8 @@ static void signal_amplitude_model_loop(
 
     for (npy_intp i = 0; i < n; i ++)
     {
-        /* Alignment of the ufunc arguments is enforced in Python by the
-         * require_contiguous_aligned wrapper function. */
+        /* Alignment of the ufunc arguments is enforced by the ufunc API. See
+         * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
         *(float complex *) &args[4][i * steps[4]] =

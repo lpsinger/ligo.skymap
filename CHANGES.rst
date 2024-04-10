@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.0.0rc3 (2024-03-31)
+2.0.0rc4 (2024-04-10)
 =====================
 
 - Added options to center ``mollweide`` and ``aitoff`` projections. Thanks go
@@ -26,7 +26,7 @@ Changelog
 - Add documentation on the LIGO Scientific Collaboration (LSC) review process
   to the Testing section of the manual.
 
-- Require Numpy >= 1.23.0.
+- Require Numpy >= 1.23.0. Rebuild for binary compatibility with Numpy 2.0.0.
 
 - Add unit tests for Python 3.12.
 

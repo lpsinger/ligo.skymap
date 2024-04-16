@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.0.0rc4 (2024-04-10)
-=====================
+2.0.0 (2024-04-15)
+==================
 
 - Added options to center ``mollweide`` and ``aitoff`` projections. Thanks go
   to Sam Wyatt for this contribution.

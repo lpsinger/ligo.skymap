@@ -3,8 +3,8 @@ ligo.skymap
 ###########
 
 The `ligo.skymap` package provides tools for reading, writing, generating, and
-visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
-the key features of this package are:
+visualizing gravitational-wave probability maps from LIGO, Virgo, and KAGRA.
+Some of the key features of this package are:
 
 *  `Command line tool bayestar-localize-coincs`_ and
    `bayestar-localize-lvalert`_: BAYESTAR, providing rapid, coherent, Bayesian,

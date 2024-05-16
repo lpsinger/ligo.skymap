@@ -90,12 +90,9 @@ void uniq2ang64(int64_t uniq, double *theta, double *phi)
 
 
 void *moc_rasterize64(
-    const void *pixels, size_t offset, size_t itemsize, size_t len,
-    size_t *npix, int8_t order)
+    const void *pixels, size_t offset, size_t in_stride, size_t out_stride,
+    size_t len, size_t *npix, int8_t order)
 {
-    /* Calculate pixel size. */
-    const size_t pixelsize = offset + itemsize;
-
     /* If the parameter order >= 0, then rasterize at that order.
      * Otherwise, find maximum order. Note: normally MOC datasets are stored in
      * order of ascending MOC index, so the last pixel should have the highest
@@ -106,7 +103,7 @@ void *moc_rasterize64(
         int64_t max_uniq = 0;
         for (size_t i = 0; i < len; i ++)
         {
-            const void *pixel = (const char *) pixels + i * pixelsize;
+            const void *pixel = (const char *) pixels + i * in_stride;
             const int64_t uniq = *(const int64_t *) pixel;
             if (uniq > max_uniq)
                 max_uniq = uniq;
@@ -127,14 +124,14 @@ void *moc_rasterize64(
 
     /* Allocate output. */
     *npix = 12 * ((size_t) 1 << 2 * max_order);
-    void *ret = calloc(*npix, itemsize);
+    void *ret = calloc(*npix, out_stride);
     if (!ret)
         GSL_ERROR_NULL("not enough memory to allocate image", GSL_ENOMEM);
 
     /* Paint pixels into output. */
     for (size_t i = 0; i < len; i ++)
     {
-        const void *pixel = (const char *) pixels + i * pixelsize;
+        const void *pixel = (const char *) pixels + i * in_stride;
         int64_t nest;
         order = uniq2nest64(*(const int64_t *) pixel, &nest);
         if (UNLIKELY(order < 0)) {
@@ -143,8 +140,8 @@ void *moc_rasterize64(
         }
         const size_t reps = (size_t) 1 << 2 * (max_order - order);
         for (size_t j = 0; j < reps; j ++)
-            memcpy((char *) ret + (nest * reps + j) * itemsize,
-                (const char *) pixel + offset, itemsize);
+            memcpy((char *) ret + (nest * reps + j) * out_stride,
+                (const char *) pixel + offset, out_stride);
     }
 
     return ret;

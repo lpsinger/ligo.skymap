@@ -42,7 +42,7 @@ int8_t uniq2nest64(int64_t uniq, int64_t *nest);
 void uniq2ang64(int64_t uniq, double *theta, double *phi);
 
 __attribute__ ((malloc))
-void *moc_rasterize64(const void *pixels, size_t offset, size_t itemsize, size_t len, size_t *npix, int8_t order);
+void *moc_rasterize64(const void *pixels, size_t offset, size_t in_stride, size_t out_stride, size_t len, size_t *npix, int8_t order);
 
 #endif /* __cplusplus */
 

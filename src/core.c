@@ -484,7 +484,6 @@ static PyObject *rasterize(
 
     const void *pixels = PyArray_DATA(arr);
     const size_t offset = PyDataType_ELSIZE(uniq_dtype);
-    const size_t itemsize = PyArray_ITEMSIZE(arr) - offset;
     const size_t len = PyArray_SIZE(arr);
     size_t npix;
 
@@ -510,9 +509,15 @@ static PyObject *rasterize(
             goto done;
     }
 
+    PyArray_Descr *descr;
+    if (PyArray_DescrAlignConverter(new_fields, &descr) != NPY_SUCCEED)
+        goto done;
+
     void *out;
     Py_BEGIN_ALLOW_THREADS
-    out = moc_rasterize64(pixels, offset, itemsize, len, &npix, order);
+    out = moc_rasterize64(
+        pixels, offset, PyArray_ITEMSIZE(arr), PyDataType_ELSIZE(descr),
+        len, &npix, order);
     Py_END_ALLOW_THREADS
     if (!out)
     {
@@ -523,10 +528,6 @@ static PyObject *rasterize(
     /* Prepare output object */
     capsule = PyCapsule_New(out, NULL, capsule_free);
     if (!capsule)
-        goto done;
-
-    PyArray_Descr *descr;
-    if (PyArray_DescrConverter(new_fields, &descr) != NPY_SUCCEED)
         goto done;
 
     npy_intp dims[] = {npix};

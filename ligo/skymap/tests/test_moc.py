@@ -41,7 +41,8 @@ def test_uniq2ang_invalid(uniq):
     assert np.isnan(phi)
 
 
-def input_skymap(order1, d_order, fraction):
+def input_skymap(order1, d_order, fraction,
+                 dtype=np.float64, extra_fields=True):
     """Construct a test multi-resolution sky map, with values that are
     proportional to the NESTED pixel index.
 
@@ -56,7 +57,11 @@ def input_skymap(order1, d_order, fraction):
         The increase in orer for part of the sky map.
     fraction : float
         The fraction of the original pixels to refine.
-
+    dtype : numpy.dtype
+        Numpy dtype for the data fields.
+    extra_fields : boolean
+        Add extra fields whose values are not tested, in order to check
+        that we get correct results regardless of strut packing in memory.
     """
     order2 = order1 + d_order
     npix1 = ah.nside_to_npix(ah.level_to_nside(order1))
@@ -64,17 +69,22 @@ def input_skymap(order1, d_order, fraction):
     ipix1 = np.arange(npix1)
     ipix2 = np.arange(npix2)
 
-    data1 = table.Table({
+    fields = {
         'UNIQ': moc.nest2uniq(order1, ipix1),
-        'VALUE': ipix1.astype(float),
-        'VALUE2': np.pi * ipix1.astype(float)
-    })
+        'VALUE': ipix1.astype(dtype),
+    }
+    if extra_fields:
+        fields['VALUE2'] = np.pi * ipix1.astype(dtype)
+    data1 = table.Table(fields)
 
-    data2 = table.Table({
+    fields = {
         'UNIQ': moc.nest2uniq(order2, ipix2),
-        'VALUE': np.repeat(ipix1, npix2 // npix1).astype(float),
-        'VALUE2': np.pi * np.repeat(ipix1, npix2 // npix1).astype(float)
-    })
+        'VALUE': np.repeat(ipix1, npix2 // npix1).astype(dtype),
+    }
+    if extra_fields:
+        fields['VALUE2'] = np.pi * np.repeat(
+            ipix1, npix2 // npix1).astype(dtype)
+    data2 = table.Table(fields)
 
     n = int(npix1 * (1 - fraction))
     return table.vstack((data1[:n], data2[n * npix2 // npix1:]))
@@ -95,15 +105,20 @@ def test_rasterize_oom():
 @pytest.mark.parametrize('d_order_in', range(3))
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
 @pytest.mark.parametrize('order_out', range(6))
-def test_rasterize_downsample(order_in, d_order_in, fraction_in, order_out):
+@pytest.mark.parametrize('dtype', [np.float32, np.float64])
+@pytest.mark.parametrize('extra_fields', [False, True])
+def test_rasterize_downsample(order_in, d_order_in, fraction_in, order_out,
+                              dtype, extra_fields):
     npix_in = ah.nside_to_npix(ah.level_to_nside(order_in))
     npix_out = ah.nside_to_npix(ah.level_to_nside(order_out))
-    skymap_in = input_skymap(order_in, d_order_in, fraction_in)
+    skymap_in = input_skymap(order_in, d_order_in, fraction_in, dtype,
+                             extra_fields)
     skymap_out = moc.rasterize(skymap_in, order_out)
 
     assert len(skymap_out) == npix_out
     reps = npix_in // npix_out
-    expected = np.mean(np.arange(npix_in).reshape(-1, reps), axis=1)
+    expected = np.mean(
+        np.arange(npix_in).reshape(-1, reps), axis=1).astype(dtype)
     np.testing.assert_array_equal(skymap_out['VALUE'], expected)
 
 
@@ -111,14 +126,18 @@ def test_rasterize_downsample(order_in, d_order_in, fraction_in, order_out):
 @pytest.mark.parametrize('d_order_in', range(3))
 @pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
 @pytest.mark.parametrize('order_out', range(3, 9))
-def test_rasterize_upsample(order_in, d_order_in, fraction_in, order_out):
+@pytest.mark.parametrize('dtype', [np.float32, np.float64])
+@pytest.mark.parametrize('extra_fields', [False, True])
+def test_rasterize_upsample(order_in, d_order_in, fraction_in, order_out,
+                            dtype, extra_fields):
     npix_in = ah.nside_to_npix(ah.level_to_nside(order_in))
     npix_out = ah.nside_to_npix(ah.level_to_nside(order_out))
-    skymap_in = input_skymap(order_in, d_order_in, fraction_in)
+    skymap_in = input_skymap(order_in, d_order_in, fraction_in, dtype,
+                             extra_fields)
     skymap_out = moc.rasterize(skymap_in, order_out)
 
     assert len(skymap_out) == npix_out
-    ipix = np.arange(npix_in)
+    ipix = np.arange(npix_in, dtype=dtype)
     reps = npix_out // npix_in
     for i in range(reps):
         np.testing.assert_array_equal(skymap_out['VALUE'][i::reps], ipix)

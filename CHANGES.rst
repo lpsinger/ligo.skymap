@@ -8,6 +8,11 @@ Changelog
 - Drop support for Python 3.9 because Astropy 6.1.0 dropped Python 3.9 in
   accordance with the Numpy version support policy.
 
+- Fix a memory alignment bug that caused ``ligo.skymap.moc.rasterize``
+  and ``ligo-skymap-flatten`` to produce incorrect results for multiresolution
+  sky maps that have an odd number of 32-bit columns. This impacted Swift BAT
+  GUANO localizations which have a single 32-bit PROBDENSITY column.
+
 2.0.0 (2024-04-15)
 ==================
 

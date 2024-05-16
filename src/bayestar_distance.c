@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017  Leo Singer
+ * Copyright (C) 2015-2024  Leo Singer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <gsl/gsl_sf_exp.h>
 #include <gsl/gsl_cdf.h>
 #include <gsl/gsl_statistics.h>
+#include <stdio.h>
 
 #include <chealpix.h>
 
@@ -33,12 +34,24 @@
 double bayestar_distance_conditional_pdf(
     double r, double mu, double sigma, double norm)
 {
-    if (!isfinite(mu))
+    if (!isfinite(mu) || r <= 0)
         return 0;
 
     const double x = -0.5 * gsl_pow_2((r - mu) / sigma);
     const double y = norm * gsl_pow_2(r) / (sqrt(2 * M_PI) * sigma);
     return gsl_sf_exp_mult(x, y);
+}
+
+
+/* Workaround for https://savannah.gnu.org/bugs/index.php?65760.
+ * I find that on x86_64 and aarch64, gsl_sf_log_erfc(1e52) == GSL_NEGINF,
+ * while gsl_sf_log_erfc(1e62) is NaN. */
+static double log_erfc(double x) {
+    if (x > 1e52) {
+        return GSL_NEGINF;
+    } else {
+        return gsl_sf_log_erfc(x);
+    }
 }
 
 
@@ -48,12 +61,12 @@ static double ugaussian_integral(double x1, double x2)
     {
         return gsl_cdf_ugaussian_P(x2) - gsl_cdf_ugaussian_P(x1);
     } else if (x1 > 0) {
-        const double logerfc1 = gsl_sf_log_erfc(x1 * M_SQRT1_2);
-        const double logerfc2 = gsl_sf_log_erfc(x2 * M_SQRT1_2);
+        const double logerfc1 = log_erfc(x1 * M_SQRT1_2);
+        const double logerfc2 = log_erfc(x2 * M_SQRT1_2);
         return 0.5 * (exp(logerfc1) - exp(logerfc2));
     } else {
-        const double logerfc1 = gsl_sf_log_erfc(-x1 * M_SQRT1_2);
-        const double logerfc2 = gsl_sf_log_erfc(-x2 * M_SQRT1_2);
+        const double logerfc1 = log_erfc(-x1 * M_SQRT1_2);
+        const double logerfc2 = log_erfc(-x2 * M_SQRT1_2);
         return 0.5 * (exp(logerfc2) - exp(logerfc1));
     }
 }
@@ -62,7 +75,7 @@ static double ugaussian_integral(double x1, double x2)
 double bayestar_distance_conditional_cdf(
     double r, double mu, double sigma, double norm)
 {
-    if (!isfinite(mu))
+    if (!isfinite(mu) || r <= 0)
         return 0;
 
     const double mu2 = gsl_pow_2(mu);
@@ -73,7 +86,7 @@ double bayestar_distance_conditional_cdf(
     return (
         (mu2 + sigma2) * ugaussian_integral(arg1, arg2)
         + sigma / sqrt(2 * M_PI) * (gsl_sf_exp_mult(-0.5 * gsl_pow_2(arg1), mu)
-        - gsl_sf_exp_mult(-0.5 * gsl_pow_2(arg2), r + mu))
+        - (isinf(r) ? 0 : gsl_sf_exp_mult(-0.5 * gsl_pow_2(arg2), r + mu)))
     ) * norm;
 }
 

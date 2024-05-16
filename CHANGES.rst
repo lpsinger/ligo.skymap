@@ -15,6 +15,12 @@ Changelog
   sky maps that have an odd number of 32-bit columns. This impacted Swift BAT
   GUANO localizations which have a single 32-bit PROBDENSITY column.
 
+- Ensure that ``ligo.skymap.distance.conditional_cdf`` and
+  ``ligo.skymap.distance.marginal_cdf`` correctly handle corner cases for
+  extreme values: both now return 0 for distances that are less than or equal
+  to 0, and 1 for a distance of positive infinity (assuming that the
+  ``distnorm`` argument does indeed normalize the distribution).
+
 2.0.0 (2024-04-15)
 ==================
 

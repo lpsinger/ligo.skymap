@@ -97,13 +97,26 @@ Test against numerical integral of pdf.
 >>> import scipy.integrate
 >>> distmu = 10.0
 >>> distsigma = 5.0
->>> distnorm = 1.0
+>>> _, _, distnorm = parameters_to_moments(distmu, distsigma)
 >>> r = 8.0
 >>> expected, _ = scipy.integrate.quad(
 ...     conditional_pdf, 0, r,
 ...     (distmu, distsigma, distnorm))
 >>> result = conditional_cdf(
 ...     r, distmu, distsigma, distnorm)
+>>> np.testing.assert_almost_equal(result, expected)
+
+For negative distances, it returns 0.
+
+>>> conditional_cdf(-1, distmu, distsigma, distnorm)
+0.0
+
+For infinite postive distance, it returns 1 (provided that distnorm normalizes
+the distribution).
+
+
+>>> expected = 1.0
+>>> result = conditional_cdf(np.inf, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(result, expected)
 
 """)
@@ -385,12 +398,26 @@ Examples
 --------
 
 >>> npix = 12
->>> prob, distmu, distsigma, distnorm = np.random.uniform(size=(4, 12))
+>>> prob, distmu, distsigma = np.random.uniform(size=(3, 12))
+>>> prob /= prob.sum()
+>>> _, _, distnorm = parameters_to_moments(distmu, distsigma)
 >>> r = np.linspace(0, 1)
 >>> cdf_expected = np.dot(
 ...     conditional_cdf(r[:, np.newaxis], distmu, distsigma, distnorm), prob)
 >>> cdf = marginal_cdf(r, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(cdf, cdf_expected, rtol=1e-4)
+
+For negative distances, it returns 0.
+
+>>> marginal_cdf(-1, prob, distmu, distsigma, distnorm)
+0.0
+
+For infinite postive distance, it returns the sum of prob
+(provided that distnorm normalizes the distribution).
+
+>>> expected = 1.0
+>>> result = marginal_cdf(np.inf, prob, distmu, distsigma, distnorm)
+>>> np.testing.assert_almost_equal(result, expected)
 
 """)
 marginal_cdf = require_contiguous_aligned(marginal_cdf)

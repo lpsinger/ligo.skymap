@@ -37,7 +37,7 @@ requirements:
 #
 
 sdist:
-  image: python:3.9
+  image: python:3.10
   stage: dist
   script:
     - pip install build
@@ -56,7 +56,7 @@ sdist:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/cp39-cp39
+    - PYPREFIX=/opt/python/cp310-cp310
     - ${PYPREFIX}/bin/pip install build
     - ${PYPREFIX}/bin/python -m build -w
     - auditwheel repair dist/*.whl
@@ -94,7 +94,7 @@ wheel/linux/aarch64:
   stage: dist
   script:
     - . /opt/local/share/macports/setupenv.bash
-    - PYVERS=3.9
+    - PYVERS=3.10
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -157,16 +157,13 @@ wheel/macos/arm64:
   tags:
     - executor-docker
 
-deps-aarch64/python3.9:
+deps-aarch64/python3.10:
   <<: *deps
   tags:
     - aarch64
     # FIXME: Uncomment after the following issue is fixed.
     # https://git.ligo.org/computing/helpdesk/-/issues/5775
     # - executor-docker
-
-deps-x86_64/python3.9:
-  <<: *deps
 
 deps-x86_64/python3.10:
   <<: *deps
@@ -186,7 +183,7 @@ deps-x86_64/python3.12.2:
 #
 
 docs:
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
   stage: test
   <<: *in-tmpdir
   script:
@@ -194,7 +191,7 @@ docs:
     - tox -e build_docs
     - mv docs/_build/html ${CI_PROJECT_DIR}/
   needs:
-    - deps-x86_64/python3.9
+    - deps-x86_64/python3.10
     - sdist
   artifacts:
     paths:
@@ -216,21 +213,14 @@ docs:
       - pytest-mpl-results/
     when: always
 
-test/linux/aarch64/python3.9:
+test/linux/aarch64/python3.10:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
   needs:
-    - deps-aarch64/python3.9
+    - deps-aarch64/python3.10
     - wheel/linux/aarch64
   tags:
     - aarch64
-
-test/linux/x86_64/python3.9:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
-  needs:
-    - deps-x86_64/python3.9
-    - wheel/linux/x86_64
 
 test/linux/x86_64/python3.10:
   <<: *test
@@ -258,7 +248,7 @@ test/linux/x86_64/python3.12.2:
   stage: test
   script:
     - . /opt/local/share/macports/setupenv.bash
-    - PYVERS=3.9
+    - PYVERS=3.10
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -286,7 +276,7 @@ test/macos/arm64:
 # Test against development versions of certain upstream dependencies.
 test/dev-deps:
   <<: *test
-  image: python:3.9
+  image: python:3.10
   script:
     # Qhull is needed to build Matplotlib from source
     - apt-get update && apt-get -y install --no-install-recommends libqhull-dev
@@ -319,7 +309,7 @@ test/dev-deps:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
   variables:
     # -UNDEBUG
     #     enable C assertions
@@ -354,7 +344,7 @@ test/coverage:
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
     - if [[ "$FAILED" ]]; then false; fi
   needs:
-    - deps-x86_64/python3.9
+    - deps-x86_64/python3.10
     - sdist
   artifacts:
     paths:
@@ -376,10 +366,10 @@ test/coverage:
 lint:
   extends:
     - .python:flake8
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.9:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
   stage: test
   needs:
-    - deps-x86_64/python3.9
+    - deps-x86_64/python3.10
 
 #
 # Acceptance tests.

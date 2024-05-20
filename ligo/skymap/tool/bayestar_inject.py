@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2023  Leo Singer
+# Copyright (C) 2019-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ cutoff that is piecewise constant in the masses and spins.
 from functools import partial
 
 from astropy import cosmology
-from astropy.cosmology.utils import vectorize_redshift_method
+from astropy.cosmology._utils import vectorize_redshift_method
 from astropy import units
 from astropy.units import dimensionless_unscaled
 import numpy as np
@@ -45,12 +45,6 @@ from ..bayestar.filter import sngl_inspiral_psd
 from . import (
     ArgumentParser, FileType, get_random_parser, register_to_xmldoc,
     write_fileobj)
-
-try:
-    from astropy.cosmology import available as available_cosmologies
-except ImportError:
-    # FIXME: Remove once we drop support for Astropy < 5.1
-    from astropy.cosmology.parameters import available as available_cosmologies
 
 
 def get_decisive_snr(snrs, min_triggers):
@@ -235,7 +229,7 @@ def assert_not_reached():  # pragma: no cover
 def parser():
     parser = ArgumentParser(parents=[get_random_parser()])
     parser.add_argument(
-        '--cosmology', choices=available_cosmologies,
+        '--cosmology', choices=cosmology.available,
         default='Planck15', help='Cosmological model')
 
     group = parser.add_mutually_exclusive_group(required=True)

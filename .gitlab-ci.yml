@@ -386,7 +386,7 @@ tests/review:
     REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
   script:
     - echo -e "section_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
-    - ssh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_JOB_ID"
+    - ssh -vT $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_JOB_ID"
     - echo -e "section_end:`date +%s`:remote_clone\r\e[0K"
 
     - echo -e "section_start:`date +%s`:remote_install\r\e[0KIntalling Python packages on cluster"

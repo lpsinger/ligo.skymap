@@ -36,7 +36,10 @@ class FileType(argparse.FileType):
     """Inherit from :class:`argparse.FileType` to enable opening stdin or
     stdout in binary mode.
 
-    This is a workaround for https://bugs.python.org/issue14156.
+    This is a workaround for https://bugs.python.org/issue14156, which is fixed
+    in Python 3.9.12, 3.10.3, and >=3.11.0.
+
+    FIXME: Remove this when we drop support for Python 3.10.
     """
 
     def __call__(self, string):

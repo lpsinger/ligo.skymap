@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2019  Leo Singer
+# Copyright (C) 2017-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,73 +56,74 @@ def parser():
 
 
 def main(args=None):
-    args = parser().parse_args(args)
+    with parser().parse_args(args) as args:
+        # Late imports.
+        from astropy.table import Table
+        from matplotlib import pyplot as plt
+        from scipy.interpolate import interp1d
+        from .. import io
+        from .. import plot as _  # noqa: F401
+        from ..postprocess import find_injection_moc
 
-    # Late imports.
-    from astropy.table import Table
-    from matplotlib import pyplot as plt
-    from scipy.interpolate import interp1d
-    from .. import io
-    from .. import plot as _  # noqa: F401
-    from ..postprocess import find_injection_moc
+        # Read input.
+        skymap = io.read_sky_map(args.skymap.name, moc=True)
+        chain = io.read_samples(args.samples.name)
 
-    # Read input.
-    skymap = io.read_sky_map(args.skymap.name, moc=True)
-    chain = io.read_samples(args.samples.name)
+        # If required, downselect to a smaller number of posterior samples.
+        if args.max_points is not None:
+            chain = Table(np.random.permutation(chain)[:args.max_points],
+                          copy=False)
 
-    # If required, downselect to a smaller number of posterior samples.
-    if args.max_points is not None:
-        chain = Table(np.random.permutation(chain)[:args.max_points],
-                      copy=False)
+        # Calculate P-P plot.
+        contours = np.asarray(args.contour)
+        result = find_injection_moc(skymap,
+                                    chain['ra'], chain['dec'], chain['dist'],
+                                    contours=1e-2 * contours)
 
-    # Calculate P-P plot.
-    contours = np.asarray(args.contour)
-    result = find_injection_moc(skymap,
-                                chain['ra'], chain['dec'], chain['dist'],
-                                contours=1e-2 * contours)
-
-    # Make Matplotlib figure.
-    fig = plt.figure(figsize=(6, 6))
-    ax = fig.add_subplot(111, projection='pp_plot')
-    ax.add_diagonal()
-    ax.add_series(result.searched_prob, label='R.A., Dec.')
-    searched_area_func = interp1d(np.linspace(0, 1, len(chain)),
-                                  np.sort(result.searched_area),
-                                  bounds_error=False)
-    if 'DISTMU' in skymap.colnames:
-        ax.add_series(result.searched_prob_dist, label='Distance')
-        ax.add_series(result.searched_prob_vol, label='Volume')
-        searched_vol_func = interp1d(np.linspace(0, 1, len(chain)),
-                                     np.sort(result.searched_vol),
-                                     bounds_error=False)
-    for p, area, vol in zip(
-            args.contour, result.contour_areas, result.contour_vols):
-        text = '{:g}%\n{} deg$^2$'.format(p, fmt(area, 2))
+        # Make Matplotlib figure.
+        fig = plt.figure(figsize=(6, 6))
+        ax = fig.add_subplot(111, projection='pp_plot')
+        ax.add_diagonal()
+        ax.add_series(result.searched_prob, label='R.A., Dec.')
+        searched_area_func = interp1d(np.linspace(0, 1, len(chain)),
+                                      np.sort(result.searched_area),
+                                      bounds_error=False)
         if 'DISTMU' in skymap.colnames:
-            text += '\n{} Mpc$^3$'.format(fmt(vol, 2, force_scientific=True))
-        ax.annotate(
-            text, (1e-2 * p, 1e-2 * p), (0, -150),
-            xycoords='data', textcoords='offset points',
-            horizontalalignment='right', backgroundcolor='white',
-            arrowprops=dict(connectionstyle='bar,angle=0,fraction=0',
-                            arrowstyle='-|>', linewidth=2, color='black'))
-        area = searched_area_func(1e-2 * p)
-        text = '{:g}%\n{} deg$^2$'.format(p, fmt(area, 2))
-        if 'DISTMU' in skymap.colnames:
-            vol = searched_vol_func(1e-2 * p)
-            text += '\n{} Mpc$^3$'.format(fmt(vol, 2, force_scientific=True))
-        ax.annotate(
-            text, (1e-2 * p, 1e-2 * p), (-75, 0),
-            xycoords='data', textcoords='offset points',
-            horizontalalignment='right', verticalalignment='center',
-            backgroundcolor='white',
-            arrowprops=dict(connectionstyle='bar,angle=0,fraction=0',
-                            arrowstyle='-|>', linewidth=2, color='black'))
-    ax.set_xlabel('searched probability')
-    ax.set_ylabel('cumulative fraction of posterior samples')
-    ax.set_title(args.skymap.name)
-    ax.legend()
-    ax.grid()
+            ax.add_series(result.searched_prob_dist, label='Distance')
+            ax.add_series(result.searched_prob_vol, label='Volume')
+            searched_vol_func = interp1d(np.linspace(0, 1, len(chain)),
+                                         np.sort(result.searched_vol),
+                                         bounds_error=False)
+        for p, area, vol in zip(
+                args.contour, result.contour_areas, result.contour_vols):
+            text = '{:g}%\n{} deg$^2$'.format(p, fmt(area, 2))
+            if 'DISTMU' in skymap.colnames:
+                text += '\n{} Mpc$^3$'.format(
+                    fmt(vol, 2, force_scientific=True))
+            ax.annotate(
+                text, (1e-2 * p, 1e-2 * p), (0, -150),
+                xycoords='data', textcoords='offset points',
+                horizontalalignment='right', backgroundcolor='white',
+                arrowprops=dict(connectionstyle='bar,angle=0,fraction=0',
+                                arrowstyle='-|>', linewidth=2, color='black'))
+            area = searched_area_func(1e-2 * p)
+            text = '{:g}%\n{} deg$^2$'.format(p, fmt(area, 2))
+            if 'DISTMU' in skymap.colnames:
+                vol = searched_vol_func(1e-2 * p)
+                text += '\n{} Mpc$^3$'.format(
+                    fmt(vol, 2, force_scientific=True))
+            ax.annotate(
+                text, (1e-2 * p, 1e-2 * p), (-75, 0),
+                xycoords='data', textcoords='offset points',
+                horizontalalignment='right', verticalalignment='center',
+                backgroundcolor='white',
+                arrowprops=dict(connectionstyle='bar,angle=0,fraction=0',
+                                arrowstyle='-|>', linewidth=2, color='black'))
+        ax.set_xlabel('searched probability')
+        ax.set_ylabel('cumulative fraction of posterior samples')
+        ax.set_title(args.skymap.name)
+        ax.legend()
+        ax.grid()
 
-    # Show or save output.
-    args.output()
+        # Show or save output.
+        args.output()

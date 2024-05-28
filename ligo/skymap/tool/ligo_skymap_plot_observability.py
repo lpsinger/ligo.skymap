@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2020  Leo Singer
+# Copyright (C) 2019-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,80 +69,81 @@ def condition_secz(x):
 
 def main(args=None):
     p = parser()
-    opts = p.parse_args(args)
+    with p.parse_args(args) as opts:
+        # Late imports
+        from astroplan import (
+            AirmassConstraint, AtNightConstraint, Observer,
+            is_event_observable)
+        from astropy.coordinates import EarthLocation, SkyCoord
+        from astropy.time import Time
+        from astropy import units as u
+        from matplotlib import dates
+        from matplotlib import pyplot as plt
+        from tqdm import tqdm
 
-    # Late imports
-    from astroplan import (
-        AirmassConstraint, AtNightConstraint, Observer, is_event_observable)
-    from astropy.coordinates import EarthLocation, SkyCoord
-    from astropy.time import Time
-    from astropy import units as u
-    from matplotlib import dates
-    from matplotlib import pyplot as plt
-    from tqdm import tqdm
+        from ..io import fits
+        from .. import moc
+        from .. import plot  # noqa
 
-    from ..io import fits
-    from .. import moc
-    from .. import plot  # noqa
+        names = ('name', 'longitude', 'latitude', 'height')
+        length0, *lengths = (
+            len(getattr(opts, 'site_{}'.format(name))) for name in names)
+        if not all(length0 == length for length in lengths):
+            p.error(
+                'these options require equal numbers of arguments: {}'.format(
+                    ', '.join('--site-{}'.format(name) for name in names)))
 
-    names = ('name', 'longitude', 'latitude', 'height')
-    length0, *lengths = (
-        len(getattr(opts, 'site_{}'.format(name))) for name in names)
-    if not all(length0 == length for length in lengths):
-        p.error('these options require equal numbers of arguments: {}'.format(
-            ', '.join(
-                '--site-{}'.format(name) for name in names)))
+        observers = [Observer.at_site(site) for site in opts.site]
+        for name, lon, lat, height in zip(
+                opts.site_name, opts.site_longitude, opts.site_latitude,
+                opts.site_height):
+            location = EarthLocation(
+                lon=lon * u.deg,
+                lat=lat * u.deg,
+                height=(height or 0) * u.m)
+            observers.append(Observer(location, name=name))
+        observers = list(reversed(observers))
 
-    observers = [Observer.at_site(site) for site in opts.site]
-    for name, lon, lat, height in zip(
-            opts.site_name, opts.site_longitude, opts.site_latitude,
-            opts.site_height):
-        location = EarthLocation(
-            lon=lon * u.deg,
-            lat=lat * u.deg,
-            height=(height or 0) * u.m)
-        observers.append(Observer(location, name=name))
-    observers = list(reversed(observers))
+        m = fits.read_sky_map(opts.input.name, moc=True)
 
-    m = fits.read_sky_map(opts.input.name, moc=True)
+        t0 = Time(opts.time) if opts.time is not None else Time.now()
+        times = t0 + np.linspace(0, 1) * u.day
 
-    t0 = Time(opts.time) if opts.time is not None else Time.now()
-    times = t0 + np.linspace(0, 1) * u.day
+        theta, phi = moc.uniq2ang(m['UNIQ'])
+        coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
+        prob = np.asarray(moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY'])
 
-    theta, phi = moc.uniq2ang(m['UNIQ'])
-    coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
-    prob = np.asarray(moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY'])
+        constraints = [
+            getattr(AtNightConstraint, 'twilight_{}'.format(opts.twilight))(),
+            AirmassConstraint(opts.max_airmass)]
 
-    constraints = [
-        getattr(AtNightConstraint, 'twilight_{}'.format(opts.twilight))(),
-        AirmassConstraint(opts.max_airmass)]
+        fig = plt.figure()
+        width, height = fig.get_size_inches()
+        fig.set_size_inches(width, (len(observers) + 1) / 16 * width)
+        ax = plt.axes()
+        locator = dates.AutoDateLocator()
+        formatter = dates.DateFormatter('%H:%M')
+        ax.set_xlim([times[0].plot_date, times[-1].plot_date])
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(locator)
+        ax.set_xlabel("Time from {0} [UTC]".format(min(times).datetime.date()))
+        plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
+        ax.set_yticks(np.arange(len(observers)))
+        ax.set_yticklabels([observer.name for observer in observers])
+        ax.yaxis.set_tick_params(left=False)
+        ax.grid(axis='x')
+        ax.spines['bottom'].set_visible(False)
+        ax.spines['top'].set_visible(False)
 
-    fig = plt.figure()
-    width, height = fig.get_size_inches()
-    fig.set_size_inches(width, (len(observers) + 1) / 16 * width)
-    ax = plt.axes()
-    locator = dates.AutoDateLocator()
-    formatter = dates.DateFormatter('%H:%M')
-    ax.set_xlim([times[0].plot_date, times[-1].plot_date])
-    ax.xaxis.set_major_formatter(formatter)
-    ax.xaxis.set_major_locator(locator)
-    ax.set_xlabel("Time from {0} [UTC]".format(min(times).datetime.date()))
-    plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
-    ax.set_yticks(np.arange(len(observers)))
-    ax.set_yticklabels([observer.name for observer in observers])
-    ax.yaxis.set_tick_params(left=False)
-    ax.grid(axis='x')
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+        for i, observer in enumerate(tqdm(observers)):
+            observable = 100 * np.dot(prob, is_event_observable(
+                constraints, observer, coords, times))
+            ax.contourf(
+                times.plot_date, [i - 0.4, i + 0.4],
+                np.tile(observable, (2, 1)), levels=np.arange(10, 110, 10),
+                cmap=plt.get_cmap().reversed())
 
-    for i, observer in enumerate(tqdm(observers)):
-        observable = 100 * np.dot(prob, is_event_observable(
-            constraints, observer, coords, times))
-        ax.contourf(
-            times.plot_date, [i - 0.4, i + 0.4], np.tile(observable, (2, 1)),
-            levels=np.arange(10, 110, 10), cmap=plt.get_cmap().reversed())
+        plt.tight_layout()
 
-    plt.tight_layout()
-
-    # Show or save output.
-    opts.output()
+        # Show or save output.
+        opts.output()

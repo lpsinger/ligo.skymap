@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014-2020  Leo Singer
+# Copyright (C) 2014-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,51 +78,50 @@ def parser():
 
 def main(args=None):
     p = parser()
-    opts = p.parse_args(args)
+    with p.parse_args(args) as opts:
+        import lal.series
+        import lalsimulation
+        import numpy as np
+        from ..bayestar.filter import vectorize_swig_psd_func
 
-    import lal.series
-    import lalsimulation
-    import numpy as np
-    from ..bayestar.filter import vectorize_swig_psd_func
+        # Add basic options.
 
-    # Add basic options.
+        psds = {}
 
-    psds = {}
+        n = int(opts.f_max // opts.df)
+        f = np.arange(n) * opts.df
 
-    n = int(opts.f_max // opts.df)
-    f = np.arange(n) * opts.df
+        detectors = [d.frDetector.prefix for d in lal.CachedDetectors]
 
-    detectors = [d.frDetector.prefix for d in lal.CachedDetectors]
+        for detector in detectors:
+            psd_name = getattr(opts, detector, None)
+            if psd_name is None:
+                continue
+            scale = 1 / np.square(getattr(opts, detector + '_scale', 1.0))
+            func = getattr(lalsimulation, psd_name_prefix + psd_name)
+            series = lal.CreateREAL8FrequencySeries(
+                psd_name, 0, 0, opts.df, lal.SecondUnit, n)
+            if '(double f) -> double' in func.__doc__:
+                series.data.data = vectorize_swig_psd_func(
+                    psd_name_prefix + psd_name)(f)
+            else:
+                func(series, 0.0)
 
-    for detector in detectors:
-        psd_name = getattr(opts, detector, None)
-        if psd_name is None:
-            continue
-        scale = 1 / np.square(getattr(opts, detector + '_scale', 1.0))
-        func = getattr(lalsimulation, psd_name_prefix + psd_name)
-        series = lal.CreateREAL8FrequencySeries(
-            psd_name, 0, 0, opts.df, lal.SecondUnit, n)
-        if '(double f) -> double' in func.__doc__:
-            series.data.data = vectorize_swig_psd_func(
-                psd_name_prefix + psd_name)(f)
-        else:
-            func(series, 0.0)
+                # Find indices of first and last nonzero samples.
+                nonzero = np.flatnonzero(series.data.data)
+                # FIXME: int cast seems to be needed on old versions of Numpy
+                first_nonzero = int(nonzero[0])
+                last_nonzero = int(nonzero[-1])
 
-            # Find indices of first and last nonzero samples.
-            nonzero = np.flatnonzero(series.data.data)
-            # FIXME: int cast seems to be needed on old versions of Numpy
-            first_nonzero = int(nonzero[0])
-            last_nonzero = int(nonzero[-1])
+                # Truncate
+                series = lal.CutREAL8FrequencySeries(
+                    series, first_nonzero, last_nonzero - first_nonzero + 1)
+                series.f0 = first_nonzero * series.deltaF
 
-            # Truncate
-            series = lal.CutREAL8FrequencySeries(
-                series, first_nonzero, last_nonzero - first_nonzero + 1)
-            series.f0 = first_nonzero * series.deltaF
+                series.name = psd_name
+            series.data.data *= scale
+            psds[detector] = series
 
-            series.name = psd_name
-        series.data.data *= scale
-        psds[detector] = series
-
-    xmldoc = lal.series.make_psd_xmldoc(psds)
-    register_to_xmldoc(xmldoc, p, opts)
-    write_fileobj(xmldoc, opts.output)
+        xmldoc = lal.series.make_psd_xmldoc(psds)
+        register_to_xmldoc(xmldoc, p, opts)
+        write_fileobj(xmldoc, opts.output)

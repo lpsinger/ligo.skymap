@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2020  Leo Singer
+# Copyright (C) 2018-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,33 +32,33 @@ def parser():
 
 
 def main(args=None):
-    args = parser().parse_args(args)
+    with parser().parse_args(args) as args:
+        import logging
+        import warnings
+        import astropy_healpix as ah
+        from astropy.io import fits
+        from ..io import read_sky_map, write_sky_map
+        from ..bayestar import rasterize
 
-    import logging
-    import warnings
-    import astropy_healpix as ah
-    from astropy.io import fits
-    from ..io import read_sky_map, write_sky_map
-    from ..bayestar import rasterize
+        log = logging.getLogger()
 
-    log = logging.getLogger()
+        if args.nside is None:
+            order = None
+        else:
+            order = ah.nside_to_level(args.nside)
 
-    if args.nside is None:
-        order = None
-    else:
-        order = ah.nside_to_level(args.nside)
-
-    log.info('reading FITS file %s', args.input.name)
-    hdus = fits.open(args.input)
-    ordering = hdus[1].header['ORDERING']
-    expected_ordering = 'NUNIQ'
-    if ordering != expected_ordering:
-        msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
-        warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
-    log.debug('converting original FITS file to Astropy table')
-    table = read_sky_map(hdus, moc=True)
-    log.debug('flattening HEALPix tree')
-    table = rasterize(table, order=order)
-    log.info('writing FITS file %s', args.output.name)
-    write_sky_map(args.output.name, table, nest=True)
-    log.debug('done')
+        log.info('reading FITS file %s', args.input.name)
+        hdus = fits.open(args.input)
+        ordering = hdus[1].header['ORDERING']
+        expected_ordering = 'NUNIQ'
+        if ordering != expected_ordering:
+            msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
+            warnings.warn(
+                msg.format(args.input.name, expected_ordering, ordering))
+        log.debug('converting original FITS file to Astropy table')
+        table = read_sky_map(hdus, moc=True)
+        log.debug('flattening HEALPix tree')
+        table = rasterize(table, order=order)
+        log.info('writing FITS file %s', args.output.name)
+        write_sky_map(args.output.name, table, nest=True)
+        log.debug('done')

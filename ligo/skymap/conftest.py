@@ -48,14 +48,15 @@ def pytest_configure(config):
 # enable_deprecations_as_exceptions()
 
 
-@pytest.fixture(autouse=True)
-def ignore_unclosed_file_warnings():
-    """Ignore unclosed file warnings.
+@pytest.fixture(autouse=True, scope='session')
+def treat_unclosed_files_as_errors():
+    """Treat warnings abnout unclosed files as errors
 
     Many of the command-line tools in :mod:`ligo.skymap.tool` use
-    :class:`arparse.FileType` and therefore leave files opened. Suppress
-    warnings about unclosed files so that other more interesting warning types
-    are more noticable.
+    :class:`arparse.FileType` and therefore might leave files opened. Treat
+    this as an error.
 
     """
-    warnings.filterwarnings('ignore', 'unclosed file .*', ResourceWarning)
+    warnings.filterwarnings('error', 'unclosed file .*', ResourceWarning)
+    warnings.filterwarnings(
+        'error', category=pytest.PytestUnraisableExceptionWarning)

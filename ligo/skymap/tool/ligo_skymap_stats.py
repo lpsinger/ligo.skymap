@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2020  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -212,33 +212,33 @@ def process(fitsfilename, db, contours, modes, areas, cosmology):
 
 def main(args=None):
     p = parser()
-    opts = p.parse_args(args)
+    with p.parse_args(args) as opts:
+        from ..util.progress import progress_map
 
-    from ..util.progress import progress_map
+        if args is None:
+            print('#', *sys.argv, file=opts.output)
+        else:
+            print('#', p.prog, *args, file=opts.output)
 
-    if args is None:
-        print('#', *sys.argv, file=opts.output)
-    else:
-        print('#', p.prog, *args, file=opts.output)
-
-    colnames = ['coinc_event_id']
-    if opts.database is not None:
-        colnames += ['simulation_id', 'far', 'snr', 'searched_area',
-                     'searched_prob', 'searched_prob_dist', 'searched_vol',
-                     'searched_prob_vol', 'offset']
-    colnames += ['runtime', 'distmean', 'diststd', 'log_bci', 'log_bsn']
-    colnames += ['area({0:g})'.format(_) for _ in opts.contour]
-    colnames += ['prob({0:g})'.format(_) for _ in opts.area]
-    colnames += ['dist({0:g})'.format(_) for _ in opts.contour]
-    colnames += ['vol({0:g})'.format(_) for _ in opts.contour]
-    if opts.modes:
+        colnames = ['coinc_event_id']
         if opts.database is not None:
-            colnames += ['searched_modes']
-        colnames += ["modes({0:g})".format(p) for p in opts.contour]
-    print(*colnames, sep="\t", file=opts.output)
+            colnames += ['simulation_id', 'far', 'snr', 'searched_area',
+                         'searched_prob', 'searched_prob_dist', 'searched_vol',
+                         'searched_prob_vol', 'offset']
+        colnames += ['runtime', 'distmean', 'diststd', 'log_bci', 'log_bsn']
+        colnames += ['area({0:g})'.format(_) for _ in opts.contour]
+        colnames += ['prob({0:g})'.format(_) for _ in opts.area]
+        colnames += ['dist({0:g})'.format(_) for _ in opts.contour]
+        colnames += ['vol({0:g})'.format(_) for _ in opts.contour]
+        if opts.modes:
+            if opts.database is not None:
+                colnames += ['searched_modes']
+            colnames += ["modes({0:g})".format(p) for p in opts.contour]
+        print(*colnames, sep="\t", file=opts.output)
 
-    func = partial(process, db=opts.database, contours=opts.contour,
-                   modes=opts.modes, areas=opts.area, cosmology=opts.cosmology)
-    for record in progress_map(func, opts.fitsfilenames, jobs=opts.jobs):
-        if record is not None:
-            print(*record, sep="\t", file=opts.output)
+        func = partial(process, db=opts.database, contours=opts.contour,
+                       modes=opts.modes, areas=opts.area,
+                       cosmology=opts.cosmology)
+        for record in progress_map(func, opts.fitsfilenames, jobs=opts.jobs):
+            if record is not None:
+                print(*record, sep="\t", file=opts.output)

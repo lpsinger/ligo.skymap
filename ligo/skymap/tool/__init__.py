@@ -32,6 +32,27 @@ from .. import version
 version_string = version.__package__ + ' ' + version.version
 
 
+def _try_close(obj):
+    try:
+        obj.close()
+    except AttributeError:
+        pass
+
+
+class Namespace(argparse.Namespace):
+    """A Namespace that can be used in a context to close all open files."""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        for value in vars(self).values():
+            if isinstance(value, list):
+                for item in value:
+                    _try_close(item)
+            _try_close(value)
+
+
 class FileType(argparse.FileType):
     """Inherit from :class:`argparse.FileType` to enable opening stdin or
     stdout in binary mode.
@@ -265,6 +286,9 @@ class ArgumentParser(argparse.ArgumentParser):
       the description is preserved.
 
     - A ``--version`` option is added that prints the version of ligo.skymap.
+
+    - The Namespace object returned by ``parser.parse_args()`` can be used as a
+      context manager, in a ``with::`` statement, to close all opened files.
     """
 
     def __init__(self,
@@ -303,6 +327,11 @@ class ArgumentParser(argparse.ArgumentParser):
             '--version', action='version', version=version_string)
         self.add_argument(
             '-l', '--loglevel', action='loglevel', default='INFO')
+
+    def parse_known_args(self, args=None, namespace=None):
+        if namespace is None:
+            namespace = Namespace()
+        return super().parse_known_args(args, namespace)
 
 
 class DirType:

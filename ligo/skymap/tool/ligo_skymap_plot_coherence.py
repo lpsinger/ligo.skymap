@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2023  Leo Singer
+# Copyright (C) 2011-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,25 +32,23 @@ def parser():
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    with parser().parse_args(args) as opts:
+        # Late imports
+        from astropy.io import fits
+        import numpy as np
+        from ..plot import plot_bayes_factor
 
-    # Late imports
+        header = fits.getheader(opts.input, 1)
+        logb = header['LOGBCI']
+        objid = header.get('OBJECT')
 
-    from astropy.io import fits
-    import numpy as np
-    from ..plot import plot_bayes_factor
+        title = 'Coherence'
+        if objid:
+            title += f' of {objid}'
+        logb_string = np.format_float_positional(logb, 1, trim='0', sign=True)
+        title += fr' $[\ln\,B = {logb_string}]$'
 
-    header = fits.getheader(opts.input, 1)
-    logb = header['LOGBCI']
-    objid = header.get('OBJECT')
+        plot_bayes_factor(logb, title=title, palette=opts.colormap)
 
-    title = 'Coherence'
-    if objid:
-        title += f' of {objid}'
-    logb_string = np.format_float_positional(logb, 1, trim='0', sign=True)
-    title += fr' $[\ln\,B = {logb_string}]$'
-
-    plot_bayes_factor(logb, title=title, palette=opts.colormap)
-
-    # Show or save output.
-    opts.output()
+        # Show or save output.
+        opts.output()

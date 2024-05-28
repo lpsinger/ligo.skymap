@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2020  Leo Singer
+# Copyright (C) 2018-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,18 +31,17 @@ def parser():
 
 
 def main(args=None):
-    args = parser().parse_args(args)
+    with parser().parse_args(args) as args:
+        import warnings
+        from astropy.io import fits
+        from ..io import read_sky_map, write_sky_map
 
-    import warnings
-    from astropy.io import fits
-    from ..io import read_sky_map, write_sky_map
-
-    hdus = fits.open(args.input)
-    ordering = hdus[1].header['ORDERING']
-    expected_orderings = {'NESTED', 'RING'}
-    if ordering not in expected_orderings:
-        msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
-        warnings.warn(msg.format(
-            args.input.name, ' or '.join(expected_orderings), ordering))
-    table = read_sky_map(hdus, moc=True)
-    write_sky_map(args.output.name, table)
+        hdus = fits.open(args.input)
+        ordering = hdus[1].header['ORDERING']
+        expected_orderings = {'NESTED', 'RING'}
+        if ordering not in expected_orderings:
+            msg = 'Expected the FITS file {} to have ordering {}, but it is {}'
+            warnings.warn(msg.format(
+                args.input.name, ' or '.join(expected_orderings), ordering))
+        table = read_sky_map(hdus, moc=True)
+        write_sky_map(args.output.name, table)

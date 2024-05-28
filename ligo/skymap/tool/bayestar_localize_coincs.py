@@ -82,101 +82,105 @@ def parser():
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    with parser().parse_args(args) as opts:
+        import logging
+        log = logging.getLogger('BAYESTAR')
 
-    import logging
-    log = logging.getLogger('BAYESTAR')
+        # BAYESTAR imports.
+        from .. import omp
+        from ..io import fits, events
+        from ..bayestar import localize
 
-    # BAYESTAR imports.
-    from .. import omp
-    from ..io import fits, events
-    from ..bayestar import localize
+        # Other imports.
+        import os
+        import subprocess
+        import sys
 
-    # Other imports.
-    import os
-    import subprocess
-    import sys
+        log.info('Using %d OpenMP thread(s)', omp.num_threads)
 
-    log.info('Using %d OpenMP thread(s)', omp.num_threads)
+        # Read coinc file.
+        log.info(
+            '%s:reading input files', ','.join(
+                file.name for file in opts.input))
+        event_source = events.open(*opts.input, sample=opts.pycbc_sample)
 
-    # Read coinc file.
-    log.info(
-        '%s:reading input files', ','.join(file.name for file in opts.input))
-    event_source = events.open(*opts.input, sample=opts.pycbc_sample)
+        if opts.disable_detector:
+            event_source = events.detector_disabled.open(
+                event_source, opts.disable_detector)
 
-    if opts.disable_detector:
-        event_source = events.detector_disabled.open(
-            event_source, opts.disable_detector)
+        os.makedirs(opts.output, exist_ok=True)
 
-    os.makedirs(opts.output, exist_ok=True)
+        if opts.condor_submit:
+            if opts.seed is not None:
+                raise NotImplementedError(
+                    '--seed does not yet work with --condor-submit')
+            if opts.coinc_event_id:
+                raise ValueError(
+                    'must not set --coinc-event-id with --condor-submit')
+            with subprocess.Popen(['condor_submit'],
+                                  text=True, stdin=subprocess.PIPE) as proc:
+                f = proc.stdin
+                print('''
+                    accounting_group = ligo.dev.o4.cbc.pe.bayestar
+                    on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
+                    on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+                    on_exit_hold_reason = (ExitBySignal == True \
+                        ? strcat("The job exited with signal ", ExitSignal) \
+                        : strcat("The job exited with code ", ExitCode))
+                    request_memory = 2000 MB
+                    request_disk = 100 MB
+                    universe = vanilla
+                    getenv = true
+                    executable = /usr/bin/env
+                    JobBatchName = BAYESTAR
+                    environment = "OMP_NUM_THREADS=1"
+                    ''', file=f)
+                print(
+                    'error =', os.path.join(opts.output, '$(cid).err'), file=f)
+                print(
+                    'arguments = "',
+                    *(arg for arg in sys.argv if arg != '--condor-submit'),
+                    '--coinc-event-id $(cid)"', file=f)
+                print('queue cid in', *event_source, file=f)
+            sys.exit(proc.returncode)
 
-    if opts.condor_submit:
-        if opts.seed is not None:
-            raise NotImplementedError(
-                '--seed does not yet work with --condor-submit')
         if opts.coinc_event_id:
-            raise ValueError(
-                'must not set --coinc-event-id with --condor-submit')
-        with subprocess.Popen(['condor_submit'],
-                              text=True, stdin=subprocess.PIPE) as proc:
-            f = proc.stdin
-            print('''
-                  accounting_group = ligo.dev.o4.cbc.pe.bayestar
-                  on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
-                  on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
-                  on_exit_hold_reason = (ExitBySignal == True \
-                    ? strcat("The job exited with signal ", ExitSignal) \
-                    : strcat("The job exited with code ", ExitCode))
-                  request_memory = 2000 MB
-                  request_disk = 100 MB
-                  universe = vanilla
-                  getenv = true
-                  executable = /usr/bin/env
-                  JobBatchName = BAYESTAR
-                  environment = "OMP_NUM_THREADS=1"
-                  ''', file=f)
-            print('error =', os.path.join(opts.output, '$(cid).err'), file=f)
-            print('arguments = "',
-                  *(arg for arg in sys.argv if arg != '--condor-submit'),
-                  '--coinc-event-id $(cid)"', file=f)
-            print('queue cid in', *event_source, file=f)
-        sys.exit(proc.returncode)
+            event_source = {
+                key: event_source[key] for key in opts.coinc_event_id}
 
-    if opts.coinc_event_id:
-        event_source = {key: event_source[key] for key in opts.coinc_event_id}
+        count_sky_maps_failed = 0
 
-    count_sky_maps_failed = 0
+        # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
+        for coinc_event_id, event in event_source.items():
+            # Loop over sky localization methods
+            log.info('%d:computing sky map', coinc_event_id)
+            if opts.chain_dump:
+                chain_dump = f'{coinc_event_id}.hdf5'
+            else:
+                chain_dump = None
+            try:
+                sky_map = localize(
+                    event, opts.waveform, opts.f_low, opts.min_distance,
+                    opts.max_distance, opts.prior_distance_power,
+                    opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
+                    enable_snr_series=opts.enable_snr_series,
+                    f_high_truncate=opts.f_high_truncate,
+                    rescale_loglikelihood=opts.rescale_loglikelihood)
+                sky_map.meta['objid'] = coinc_event_id
+                sky_map.meta['comment'] = ROW_ID_COMMENT
 
-    # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
-    for coinc_event_id, event in event_source.items():
-        # Loop over sky localization methods
-        log.info('%d:computing sky map', coinc_event_id)
-        if opts.chain_dump:
-            chain_dump = f'{coinc_event_id}.hdf5'
-        else:
-            chain_dump = None
-        try:
-            sky_map = localize(
-                event, opts.waveform, opts.f_low, opts.min_distance,
-                opts.max_distance, opts.prior_distance_power,
-                opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
-                enable_snr_series=opts.enable_snr_series,
-                f_high_truncate=opts.f_high_truncate,
-                rescale_loglikelihood=opts.rescale_loglikelihood)
-            sky_map.meta['objid'] = coinc_event_id
-            sky_map.meta['comment'] = ROW_ID_COMMENT
+            except (ArithmeticError, ValueError):
+                log.exception('%d:sky localization failed', coinc_event_id)
+                count_sky_maps_failed += 1
+                if not opts.keep_going:
+                    raise
+            else:
+                log.info('%d:saving sky map', coinc_event_id)
+                filename = f'{coinc_event_id}.fits'
+                fits.write_sky_map(
+                    os.path.join(opts.output, filename), sky_map, nest=True)
 
-        except (ArithmeticError, ValueError):
-            log.exception('%d:sky localization failed', coinc_event_id)
-            count_sky_maps_failed += 1
-            if not opts.keep_going:
-                raise
-        else:
-            log.info('%d:saving sky map', coinc_event_id)
-            filename = f'{coinc_event_id}.fits'
-            fits.write_sky_map(
-                os.path.join(opts.output, filename), sky_map, nest=True)
-
-    if count_sky_maps_failed > 0:
-        raise RuntimeError("{0} sky map{1} did not converge".format(
-            count_sky_maps_failed, 's' if count_sky_maps_failed > 1 else ''))
+        if count_sky_maps_failed > 0:
+            raise RuntimeError("{0} sky map{1} did not converge".format(
+                count_sky_maps_failed,
+                's' if count_sky_maps_failed > 1 else ''))

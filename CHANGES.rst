@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.0.1rc1 (2024-04-24)
+2.0.1rc2 (unreleased)
 =====================
 
 - Drop support for Python 3.9 because Astropy 6.1.0 dropped Python 3.9 in
@@ -20,6 +20,10 @@ Changelog
   extreme values: both now return 0 for distances that are less than or equal
   to 0, and 1 for a distance of positive infinity (assuming that the
   ``distnorm`` argument does indeed normalize the distribution).
+
+- Ensure that all ligo.skymap command-line tools close any files that they have
+  opened. These command-line tools are used as functions in GWCelery, and were
+  leaking unclosed file descriptors.
 
 2.0.0 (2024-04-15)
 ==================

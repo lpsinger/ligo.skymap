@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2023  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -219,243 +219,249 @@ def simulate(seed, sim_inspiral, psds, responses, locations, measurement_error,
 
 def main(args=None):
     p = parser()
-    opts = p.parse_args(args)
+    with p.parse_args(args) as opts:
+        # LIGO-LW XML imports.
+        from ligo.lw import ligolw
+        from ligo.lw.param import Param
+        from ligo.lw.utils.search_summary import append_search_summary
+        from ligo.lw import utils as ligolw_utils
+        from ligo.lw.lsctables import (
+            New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
+            CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
+            SnglInspiralTable, TimeSlideTable)
 
-    # LIGO-LW XML imports.
-    from ligo.lw import ligolw
-    from ligo.lw.param import Param
-    from ligo.lw.utils.search_summary import append_search_summary
-    from ligo.lw import utils as ligolw_utils
-    from ligo.lw.lsctables import (
-        New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
-        CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
-        SnglInspiralTable, TimeSlideTable)
+        # glue, LAL and pylal imports.
+        from ligo import segments
+        import lal
+        import lal.series
+        import lalsimulation
+        from lalinspiral.inspinjfind import InspiralSCExactCoincDef
+        from lalinspiral.thinca import InspiralCoincDef
+        from tqdm import tqdm
 
-    # glue, LAL and pylal imports.
-    from ligo import segments
-    import lal
-    import lal.series
-    import lalsimulation
-    from lalinspiral.inspinjfind import InspiralSCExactCoincDef
-    from lalinspiral.thinca import InspiralCoincDef
-    from tqdm import tqdm
+        # BAYESTAR imports.
+        from ..io.events.ligolw import ContentHandler
+        from ..bayestar import filter
+        from ..util.progress import progress_map
 
-    # BAYESTAR imports.
-    from ..io.events.ligolw import ContentHandler
-    from ..bayestar import filter
-    from ..util.progress import progress_map
+        # Read PSDs.
+        xmldoc = ligolw_utils.load_fileobj(
+            opts.reference_psd, contenthandler=lal.series.PSDContentHandler)
+        psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
+        psds = {
+            key: filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
+            for key, psd in psds.items() if psd is not None}
+        psds = [psds[ifo] for ifo in opts.detector]
 
-    # Read PSDs.
-    xmldoc = ligolw_utils.load_fileobj(
-        opts.reference_psd, contenthandler=lal.series.PSDContentHandler)
-    psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
-    psds = {
-        key: filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
-        for key, psd in psds.items() if psd is not None}
-    psds = [psds[ifo] for ifo in opts.detector]
+        # Extract simulation table from injection file.
+        inj_xmldoc = ligolw_utils.load_fileobj(
+            opts.input, contenthandler=ContentHandler)
+        orig_sim_inspiral_table = SimInspiralTable.get_table(inj_xmldoc)
 
-    # Extract simulation table from injection file.
-    inj_xmldoc = ligolw_utils.load_fileobj(
-        opts.input, contenthandler=ContentHandler)
-    orig_sim_inspiral_table = SimInspiralTable.get_table(inj_xmldoc)
+        # Prune injections that are outside distance limits.
+        orig_sim_inspiral_table[:] = [
+            row for row in orig_sim_inspiral_table
+            if opts.min_distance <= row.distance <= opts.max_distance]
 
-    # Prune injections that are outside distance limits.
-    orig_sim_inspiral_table[:] = [
-        row for row in orig_sim_inspiral_table
-        if opts.min_distance <= row.distance <= opts.max_distance]
+        # Open output file.
+        xmldoc = ligolw.Document()
+        xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
 
-    # Open output file.
-    xmldoc = ligolw.Document()
-    xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
+        # Create tables. Process and ProcessParams tables are copied from the
+        # injection file.
+        coinc_def_table = xmlroot.appendChild(New(CoincDefTable))
+        coinc_inspiral_table = xmlroot.appendChild(New(CoincInspiralTable))
+        coinc_map_table = xmlroot.appendChild(New(CoincMapTable))
+        coinc_table = xmlroot.appendChild(New(CoincTable))
+        xmlroot.appendChild(ProcessParamsTable.get_table(inj_xmldoc))
+        xmlroot.appendChild(ProcessTable.get_table(inj_xmldoc))
+        sim_inspiral_table = xmlroot.appendChild(New(SimInspiralTable))
+        sngl_inspiral_table = xmlroot.appendChild(New(SnglInspiralTable))
+        time_slide_table = xmlroot.appendChild(New(TimeSlideTable))
 
-    # Create tables. Process and ProcessParams tables are copied from the
-    # injection file.
-    coinc_def_table = xmlroot.appendChild(New(CoincDefTable))
-    coinc_inspiral_table = xmlroot.appendChild(New(CoincInspiralTable))
-    coinc_map_table = xmlroot.appendChild(New(CoincMapTable))
-    coinc_table = xmlroot.appendChild(New(CoincTable))
-    xmlroot.appendChild(ProcessParamsTable.get_table(inj_xmldoc))
-    xmlroot.appendChild(ProcessTable.get_table(inj_xmldoc))
-    sim_inspiral_table = xmlroot.appendChild(New(SimInspiralTable))
-    sngl_inspiral_table = xmlroot.appendChild(New(SnglInspiralTable))
-    time_slide_table = xmlroot.appendChild(New(TimeSlideTable))
+        # Write process metadata to output file.
+        process = register_to_xmldoc(
+            xmldoc, p, opts, instruments=opts.detector,
+            comment="Simulated coincidences")
 
-    # Write process metadata to output file.
-    process = register_to_xmldoc(
-        xmldoc, p, opts, instruments=opts.detector,
-        comment="Simulated coincidences")
+        # Add search summary to output file.
+        all_time = segments.segment([lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9)])
+        append_search_summary(xmldoc, process, inseg=all_time, outseg=all_time)
 
-    # Add search summary to output file.
-    all_time = segments.segment([lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9)])
-    append_search_summary(xmldoc, process, inseg=all_time, outseg=all_time)
+        # Create a time slide entry.  Needed for coinc_event rows.
+        time_slide_id = time_slide_table.get_time_slide_id(
+            {ifo: 0 for ifo in opts.detector}, create_new=process)
 
-    # Create a time slide entry.  Needed for coinc_event rows.
-    time_slide_id = time_slide_table.get_time_slide_id(
-        {ifo: 0 for ifo in opts.detector}, create_new=process)
+        # Populate CoincDef table.
+        inspiral_coinc_def = copy.copy(InspiralCoincDef)
+        inspiral_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
+        coinc_def_table.append(inspiral_coinc_def)
+        found_coinc_def = copy.copy(InspiralSCExactCoincDef)
+        found_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
+        coinc_def_table.append(found_coinc_def)
 
-    # Populate CoincDef table.
-    inspiral_coinc_def = copy.copy(InspiralCoincDef)
-    inspiral_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
-    coinc_def_table.append(inspiral_coinc_def)
-    found_coinc_def = copy.copy(InspiralSCExactCoincDef)
-    found_coinc_def.coinc_def_id = coinc_def_table.get_next_id()
-    coinc_def_table.append(found_coinc_def)
+        # Precompute values that are common to all simulations.
+        detectors = [lalsimulation.DetectorPrefixToLALDetector(ifo)
+                     for ifo in opts.detector]
+        responses = [det.response for det in detectors]
+        locations = [det.location for det in detectors]
 
-    # Precompute values that are common to all simulations.
-    detectors = [lalsimulation.DetectorPrefixToLALDetector(ifo)
-                 for ifo in opts.detector]
-    responses = [det.response for det in detectors]
-    locations = [det.location for det in detectors]
+        func = functools.partial(simulate, psds=psds,
+                                 responses=responses, locations=locations,
+                                 measurement_error=opts.measurement_error,
+                                 f_low=opts.f_low, f_high=opts.f_high,
+                                 waveform=opts.waveform)
 
-    func = functools.partial(simulate, psds=psds,
-                             responses=responses, locations=locations,
-                             measurement_error=opts.measurement_error,
-                             f_low=opts.f_low, f_high=opts.f_high,
-                             waveform=opts.waveform)
+        # Make sure that each thread gets a different random number state.
+        # We start by drawing a random integer s in the main thread, and
+        # then the i'th subprocess will seed itself with the integer i + s.
+        #
+        # The seed must be an unsigned 32-bit integer, so if there are n
+        # threads, then s must be drawn from the interval [0, 2**32 - n).
+        #
+        # Note that *we* are thread 0, so there are a total of
+        # n=1+len(sim_inspiral_table) threads.
+        seed = np.random.randint(0, 2 ** 32 - len(sim_inspiral_table) - 1)
+        np.random.seed(seed)
 
-    # Make sure that each thread gets a different random number state.
-    # We start by drawing a random integer s in the main thread, and
-    # then the i'th subprocess will seed itself with the integer i + s.
-    #
-    # The seed must be an unsigned 32-bit integer, so if there are n
-    # threads, then s must be drawn from the interval [0, 2**32 - n).
-    #
-    # Note that *we* are thread 0, so there are a total of
-    # n=1+len(sim_inspiral_table) threads.
-    seed = np.random.randint(0, 2 ** 32 - len(sim_inspiral_table) - 1)
-    np.random.seed(seed)
+        with tqdm(desc='accepted') as progress:
+            for sim_inspiral, simulation in zip(
+                    orig_sim_inspiral_table,
+                    progress_map(
+                        func,
+                        np.arange(len(orig_sim_inspiral_table)) + seed + 1,
+                        orig_sim_inspiral_table, jobs=opts.jobs)):
 
-    with tqdm(desc='accepted') as progress:
-        for sim_inspiral, simulation in zip(
-                orig_sim_inspiral_table,
-                progress_map(
-                    func,
-                    np.arange(len(orig_sim_inspiral_table)) + seed + 1,
-                    orig_sim_inspiral_table, jobs=opts.jobs)):
+                sngl_inspirals = []
+                used_snr_series = []
+                net_snr = 0.0
+                count_triggers = 0
 
-            sngl_inspirals = []
-            used_snr_series = []
-            net_snr = 0.0
-            count_triggers = 0
+                # Loop over individual detectors and create SnglInspiral
+                # entries.
+                for ifo, (horizon, abs_snr, arg_snr, toa, series) \
+                        in zip(opts.detector, simulation):
 
-            # Loop over individual detectors and create SnglInspiral entries.
-            for ifo, (horizon, abs_snr, arg_snr, toa, series) \
-                    in zip(opts.detector, simulation):
+                    if np.random.uniform() > opts.duty_cycle:
+                        continue
+                    elif abs_snr >= opts.snr_threshold:
+                        # If SNR < threshold, then the injection is not found.
+                        # Skip it.
+                        count_triggers += 1
+                        net_snr += np.square(abs_snr)
+                    elif not opts.keep_subthreshold:
+                        continue
 
-                if np.random.uniform() > opts.duty_cycle:
+                    # Create SnglInspiral entry.
+                    used_snr_series.append(series)
+                    sngl_inspirals.append(
+                        sngl_inspiral_table.RowType(**dict(
+                            dict.fromkeys(
+                                sngl_inspiral_table.validcolumns, None),
+                            process_id=process.process_id,
+                            ifo=ifo,
+                            mass1=sim_inspiral.mass1,
+                            mass2=sim_inspiral.mass2,
+                            spin1x=sim_inspiral.spin1x,
+                            spin1y=sim_inspiral.spin1y,
+                            spin1z=sim_inspiral.spin1z,
+                            spin2x=sim_inspiral.spin2x,
+                            spin2y=sim_inspiral.spin2y,
+                            spin2z=sim_inspiral.spin2z,
+                            end=toa,
+                            snr=abs_snr,
+                            coa_phase=arg_snr,
+                            f_final=opts.f_high,
+                            eff_distance=horizon / abs_snr)))
+
+                net_snr = np.sqrt(net_snr)
+
+                # If too few triggers were found, then skip this event.
+                if count_triggers < opts.min_triggers:
                     continue
-                elif abs_snr >= opts.snr_threshold:
-                    # If SNR < threshold, then the injection is not found.
-                    # Skip it.
-                    count_triggers += 1
-                    net_snr += np.square(abs_snr)
-                elif not opts.keep_subthreshold:
+
+                # If network SNR < threshold, then the injection is not found.
+                # Skip it.
+                if net_snr < opts.net_snr_threshold:
                     continue
 
-                # Create SnglInspiral entry.
-                used_snr_series.append(series)
-                sngl_inspirals.append(
-                    sngl_inspiral_table.RowType(**dict(
-                        dict.fromkeys(sngl_inspiral_table.validcolumns, None),
-                        process_id=process.process_id,
-                        ifo=ifo,
-                        mass1=sim_inspiral.mass1,
-                        mass2=sim_inspiral.mass2,
-                        spin1x=sim_inspiral.spin1x,
-                        spin1y=sim_inspiral.spin1y,
-                        spin1z=sim_inspiral.spin1z,
-                        spin2x=sim_inspiral.spin2x,
-                        spin2y=sim_inspiral.spin2y,
-                        spin2z=sim_inspiral.spin2z,
-                        end=toa,
-                        snr=abs_snr,
-                        coa_phase=arg_snr,
-                        f_final=opts.f_high,
-                        eff_distance=horizon / abs_snr)))
+                # Add Coinc table entry.
+                coinc = coinc_table.appendRow(
+                    coinc_event_id=coinc_table.get_next_id(),
+                    process_id=process.process_id,
+                    coinc_def_id=inspiral_coinc_def.coinc_def_id,
+                    time_slide_id=time_slide_id,
+                    insts=opts.detector,
+                    nevents=len(opts.detector),
+                    likelihood=None)
 
-            net_snr = np.sqrt(net_snr)
+                # Add CoincInspiral table entry.
+                coinc_inspiral_table.appendRow(
+                    coinc_event_id=coinc.coinc_event_id,
+                    instruments=[
+                        sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals],
+                    end=lal.LIGOTimeGPS(1e-9 * np.mean([
+                        sngl_inspiral.end.ns()
+                        for sngl_inspiral in sngl_inspirals
+                        if sngl_inspiral.end is not None])),
+                    mass=sim_inspiral.mass1 + sim_inspiral.mass2,
+                    mchirp=sim_inspiral.mchirp,
+                    combined_far=0.0,  # Not provided
+                    false_alarm_rate=0.0,  # Not provided
+                    minimum_duration=None,  # Not provided
+                    snr=net_snr)
 
-            # If too few triggers were found, then skip this event.
-            if count_triggers < opts.min_triggers:
-                continue
+                # Record all sngl_inspiral records and associate them with
+                # coincs.
+                for sngl_inspiral, series in zip(
+                        sngl_inspirals, used_snr_series):
+                    # Give this sngl_inspiral record an id and add it to the
+                    # table.
+                    sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()
+                    sngl_inspiral_table.append(sngl_inspiral)
 
-            # If network SNR < threshold, then the injection is not found.
-            # Skip it.
-            if net_snr < opts.net_snr_threshold:
-                continue
+                    if opts.enable_snr_series:
+                        elem = lal.series.build_COMPLEX8TimeSeries(series)
+                        elem.appendChild(
+                            Param.from_pyvalue(
+                                'event_id', sngl_inspiral.event_id))
+                        xmlroot.appendChild(elem)
 
-            # Add Coinc table entry.
+                    # Add CoincMap entry.
+                    coinc_map_table.appendRow(
+                        coinc_event_id=coinc.coinc_event_id,
+                        table_name=sngl_inspiral_table.tableName,
+                        event_id=sngl_inspiral.event_id)
+
+                # Record injection
+                if not opts.preserve_ids:
+                    sim_inspiral.simulation_id \
+                        = sim_inspiral_table.get_next_id()
+                sim_inspiral_table.append(sim_inspiral)
+
+                progress.update()
+
+        # Record coincidence associating injections with events.
+        for i, sim_inspiral in enumerate(sim_inspiral_table):
             coinc = coinc_table.appendRow(
                 coinc_event_id=coinc_table.get_next_id(),
                 process_id=process.process_id,
-                coinc_def_id=inspiral_coinc_def.coinc_def_id,
+                coinc_def_id=found_coinc_def.coinc_def_id,
                 time_slide_id=time_slide_id,
-                insts=opts.detector,
-                nevents=len(opts.detector),
+                instruments=None,
+                nevents=None,
                 likelihood=None)
-
-            # Add CoincInspiral table entry.
-            coinc_inspiral_table.appendRow(
+            coinc_map_table.appendRow(
                 coinc_event_id=coinc.coinc_event_id,
-                instruments=[
-                    sngl_inspiral.ifo for sngl_inspiral in sngl_inspirals],
-                end=lal.LIGOTimeGPS(1e-9 * np.mean([
-                    sngl_inspiral.end.ns()
-                    for sngl_inspiral in sngl_inspirals
-                    if sngl_inspiral.end is not None])),
-                mass=sim_inspiral.mass1 + sim_inspiral.mass2,
-                mchirp=sim_inspiral.mchirp,
-                combined_far=0.0,  # Not provided
-                false_alarm_rate=0.0,  # Not provided
-                minimum_duration=None,  # Not provided
-                snr=net_snr)
+                table_name=sim_inspiral_table.tableName,
+                event_id=sim_inspiral.simulation_id)
+            coinc_map_table.appendRow(
+                coinc_event_id=coinc.coinc_event_id,
+                table_name=coinc_table.tableName,
+                event_id=CoincID(i))
 
-            # Record all sngl_inspiral records and associate them with coincs.
-            for sngl_inspiral, series in zip(sngl_inspirals, used_snr_series):
-                # Give this sngl_inspiral record an id and add it to the table.
-                sngl_inspiral.event_id = sngl_inspiral_table.get_next_id()
-                sngl_inspiral_table.append(sngl_inspiral)
+        # Record process end time.
+        process.set_end_time_now()
 
-                if opts.enable_snr_series:
-                    elem = lal.series.build_COMPLEX8TimeSeries(series)
-                    elem.appendChild(
-                        Param.from_pyvalue('event_id', sngl_inspiral.event_id))
-                    xmlroot.appendChild(elem)
-
-                # Add CoincMap entry.
-                coinc_map_table.appendRow(
-                    coinc_event_id=coinc.coinc_event_id,
-                    table_name=sngl_inspiral_table.tableName,
-                    event_id=sngl_inspiral.event_id)
-
-            # Record injection
-            if not opts.preserve_ids:
-                sim_inspiral.simulation_id = sim_inspiral_table.get_next_id()
-            sim_inspiral_table.append(sim_inspiral)
-
-            progress.update()
-
-    # Record coincidence associating injections with events.
-    for i, sim_inspiral in enumerate(sim_inspiral_table):
-        coinc = coinc_table.appendRow(
-            coinc_event_id=coinc_table.get_next_id(),
-            process_id=process.process_id,
-            coinc_def_id=found_coinc_def.coinc_def_id,
-            time_slide_id=time_slide_id,
-            instruments=None,
-            nevents=None,
-            likelihood=None)
-        coinc_map_table.appendRow(
-            coinc_event_id=coinc.coinc_event_id,
-            table_name=sim_inspiral_table.tableName,
-            event_id=sim_inspiral.simulation_id)
-        coinc_map_table.appendRow(
-            coinc_event_id=coinc.coinc_event_id,
-            table_name=coinc_table.tableName,
-            event_id=CoincID(i))
-
-    # Record process end time.
-    process.set_end_time_now()
-
-    # Write output file.
-    write_fileobj(xmldoc, opts.output)
+        # Write output file.
+        write_fileobj(xmldoc, opts.output)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015-2018  Leo Singer
+# Copyright (C) 2015-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,49 +48,50 @@ def parser():
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    with parser().parse_args(args) as opts:
+        import healpy as hp
+        import numpy as np
+        import json
 
-    import healpy as hp
-    import numpy as np
-    import json
+        from ..io import fits
+        from .. import postprocess
 
-    from ..io import fits
-    from .. import postprocess
+        # Read input file
+        prob, _ = fits.read_sky_map(opts.input.name, nest=True)
 
-    # Read input file
-    prob, _ = fits.read_sky_map(opts.input.name, nest=True)
+        # Resample if requested
+        if opts.nside is not None and opts.interpolate in (
+                'nearest', 'nested'):
+            prob = hp.ud_grade(prob, opts.nside, order_in='NESTED', power=-2)
+        elif opts.nside is not None and opts.interpolate == 'bilinear':
+            prob = postprocess.smooth_ud_grade(prob, opts.nside, nest=True)
+        if opts.interpolate == 'nested':
+            prob = postprocess.interpolate_nested(prob, nest=True)
 
-    # Resample if requested
-    if opts.nside is not None and opts.interpolate in ('nearest', 'nested'):
-        prob = hp.ud_grade(prob, opts.nside, order_in='NESTED', power=-2)
-    elif opts.nside is not None and opts.interpolate == 'bilinear':
-        prob = postprocess.smooth_ud_grade(prob, opts.nside, nest=True)
-    if opts.interpolate == 'nested':
-        prob = postprocess.interpolate_nested(prob, nest=True)
+        # Find credible levels
+        i = np.flipud(np.argsort(prob))
+        cumsum = np.cumsum(prob[i])
+        cls = np.empty_like(prob)
+        cls[i] = cumsum * 100
 
-    # Find credible levels
-    i = np.flipud(np.argsort(prob))
-    cumsum = np.cumsum(prob[i])
-    cls = np.empty_like(prob)
-    cls[i] = cumsum * 100
+        # Generate contours
+        paths = list(postprocess.contour(
+            cls, opts.contour, nest=True, degrees=True,
+            simplify=opts.simplify))
 
-    # Generate contours
-    paths = list(postprocess.contour(
-        cls, opts.contour, nest=True, degrees=True, simplify=opts.simplify))
-
-    json.dump({
-        'type': 'FeatureCollection',
-        'features': [
-            {
-                'type': 'Feature',
-                'properties': {
-                    'credible_level': contour
-                },
-                'geometry': {
-                    'type': 'MultiLineString',
-                    'coordinates': path
+        json.dump({
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'properties': {
+                        'credible_level': contour
+                    },
+                    'geometry': {
+                        'type': 'MultiLineString',
+                        'coordinates': path
+                    }
                 }
-            }
-            for contour, path in zip(opts.contour, paths)
-        ]
-    }, opts.output)
+                for contour, path in zip(opts.contour, paths)
+            ]
+        }, opts.output)

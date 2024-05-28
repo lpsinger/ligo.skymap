@@ -279,271 +279,277 @@ def parser():
 
 
 def main(args=None):
-    import warnings
-
-    from astropy.table import Table
-    from ligo.lw import lsctables
-    from ligo.lw import utils as ligolw_utils
-    from ligo.lw import ligolw
-    import lal.series
-    from scipy import stats
-
     p = parser()
-    args = p.parse_args(args)
+    with p.parse_args(args) as args:
+        import warnings
 
-    if args.min_snr is not None:
-        warnings.warn(
-            'The --min-snr threshold option is deprecated. '
-            'Please use the synonymous --snr-threshold option instead.',
-            UserWarning)
-        args.snr_threshold = args.min_snr
+        from astropy.table import Table
+        from ligo.lw import lsctables
+        from ligo.lw import utils as ligolw_utils
+        from ligo.lw import ligolw
+        import lal.series
+        from scipy import stats
 
-    xmldoc = ligolw.Document()
-    xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
-    process = register_to_xmldoc(xmldoc, p, args)
+        if args.min_snr is not None:
+            warnings.warn(
+                'The --min-snr threshold option is deprecated. '
+                'Please use the synonymous --snr-threshold option instead.',
+                UserWarning)
+            args.snr_threshold = args.min_snr
 
-    # Read PSDs
-    psds = list(
-        lal.series.read_psd_xmldoc(
-            ligolw_utils.load_fileobj(
-                args.reference_psd,
-                contenthandler=lal.series.PSDContentHandler)).values())
+        xmldoc = ligolw.Document()
+        xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
+        process = register_to_xmldoc(xmldoc, p, args)
 
-    if len(psds) < args.min_triggers:
-        parser.error(
-            f'The number of PSDs ({len(psds)}) must be greater than or equal '
-            f'to the value of --min-triggers ({args.min_triggers}).')
+        # Read PSDs
+        psds = list(
+            lal.series.read_psd_xmldoc(
+                ligolw_utils.load_fileobj(
+                    args.reference_psd,
+                    contenthandler=lal.series.PSDContentHandler)).values())
 
-    gwcosmo = GWCosmo(getattr(cosmology, args.cosmology))
+        if len(psds) < args.min_triggers:
+            parser.error(
+                f'The number of PSDs ({len(psds)}) must be greater than or '
+                f'equal to the value of --min-triggers ({args.min_triggers}).')
 
-    if args.distribution:
-        ns_mass_min = 1.0
-        ns_mass_max = 2.0
-        bh_mass_min = 5.0
-        bh_mass_max = 50.0
+        gwcosmo = GWCosmo(getattr(cosmology, args.cosmology))
 
-        ns_astro_spin_min = -0.05
-        ns_astro_spin_max = +0.05
-        ns_astro_mass_dist = stats.norm(1.33, 0.09)
-        ns_astro_spin_dist = stats.uniform(
-            ns_astro_spin_min, ns_astro_spin_max - ns_astro_spin_min)
+        if args.distribution:
+            ns_mass_min = 1.0
+            ns_mass_max = 2.0
+            bh_mass_min = 5.0
+            bh_mass_max = 50.0
 
-        ns_broad_spin_min = -0.4
-        ns_broad_spin_max = +0.4
-        ns_broad_mass_dist = stats.uniform(
-            ns_mass_min, ns_mass_max - ns_mass_min)
-        ns_broad_spin_dist = stats.uniform(
-            ns_broad_spin_min, ns_broad_spin_max - ns_broad_spin_min)
+            ns_astro_spin_min = -0.05
+            ns_astro_spin_max = +0.05
+            ns_astro_mass_dist = stats.norm(1.33, 0.09)
+            ns_astro_spin_dist = stats.uniform(
+                ns_astro_spin_min, ns_astro_spin_max - ns_astro_spin_min)
 
-        bh_astro_spin_min = -0.99
-        bh_astro_spin_max = +0.99
-        bh_astro_mass_dist = stats.pareto(b=1.3)
-        bh_astro_spin_dist = stats.uniform(
-            bh_astro_spin_min, bh_astro_spin_max - bh_astro_spin_min)
+            ns_broad_spin_min = -0.4
+            ns_broad_spin_max = +0.4
+            ns_broad_mass_dist = stats.uniform(
+                ns_mass_min, ns_mass_max - ns_mass_min)
+            ns_broad_spin_dist = stats.uniform(
+                ns_broad_spin_min, ns_broad_spin_max - ns_broad_spin_min)
 
-        bh_broad_spin_min = -0.99
-        bh_broad_spin_max = +0.99
-        bh_broad_mass_dist = stats.reciprocal(bh_mass_min, bh_mass_max)
-        bh_broad_spin_dist = stats.uniform(
-            bh_broad_spin_min, bh_broad_spin_max - bh_broad_spin_min)
+            bh_astro_spin_min = -0.99
+            bh_astro_spin_max = +0.99
+            bh_astro_mass_dist = stats.pareto(b=1.3)
+            bh_astro_spin_dist = stats.uniform(
+                bh_astro_spin_min, bh_astro_spin_max - bh_astro_spin_min)
 
-        if args.distribution.startswith('bns_'):
-            m1_min = m2_min = ns_mass_min
-            m1_max = m2_max = ns_mass_max
-            if args.distribution.endswith('_astro'):
-                x1_min = x2_min = ns_astro_spin_min
-                x1_max = x2_max = ns_astro_spin_max
-                m1_dist = m2_dist = ns_astro_mass_dist
-                x1_dist = x2_dist = ns_astro_spin_dist
-            elif args.distribution.endswith('_broad'):
-                x1_min = x2_min = ns_broad_spin_min
-                x1_max = x2_max = ns_broad_spin_max
-                m1_dist = m2_dist = ns_broad_mass_dist
-                x1_dist = x2_dist = ns_broad_spin_dist
+            bh_broad_spin_min = -0.99
+            bh_broad_spin_max = +0.99
+            bh_broad_mass_dist = stats.reciprocal(bh_mass_min, bh_mass_max)
+            bh_broad_spin_dist = stats.uniform(
+                bh_broad_spin_min, bh_broad_spin_max - bh_broad_spin_min)
+
+            if args.distribution.startswith('bns_'):
+                m1_min = m2_min = ns_mass_min
+                m1_max = m2_max = ns_mass_max
+                if args.distribution.endswith('_astro'):
+                    x1_min = x2_min = ns_astro_spin_min
+                    x1_max = x2_max = ns_astro_spin_max
+                    m1_dist = m2_dist = ns_astro_mass_dist
+                    x1_dist = x2_dist = ns_astro_spin_dist
+                elif args.distribution.endswith('_broad'):
+                    x1_min = x2_min = ns_broad_spin_min
+                    x1_max = x2_max = ns_broad_spin_max
+                    m1_dist = m2_dist = ns_broad_mass_dist
+                    x1_dist = x2_dist = ns_broad_spin_dist
+                else:  # pragma: no cover
+                    assert_not_reached()
+            elif args.distribution.startswith('nsbh_'):
+                m1_min = bh_mass_min
+                m1_max = bh_mass_max
+                m2_min = ns_mass_min
+                m2_max = ns_mass_max
+                if args.distribution.endswith('_astro'):
+                    x1_min = bh_astro_spin_min
+                    x1_max = bh_astro_spin_max
+                    x2_min = ns_astro_spin_min
+                    x2_max = ns_astro_spin_max
+                    m1_dist = bh_astro_mass_dist
+                    m2_dist = ns_astro_mass_dist
+                    x1_dist = bh_astro_spin_dist
+                    x2_dist = ns_astro_spin_dist
+                elif args.distribution.endswith('_broad'):
+                    x1_min = bh_broad_spin_min
+                    x1_max = bh_broad_spin_max
+                    x2_min = ns_broad_spin_min
+                    x2_max = ns_broad_spin_max
+                    m1_dist = bh_broad_mass_dist
+                    m2_dist = ns_broad_mass_dist
+                    x1_dist = bh_broad_spin_dist
+                    x2_dist = ns_broad_spin_dist
+                else:  # pragma: no cover
+                    assert_not_reached()
+            elif args.distribution.startswith('bbh_'):
+                m1_min = m2_min = bh_mass_min
+                m1_max = m2_max = bh_mass_max
+                if args.distribution.endswith('_astro'):
+                    x1_min = x2_min = bh_astro_spin_min
+                    x1_max = x2_max = bh_astro_spin_max
+                    m1_dist = m2_dist = bh_astro_mass_dist
+                    x1_dist = x2_dist = bh_astro_spin_dist
+                elif args.distribution.endswith('_broad'):
+                    x1_min = x2_min = bh_broad_spin_min
+                    x1_max = x2_max = bh_broad_spin_max
+                    m1_dist = m2_dist = bh_broad_mass_dist
+                    x1_dist = x2_dist = bh_broad_spin_dist
+                else:  # pragma: no cover
+                    assert_not_reached()
             else:  # pragma: no cover
                 assert_not_reached()
-        elif args.distribution.startswith('nsbh_'):
-            m1_min = bh_mass_min
-            m1_max = bh_mass_max
-            m2_min = ns_mass_min
-            m2_max = ns_mass_max
-            if args.distribution.endswith('_astro'):
-                x1_min = bh_astro_spin_min
-                x1_max = bh_astro_spin_max
-                x2_min = ns_astro_spin_min
-                x2_max = ns_astro_spin_max
-                m1_dist = bh_astro_mass_dist
-                m2_dist = ns_astro_mass_dist
-                x1_dist = bh_astro_spin_dist
-                x2_dist = ns_astro_spin_dist
-            elif args.distribution.endswith('_broad'):
-                x1_min = bh_broad_spin_min
-                x1_max = bh_broad_spin_max
-                x2_min = ns_broad_spin_min
-                x2_max = ns_broad_spin_max
-                m1_dist = bh_broad_mass_dist
-                m2_dist = ns_broad_mass_dist
-                x1_dist = bh_broad_spin_dist
-                x2_dist = ns_broad_spin_dist
-            else:  # pragma: no cover
-                assert_not_reached()
-        elif args.distribution.startswith('bbh_'):
-            m1_min = m2_min = bh_mass_min
-            m1_max = m2_max = bh_mass_max
-            if args.distribution.endswith('_astro'):
-                x1_min = x2_min = bh_astro_spin_min
-                x1_max = x2_max = bh_astro_spin_max
-                m1_dist = m2_dist = bh_astro_mass_dist
-                x1_dist = x2_dist = bh_astro_spin_dist
-            elif args.distribution.endswith('_broad'):
-                x1_min = x2_min = bh_broad_spin_min
-                x1_max = x2_max = bh_broad_spin_max
-                m1_dist = m2_dist = bh_broad_mass_dist
-                x1_dist = x2_dist = bh_broad_spin_dist
-            else:  # pragma: no cover
-                assert_not_reached()
-        else:  # pragma: no cover
+
+            dists = (m1_dist, m2_dist, x1_dist, x2_dist)
+
+            # Construct mass1, mass2, spin1z, spin2z grid.
+            m1 = np.geomspace(m1_min, m1_max, 10)
+            m2 = np.geomspace(m2_min, m2_max, 10)
+            x1 = np.linspace(x1_min, x1_max, 10)
+            x2 = np.linspace(x2_min, x2_max, 10)
+            params = m1, m2, x1, x2
+
+            # Calculate the maximum distance on the grid.
+            max_z = gwcosmo.get_max_z(
+                psds, args.waveform, args.f_low,
+                args.snr_threshold, args.min_triggers,
+                *np.meshgrid(m1, m2, x1, x2, indexing='ij'), jobs=args.jobs)
+            if args.max_distance is not None:
+                new_max_z = cosmology.z_at_value(
+                    gwcosmo.cosmo.luminosity_distance,
+                    args.max_distance * units.Mpc)
+                max_z[max_z > new_max_z] = new_max_z
+            max_distance = gwcosmo.sensitive_distance(
+                max_z).to_value(units.Mpc)
+
+            # Find piecewise constant approximate upper bound on distance.
+            max_distance = cell_max(max_distance)
+
+            # Calculate V * T in each grid cell
+            cdfs = [dist.cdf(param) for param, dist in zip(params, dists)]
+            cdf_los = [cdf[:-1] for cdf in cdfs]
+            cdfs = [np.diff(cdf) for cdf in cdfs]
+            probs = np.prod(np.meshgrid(*cdfs, indexing='ij'), axis=0)
+            probs /= probs.sum()
+            probs *= 4/3*np.pi*max_distance**3
+            volume = probs.sum()
+            probs /= volume
+            probs = probs.ravel()
+
+            # Draw random grid cells
+            dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
+            indices = np.unravel_index(
+                dist.rvs(size=args.nsamples), max_distance.shape)
+
+            # Draw random intrinsic params from each cell
+            cols = {}
+            cols['mass1'], cols['mass2'], cols['spin1z'], cols['spin2z'] = [
+                dist.ppf(
+                    stats.uniform(cdf_lo[i], cdf[i]).rvs(size=args.nsamples))
+                for i, dist, cdf_lo, cdf in zip(indices, dists, cdf_los, cdfs)]
+        elif args.distribution_samples:
+            # Load distribution samples.
+            samples = Table.read(args.distribution_samples)
+
+            # Calculate the maximum sensitive distance for each sample.
+            max_z = gwcosmo.get_max_z(
+                psds, args.waveform, args.f_low,
+                args.snr_threshold, args.min_triggers,
+                samples['mass1'], samples['mass2'],
+                samples['spin1z'], samples['spin2z'], jobs=args.jobs)
+            if args.max_distance is not None:
+                new_max_z = cosmology.z_at_value(
+                    gwcosmo.cosmo.luminosity_distance,
+                    args.max_distance * units.Mpc)
+                max_z[max_z > new_max_z] = new_max_z
+            max_distance = gwcosmo.sensitive_distance(
+                max_z).to_value(units.Mpc)
+
+            # Calculate V * T for each sample.
+            probs = 1 / len(max_distance)
+            probs *= 4/3*np.pi*max_distance**3
+            volume = probs.sum()
+            probs /= volume
+
+            # Draw weighted samples for the simulated events.
+            dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
+            # Note that we do this in small batches because
+            # stats.rv_discrete.rvs has quadratic memory usage, number of
+            # values times number of samples, which might cause us to run out
+            # of memory if we did it all at once.
+            n_batches = max(args.nsamples * len(probs) // 1_000_000_000, 1)
+            batch_sizes = [len(subarray) for subarray in
+                           np.array_split(np.empty(args.nsamples), n_batches)]
+            indices = np.concatenate([dist.rvs(size=batch_size)
+                                      for batch_size in batch_sizes])
+
+            cols = {key: samples[key][indices]
+                    for key in ['mass1', 'mass2', 'spin1z', 'spin2z']}
+        else:
             assert_not_reached()
 
-        dists = (m1_dist, m2_dist, x1_dist, x2_dist)
+        volumetric_rate = (
+            args.nsamples / volume * units.year**-1 * units.Mpc**-3)
 
-        # Construct mass1, mass2, spin1z, spin2z grid.
-        m1 = np.geomspace(m1_min, m1_max, 10)
-        m2 = np.geomspace(m2_min, m2_max, 10)
-        x1 = np.linspace(x1_min, x1_max, 10)
-        x2 = np.linspace(x2_min, x2_max, 10)
-        params = m1, m2, x1, x2
+        # Swap binary components as needed to ensure that mass1 >= mass2.
+        # Note that the .copy() is important.
+        # See https://github.com/numpy/numpy/issues/14428
+        swap = cols['mass1'] < cols['mass2']
+        cols['mass1'][swap], cols['mass2'][swap] = \
+            cols['mass2'][swap].copy(), cols['mass1'][swap].copy()
+        cols['spin1z'][swap], cols['spin2z'][swap] = \
+            cols['spin2z'][swap].copy(), cols['spin1z'][swap].copy()
 
-        # Calculate the maximum distance on the grid.
-        max_z = gwcosmo.get_max_z(
-            psds, args.waveform, args.f_low,
-            args.snr_threshold, args.min_triggers,
-            *np.meshgrid(m1, m2, x1, x2, indexing='ij'), jobs=args.jobs)
-        if args.max_distance is not None:
-            new_max_z = cosmology.z_at_value(gwcosmo.cosmo.luminosity_distance,
-                                             args.max_distance * units.Mpc)
-            max_z[max_z > new_max_z] = new_max_z
-        max_distance = gwcosmo.sensitive_distance(max_z).to_value(units.Mpc)
+        # Draw random extrinsic parameters
+        cols['distance'] = stats.powerlaw(
+            a=3, scale=max_distance[indices]).rvs(size=args.nsamples)
+        cols['longitude'] = stats.uniform(0, 2 * np.pi).rvs(
+            size=args.nsamples)
+        cols['latitude'] = np.arcsin(stats.uniform(-1, 2).rvs(
+            size=args.nsamples))
+        cols['inclination'] = np.arccos(stats.uniform(-1, 2).rvs(
+            size=args.nsamples))
+        cols['polarization'] = stats.uniform(0, 2 * np.pi).rvs(
+            size=args.nsamples)
+        cols['coa_phase'] = stats.uniform(-np.pi, 2 * np.pi).rvs(
+            size=args.nsamples)
+        cols['time_geocent'] = stats.uniform(
+            1e9, units.year.to(units.second)).rvs(size=args.nsamples)
 
-        # Find piecewise constant approximate upper bound on distance.
-        max_distance = cell_max(max_distance)
+        # Convert from sensitive distance to redshift and comoving distance.
+        # FIXME: Replace this brute-force lookup table with a solver.
+        z = np.linspace(0, max_z.max(), 10000)
+        ds = gwcosmo.sensitive_distance(z).to_value(units.Mpc)
+        dc = gwcosmo.cosmo.comoving_distance(z).to_value(units.Mpc)
+        z_for_ds = interp1d(ds, z, kind='cubic', assume_sorted=True)
+        dc_for_ds = interp1d(ds, dc, kind='cubic', assume_sorted=True)
+        zp1 = 1 + z_for_ds(cols['distance'])
+        cols['distance'] = dc_for_ds(cols['distance'])
 
-        # Calculate V * T in each grid cell
-        cdfs = [dist.cdf(param) for param, dist in zip(params, dists)]
-        cdf_los = [cdf[:-1] for cdf in cdfs]
-        cdfs = [np.diff(cdf) for cdf in cdfs]
-        probs = np.prod(np.meshgrid(*cdfs, indexing='ij'), axis=0)
-        probs /= probs.sum()
-        probs *= 4/3*np.pi*max_distance**3
-        volume = probs.sum()
-        probs /= volume
-        probs = probs.ravel()
+        # Apply redshift factor to convert from comoving distance and source
+        # frame masses to luminosity distance and observer frame masses.
+        for key in ['distance', 'mass1', 'mass2']:
+            cols[key] *= zp1
 
-        # Draw random grid cells
-        dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
-        indices = np.unravel_index(
-            dist.rvs(size=args.nsamples), max_distance.shape)
+        # Populate sim_inspiral table
+        sims = xmlroot.appendChild(lsctables.New(lsctables.SimInspiralTable))
+        for row in zip(*cols.values()):
+            sims.appendRow(
+                **dict(
+                    dict.fromkeys(sims.validcolumns, None),
+                    process_id=process.process_id,
+                    simulation_id=sims.get_next_id(),
+                    waveform=args.waveform,
+                    f_lower=args.f_low,
+                    **dict(zip(cols.keys(), row))))
 
-        # Draw random intrinsic params from each cell
-        cols = {}
-        cols['mass1'], cols['mass2'], cols['spin1z'], cols['spin2z'] = [
-            dist.ppf(stats.uniform(cdf_lo[i], cdf[i]).rvs(size=args.nsamples))
-            for i, dist, cdf_lo, cdf in zip(indices, dists, cdf_los, cdfs)]
-    elif args.distribution_samples:
-        # Load distribution samples.
-        samples = Table.read(args.distribution_samples)
+        # Record process end time.
+        process.comment = str(volumetric_rate)
+        process.set_end_time_now()
 
-        # Calculate the maximum sensitive distance for each sample.
-        max_z = gwcosmo.get_max_z(
-            psds, args.waveform, args.f_low,
-            args.snr_threshold, args.min_triggers,
-            samples['mass1'], samples['mass2'],
-            samples['spin1z'], samples['spin2z'], jobs=args.jobs)
-        if args.max_distance is not None:
-            new_max_z = cosmology.z_at_value(gwcosmo.cosmo.luminosity_distance,
-                                             args.max_distance * units.Mpc)
-            max_z[max_z > new_max_z] = new_max_z
-        max_distance = gwcosmo.sensitive_distance(max_z).to_value(units.Mpc)
-
-        # Calculate V * T for each sample.
-        probs = 1 / len(max_distance)
-        probs *= 4/3*np.pi*max_distance**3
-        volume = probs.sum()
-        probs /= volume
-
-        # Draw weighted samples for the simulated events.
-        dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
-        # Note that we do this in small batches because stats.rv_discrete.rvs
-        # has quadratic memory usage, number of values times number of samples,
-        # which might cause us to run out of memory if we did it all at once.
-        n_batches = max(args.nsamples * len(probs) // 1_000_000_000, 1)
-        batch_sizes = [len(subarray) for subarray in
-                       np.array_split(np.empty(args.nsamples), n_batches)]
-        indices = np.concatenate([dist.rvs(size=batch_size)
-                                  for batch_size in batch_sizes])
-
-        cols = {key: samples[key][indices]
-                for key in ['mass1', 'mass2', 'spin1z', 'spin2z']}
-    else:
-        assert_not_reached()
-
-    volumetric_rate = args.nsamples / volume * units.year**-1 * units.Mpc**-3
-
-    # Swap binary components as needed to ensure that mass1 >= mass2.
-    # Note that the .copy() is important.
-    # See https://github.com/numpy/numpy/issues/14428
-    swap = cols['mass1'] < cols['mass2']
-    cols['mass1'][swap], cols['mass2'][swap] = \
-        cols['mass2'][swap].copy(), cols['mass1'][swap].copy()
-    cols['spin1z'][swap], cols['spin2z'][swap] = \
-        cols['spin2z'][swap].copy(), cols['spin1z'][swap].copy()
-
-    # Draw random extrinsic parameters
-    cols['distance'] = stats.powerlaw(a=3, scale=max_distance[indices]).rvs(
-        size=args.nsamples)
-    cols['longitude'] = stats.uniform(0, 2 * np.pi).rvs(
-        size=args.nsamples)
-    cols['latitude'] = np.arcsin(stats.uniform(-1, 2).rvs(
-        size=args.nsamples))
-    cols['inclination'] = np.arccos(stats.uniform(-1, 2).rvs(
-        size=args.nsamples))
-    cols['polarization'] = stats.uniform(0, 2 * np.pi).rvs(
-        size=args.nsamples)
-    cols['coa_phase'] = stats.uniform(-np.pi, 2 * np.pi).rvs(
-        size=args.nsamples)
-    cols['time_geocent'] = stats.uniform(1e9, units.year.to(units.second)).rvs(
-        size=args.nsamples)
-
-    # Convert from sensitive distance to redshift and comoving distance.
-    # FIXME: Replace this brute-force lookup table with a solver.
-    z = np.linspace(0, max_z.max(), 10000)
-    ds = gwcosmo.sensitive_distance(z).to_value(units.Mpc)
-    dc = gwcosmo.cosmo.comoving_distance(z).to_value(units.Mpc)
-    z_for_ds = interp1d(ds, z, kind='cubic', assume_sorted=True)
-    dc_for_ds = interp1d(ds, dc, kind='cubic', assume_sorted=True)
-    zp1 = 1 + z_for_ds(cols['distance'])
-    cols['distance'] = dc_for_ds(cols['distance'])
-
-    # Apply redshift factor to convert from comoving distance and source frame
-    # masses to luminosity distance and observer frame masses.
-    for key in ['distance', 'mass1', 'mass2']:
-        cols[key] *= zp1
-
-    # Populate sim_inspiral table
-    sims = xmlroot.appendChild(lsctables.New(lsctables.SimInspiralTable))
-    for row in zip(*cols.values()):
-        sims.appendRow(
-            **dict(
-                dict.fromkeys(sims.validcolumns, None),
-                process_id=process.process_id,
-                simulation_id=sims.get_next_id(),
-                waveform=args.waveform,
-                f_lower=args.f_low,
-                **dict(zip(cols.keys(), row))))
-
-    # Record process end time.
-    process.comment = str(volumetric_rate)
-    process.set_end_time_now()
-
-    # Write output file.
-    write_fileobj(xmldoc, args.output)
+        # Write output file.
+        write_fileobj(xmldoc, args.output)

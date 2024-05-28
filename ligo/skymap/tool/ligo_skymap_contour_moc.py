@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2023 Giuseppe Greco, Leo Singer, and CDS team.
+# Copyright (C) 2013-2024  Giuseppe Greco, Leo Singer, and CDS team.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,36 +42,35 @@ def parser():
 
 def main(args=None):
     p = parser()
-    opts = parser().parse_args(args)
+    with parser().parse_args(args) as opts:
+        import astropy_healpix as ah
+        import astropy.units as u
 
-    import astropy_healpix as ah
-    import astropy.units as u
+        try:
+            from mocpy import MOC
+        except ImportError:
+            p.error('This command-line tool requires mocpy >= 0.8.2. '
+                    'Please install it by running "pip install mocpy".')
 
-    try:
-        from mocpy import MOC
-    except ImportError:
-        p.error('This command-line tool requires mocpy >= 0.8.2. '
-                'Please install it by running "pip install mocpy".')
+        from ..io import read_sky_map
 
-    from ..io import read_sky_map
+        # Read multi-order sky map
+        skymap = read_sky_map(opts.input.name, moc=True)
 
-    # Read multi-order sky map
-    skymap = read_sky_map(opts.input.name, moc=True)
+        uniq = skymap['UNIQ']
+        probdensity = skymap['PROBDENSITY']
 
-    uniq = skymap['UNIQ']
-    probdensity = skymap['PROBDENSITY']
+        level, ipix = ah.uniq_to_level_ipix(uniq)
+        area = ah.nside_to_pixel_area(
+            ah.level_to_nside(level)).to_value(u.steradian)
 
-    level, ipix = ah.uniq_to_level_ipix(uniq)
-    area = ah.nside_to_pixel_area(
-        ah.level_to_nside(level)).to_value(u.steradian)
+        prob = probdensity * area
 
-    prob = probdensity * area
+        # Create MOC
+        contour_decimal = opts.contour / 100
+        moc = MOC.from_valued_healpix_cells(
+            uniq, prob, max_depth=level.max(),
+            cumul_from=0.0, cumul_to=contour_decimal)
 
-    # Create MOC
-    contour_decimal = opts.contour / 100
-    moc = MOC.from_valued_healpix_cells(
-        uniq, prob, max_depth=level.max(),
-        cumul_from=0.0, cumul_to=contour_decimal)
-
-    # Write MOC
-    moc.write(opts.output, format='fits', overwrite=True)
+        # Write MOC
+        moc.write(opts.output, format='fits', overwrite=True)

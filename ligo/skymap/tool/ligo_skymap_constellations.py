@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2020  Leo Singer
+# Copyright (C) 2019-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,27 +35,26 @@ def parser():
 
 
 def main(args=None):
-    opts = parser().parse_args(args)
+    with parser().parse_args(args) as opts:
+        # Late imports
+        from ..io import fits
+        import astropy_healpix as ah
+        from astropy.coordinates import SkyCoord
+        from astropy.table import Table
+        from astropy import units as u
+        import healpy as hp
+        import numpy as np
 
-    # Late imports
-
-    from ..io import fits
-    import astropy_healpix as ah
-    from astropy.coordinates import SkyCoord
-    from astropy.table import Table
-    from astropy import units as u
-    import healpy as hp
-    import numpy as np
-
-    prob, meta = fits.read_sky_map(opts.input.name, nest=None)
-    npix = len(prob)
-    nside = ah.npix_to_nside(npix)
-    ipix = np.arange(npix)
-    ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta['nest'])
-    coord = SkyCoord(ra * u.deg, dec * u.deg)
-    table = Table({'prob': prob, 'constellation': coord.get_constellation()},
-                  copy=False)
-    table = table.group_by('constellation').groups.aggregate(np.sum)
-    table.sort('prob')
-    table.reverse()
-    table.write(opts.output, format='ascii.tab')
+        prob, meta = fits.read_sky_map(opts.input.name, nest=None)
+        npix = len(prob)
+        nside = ah.npix_to_nside(npix)
+        ipix = np.arange(npix)
+        ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta['nest'])
+        coord = SkyCoord(ra * u.deg, dec * u.deg)
+        table = Table(
+            {'prob': prob, 'constellation': coord.get_constellation()},
+            copy=False)
+        table = table.group_by('constellation').groups.aggregate(np.sum)
+        table.sort('prob')
+        table.reverse()
+        table.write(opts.output, format='ascii.tab')

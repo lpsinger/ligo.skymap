@@ -1,10 +1,10 @@
+from contextlib import ExitStack
 import errno
 import gzip
 import os
 from pathlib import Path
 import re
 import subprocess
-from unittest.mock import patch
 
 from ligo.lw.utils import load_filename
 import h5py
@@ -18,17 +18,24 @@ from ...util import sqlite
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 
 
-class MockGraceDb:
-    """Mock GraceDB client class that reads local data files."""
+@pytest.fixture
+def mock_gracedb(monkeypatch):
+    stack = ExitStack()
 
-    def files(self, graceid, filename):
-        path = os.path.join(DATA_PATH, '{}_{}'.format(graceid, filename))
-        try:
-            return open(path, 'rb')
-        except IOError as e:
-            if e.errno != errno.ENOENT:
-                raise
-            return gzip.GzipFile(path + '.gz', 'rb')
+    class MockGraceDb(ExitStack):
+
+        def files(self, graceid, filename):
+            path = os.path.join(DATA_PATH, '{}_{}'.format(graceid, filename))
+            try:
+                return stack.enter_context(open(path, 'rb'))
+            except IOError as e:
+                if e.errno != errno.ENOENT:
+                    raise
+                return stack.enter_context(gzip.GzipFile(path + '.gz', 'rb'))
+
+    with stack:
+        monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
+        yield
 
 
 def raises(expected_exception, msg):
@@ -130,8 +137,7 @@ def test_sqlite(tmpdir):
         ligolw_assertions(source)
 
 
-@patch('ligo.gracedb.rest.GraceDb', MockGraceDb)
-def test_gracedb():
+def test_gracedb(mock_gracedb):
     """Test reading events from GraceDB records."""
     source = events.gracedb.open(['G211117', 'G197392'])
     assert len(source) == 2
@@ -198,8 +204,7 @@ def test_gracedb():
                 'f_final': 0.0}
 
 
-@patch('ligo.gracedb.rest.GraceDb', MockGraceDb)
-def test_detector_disabled():
+def test_detector_disabled(mock_gracedb):
     """Test reading from event sources with certain detectors disabled."""
     graceids = ('G211117', 'G197392')
     base_source = events.gracedb.open(graceids)
@@ -326,4 +331,7 @@ def test_hdf(tmpdir):
     events.open(*(h5py.File(filename, 'r') for filename in filenames))
 
     # Test reading from file-like objects
-    events.open(*(open(filename, 'rb') for filename in filenames))
+    with ExitStack() as stack:
+        events.open(*(
+            stack.enter_context(open(filename, 'rb'))
+            for filename in filenames))

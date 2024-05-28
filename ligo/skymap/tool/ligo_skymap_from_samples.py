@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2023  Will M. Farr <will.farr@ligo.org>
+# Copyright (C) 2011-2024  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -86,101 +86,103 @@ def parser():
 
 def main(args=None):
     _parser = parser()
-    args = _parser.parse_args(args)
+    with _parser.parse_args(args) as args:
+        # Late imports
+        from .. import io
+        from ..io.hdf5 import _remap_colnames
+        from ..bayestar import rasterize
+        from .. import version
+        from astropy.table import Table
+        from astropy.time import Time
+        import numpy as np
+        import os
+        import sys
+        import pickle
+        from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
+        import logging
+        from textwrap import wrap
 
-    # Late imports
-    from .. import io
-    from ..io.hdf5 import _remap_colnames
-    from ..bayestar import rasterize
-    from .. import version
-    from astropy.table import Table
-    from astropy.time import Time
-    import numpy as np
-    import os
-    import sys
-    import pickle
-    from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
-    import logging
-    from textwrap import wrap
+        log = logging.getLogger()
 
-    log = logging.getLogger()
-
-    log.info('reading samples')
-    try:
-        data = io.read_samples(args.samples.name, path=args.path,
-                               tablename=args.tablename)
-    except IOError:
-        # FIXME: remove this code path once we support only HDF5
-        data = Table.read(args.samples, format='ascii')
-        _remap_colnames(data)
-
-    if args.maxpts is not None and args.maxpts < len(data):
-        log.info('taking random subsample of chain')
-        data = data[np.random.choice(len(data), args.maxpts, replace=False)]
-    try:
-        dist = data['dist']
-    except KeyError:
+        log.info('reading samples')
         try:
-            dist = data['distance']
-        except KeyError:
-            dist = None
+            data = io.read_samples(args.samples.name, path=args.path,
+                                   tablename=args.tablename)
+        except IOError:
+            # FIXME: remove this code path once we support only HDF5
+            data = Table.read(args.samples, format='ascii')
+            _remap_colnames(data)
 
-    if args.loadpost is None:
-        if dist is None:
+        if args.maxpts is not None and args.maxpts < len(data):
+            log.info('taking random subsample of chain')
+            data = data[
+                np.random.choice(len(data), args.maxpts, replace=False)]
+        try:
+            dist = data['dist']
+        except KeyError:
+            try:
+                dist = data['distance']
+            except KeyError:
+                dist = None
+
+        if args.loadpost is None:
+            if dist is None:
+                if args.enable_distance_map:
+                    _parser.error("The posterior samples file '{}' does not "
+                                  "have a distance column named 'dist' or "
+                                  "'distance'. Cannot generate distance map. "
+                                  "If you do not intend to generate a "
+                                  "distance map, then add the "
+                                  "'--disable-distance-map' command line "
+                                  "argument.".format(args.samples.name))
+                pts = np.column_stack((data['ra'], data['dec']))
+            else:
+                pts = np.column_stack((data['ra'], data['dec'], dist))
             if args.enable_distance_map:
-                _parser.error("The posterior samples file '{}' does not have "
-                              "a distance column named 'dist' or 'distance'. "
-                              "Cannot generate distance map. If you do not "
-                              "intend to generate a distance map, then add "
-                              "the '--disable-distance-map' command line "
-                              "argument.".format(args.samples.name))
-            pts = np.column_stack((data['ra'], data['dec']))
+                cls = Clustered2Plus1DSkyKDE
+            else:
+                cls = Clustered2DSkyKDE
+            skypost = cls(pts, trials=args.trials, jobs=args.jobs)
+
+            log.info('pickling')
+            with open(os.path.join(args.outdir, 'skypost.obj'), 'wb') as out:
+                pickle.dump(skypost, out)
         else:
-            pts = np.column_stack((data['ra'], data['dec'], dist))
+            skypost = pickle.load(args.loadpost)
+            skypost.jobs = args.jobs
+
+        log.info('making skymap')
+        hpmap = skypost.as_healpix(top_nside=args.top_nside)
+        if not args.enable_multiresolution:
+            hpmap = rasterize(hpmap)
+        hpmap.meta.update(io.fits.metadata_for_version_module(version))
+        hpmap.meta['creator'] = _parser.prog
+        hpmap.meta['origin'] = 'LIGO/Virgo/KAGRA'
+        hpmap.meta['gps_creation_time'] = Time.now().gps
+        hpmap.meta['history'] = [
+            '', 'Generated by running the following script:',
+            *wrap(' '.join([_parser.prog] + sys.argv[1:]), 72)]
+        if args.objid is not None:
+            hpmap.meta['objid'] = args.objid
+        if args.instruments:
+            hpmap.meta['instruments'] = args.instruments
         if args.enable_distance_map:
-            cls = Clustered2Plus1DSkyKDE
+            hpmap.meta['distmean'] = np.mean(dist)
+            hpmap.meta['diststd'] = np.std(dist)
+
+        keys = ['time', 'time_mean', 'time_maxl']
+        for key in keys:
+            try:
+                time = data[key]
+            except KeyError:
+                continue
+            else:
+                hpmap.meta['gps_time'] = time.mean()
+                break
         else:
-            cls = Clustered2DSkyKDE
-        skypost = cls(pts, trials=args.trials, jobs=args.jobs)
+            log.warning(
+                'Cannot determine the event time from any of the columns %r',
+                keys)
 
-        log.info('pickling')
-        with open(os.path.join(args.outdir, 'skypost.obj'), 'wb') as out:
-            pickle.dump(skypost, out)
-    else:
-        skypost = pickle.load(args.loadpost)
-        skypost.jobs = args.jobs
-
-    log.info('making skymap')
-    hpmap = skypost.as_healpix(top_nside=args.top_nside)
-    if not args.enable_multiresolution:
-        hpmap = rasterize(hpmap)
-    hpmap.meta.update(io.fits.metadata_for_version_module(version))
-    hpmap.meta['creator'] = _parser.prog
-    hpmap.meta['origin'] = 'LIGO/Virgo/KAGRA'
-    hpmap.meta['gps_creation_time'] = Time.now().gps
-    hpmap.meta['history'] = [
-        '', 'Generated by running the following script:',
-        *wrap(' '.join([_parser.prog] + sys.argv[1:]), 72)]
-    if args.objid is not None:
-        hpmap.meta['objid'] = args.objid
-    if args.instruments:
-        hpmap.meta['instruments'] = args.instruments
-    if args.enable_distance_map:
-        hpmap.meta['distmean'] = np.mean(dist)
-        hpmap.meta['diststd'] = np.std(dist)
-
-    keys = ['time', 'time_mean', 'time_maxl']
-    for key in keys:
-        try:
-            time = data[key]
-        except KeyError:
-            continue
-        else:
-            hpmap.meta['gps_time'] = time.mean()
-            break
-    else:
-        log.warning(
-            'Cannot determine the event time from any of the columns %r', keys)
-
-    io.write_sky_map(os.path.join(args.outdir, args.fitsoutname),
-                     hpmap, nest=True)
+        io.write_sky_map(os.path.join(args.outdir, args.fitsoutname),
+                         hpmap, nest=True)

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.0.1rc2 (unreleased)
+2.0.1rc2 (2024-05-29)
 =====================
 
 - Drop support for Python 3.9 because Astropy 6.1.0 dropped Python 3.9 in

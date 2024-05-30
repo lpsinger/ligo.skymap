@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.0.1rc2 (2024-05-29)
-=====================
+2.0.1 (2024-05-30)
+==================
 
 - Drop support for Python 3.9 because Astropy 6.1.0 dropped Python 3.9 in
   accordance with the Numpy version support policy.

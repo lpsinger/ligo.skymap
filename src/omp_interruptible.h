@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Leo Singer
+ * Copyright (C) 2017-2024  Leo Singer
  *
  * These preprocessor macros help make long-running Python C extensions,
  * possibly that contain OpenMP parallel for loops, respond gracefully to
@@ -121,6 +121,10 @@
  *      {
  *          return PyModule_Create(&moduledef);
  *      }
+ *
+ * Note that only one section of a code at a time will have the signal handler
+ * active. If multiple threads call OMP_BEGIN_INTERRUPTIBLE at the same time,
+ * only one of them is guaranteed to be cancelled.
  */
 
 
@@ -129,36 +133,43 @@
 
 #include "branch_prediction.h"
 
+#include <assert.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 
-/* This is a per-thread pointer to an integer flag that we set when we
- * receive SIGINT. This is a pointer, and not the flag itself, because the
- * flag should be shared among all OpenMP threads, and therefore cannot
- * itself be thread-local. */
-static __thread int *omp_interruptible_flag_ptr = NULL;
+static int omp_was_interrupted = 0;
+static const int omp_interruptible_signal = SIGINT;
+static pthread_mutex_t omp_interruptible_lock = PTHREAD_MUTEX_INITIALIZER;
+static struct sigaction omp_interruptible_old_action;
 
 
-static __thread struct sigaction omp_interruptible_old_action = {
-    .sa_handler = NULL
-};
-
-
-static void omp_interruptible_restore_handler(int sig)
+/* A utility to safely assert that a function that may have side-effects
+ * returns a nonzero value.
+ *
+ * On a non-debug build, `assert(!foo())` will not emit any code, whereas
+ * `must_succed(foo())` will compile to the same code as `foo()`. */
+static void must_succeed(int result)
 {
-    int ret = sigaction(sig, &omp_interruptible_old_action, NULL);
-    (void)ret; /* FIXME: should probably do something with this return value */
-    omp_interruptible_old_action = (struct sigaction) {.sa_handler = NULL};
-    omp_interruptible_flag_ptr = NULL;
+    assert(!result);
+}
+
+
+static void omp_interruptible_restore_handler()
+{
+    must_succeed(sigaction(
+        omp_interruptible_signal,
+        &omp_interruptible_old_action,
+        NULL));
 }
 
 
 static void omp_interruptible_handler(int sig)
 {
-    *omp_interruptible_flag_ptr = 1;
+    omp_was_interrupted = 1;
     #pragma omp flush
-    omp_interruptible_restore_handler(sig);
+    omp_interruptible_restore_handler();
     raise(sig);
 }
 
@@ -168,27 +179,38 @@ static const struct sigaction omp_interruptible_action = {
 };
 
 
-static void omp_interruptible_set_handler(int sig, int *flag_ptr)
-{
-    omp_interruptible_flag_ptr = flag_ptr;
-    *omp_interruptible_flag_ptr = 0;
-    int ret = sigaction(
-        sig, &omp_interruptible_action, &omp_interruptible_old_action);
-    (void)ret; /* FIXME: should probably do something with this return value */
+static int omp_interruptible_begin() {
+    int result = pthread_mutex_trylock(&omp_interruptible_lock);
+    if (LIKELY(!result)) {
+        omp_was_interrupted = 0;
+        must_succeed(sigaction(
+            omp_interruptible_signal,
+            &omp_interruptible_action,
+            &omp_interruptible_old_action));
+    }
+    return result;
 }
 
 
-#define OMP_BEGIN_INTERRUPTIBLE { \
-    int omp_was_interrupted; \
-    omp_interruptible_set_handler(SIGINT, &omp_was_interrupted);
-
-
-#define OMP_END_INTERRUPTIBLE \
-    omp_interruptible_restore_handler(SIGINT); \
+static void omp_interruptible_end(int omp_interruptible_begin_result) {
+    if (LIKELY(!omp_interruptible_begin_result)) {
+        omp_interruptible_restore_handler();
+        must_succeed(pthread_mutex_unlock(&omp_interruptible_lock));
+    }
 }
 
 
-#define OMP_WAS_INTERRUPTED UNLIKELY(omp_was_interrupted)
+static int omp_interruptible_get(int omp_interruptible_begin_result) {
+    if (UNLIKELY(omp_interruptible_begin_result))
+        return 0;
+    else
+        return omp_was_interrupted;
+}
+
+
+#define OMP_BEGIN_INTERRUPTIBLE int omp_interruptible_begin_result = omp_interruptible_begin();
+#define OMP_END_INTERRUPTIBLE omp_interruptible_end(omp_interruptible_begin_result);
+#define OMP_WAS_INTERRUPTED UNLIKELY(omp_interruptible_get(omp_interruptible_begin_result))
 
 
 #if _OPENMP

@@ -444,13 +444,18 @@ done:
     interrupted = OMP_WAS_INTERRUPTED;
     OMP_END_INTERRUPTIBLE
 
-    if (UNLIKELY(interrupted || !(integrator && region0 && region1 && region2)))
-    {
+    if (UNLIKELY(!(integrator && region0 && region1 && region2))) {
         free(integrator);
         free(region0);
         free(region1);
         free(region2);
         GSL_ERROR_NULL("not enough memory to allocate integrator", GSL_ENOMEM);
+    } else if (UNLIKELY(interrupted)) {
+        free(integrator);
+        free(region0);
+        free(region1);
+        free(region2);
+        return NULL;
     }
 
     integrator->region0 = region0;

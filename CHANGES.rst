@@ -5,7 +5,14 @@ Changelog
 2.0.2 (unreleased)
 ==================
 
-- No changes yet.
+- BAYESTAR now terminates gracefully if you interrupt it by typing control-C or
+  sending the process in which it is running a SIGINT signal. Previously, there
+  was a bug in the signal handling code that caused it to segfault on keyboard
+  interrupt.
+
+  Note that if you invoke BAYESTAR multiple times in different threads of the
+  same process, then only one of the invocations will stop early due the
+  interrupt, because signal handlers are process-wide.
 
 2.0.1 (2024-05-30)
 ==================

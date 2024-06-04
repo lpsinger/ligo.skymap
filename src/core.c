@@ -866,7 +866,7 @@ static PyObject *sky_map_toa_phoa_snr(
      * occurred during the brief serial sections and that the function could
      * have run successfully to completion. In that case, we still need to
      * return NULL to Python and report the exception! */
-    if (PyErr_CheckSignals())
+    if (PyErr_CheckSignals() || PyErr_Occurred())
     {
         free(pixels);
         pixels = NULL;

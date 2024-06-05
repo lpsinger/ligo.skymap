@@ -269,7 +269,7 @@ test/macos/x86_64:
 test/macos/arm64:
   <<: *test-macos
   tags:
-    - macos_monterey_arm64
+    - macos_sonoma_arm64
   needs:
     - wheel/macos/arm64
 

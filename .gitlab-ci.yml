@@ -253,8 +253,6 @@ test/linux/x86_64/python3.12.2:
     - python${PYVERS} -m venv env
     - source env/bin/activate
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    # FIXME: remove when https://git.ligo.org/computing/helpdesk/-/issues/5983 is fixed
-    - pip install 'healpy<1.17'
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
   artifacts:
     paths:

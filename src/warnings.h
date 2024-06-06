@@ -29,14 +29,6 @@
 #endif
 
 #ifdef __ICC
-#define WARNINGS_IGNORE_DISCARDED_QUALIFIERS _Pragma("warning(disable:2330)")
-#elif defined(__clang__)
-#define WARNINGS_IGNORE_DISCARDED_QUALIFIERS _Pragma("GCC diagnostic ignored \"-Wincompatible-pointer-types-discards-qualifiers\"")
-#else  /* gcc */
-#define WARNINGS_IGNORE_DISCARDED_QUALIFIERS _Pragma("GCC diagnostic ignored \"-Wdiscarded-qualifiers\"")
-#endif
-
-#ifdef __ICC
 #define WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES _Pragma("warning(disable:167)")
 #else  /* gcc or clang */
 #define WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES _Pragma("GCC diagnostic ignored \"-Wincompatible-pointer-types\"")

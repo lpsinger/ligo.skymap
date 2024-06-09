@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020  Leo Singer
+ * Copyright (C) 2015-2024  Leo Singer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,9 +83,8 @@ static void cubic_interp_init_coefficients(
 cubic_interp *cubic_interp_init(
     const double *data, int n, double tmin, double dt)
 {
-    cubic_interp *interp;
     const int length = n + 6;
-    interp = malloc(sizeof(*interp) + length * sizeof(*interp->a));
+    cubic_interp *interp = malloc(sizeof(*interp) + length * sizeof(*interp->a));
     if (LIKELY(interp))
     {
         interp->f = 1 / dt;
@@ -133,10 +132,9 @@ bicubic_interp *bicubic_interp_init(
     const double *data, int ns, int nt,
     double smin, double tmin, double ds, double dt)
 {
-    bicubic_interp *interp = NULL;
     const int slength = ns + 6;
     const int tlength = nt + 6;
-    interp = aligned_alloc(
+    bicubic_interp *interp = aligned_alloc(
         alignof(bicubic_interp),
         sizeof(*interp) + slength * tlength * sizeof(*interp->a));
     if (LIKELY(interp))

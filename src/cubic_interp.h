@@ -21,7 +21,7 @@
  *         when the input data contains NaNs or infinities
  *      3. Bounds and invalid value checks are precomputed:
  *         minimal branch instructions needed in evaluate function
- *      5. Interpolating polynomial is precomputed:
+ *      4. Interpolating polynomial is precomputed:
  *         modest speedup relative to naive 1D interpolant,
  *         4x speedup relative to naive 2D interpolant
  *         at the cost of 16x the memory footprint

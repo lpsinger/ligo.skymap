@@ -16,15 +16,26 @@
  *
  *
  *      Accelerated 1D and 2D cubic interpolation
+ *
  *      1. Constant boundary conditions
+ *
  *      2. Robust to invalid data: drops to linear or nearest-neighbor
  *         when the input data contains NaNs or infinities
+ *
  *      3. Bounds and invalid value checks are precomputed:
  *         minimal branch instructions needed in evaluate function
- *      4. Interpolating polynomial is precomputed:
- *         modest speedup relative to naive 1D interpolant,
- *         4x speedup relative to naive 2D interpolant
- *         at the cost of 16x the memory footprint
+ *
+ *      4. Interpolating polynomial is precomputed.
+ *
+ *         For 1D interpolation, direct evaluation of the inteprolating
+ *         polynomial from the data takes 9 multiplications and 10 additions;
+ *         with precomputed coefficients we need only 3 multiplications and 3
+ *         additions at the cost of 4x the memory footprint.
+ *
+ *         For 2D interpolation, direct evaluation of the inteprolating
+ *         polynomial from the data takes 18 multiplications and 20 additions;
+ *         with precomputed coefficients we need only 6 multiplications and 6
+ *         additions at the cost of 16x the memory footprint.
  */
 
 

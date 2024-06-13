@@ -35,7 +35,7 @@
 #define VCUBIC(a, t) (t * (t * (t * a[0] + a[1]) + a[2]) + a[3])
 
 
-struct cubic_interp{
+struct cubic_interp {
     double f, t0, length;
     double a[][4];
 };

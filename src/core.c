@@ -1103,9 +1103,9 @@ static PyModuleDef moduledef = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "core",
     .m_methods = (PyMethodDef []) {
-        {"itt_pause", (PyCFunction)get_num_threads,
+        {"itt_pause", (PyCFunction)itt_pause,
             METH_NOARGS, "fill me in"},
-        {"itt_resume", (PyCFunction)set_num_threads,
+        {"itt_resume", (PyCFunction)itt_resume,
             METH_NOARGS, "fill me in"},
         {"get_num_threads", (PyCFunction)get_num_threads,
             METH_NOARGS, "fill me in"},

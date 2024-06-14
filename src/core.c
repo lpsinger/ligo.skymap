@@ -34,6 +34,10 @@
 #include "cubic_interp.h"
 #include "omp_interruptible.h"
 
+#ifdef WITH_ITTNOTIFY
+#include <ittnotify.h>
+#endif
+
 /* FIXME:
  * The Numpy C-API defines PyArrayDescr_Type as:
  *
@@ -51,6 +55,24 @@
 #ifndef PYPY_VERSION
 struct _typeobject {};
 #endif
+
+
+static PyObject *itt_pause(PyObject *NPY_UNUSED(module), void *NPY_UNUSED(args))
+{
+#ifdef WITH_ITTNOTIFY
+    __itt_pause();
+#endif
+    Py_RETURN_NONE;
+}
+
+
+static PyObject *itt_resume(PyObject *NPY_UNUSED(module), void *NPY_UNUSED(args))
+{
+#ifdef WITH_ITTNOTIFY
+    __itt_resume();
+#endif
+    Py_RETURN_NONE;
+}
 
 
 static PyObject *
@@ -1081,6 +1103,10 @@ static PyModuleDef moduledef = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "core",
     .m_methods = (PyMethodDef []) {
+        {"itt_pause", (PyCFunction)get_num_threads,
+            METH_NOARGS, "fill me in"},
+        {"itt_resume", (PyCFunction)set_num_threads,
+            METH_NOARGS, "fill me in"},
         {"get_num_threads", (PyCFunction)get_num_threads,
             METH_NOARGS, "fill me in"},
         {"set_num_threads", (PyCFunction)set_num_threads,

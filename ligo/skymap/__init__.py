@@ -33,5 +33,27 @@ class Omp:
         set_num_threads(value)
 
 
+class Itt():
+    """Context manager to run code with Intel ITT tracing temporarily enabled.
+
+    If you use this context manager, then you should start profiling with
+    collection paused.
+
+    See https://www.intel.com/content/www/us/en/docs/vtune-profiler/user-guide/2023-1/instrumentation-and-tracing-technology-apis.html
+    """  # noqa: E501
+
+    def __enter__(self):
+        from .core import itt_resume
+        itt_resume()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        from .core import itt_pause
+        itt_pause()
+
+
 omp = Omp()
 del Omp
+
+itt = Itt()
+del Itt

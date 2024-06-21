@@ -8,7 +8,7 @@ Example
 
 ::
 
-    $ curl -O https://gracedb.ligo.org/api/superevents/S230707ai/files/bayestar.multiorder.fits,2
+    $ curl -OL https://gracedb.ligo.org/api/superevents/S230707ai/files/bayestar.multiorder.fits,2
     $ ligo-skymap-plot-coherence bayestar.multiorder.fits,2 -o bayestar.coherence.png
 
 .. plot::

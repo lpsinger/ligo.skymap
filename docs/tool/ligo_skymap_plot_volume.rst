@@ -8,7 +8,7 @@ Example
 
 To plot a 3D volume rendering for GW170104::
 
-    $ curl -O https://losc.ligo.org/s/events/GW170104/P1500227/bayestar.fits.gz
+    $ curl -OL https://gwosc.org/s/events/GW170104/P1500227/bayestar.fits.gz
     $ ligo-skymap-plot-volume bayestar.fits.gz -o bayestar.png
 
 .. plot::
@@ -17,7 +17,7 @@ To plot a 3D volume rendering for GW170104::
 
     from ligo.skymap.tool.ligo_skymap_plot_volume import main
     from astropy.utils.data import download_file
-    filename = download_file('https://losc.ligo.org/s/events/GW170104/P1500227/bayestar.fits.gz', cache=True)
+    filename = download_file('https://gwosc.org/s/events/GW170104/P1500227/bayestar.fits.gz', cache=True)
     main([filename])
 
 .. argparse::

@@ -8,7 +8,7 @@ Example
 
 To plot the localization for GW150914::
 
-    $ curl -O https://dcc.ligo.org/public/0122/P1500227/012/bayestar_gstlal_C01.fits.gz
+    $ curl -OL https://dcc.ligo.org/public/0122/P1500227/012/bayestar_gstlal_C01.fits.gz
     $ ligo-skymap-plot bayestar_gstlal_C01.fits.gz -o bayestar.png --annotate --contour 50 90
 
 .. plot::

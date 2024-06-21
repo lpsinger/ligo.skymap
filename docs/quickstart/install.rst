@@ -100,7 +100,7 @@ models) rely on external data files. These data files are part of
 `lalsuite-extra`_, which must be installed separately. To install these data
 files, run the following commands::
 
-    $ curl -O https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
+    $ curl -OL https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
     $ tar xf lalsuite-extra-1.3.0.tar.gz
     $ cd lalsuite-extra-1.3.0
     $ ./configure --prefix=$HOME/.local

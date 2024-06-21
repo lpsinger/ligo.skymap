@@ -13,8 +13,8 @@ Example
 Combine the LIGO-only localization of GW170817 and the Fermi/GBM localization
 of GRB 170817A into a more precise localization::
 
-    $ curl -O https://dcc.ligo.org/public/0146/G1701985/001/bayestar_no_virgo.fits.gz
-    $ curl -O https://gammaray.nsstc.nasa.gov/gbm/science/grbs/grb170817a/gbuts_healpix_systematic.fit
+    $ curl -OL https://dcc.ligo.org/public/0146/G1701985/001/bayestar_no_virgo.fits.gz
+    $ curl -OL https://gammaray.nsstc.nasa.gov/gbm/science/grbs/grb170817a/gbuts_healpix_systematic.fit
     $ ligo-skymap-combine bayestar_no_virgo.fits.gz gbuts_healpix_systematic.fit hanford_livingston_gbm.fits.gz
     $ ligo-skymap-plot hanford_livingston_gbm.fits.gz -o hanford_livingston_gbm.png
 

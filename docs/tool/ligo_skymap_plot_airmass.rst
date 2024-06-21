@@ -8,7 +8,7 @@ Example
 
 To make an airmass plot for GW170817::
 
-    $ curl -O https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz
+    $ curl -OL https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz
     $ ligo-skymap-plot-airmass --site 'Las Campanas Observatory' --time 2017-08-17 bayestar.fits.gz -o bayestar.png
 
 .. plot::

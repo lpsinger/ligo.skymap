@@ -9,7 +9,7 @@ Easter Egg: List Most Probable Constellations (`ligo-skymap-constellations`)
 
 To list the most probable constellations for GW170817::
 
-    $ curl -O https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz
+    $ curl -OL https://dcc.ligo.org/public/0146/G1701985/001/bayestar.fits.gz
     $ ligo-skymap-constellations bayestar.fits.gz
 
 .. testcode::

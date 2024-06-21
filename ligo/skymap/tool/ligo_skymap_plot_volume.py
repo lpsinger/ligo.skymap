@@ -67,10 +67,10 @@ def main(args=None):
         from .. import io
         from ..plot import marker
         from ..distance import (parameters_to_marginal_moments,
-                                principal_axes, volume_render, marginal_pdf)
+                                principal_axes, volume_render, marginal_pdf,
+                                conditional_pdf)
         import healpy as hp
         import numpy as np
-        import scipy.stats
 
         # Read input, determine input resolution.
         progress.set_description('Loading FITS file')
@@ -216,8 +216,8 @@ def main(args=None):
                     markerfacecolor='none', markeredgewidth=1, clip_on=False,
                     transform=transforms.blended_transform_factory(
                         ax.transData, ax.transAxes))
-                ax.fill_between(d, scipy.stats.norm(
-                    mu[ipix], sigma[ipix]).pdf(d) * norm[ipix] * np.square(d),
+                ax.fill_between(
+                    d, conditional_pdf(d, mu[ipix], sigma[ipix], norm[ipix]),
                     alpha=0.5, color=lines.get_color())
                 ax.axvline(dist, color='black', linewidth=0.5)
 

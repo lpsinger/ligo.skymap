@@ -17,6 +17,7 @@
 
 
 #include "bayestar_distance.h"
+#include "find_floor.h"
 
 #include <gsl/gsl_cblas.h>
 #include <gsl/gsl_errno.h>
@@ -324,8 +325,9 @@ void bayestar_distance_parameters_to_moments(
 
 static double bayestar_volume_render_inner(
     double x, double y, double z, int axis0, int axis1, int axis2,
-    const double *R, long long nside, int nest, const double *prob, const
-    double *mu, const double *sigma, const double *norm)
+    const double *R, long int n, const long int *nest,
+    const double *probdensity, const double *mu, const double *sigma,
+    const double *norm)
 {
     double ret;
     double xyz[3];
@@ -338,27 +340,31 @@ static double bayestar_volume_render_inner(
     double vec[3];
     cblas_dgemv(
         CblasRowMajor, CblasNoTrans, 3, 3, 1, R, 3, xyz, 1, 0, vec, 1);
+
+    /* Find the nested pixel index at the maximum 64-bit resolution. */
     int64_t ipix;
-    if (nest)
-        vec2pix_nest64(nside, vec, &ipix);
-    else
-        vec2pix_ring64(nside, vec, &ipix);
+    vec2pix_nest64(1 << 29, vec, &ipix);
+
+    /* Look up the pixel index. */
+    long int i = find_floor(nest, ipix, n);
+
     double r = sqrt(gsl_pow_2(x) + gsl_pow_2(y) + gsl_pow_2(z));
 
-    if (isfinite(mu[ipix]))
+    if (i >= 0 && isfinite(mu[i]))
         ret = gsl_sf_exp_mult(
-            -0.5 * gsl_pow_2((r - mu[ipix]) / sigma[ipix]),
-            prob[ipix] * norm[ipix] / sigma[ipix]);
+            -0.5 * gsl_pow_2((r - mu[i]) / sigma[i]),
+            probdensity[i] * norm[i] / sigma[i]);
     else
         ret = 0;
+
     return ret;
 }
 
 
 double bayestar_volume_render(
     double x, double y, double max_distance, int axis0, int axis1,
-    const double *R, long long nside, int nest,
-    const double *prob, const double *mu,
+    const double *R, long long nside, long int n, const long int *nest,
+    const double *probdensity, const double *mu,
     const double *sigma, const double *norm)
 {
     /* Determine which axis to integrate over
@@ -401,7 +407,7 @@ double bayestar_volume_render(
             const double dz_dtheta = a / gsl_pow_2(cos(theta));
             const double z = a * tan(theta);
             ret += bayestar_volume_render_inner(x, y, z, axis0, axis1, axis2,
-                R, nside, nest, prob, mu, sigma, norm) * dz_dtheta;
+                R, n, nest, probdensity, mu, sigma, norm) * dz_dtheta;
         }
         ret *= dtheta;
     } else {
@@ -409,11 +415,11 @@ double bayestar_volume_render(
         for (double z = -max_distance; z <= max_distance; z += dz)
         {
             ret += bayestar_volume_render_inner(x, y, z, axis0, axis1, axis2,
-                R, nside, nest, prob, mu, sigma, norm);
+                R, n, nest, probdensity, mu, sigma, norm);
         }
         ret *= dz;
     }
-    ret *= nside2npix64(nside) / (4 * M_PI * sqrt(2 * M_PI));
+    ret *= 1 / (sqrt(2 * M_PI));
     return ret;
 }
 

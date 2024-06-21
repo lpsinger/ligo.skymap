@@ -25,8 +25,12 @@ Changelog
     does linear interpolation of area when the credible level falls between
     pixels.
 
-  - Temporarily require numpy \< 2.0.0 and scipy \< 1.14.0 due to
-    incompatibilities with lalsuite and healpy respectively.
+- The ``ligo-skymap-plot-volume`` script now uses multi-resolution sky maps
+  internally. This will significantly decrease its memory usage for
+  high-resolution sky maps.
+
+- Temporarily require numpy \< 2.0.0 and scipy \< 1.14.0 due to
+  incompatibilities with lalsuite and healpy respectively.
 
 2.0.1 (2024-05-30)
 ==================

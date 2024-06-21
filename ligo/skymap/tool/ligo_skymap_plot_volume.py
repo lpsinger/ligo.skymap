@@ -60,38 +60,38 @@ def main(args=None):
         progress.set_description('Starting up')
 
         # Late imports
-        import astropy_healpix as ah
         from matplotlib import pyplot as plt
         from matplotlib import gridspec
         from matplotlib import transforms
         from .. import io
+        from .. import moc
         from ..plot import marker
+        from ..healpix_tree import HEALPIX_MACHINE_ORDER, HEALPIX_MACHINE_NSIDE
         from ..distance import (parameters_to_marginal_moments,
-                                principal_axes, volume_render, marginal_pdf,
-                                conditional_pdf)
+                                principal_axes_moc, volume_render,
+                                conditional_pdf, marginal_pdf)
         import healpy as hp
         import numpy as np
 
         # Read input, determine input resolution.
         progress.set_description('Loading FITS file')
-        (prob, mu, sigma, norm), metadata = io.read_sky_map(
-            opts.input.name, distances=True)
-        npix = len(prob)
-        nside = ah.npix_to_nside(npix)
+        skymap = io.read_sky_map(opts.input.name, distances=True, moc=True)
 
         progress.set_description('Preparing projection')
 
         if opts.align_to is None or opts.input.name == opts.align_to.name:
-            prob2, mu2, sigma2, norm2 = prob, mu, sigma, norm
+            skymap2 = skymap
         else:
-            (prob2, mu2, sigma2, norm2), _ = io.read_sky_map(
-                opts.align_to.name, distances=True)
+            skymap2 = io.read_sky_map(
+                opts.align_to.name, distances=True, moc=True)
         if opts.max_distance is None:
-            mean, std = parameters_to_marginal_moments(prob2, mu2, sigma2)
+            mean, std = parameters_to_marginal_moments(
+                moc.uniq2pixarea(skymap2['UNIQ']) * skymap2['PROBDENSITY'],
+                skymap2['DISTMU'], skymap2['DISTSIGMA'])
             max_distance = mean + 2.5 * std
         else:
             max_distance = opts.max_distance
-        rot = np.ascontiguousarray(principal_axes(prob2, mu2, sigma2))
+        rot = np.ascontiguousarray(principal_axes_moc(skymap2))
 
         if opts.chain:
             chain = io.read_samples(opts.chain.name)
@@ -125,8 +125,8 @@ def main(args=None):
 
             # Marginalize onto the given face
             density = volume_render(
-                xx.ravel(), yy.ravel(), max_distance, axis0, axis1, rot, False,
-                prob, mu, sigma, norm).reshape(xx.shape)
+                xx.ravel(), yy.ravel(), max_distance, axis0, axis1, rot,
+                skymap).reshape(xx.shape)
 
             # Plot heat map
             ax = fig.add_subplot(
@@ -202,24 +202,36 @@ def main(args=None):
             # Plot marginal distance distribution, integrated over the whole
             # sky.
             d = np.linspace(0, max_distance)
-            ax.fill_between(d, marginal_pdf(d, prob, mu, sigma, norm),
-                            alpha=0.5, color=ax._get_lines.get_next_color())
+            dp_dd = marginal_pdf(
+                d, moc.uniq2pixarea(skymap['UNIQ']) * skymap['PROBDENSITY'],
+                skymap['DISTMU'], skymap['DISTSIGMA'], skymap['DISTNORM'])
+            ax.fill_between(d, dp_dd, alpha=0.5,
+                            color=ax._get_lines.get_next_color())
 
-            # Plot conditional distance distribution at true position
-            # and mark true distance.
-            for ra, dec, dist in opts.radecdist:
-                theta = 0.5 * np.pi - np.deg2rad(dec)
-                phi = np.deg2rad(ra)
-                ipix = hp.ang2pix(nside, theta, phi)
-                lines, = ax.plot(
-                    [dist], [-0.15], marker=truth_marker,
-                    markerfacecolor='none', markeredgewidth=1, clip_on=False,
-                    transform=transforms.blended_transform_factory(
-                        ax.transData, ax.transAxes))
-                ax.fill_between(
-                    d, conditional_pdf(d, mu[ipix], sigma[ipix], norm[ipix]),
-                    alpha=0.5, color=lines.get_color())
-                ax.axvline(dist, color='black', linewidth=0.5)
+            if opts.radecdist:
+                level, ipix = moc.uniq2nest(skymap['UNIQ'])
+                index = ipix << 2 * (HEALPIX_MACHINE_ORDER - level)
+                sorter = np.argsort(index)
+
+                # Plot conditional distance distribution at true position
+                # and mark true distance.
+                for ra, dec, dist in opts.radecdist:
+                    match_ipix = hp.ang2pix(HEALPIX_MACHINE_NSIDE, ra, dec,
+                                            nest=True, lonlat=True)
+                    i = sorter[np.searchsorted(index, match_ipix, side='right',
+                                               sorter=sorter) - 1]
+                    lines, = ax.plot(
+                        [dist], [-0.15], marker=truth_marker,
+                        markerfacecolor='none', markeredgewidth=1,
+                        clip_on=False,
+                        transform=transforms.blended_transform_factory(
+                            ax.transData, ax.transAxes))
+                    dp_dd = conditional_pdf(
+                        d, skymap['DISTMU'][i], skymap['DISTSIGMA'][i],
+                        skymap['DISTNORM'][i])
+                    ax.fill_between(
+                        d, dp_dd, alpha=0.5, color=lines.get_color())
+                    ax.axvline(dist, color='black', linewidth=0.5)
 
             # Scale axes
             ax.set_xticks([0, max_distance])
@@ -233,14 +245,14 @@ def main(args=None):
             if opts.annotate:
                 text = []
                 try:
-                    objid = metadata['objid']
+                    objid = skymap.meta['objid']
                 except KeyError:
                     pass
                 else:
                     text.append('event ID: {}'.format(objid))
                 try:
-                    distmean = metadata['distmean']
-                    diststd = metadata['diststd']
+                    distmean = skymap.meta['distmean']
+                    diststd = skymap.meta['diststd']
                 except KeyError:
                     pass
                 else:

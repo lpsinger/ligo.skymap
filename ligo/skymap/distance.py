@@ -33,14 +33,18 @@ References
 
 """
 
+from astropy.table import Table
 import astropy_healpix as ah
 import numpy as np
 import healpy as hp
 import scipy.special
 from .core import (conditional_pdf, conditional_cdf, conditional_ppf,
-                   moments_to_parameters, parameters_to_moments, volume_render,
-                   marginal_pdf, marginal_cdf, marginal_ppf)
+                   moments_to_parameters, parameters_to_moments,
+                   volume_render as _volume_render, marginal_pdf, marginal_cdf,
+                   marginal_ppf)
 from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
+from .healpix_tree import HEALPIX_MACHINE_ORDER
+from . import moc
 
 __all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
            'moments_to_parameters', 'parameters_to_moments', 'volume_render',
@@ -245,96 +249,100 @@ Check some more arbitrary values using numerical quadrature:
 """)
 
 
-add_newdoc_ufunc(volume_render, """\
-Perform volumetric rendering of a 3D sky map.
+_volume_render = require_contiguous_aligned(_volume_render)
 
-Parameters
-----------
-x : `numpy.ndarray`
-    X-coordinate in rendered image
-y : `numpy.ndarray`
-    Y-coordinate in rendered image
-max_distance : float
-    Limit of integration from `-max_distance` to `+max_distance`
-axis0 : int
-    Index of axis to assign to x-coordinate
-axis1 : int
-    Index of axis to assign to y-coordinate
-R : `numpy.ndarray`
-    Rotation matrix as provided by `principal_axes`
-nest : bool
-    HEALPix ordering scheme
-prob : `numpy.ndarray`
-    Marginal probability (pix^-2)
-distmu : `numpy.ndarray`
-    Distance location parameter (Mpc)
-distsigma : `numpy.ndarray`
-    Distance scale parameter (Mpc)
-distnorm : `numpy.ndarray`
-    Distance normalization factor (Mpc^-2)
 
-Returns
--------
-image : `numpy.ndarray`
-    Rendered image
+def volume_render(x, y, max_distance, axis0, axis1, R, skymap):
+    """Perform volumetric rendering of a 3D multi-resolution sky map.
 
-Examples
---------
-Test volume rendering of a normal unit sphere...
-First, set up the 3D sky map.
+    Parameters
+    ----------
+    x : `numpy.ndarray`
+        X-coordinate in rendered image
+    y : `numpy.ndarray`
+        Y-coordinate in rendered image
+    max_distance : float
+        Limit of integration from `-max_distance` to `+max_distance`
+    axis0 : int
+        Index of axis to assign to x-coordinate
+    axis1 : int
+        Index of axis to assign to y-coordinate
+    R : `numpy.ndarray`
+        Rotation matrix as provided by `principal_axes`
+    skymap : `astropy.table.Table`
+        Multi-resolution sky map
 
->>> nside = 32
->>> npix = ah.nside_to_npix(nside)
->>> prob = np.ones(npix) / npix
->>> distmu = np.zeros(npix)
->>> distsigma = np.ones(npix)
->>> distnorm = np.ones(npix) * 2.0
+    Returns
+    -------
+    image : `numpy.ndarray`
+        Rendered image
 
-The conditional distance distribution should be a chi distribution with
-3 degrees of freedom.
+    Examples
+    --------
+    Test volume rendering of a normal unit sphere...
+    First, set up the 3D sky map.
 
->>> from scipy.stats import norm, chi
->>> r = np.linspace(0, 10.0)
->>> actual = conditional_pdf(r, distmu[0], distsigma[0], distnorm[0])
->>> expected = chi(3).pdf(r)
->>> np.testing.assert_almost_equal(actual, expected)
+    >>> import astropy_healpix as ah
+    >>> from astropy.table import Table
+    >>> import numpy as np
+    >>> level = 5
+    >>> nside = 2**level
+    >>> npix = ah.nside_to_npix(nside)
+    >>> ipix = np.arange(npix)
+    >>> skymap = Table({
+    ...     'UNIQ': ah.level_ipix_to_uniq(level, ipix),
+    ...     'PROBDENSITY': np.ones(npix) / (4 * np.pi),
+    ...     'DISTMU': np.zeros(npix),
+    ...     'DISTSIGMA': np.ones(npix),
+    ...     'DISTNORM': np.ones(npix) * 2.0
+    ... })
 
-Next, run the volume renderer.
+    The conditional distance distribution should be a chi distribution with
+    3 degrees of freedom.
 
->>> dmax = 4.0
->>> n = 64
->>> s = np.logspace(-dmax, dmax, n)
->>> x, y = np.meshgrid(s, s)
->>> R = np.eye(3)
->>> P = volume_render(x, y, dmax, 0, 1, R, False,
-...                   prob, distmu, distsigma, distnorm)
+    >>> from scipy.stats import norm, chi
+    >>> r = np.linspace(0, 10.0)
+    >>> actual = conditional_pdf(
+    ...     r, skymap['DISTMU'][0], skymap['DISTSIGMA'][0], skymap['DISTNORM'][0])
+    >>> expected = chi(3).pdf(r)
+    >>> np.testing.assert_almost_equal(actual, expected)
 
-Next, integrate analytically.
+    Next, run the volume renderer.
 
->>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
+    >>> dmax = 4.0
+    >>> n = 64
+    >>> s = np.logspace(-dmax, dmax, n)
+    >>> x, y = np.meshgrid(s, s)
+    >>> R = np.eye(3)
+    >>> P = volume_render(x, y, dmax, 0, 1, R, skymap)
 
-Compare the two.
+    Next, integrate analytically.
 
->>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
+    >>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
 
-Check that we get the same answer if the input is in ring ordering.
-FIXME: this is a very weak test, because the input sky map is isotropic!
+    Compare the two.
 
->>> P = volume_render(x, y, dmax, 0, 1, R, True,
-...                   prob, distmu, distsigma, distnorm)
->>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
+    >>> np.testing.assert_almost_equal(P, P_expected, decimal=4)
 
-Last, check that we don't have a coordinate singularity at the origin.
+    Last, check that we don't have a coordinate singularity at the origin.
 
->>> x = np.concatenate(([0], np.logspace(1 - n, 0, n) * dmax))
->>> y = 0.0
->>> P = volume_render(x, y, dmax, 0, 1, R, False,
-...                   prob, distmu, distsigma, distnorm)
->>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
->>> np.testing.assert_allclose(P, P_expected, rtol=1e-4)
+    >>> x = np.concatenate(([0], np.logspace(1 - n, 0, n) * dmax))
+    >>> y = 0.0
+    >>> P = volume_render(x, y, dmax, 0, 1, R, skymap)
+    >>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
+    >>> np.testing.assert_allclose(P, P_expected, rtol=1e-4)
 
-""")
-volume_render = require_contiguous_aligned(volume_render)
+    """  # noqa: E501
+    skymap = Table(skymap)
+    uniq = skymap.columns.pop('UNIQ')
+    nside = 1 << moc.uniq2order(uniq.max())
+    order, nest = moc.uniq2nest(uniq)
+    skymap['NEST'] = nest << np.int64(2 * (HEALPIX_MACHINE_ORDER - order))
+    skymap.sort('NEST')
+    return _volume_render(
+        x, y, max_distance, axis0, axis1, R, nside,
+        skymap['NEST'], skymap['PROBDENSITY'], skymap['DISTMU'],
+        skymap['DISTSIGMA'], skymap['DISTNORM'])
 
 
 add_newdoc_ufunc(marginal_pdf, """\
@@ -661,6 +669,28 @@ def principal_axes(prob, distmu, distsigma, nest=False):
     distmean, diststd, _ = parameters_to_moments(distmu[good], distsigma[good])
     mass = prob[good] * (np.square(diststd) + np.square(distmean))
     xyz = np.asarray(hp.pix2vec(nside, ipix, nest=nest))
+    cov = np.dot(xyz * mass, xyz.T)
+    L, V = np.linalg.eigh(cov)
+    if np.linalg.det(V) < 0:
+        V = -V
+    return V
+
+
+def principal_axes_moc(skymap):
+    skymap = skymap[
+        np.isfinite(skymap['PROBDENSITY']) &
+        np.isfinite(skymap['DISTMU']) &
+        np.isfinite(skymap['DISTNORM'])]
+
+    prob = skymap['PROBDENSITY'] * moc.uniq2pixarea(skymap['UNIQ'])
+    distmean, diststd, _ = parameters_to_moments(
+        skymap['DISTMU'], skymap['DISTSIGMA'])
+    mass = prob * (np.square(diststd) + np.square(distmean))
+
+    order, ipix = moc.uniq2nest(skymap['UNIQ'])
+    nside = 1 << np.int64(order)
+    xyz = np.asarray(hp.pix2vec(nside, ipix, nest=True))
+
     cov = np.dot(xyz * mass, xyz.T)
     L, V = np.linalg.eigh(cov)
     if np.linalg.det(V) < 0:

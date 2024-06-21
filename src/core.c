@@ -32,6 +32,7 @@
 #include "bayestar_moc.h"
 #include "bayestar_sky_map.h"
 #include "cubic_interp.h"
+#include "find_floor.h"
 #include "omp_interruptible.h"
 
 #ifdef WITH_ITTNOTIFY
@@ -270,16 +271,16 @@ static void volume_render_loop(
     /* The arguments with core dimensions must be C contiguous.
      * This is enforced in Python by the require_contiguous_aligned wrapper.
      * This ufunc loop must NOT be called without that wrapper. */
-    assert(steps[12] == sizeof(double) * 3);
-    assert(steps[13] == sizeof(double));
-    assert(steps[14] == sizeof(double));
+    assert(steps[13] == sizeof(double) * 3);
+    assert(steps[14] == sizeof(npy_intp));
     assert(steps[15] == sizeof(double));
     assert(steps[16] == sizeof(double));
     assert(steps[17] == sizeof(double));
+    assert(steps[18] == sizeof(double));
+    assert(steps[19] == sizeof(double));
 
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
-    const long long nside = npix2nside64(dimensions[2]);
 
     OMP_BEGIN_INTERRUPTIBLE
     #pragma omp parallel for
@@ -291,19 +292,20 @@ static void volume_render_loop(
          * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         WARNINGS_PUSH
         WARNINGS_IGNORE_CAST_ALIGN
-        *(double *) &args[11][i * steps[11]] = bayestar_volume_render(
+        *(double *) &args[12][i * steps[12]] = bayestar_volume_render(
             *(double *)   &args[0][i * steps[0]],
             *(double *)   &args[1][i * steps[1]],
             *(double *)   &args[2][i * steps[2]],
             *(int *)      &args[3][i * steps[3]],
             *(int *)      &args[4][i * steps[4]],
              (double *)   &args[5][i * steps[5]],
-            nside,
-            *(npy_bool *) &args[6][i * steps[6]],
-             (double *)   &args[7][i * steps[7]],
+            *(npy_intp *) &args[6][i * steps[6]],
+            dimensions[2],
+             (npy_intp *) &args[7][i * steps[7]],
              (double *)   &args[8][i * steps[8]],
              (double *)   &args[9][i * steps[9]],
-             (double *)   &args[10][i * steps[10]]);
+             (double *)   &args[10][i * steps[10]],
+             (double *)   &args[11][i * steps[11]]);
         WARNINGS_POP
     }
     OMP_END_INTERRUPTIBLE
@@ -1046,7 +1048,7 @@ static PyObject *test(
     int ret;
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     Py_BEGIN_ALLOW_THREADS
-    ret = bayestar_test() + cubic_interp_test();
+    ret = bayestar_test() + cubic_interp_test() + find_floor_test();
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
     return PyLong_FromLong(ret);
@@ -1082,8 +1084,9 @@ static const char log_posterior_toa_phoa_snr_types[] = {
     NPY_DOUBLE};
 
 static const char volume_render_ufunc_types[] = {
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE, NPY_BOOL,
-    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
+    NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_INTP, NPY_INT, NPY_DOUBLE,
+    NPY_INTP, NPY_INTP, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
+    NPY_DOUBLE};
 
 static const char double_ufunc_types[] = {
                       NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE,
@@ -1197,9 +1200,9 @@ PyMODINIT_FUNC PyInit_core(void)
     MODULE_ADD_OBJECT(
         "volume_render", PyUFunc_FromFuncAndDataAndSignature(
             (PyUFuncGenericFunction *) volume_render_loops, NULL,
-            volume_render_ufunc_types, 1, 11, 1, PyUFunc_None,
+            volume_render_ufunc_types, 1, 12, 1, PyUFunc_None,
             "volume_render", NULL, 0,
-            "(),(),(),(),(),(3,3),(),(n),(n),(n),(n)->()"));
+            "(),(),(),(),(),(3,3),(),(n),(n),(n),(n),(n)->()"));
 
     MODULE_ADD_OBJECT(
         "marginal_pdf", PyUFunc_FromFuncAndDataAndSignature(

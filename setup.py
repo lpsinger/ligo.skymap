@@ -27,6 +27,7 @@ def get_extensions():
             'src/core.c',
             'src/cubic_interp.c',
             'src/cubic_interp_test.c',
+            'src/find_floor.c',
         ],
         'include_dirs': [
             np.get_include()

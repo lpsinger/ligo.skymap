@@ -224,13 +224,13 @@ modindex_common_prefix = [package.__name__ + '.']
 # -- Options for intersphinx --------------------------------------------------
 
 intersphinx_mapping.update({
-    'gracedb': ('https://gracedb.ligo.org/documentation/', None),
-    'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'celery': ('https://docs.celeryq.dev/en/stable/', None),
-    'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
-    'gwpy': ('https://gwpy.github.io/docs/latest/', None),
-    'pytest': ('https://docs.pytest.org/en/latest/', None),
+    'gracedb': ('https://gracedb.ligo.org/documentation/', None),
     'gsl': ('https://www.gnu.org/software/gsl/doc/html/', None),
+    'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
+    'gwpy': ('https://gwpy.github.io/docs/latest/', None),
+    'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
+    'pytest': ('https://docs.pytest.org/en/latest/', None),
 })
 
 # -- Options for mermaid ------------------------------------------------------

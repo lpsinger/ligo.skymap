@@ -109,6 +109,8 @@ extensions.extend(['sphinx.ext.extlinks'])
 # name of a builtin theme or the name of a custom theme in html_theme_path.
 #html_theme = None
 
+html_static_path = ['_static']
+html_css_files = ['fix-sidebar-textwrap.css']
 
 # Please update these texts to match the name of your package.
 html_theme_options = {

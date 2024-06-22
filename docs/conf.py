@@ -231,6 +231,7 @@ intersphinx_mapping.update({
     'gwpy': ('https://gwpy.github.io/docs/latest/', None),
     'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
     'pytest': ('https://docs.pytest.org/en/latest/', None),
+    'reproject': ('https://reproject.readthedocs.io/en/stable/', None),
 })
 
 # -- Options for mermaid ------------------------------------------------------

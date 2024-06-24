@@ -335,7 +335,7 @@ static double log_radial_integral(double r1, double r2, double p, double b, int 
 
     {
         /* Maximum number of subdivisions for adaptive integration. */
-        static const size_t n = 64;
+        enum {n = 64};
 
         /* Allocate workspace on stack. Hopefully, a little bit faster than
          * using the heap in multi-threaded code. */
@@ -581,8 +581,8 @@ float complex bayestar_signal_amplitude_model(
 }
 
 
-#define nu 10
-static const unsigned int ntwopsi = 10;
+enum {nu = 10};
+enum {ntwopsi = 10};
 static float u_points_weights[nu][2];
 
 

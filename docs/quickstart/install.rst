@@ -74,12 +74,12 @@ You are now ready to get started using `ligo.skymap`.
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.5.0
           *  `NetworkX <https://networkx.github.io>`_
-          *  `Numpy <http://www.numpy.org>`_ ≥ 1.23.0
+          *  `Numpy <http://www.numpy.org>`_ ≥ 1.23.0, \< 2.0.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
           *  `ptemcee <https://github.com/willvousden/ptemcee>`_
           *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_ ≥ 1.8.0
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
-          *  `Scipy <https://www.scipy.org>`_ ≥ 0.14, ≠ 1.10.0
+          *  `Scipy <https://www.scipy.org>`_ ≥ 0.14, ≠ 1.10.0, \< 1.14.0
           *  `tqdm <https://tqdm.github.io>`_ ≥ 4.27.0
           *  `pytz <http://pytz.sourceforge.net>`_
 

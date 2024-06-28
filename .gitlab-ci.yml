@@ -428,6 +428,55 @@ tests/review:
     expire_in: 1 week
 
 #
+# Run benchmark.
+#
+
+tests/benchmark:
+  stage: test
+  image: containers.ligo.org/emfollow/ssh-kerberos
+  when: manual
+  needs:
+    - wheel/linux/x86_64
+  variables:
+    GIT_STRATEGY: none
+    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+  script:
+    - |
+      ssh -T $REMOTE_HOST "bash -e" <<EOF
+      mkdir -p public_html
+      git clone $CI_REPOSITORY_URL public_html/$CI_JOB_ID
+      cd public_html/$CI_JOB_ID
+      git checkout $CI_COMMIT_REF_NAME
+      EOF
+    - scp *.whl $REMOTE_HOST:public_html/$CI_JOB_ID
+    - |
+      ssh -T $REMOTE_HOST "bash -e" <<EOF
+      cd public_html/$CI_JOB_ID
+      CI_SERVER_PROTOCOL="$CI_SERVER_PROTOCOL" CI_JOB_TOKEN="$CI_JOB_TOKEN" \
+      CI_SERVER_FQDN="$CI_SERVER_FQDN" condor_run \
+        -a request_disk=4G \
+        -a request_memory=8G \
+        -a request_cpus=48 \
+        -a accounting_group=ligo.dev.o4.cbc.pe.bayestar \
+        -a accounting_group_user=leo.singer \
+        -a Requirements=TARGET.machine==\"node2100.cluster.ldas.cit\" \
+        -a MY.Benchmarking_Mix=True \
+        ./.gitlab/benchmark.sh *.whl
+      EOF
+    - scp $REMOTE_HOST:public_html/$CI_JOB_ID/{benchmark.svg,roofline.html,perf.svg} ./
+  after_script:
+    - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
+    - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"
+    - echo -e "\e[0Ksection_end:`date +%s`:remote_cleanup\r\e[0K"
+  artifacts:
+    paths:
+      - benchmark.svg
+      - roofline.html
+      - perf.svg
+    expose_as: benchmark
+    expire_in: 1 week
+
+#
 # Gather coverage reports and docs for GitLab pages and build badges.
 #
 

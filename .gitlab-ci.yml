@@ -417,7 +417,6 @@ tests/review:
     - scp -r $REMOTE_HOST:public_html/$CI_JOB_ID/site site
     - echo -e "\e[0Ksection_end:`date +%s`:remote_retrieve\r\e[0K"
 
-    # For now, do not delete the output directory, because GitLab CI artifacts are not uploading.
     - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
     - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"
     - echo -e "\e[0Ksection_end:`date +%s`:remote_cleanup\r\e[0K"

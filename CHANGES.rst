@@ -32,6 +32,9 @@ Changelog
 - Temporarily require numpy \< 2.0.0 and scipy \< 1.14.0 due to
   incompatibilities with lalsuite and healpy respectively.
 
+- Use a Wayback Machine URL to download the Mellinger sky panorama because the
+  original URL is broken.
+
 2.0.1 (2024-05-30)
 ==================
 

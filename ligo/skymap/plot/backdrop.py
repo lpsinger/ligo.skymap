@@ -84,7 +84,7 @@ def mellinger():
         ax.imshow(backdrop_reprojected)
 
     """
-    url = 'http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits'
+    url = 'https://web.archive.org/web/20160317214047/http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits'  # noqa: E501
     hdu, = fits.open(url, cache=True)
     return hdu
 

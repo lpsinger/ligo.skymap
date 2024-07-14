@@ -211,6 +211,10 @@ extensions += ['sphinxarg.ext']
 
 extensions += ['sphinx.ext.doctest']
 
+# -- Options for the matplotlib.sphinxext extension ---------------------------
+
+extensions += ['matplotlib.sphinxext.roles']
+
 # -- Options for extlinks extension ------------------------------------------
 
 extlinks = {

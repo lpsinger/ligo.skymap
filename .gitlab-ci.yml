@@ -262,7 +262,7 @@ test/linux/x86_64/python3.12.2:
 test/macos/x86_64:
   <<: *test-macos
   tags:
-    - macos_bigsur_x86_64
+    - macos_monterey_x86_64
   needs:
     - wheel/macos/x86_64
 

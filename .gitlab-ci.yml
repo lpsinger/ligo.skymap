@@ -168,14 +168,13 @@ deps-aarch64/python3.10:
 deps-x86_64/python3.10:
   <<: *deps
 
-# FIXME: Temporarily pin Python patch version due to bug affecting doctests.
-# See https://github.com/python/cpython/issues/117692.
+# Pin Python patch version due to bug affecting doctests that has been fixed
+# but will not be backported to Python 3.11.
+# See https://github.com/python/cpython/issues/117692#issuecomment-2047800533.
 deps-x86_64/python3.11.8:
   <<: *deps
 
-# FIXME: Temporarily pin Python patch version due to bug affecting doctests.
-# See https://github.com/python/cpython/issues/117692.
-deps-x86_64/python3.12.2:
+deps-x86_64/python3.12:
   <<: *deps
 
 #
@@ -236,11 +235,11 @@ test/linux/x86_64/python3.11.8:
     - deps-x86_64/python3.11.8
     - wheel/linux/x86_64
 
-test/linux/x86_64/python3.12.2:
+test/linux/x86_64/python3.12:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12.2:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12:$CI_COMMIT_REF_SLUG
   needs:
-    - deps-x86_64/python3.12.2
+    - deps-x86_64/python3.12
     - wheel/linux/x86_64
 
 .test/macos: &test-macos

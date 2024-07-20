@@ -596,7 +596,7 @@ static void u_points_weights_init(void)
      * values for certain orders, and for the order I have picked it will
      * return a pointer to one of these. See:
      *
-     * http://git.savannah.gnu.org/cgit/gsl.git/tree/integration/glfixed.c
+     * https://git.savannah.gnu.org/cgit/gsl.git/tree/integration/glfixed.c
      */
     assert(gltable);
     assert(gltable->precomputed); /* We don't have to free it. */

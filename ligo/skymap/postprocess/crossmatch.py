@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2020  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -390,7 +390,7 @@ def crossmatch(sky_map, coordinates=None,
             contour_dists = []
         else:
             lo, hi = np.interp(
-                np.row_stack((
+                np.vstack((
                     0.5 * (1 - contours),
                     0.5 * (1 + contours)
                 )), P_r, r, left=0, right=np.inf)

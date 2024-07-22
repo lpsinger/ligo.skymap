@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2020  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,12 @@ import numpy as np
 from scipy import interpolate
 from scipy import fftpack as fft
 from scipy import linalg
+
+try:
+    from numpy import trapezoid
+except ImportError:
+    # FIXME: Remove after we require Numpy >=2.0.0.
+    from numpy import trapz as trapezoid
 
 log = logging.getLogger('BAYESTAR')
 
@@ -545,7 +551,7 @@ class SignalModel:
         h = h.data.data[first_nonzero:last_nonzero + 1]
 
         self.denom_integrand = 4 / (2 * np.pi) * h
-        self.den = np.trapz(self.denom_integrand, dx=self.dw)
+        self.den = trapezoid(self.denom_integrand, dx=self.dw)
 
     def get_horizon_distance(self, snr_thresh=1):
         return np.sqrt(self.den) / snr_thresh
@@ -554,7 +560,7 @@ class SignalModel:
         """Get the average of a function of angular frequency, weighted by the
         signal to noise per unit angular frequency.
         """
-        num = np.trapz(func(self.w) * self.denom_integrand, dx=self.dw)
+        num = trapezoid(func(self.w) * self.denom_integrand, dx=self.dw)
         return num / self.den
 
     def get_sn_moment(self, power):

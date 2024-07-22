@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2020  Leo Singer
+# Copyright (C) 2017-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,9 +103,9 @@ class EigenFrame(BaseCoordinateFrame):
 
 @frame_transform_graph.transform(DynamicMatrixTransform, ICRS, EigenFrame)
 def icrs_to_eigenframe(from_coo, to_frame):
-    return np.row_stack((to_frame.e_x.xyz.value,
-                         to_frame.e_y.xyz.value,
-                         to_frame.e_z.xyz.value))
+    return np.vstack((to_frame.e_x.xyz.value,
+                      to_frame.e_y.xyz.value,
+                      to_frame.e_z.xyz.value))
 
 
 @frame_transform_graph.transform(DynamicMatrixTransform, EigenFrame, ICRS)

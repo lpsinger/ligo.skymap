@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2020  Leo Singer
+# Copyright (C) 2012-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ def cut_prime_meridian(vertices):
     # them crosses the meridian if the difference of the angles is greater
     # than π.
     phis = vertices[:, 0]
-    phi0, phi1 = np.sort(np.row_stack((np.roll(phis, 1), phis)), axis=0)
+    phi0, phi1 = np.sort(np.vstack((np.roll(phis, 1), phis)), axis=0)
     crosses_meridian = (phi1 - phi0 > np.pi)
 
     # Count the number of times that the polygon crosses the meridian.

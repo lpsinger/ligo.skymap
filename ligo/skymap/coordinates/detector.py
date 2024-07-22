@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2020  Leo Singer
+# Copyright (C) 2018-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,9 +92,9 @@ def itrs_to_detectorframe(from_coo, to_frame):
     e_x /= e_x.norm()
     e_y = e_z.cross(e_x)
 
-    return np.row_stack((e_x.xyz.value,
-                         e_y.xyz.value,
-                         e_z.xyz.value))
+    return np.vstack((e_x.xyz.value,
+                      e_y.xyz.value,
+                      e_z.xyz.value))
 
 
 @frame_transform_graph.transform(DynamicMatrixTransform, DetectorFrame, ITRS)

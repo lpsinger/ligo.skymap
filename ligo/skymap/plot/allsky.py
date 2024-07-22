@@ -293,7 +293,7 @@ class WCSCircleInsetConnectionPatch(PathPatch):
             r0 * np.sin(alpha), r0 * np.cos(alpha)])
         p1 = centers[1] + self._sign * np.asarray([
             r1 * np.sin(alpha), r1 * np.cos(alpha)])
-        return Path(np.row_stack((p0, p1)), np.asarray([
+        return Path(np.vstack((p0, p1)), np.asarray([
             Path.MOVETO, Path.LINETO]))
 
 

@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
 
 # From https://docs.gitlab.com/ee/ci/jobs/index.html#use-a-script-to-improve-display-of-collapsible-sections
 function section_start () {

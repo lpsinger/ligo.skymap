@@ -28,7 +28,7 @@ git clone ${GIT_ORIGIN}leo-singer/ligo-skymap-benchmark.git
 section_end "clone"
 
 section_start "venv" "Creating Python virtual environment"
-python -m venv env
+python3.12 -m venv env
 source env/bin/activate
 pip install pandas
 section_end "venv"

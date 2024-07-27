@@ -35,6 +35,14 @@ Changelog
 - Use a Wayback Machine URL to download the Mellinger sky panorama because the
   original URL is broken.
 
+- Fixes related to the ``cut_dateline`` and ``cut_prime_meridian`` functions:
+
+  - Adjust to API changes between Shapely 1.x and 2.x.
+
+  - Add a dependency on Shapely.
+
+  - Add test cases.
+
 2.0.1 (2024-05-30)
 ==================
 

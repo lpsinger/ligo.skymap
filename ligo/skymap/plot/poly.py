@@ -17,6 +17,7 @@
 """Plotting tools for drawing polygons."""
 import numpy as np
 import healpy as hp
+import shapely
 
 from .angle import reference_angle, wrapped_angle
 
@@ -49,6 +50,24 @@ def cut_dateline(vertices):
 
     This routine is not meant to cover all possible cases; it will only work
     for convex polygons that extend over less than a hemisphere.
+
+    Examples
+    --------
+    >>> cut_dateline(np.asarray([[3, 0.1],
+    ...                          [4, 0.1],
+    ...                          [4, -0.1],
+    ...                          [3, -0.1],
+    ...                          [3, 0.1]]))
+    [array([[-2.28318531,  0.1       ],
+            [-2.28318531, -0.1       ],
+            [-3.14159265, -0.1       ],
+            [-3.14159265,  0.1       ],
+            [-2.28318531,  0.1       ]]),
+     array([[ 3.14159265,  0.1       ],
+            [ 3.14159265, -0.1       ],
+            [ 3.        , -0.1       ],
+            [ 3.        ,  0.1       ],
+            [ 3.14159265,  0.1       ]])]
     """
     vertices = vertices.copy()
     vertices[:, 0] += np.pi
@@ -65,9 +84,25 @@ def cut_prime_meridian(vertices):
 
     This routine is not meant to cover all possible cases; it will only work
     for convex polygons that extend over less than a hemisphere.
-    """
-    from shapely import geometry
 
+    Examples
+    --------
+    >>> cut_prime_meridian(np.asarray([[6, 0.1],
+    ...                                [7, 0.1],
+    ...                                [7, -0.1],
+    ...                                [6, -0.1],
+    ...                                [6, 0.1]]))
+    [array([[ 0.71681469,  0.1       ],
+            [ 0.71681469, -0.1       ],
+            [ 0.        , -0.1       ],
+            [ 0.        ,  0.1       ],
+            [ 0.71681469,  0.1       ]]),
+     array([[ 6.28318531,  0.1       ],
+            [ 6.28318531, -0.1       ],
+            [ 6.        , -0.1       ],
+            [ 6.        ,  0.1       ],
+            [ 6.28318531,  0.1       ]])]
+    """
     # Ensure that the list of vertices does not contain a repeated endpoint.
     if (vertices[0] == vertices[-1]).all():
         vertices = vertices[:-1]
@@ -132,7 +167,7 @@ def cut_prime_meridian(vertices):
         out_vertices = []
 
         # Construct polygon representing map boundaries.
-        frame_poly = geometry.Polygon(np.asarray([
+        frame_poly = shapely.geometry.Polygon(np.asarray([
             [0., 0.5 * np.pi],
             [0., -0.5 * np.pi],
             [2 * np.pi, -0.5 * np.pi],
@@ -140,13 +175,14 @@ def cut_prime_meridian(vertices):
 
         # Intersect with polygon re-wrapped to lie in [-π, π) or [π, 3π).
         for shift in [0, 2 * np.pi]:
-            poly = geometry.Polygon(np.column_stack((
+            poly = shapely.geometry.Polygon(np.column_stack((
                 reference_angle(vertices[:, 0]) + shift, vertices[:, 1])))
             intersection = poly.intersection(frame_poly)
             if intersection:
-                assert isinstance(intersection, geometry.Polygon)
+                assert isinstance(intersection, shapely.geometry.Polygon)
                 assert intersection.is_simple
-                out_vertices += [np.asarray(intersection.exterior)]
+                out_vertices += [
+                    shapely.get_coordinates(intersection.exterior)]
     else:
         # There were more than two intersections. Not implemented!
         raise NotImplementedError('The polygon intersected the map boundaries '

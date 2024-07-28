@@ -284,14 +284,14 @@ test/dev-deps:
   script:
     # Qhull is needed to build Matplotlib from source
     - apt-get update && apt-get -y install --no-install-recommends libqhull-dev
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - >
-      pip install
-      git+https://github.com/numpy/numpy
-      git+https://github.com/matplotlib/matplotlib
+      pip install --upgrade --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
+      'numpy>=0.0.0.dev0'
+      'matplotlib>=0.0.0.dev0'
+      'lalsuite>=0.0.0.dev0'
       git+https://github.com/astropy/astropy
       git+https://git.ligo.org/kipp.cannon/python-ligo-lw
-      'lalsuite>=0.0.dev0'
-      $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
   needs:
     - wheel/linux/x86_64

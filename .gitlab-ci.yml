@@ -22,10 +22,14 @@ requirements:
   script:
     - |
       python >requirements.txt <<EOF
-      from configparser import ConfigParser
-      conf = ConfigParser()
-      conf.read('setup.cfg')
-      print(conf['options']['install_requires'] + ''.join(conf['options.extras_require'].values()))
+      import tomllib
+      with open('pyproject.toml', 'rb') as f:
+          conf = tomllib.load(f)
+      for dep in conf['project']['dependencies']:
+          print(dep)
+      for deps in conf['project']['optional-dependencies'].values():
+          for dep in deps:
+              print(dep)
       EOF
   artifacts:
     paths:

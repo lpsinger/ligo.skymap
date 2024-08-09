@@ -88,8 +88,8 @@ wheel/linux/aarch64:
 
 .wheel-macos: &wheel-macos
   variables:
-    CC: gcc-mp-11
-    CXX: g++-mp-11
+    CC: gcc-mp-14
+    CXX: g++-mp-14
     CFLAGS: -Ofast -fno-finite-math-only -flto
   stage: dist
   script:

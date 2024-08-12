@@ -27,7 +27,7 @@ def test_reproject_from_healpix_moc():
     map_flat = np.arange(hpx.npix)
 
     map_moc = Table({
-        'UNIQ': nest2uniq(hpx.level, hpx.ring_to_nested(map_flat)),
+        'UNIQ': nest2uniq(np.int8(hpx.level), hpx.ring_to_nested(map_flat)),
         'IMG': map_flat,
     })
 

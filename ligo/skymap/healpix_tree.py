@@ -386,42 +386,147 @@ def reconstruct_nested(m, order='depthfirst', extra=True):
 
     >>> m = np.zeros(12)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
+    >>> np.asarray(list(result))
+    array([[ 1,  0],
+           [ 1,  1],
+           [ 1,  2],
+           [ 1,  3],
+           [ 1,  4],
+           [ 1,  5],
+           [ 1,  6],
+           [ 1,  7],
+           [ 1,  8],
+           [ 1,  9],
+           [ 1, 10],
+           [ 1, 11]])
 
     An nside=1 array of distinct values:
 
     >>> m = range(12)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
+    >>> np.asarray(list(result))
+    array([[ 1,  0],
+           [ 1,  1],
+           [ 1,  2],
+           [ 1,  3],
+           [ 1,  4],
+           [ 1,  5],
+           [ 1,  6],
+           [ 1,  7],
+           [ 1,  8],
+           [ 1,  9],
+           [ 1, 10],
+           [ 1, 11]])
 
     An nside=8 array of zeros:
 
     >>> m = np.zeros(768)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
+    >>> np.asarray(list(result))
+    array([[ 1,  0],
+           [ 1,  1],
+           [ 1,  2],
+           [ 1,  3],
+           [ 1,  4],
+           [ 1,  5],
+           [ 1,  6],
+           [ 1,  7],
+           [ 1,  8],
+           [ 1,  9],
+           [ 1, 10],
+           [ 1, 11]])
 
     An nside=2 array, all zeros except for four consecutive distinct elements:
 
     >>> m = np.zeros(48); m[:4] = range(4)
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (2, 0), (2, 1), (2, 2), (2, 3)]
+    >>> np.asarray(list(result))
+    array([[ 1,  1],
+           [ 1,  2],
+           [ 1,  3],
+           [ 1,  4],
+           [ 1,  5],
+           [ 1,  6],
+           [ 1,  7],
+           [ 1,  8],
+           [ 1,  9],
+           [ 1, 10],
+           [ 1, 11],
+           [ 2,  0],
+           [ 2,  1],
+           [ 2,  2],
+           [ 2,  3]])
 
     Same, but in depthfirst order:
 
     >>> result = reconstruct_nested(m, order='depthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(2, 0), (2, 1), (2, 2), (2, 3), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
+    >>> np.asarray(list(result))
+    array([[ 2,  0],
+           [ 2,  1],
+           [ 2,  2],
+           [ 2,  3],
+           [ 1,  1],
+           [ 1,  2],
+           [ 1,  3],
+           [ 1,  4],
+           [ 1,  5],
+           [ 1,  6],
+           [ 1,  7],
+           [ 1,  8],
+           [ 1,  9],
+           [ 1, 10],
+           [ 1, 11]])
 
     An nside=2 array, all elements distinct except for four consecutive zeros:
 
     >>> m = np.arange(48); m[:4] = 0
     >>> result = reconstruct_nested(m, order='breadthfirst', extra=False)
-    >>> [tuple(_) for _ in result]
-    [(1, 0), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 17), (2, 18), (2, 19), (2, 20), (2, 21), (2, 22), (2, 23), (2, 24), (2, 25), (2, 26), (2, 27), (2, 28), (2, 29), (2, 30), (2, 31), (2, 32), (2, 33), (2, 34), (2, 35), (2, 36), (2, 37), (2, 38), (2, 39), (2, 40), (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47)]
+    >>> np.asarray(list(result))
+    array([[ 1,  0],
+           [ 2,  4],
+           [ 2,  5],
+           [ 2,  6],
+           [ 2,  7],
+           [ 2,  8],
+           [ 2,  9],
+           [ 2, 10],
+           [ 2, 11],
+           [ 2, 12],
+           [ 2, 13],
+           [ 2, 14],
+           [ 2, 15],
+           [ 2, 16],
+           [ 2, 17],
+           [ 2, 18],
+           [ 2, 19],
+           [ 2, 20],
+           [ 2, 21],
+           [ 2, 22],
+           [ 2, 23],
+           [ 2, 24],
+           [ 2, 25],
+           [ 2, 26],
+           [ 2, 27],
+           [ 2, 28],
+           [ 2, 29],
+           [ 2, 30],
+           [ 2, 31],
+           [ 2, 32],
+           [ 2, 33],
+           [ 2, 34],
+           [ 2, 35],
+           [ 2, 36],
+           [ 2, 37],
+           [ 2, 38],
+           [ 2, 39],
+           [ 2, 40],
+           [ 2, 41],
+           [ 2, 42],
+           [ 2, 43],
+           [ 2, 44],
+           [ 2, 45],
+           [ 2, 46],
+           [ 2, 47]])
     """
     funcs = {'depthfirst': _reconstruct_nested_depthfirst,
              'breadthfirst': _reconstruct_nested_breadthfirst}

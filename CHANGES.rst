@@ -29,9 +29,6 @@ Changelog
   internally. This will significantly decrease its memory usage for
   high-resolution sky maps.
 
-- Temporarily require numpy \< 2.0.0 and scipy \< 1.14.0 due to
-  incompatibilities with lalsuite and healpy respectively.
-
 - Use a Wayback Machine URL to download the Mellinger sky panorama because the
   original URL is broken.
 
@@ -42,6 +39,15 @@ Changelog
   - Add a dependency on Shapely.
 
   - Add test cases.
+
+- Require numpy ≥ 2.0.0 due to changes in string representations of scalars
+  that affected doctest test cases. See `astropy/astropy#15095`__.
+
+  __ https://github.com/astropy/astropy/issues/15095
+
+- **DON'T RELEASE** Temporarily require a recent nightly version of LALSuite
+  due to Numpy and Scipy incompatibilities that have been fixed on master but
+  not yet released.
 
 2.0.1 (2024-05-30)
 ==================

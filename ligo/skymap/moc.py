@@ -148,7 +148,8 @@ def rasterize(moc_data, order=None):
             for colname, column in to_downsample.columns.items():
                 if colname != 'UNIQ':
                     column *= weights
-            to_downsample['UNIQ'] = nest2uniq(order, orig_nest // ratio)
+            to_downsample['UNIQ'] = nest2uniq(
+                np.int8(order), orig_nest // ratio)
             to_downsample = to_downsample.group_by(
                 'UNIQ').groups.aggregate(np.sum)
 

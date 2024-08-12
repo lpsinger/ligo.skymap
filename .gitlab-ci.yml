@@ -217,14 +217,19 @@ docs:
       - pytest-mpl-results/
     when: always
 
-test/linux/aarch64/python3.10:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
-  needs:
-    - deps-aarch64/python3.10
-    - wheel/linux/aarch64
-  tags:
-    - aarch64
+# FIXME: skip aarch64 tests until h5py releases Linux aarch64 wheels
+# that support Numpy >= 2.0.0.
+#
+# See https://github.com/h5py/h5py/issues/2408.
+
+# test/linux/aarch64/python3.10:
+#   <<: *test
+#   image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
+#   needs:
+#     - deps-aarch64/python3.10
+#     - wheel/linux/aarch64
+#   tags:
+#     - aarch64
 
 test/linux/x86_64/python3.10:
   <<: *test

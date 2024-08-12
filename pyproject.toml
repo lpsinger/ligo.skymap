@@ -37,18 +37,18 @@ dependencies = [
     "astropy-healpix>=0.3",  # https://github.com/astropy/astropy-healpix/pull/106
     "healpy",
     "h5py",
-    "lalsuite>=6.82, !=7.2",  # https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/1757
+    "lalsuite>=6.82, !=7.2, >=7.22.1.dev20240812",  # https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/1757, FIXME: remove dev version when lalsuite > 7.22.1 is released
     "ligo-gracedb>=2.0.1",
     "ligo-segments>=1.2.0",
     "matplotlib>=3.5.0",  # https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.6.0.html#pending-deprecation-top-level-cmap-registration-and-access-functions-in-mpl-cm
     "networkx",
-    "numpy>=1.23.0, <2.0.0",  # FIXME: remove <2.0.0 once https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/2275 is fixed
+    "numpy>=2.0.0",  # https://github.com/astropy/astropy/issues/15095
     "pillow>=2.5.0",
     "ptemcee",
     "python-ligo-lw>=1.8.0",
     "pytz",
     "reproject>=0.3.2",
-    "scipy>=0.14, !=1.10.0, <1.14.0",  # https://git.ligo.org/lscsoft/ligo.skymap/-/issues/36, FIXME: remove <1.14.0 once https://github.com/healpy/healpy/pull/953 has been released
+    "scipy>=0.14, !=1.10.0",  # https://git.ligo.org/lscsoft/ligo.skymap/-/issues/36
     "shapely>=2.0.0",
     "tqdm>=4.27.0",
 ]

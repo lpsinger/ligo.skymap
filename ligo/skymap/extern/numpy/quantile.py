@@ -34,7 +34,7 @@
 import warnings
 
 import numpy as np
-import numpy.core.numeric as _nx
+import numpy._core.numeric as _nx
 
 
 def _ureduce(a, func, **kwargs):

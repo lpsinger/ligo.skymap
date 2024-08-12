@@ -125,7 +125,7 @@ def iso8601_to_gps(iso8601):
     >>> gps_to_iso8601(1129501781.2)
     '2015-10-21T22:29:24.200000'
     >>> iso8601_to_gps('2015-10-21T22:29:24.2')
-    1129501781.2
+    np.float64(1129501781.2)
 
     """
     return Time(iso8601, scale='utc').gps
@@ -282,7 +282,7 @@ def write_sky_map(filename, m, **kwargs):
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
-    >>> uniq = moc.nest2uniq(np.uint8(order), np.arange(npix))
+    >>> uniq = moc.nest2uniq(np.int8(order), np.arange(npix))
     >>> probdensity = prob / hp.nside2pixarea(nside)
     >>> moc_data = np.rec.fromarrays(
     ...     [uniq, probdensity], names=['UNIQ', 'PROBDENSITY'])

@@ -49,6 +49,10 @@ Changelog
   due to Numpy and Scipy incompatibilities that have been fixed on master but
   not yet released.
 
+- There are now nightly builds of ligo.skymap. For instructions on installing
+  the latest, unreleased, bleeding-edge version of ligo.skyamp, see
+  https://lscsoft.docs.ligo.org/ligo.skymap/develop.html#nightly-builds.
+
 2.0.1 (2024-05-30)
 ==================
 

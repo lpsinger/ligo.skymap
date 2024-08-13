@@ -84,9 +84,22 @@ You are now ready to get started using `ligo.skymap`.
           *  `tqdm <https://tqdm.github.io>`_ ≥ 4.27.0
           *  `pytz <http://pytz.sourceforge.net>`_
 
-          The following packages are optional for specific features:
+          The following packages are optional for specific features.
 
-          *  `pytest <https://docs.pytest.org>`_ for running the test suite
+          For running the test suite:
+
+          *  `astroquery <https://astroquery.readthedocs.io/>`_
+          *  `pytest-astropy <https://github.com/astropy/pytest-astropy>`_
+          *  `pytest-mpl <https://pytest-mpl.readthedocs.io/>`_
+
+          For building the documentation:
+
+          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
+          *  `Sphinx <https://www.sphinx-doc.org/>`_ ≥ 4.0
+          *  `sphinx-argparse <https://sphinx-argparse.readthedocs.org/>`_ ≥ 0.3.0
+          *  `sphinx-astropy <https://github.com/astropy/sphinx-astropy>`_
+          *  `sphinxcontrib-mermaid <https://github.com/mgaitan/sphinxcontrib-mermaid>`_ ≥ 0.7.1
+          *  `tomli <https://github.com/hukkin/tomli>`_ ≥ 1.1.0
 
 Optional LALSimulation Data
 ---------------------------

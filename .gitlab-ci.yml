@@ -513,9 +513,10 @@ pages:
 .deploy-pypi: &deploy-pypi
   stage: deploy
   image: python:slim
+  before_script:
+    - pip install twine
   script:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
-    - pip install twine
     - twine upload *.whl *.tar.*
   needs:
     - sdist
@@ -534,10 +535,8 @@ deploy/pypi:
 # Upload pacakges to GitLab on tags and scheduled builds.
 deploy/pypi/git.ligo.org:
   <<: *deploy-pypi
-  variables:
-    TWINE_USERNAME: gitlab-ci-token
-    TWINE_PASSWORD: $CI_JOB_TOKEN
-    TWINE_REPOSITORY_URL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/pypi
+  script:
+    - twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi --username gitlab-ci-token --password ${CI_JOB_TOKEN} *.whl *.tar.*
   rules:
     - if: '$CI_COMMIT_TAG'
     - if: '$CI_PIPELINE_SOURCE == "schedule"'

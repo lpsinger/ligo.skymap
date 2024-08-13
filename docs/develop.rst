@@ -8,7 +8,7 @@ Nightly builds
 
 If you want to try out the latest, bleeding-edge, unreleased version of
 ligo.skymap, then you can install the most recent nightly build by running the
-following command:
+following command::
 
     $ pip install --upgrade 'ligo.skymap>=0.0.0.dev0'
 

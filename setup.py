@@ -35,7 +35,7 @@ def get_extensions():
         'define_macros': [
             ('GSL_RANGE_CHECK_OFF', None),
             ('HAVE_INLINE', None),
-            ('Py_LIMITED_API', 0x03090000),
+            ('Py_LIMITED_API', 0x030A0000),
             ('NPY_TARGET_VERSION', 'NPY_1_23_API_VERSION'),
             ('NPY_NO_DEPRECATED_API', 'NPY_1_23_API_VERSION'),
         ],

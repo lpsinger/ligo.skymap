@@ -510,7 +510,7 @@ pages:
 # Upload Python packages.
 #
 
-.deploy-pypi: &deploy-pypi
+deploy/pypi:
   stage: deploy
   image: python:slim
   before_script:
@@ -524,19 +524,6 @@ pages:
     - wheel/linux/aarch64
     - wheel/macos/x86_64
     - wheel/macos/arm64
-
-
-# Upload packages to PyPI on tags.
-deploy/pypi:
-  <<: *deploy-pypi
-  rules:
-    - if: '$CI_COMMIT_TAG'
-
-# Upload pacakges to GitLab on tags and scheduled builds.
-deploy/pypi/git.ligo.org:
-  <<: *deploy-pypi
-  script:
-    - twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi --username gitlab-ci-token --password ${CI_JOB_TOKEN} *.whl *.tar.*
   rules:
     - if: '$CI_COMMIT_TAG'
     - if: '$CI_PIPELINE_SOURCE == "schedule"'

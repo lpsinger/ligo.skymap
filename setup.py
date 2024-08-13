@@ -5,6 +5,7 @@
 # NOTE: The configuration for the package, including the name, version, and
 # other information are set in the setup.cfg file.
 
+import os
 import sys
 
 from setuptools import setup
@@ -132,6 +133,17 @@ except Exception:
     version = '{version}'
 """.lstrip()
 
-setup(use_scm_version={'write_to': 'ligo/skymap/version.py',
-                       'write_to_template': VERSION_TEMPLATE},
-      ext_modules=get_extensions())
+
+use_scm_version = {'write_to': 'ligo/skymap/version.py',
+                   'write_to_template': VERSION_TEMPLATE}
+
+# If we are building under the GitLab CI pipeline and we are building on the
+# default branch, then disable the local part of the version
+# (+g<short commit hash>) so that we can upload nightly builds to PyPI.
+if (
+    os.environ.get('CI') == 'true' and
+    os.environ.get('CI_COMMIT_BRANCH') == os.environ['CI_DEFAULT_BRANCH']
+):
+    use_scm_version['local_scheme'] = 'no-local-version'
+
+setup(use_scm_version=use_scm_version, ext_modules=get_extensions())

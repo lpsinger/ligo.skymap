@@ -10,7 +10,7 @@ If you want to try out the latest, bleeding-edge, unreleased version of
 ligo.skymap, then you can install the most recent nightly build by running the
 following command:
 
-    $ pip install --upgrade --extra-index-url https://git.ligo.org/api/v4/projects/lscsoft%2Fligo.skymap/packages/pypi/simple 'ligo.skymap>=0.0.0.dev0'
+    $ pip install --upgrade 'ligo.skymap>=0.0.0.dev0'
 
 Source dependencies
 -------------------

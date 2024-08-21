@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.0.2 (unreleased)
-==================
+2.1.0rc1 (2024-08-20)
+=====================
 
 - BAYESTAR now terminates gracefully if you interrupt it by typing control-C or
   sending the process in which it is running a SIGINT signal. Previously, there

@@ -517,7 +517,7 @@ deploy/pypi:
     - pip install twine
   script:
     # TWINE_USERNAME and TWINE_PASSWORD are provided by CI secret variables
-    - twine upload *.whl *.tar.*
+    - twine upload --skip-existing *.whl *.tar.*
   needs:
     - sdist
     - wheel/linux/x86_64

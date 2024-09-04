@@ -36,7 +36,7 @@ def get_extensions():
         'define_macros': [
             ('GSL_RANGE_CHECK_OFF', None),
             ('HAVE_INLINE', None),
-            ('Py_LIMITED_API', 0x030A0000),
+            ('Py_LIMITED_API', 0x03090000),
         ],
         'extra_compile_args': [
             '-std=gnu11',

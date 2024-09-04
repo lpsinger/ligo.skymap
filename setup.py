@@ -36,6 +36,7 @@ def get_extensions():
         'define_macros': [
             ('GSL_RANGE_CHECK_OFF', None),
             ('HAVE_INLINE', None),
+            ('Py_LIMITED_API', 0x03090000),
         ],
         'extra_compile_args': [
             '-std=gnu11',
@@ -58,7 +59,7 @@ def get_extensions():
         kwargs.setdefault(key, []).extend(orig_value)
 
     extension = Extension(name='ligo.skymap.core', language='c',
-                          **kwargs)
+                          py_limited_api=True, **kwargs)
 
     if not os.environ.get('LIGO_SKYMAP_DISABLE_OPENMP'):
         add_openmp_flags_if_available(extension)

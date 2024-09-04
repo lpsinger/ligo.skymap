@@ -24,14 +24,14 @@ classifiers = [
     "Operating System :: Unix",
     "Programming Language :: C",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.09",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Astronomy",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">=3.09"
+requires-python = ">=3.9"
 dependencies = [
     "astroplan>=0.7",  # https://github.com/astropy/astroplan/issues/479
     "astropy>=6.0",  # https://github.com/astropy/astropy/pull/14980

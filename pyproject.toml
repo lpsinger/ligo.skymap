@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.09"
 dependencies = [
     "astroplan>=0.7",  # https://github.com/astropy/astroplan/issues/479
     "astropy>=6.0",  # https://github.com/astropy/astropy/pull/14980

@@ -37,8 +37,6 @@ def get_extensions():
             ('GSL_RANGE_CHECK_OFF', None),
             ('HAVE_INLINE', None),
             ('Py_LIMITED_API', 0x030A0000),
-            ('NPY_TARGET_VERSION', 'NPY_2_0_API_VERSION'),
-            ('NPY_NO_DEPRECATED_API', 'NPY_2_0_API_VERSION'),
         ],
         'extra_compile_args': [
             '-std=gnu11',
@@ -141,8 +139,11 @@ use_scm_version = {'write_to': 'ligo/skymap/version.py',
 # default branch, then disable the local part of the version
 # (+g<short commit hash>) so that we can upload nightly builds to PyPI.
 if (
-    os.environ.get('CI') == 'true' and
-    os.environ.get('CI_COMMIT_BRANCH') == os.environ['CI_DEFAULT_BRANCH']
+    try:
+        os.environ.get('CI') == 'true' and
+        os.environ.get('CI_COMMIT_BRANCH') == os.environ['CI_DEFAULT_BRANCH']
+    except KeyError:
+        use_scm_version['local_scheme'] = 'no-local-version'
 ):
     use_scm_version['local_scheme'] = 'no-local-version'
 

@@ -139,11 +139,8 @@ use_scm_version = {'write_to': 'ligo/skymap/version.py',
 # default branch, then disable the local part of the version
 # (+g<short commit hash>) so that we can upload nightly builds to PyPI.
 if (
-    try:
-        os.environ.get('CI') == 'true' and
-        os.environ.get('CI_COMMIT_BRANCH') == os.environ['CI_DEFAULT_BRANCH']
-    except KeyError:
-        use_scm_version['local_scheme'] = 'no-local-version'
+    os.environ.get('CI') == 'true' and "CI_DEFAULT_BRANCH" in os.environ and
+    os.environ.get('CI_COMMIT_BRANCH') == os.environ['CI_DEFAULT_BRANCH']
 ):
     use_scm_version['local_scheme'] = 'no-local-version'
 

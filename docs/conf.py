@@ -240,6 +240,7 @@ intersphinx_mapping.update({
     'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None),
     'ligo-lw': ('https://docs.ligo.org/kipp/python-ligo-lw/', None),
+    'neps': ('https://numpy.org/neps/', None),
     'pytest': ('https://docs.pytest.org/en/latest/', None),
     'reproject': ('https://reproject.readthedocs.io/en/stable/', None),
 })

@@ -65,6 +65,17 @@ Here is the full list of environment variables.
 :envvar:`LIGO_SKYMAP_DISABLE_OPENMP`
     Disable OpenMP parallelization.
 
+.. _python-version-policy:
+
+Python version support policy
+-----------------------------
+
+Generally, the latest release of `ligo.skymap` supports the Python versions
+specified by :doc:`neps:nep-0029-deprecation_policy`. We follow the lead of the
+main Scientific Python packages that we depend upon (Numpy, Scipy, Astropy) to
+determine when to drop support for older versions of Python and take advantage
+of new Python language features.
+
 .. _`GSL`: https://www.gnu.org/software/gsl
 .. _`chealpix`: https://sourceforge.net/projects/healpix/files/Healpix_3.30/
 .. _`pkg-config`: https://www.freedesktop.org/wiki/Software/pkg-config/

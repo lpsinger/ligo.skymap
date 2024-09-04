@@ -4,6 +4,7 @@ Installation
 ============
 
 .. important:: The `ligo.skymap` package requires `Python`_ 3.10 or later.
+    See our :ref:`python-version-policy` for more details.
 
 On the Linux or macOS operating systems and on x86_64 or aarch64/arm64 systems,
 we recommend installing `ligo.skymap` using `pip`_ or `conda`_, either of which

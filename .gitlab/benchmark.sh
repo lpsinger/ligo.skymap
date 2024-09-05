@@ -17,14 +17,8 @@ function section_end () {
   echo -e "section_end:`date +%s`:${section_title}\r\e[0K"
 }
 
-if [[ -n "${CI_SERVER_PROTOCOL}${CI_JOB_TOKEN}${CI_SERVER_FQDN}" ]]; then
-    GIT_ORIGIN="${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_FQDN}/"
-else
-    GIT_ORIGIN=git@git.ligo.org:
-fi
-
 section_start "clone" "Cloning benchmark repo"
-git clone ${GIT_ORIGIN}leo-singer/ligo-skymap-benchmark.git
+git clone https://git.ligo.org/leo-singer/ligo-skymap-benchmark.git
 section_end "clone"
 
 section_start "venv" "Creating Python virtual environment"

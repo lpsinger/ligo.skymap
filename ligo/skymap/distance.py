@@ -335,7 +335,7 @@ def volume_render(x, y, max_distance, axis0, axis1, R, skymap):
     """  # noqa: E501
     skymap = Table(skymap)
     uniq = skymap.columns.pop('UNIQ')
-    nside = 1 << moc.uniq2order(uniq.max())
+    nside = 1 << np.int64(moc.uniq2order(uniq.max()))
     order, nest = moc.uniq2nest(uniq)
     skymap['NEST'] = nest << np.int64(2 * (HEALPIX_MACHINE_ORDER - order))
     skymap.sort('NEST')

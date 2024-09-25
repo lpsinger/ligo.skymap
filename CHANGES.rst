@@ -5,7 +5,10 @@ Changelog
 2.1.1 (unreleased)
 ==================
 
-- No changes yet.
+- Fix blank volume rendering plots for very well-localized events due to
+  `changes in data type promotion rules in Numpy 2.x`__.
+
+  __ https://numpy.org/devdocs/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion
 
 2.1.0 (2024-08-23)
 ==================

@@ -149,8 +149,7 @@ wheel/macos/arm64:
       cat <<EOF > Dockerfile
       FROM python:${CI_JOB_NAME#*python}
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      # FIXME: Install h5py<3.11.0 on aarch64 because h5py has not released aarch64 wheels for 3.11.0.
-      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage 'pip>=24' 'h5py<3.11.0;platform_machine=="aarch64"'
+      RUN pip --no-cache-dir install pytest-cov gcovr pycobertura flake8 coverage 'pip>=24'
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF
@@ -217,19 +216,14 @@ docs:
       - pytest-mpl-results/
     when: always
 
-# FIXME: skip aarch64 tests until h5py releases Linux aarch64 wheels
-# that support Numpy >= 2.0.0.
-#
-# See https://github.com/h5py/h5py/issues/2408.
-
-# test/linux/aarch64/python3.10:
-#   <<: *test
-#   image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
-#   needs:
-#     - deps-aarch64/python3.10
-#     - wheel/linux/aarch64
-#   tags:
-#     - aarch64
+test/linux/aarch64/python3.10:
+  <<: *test
+  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
+  needs:
+    - deps-aarch64/python3.10
+    - wheel/linux/aarch64
+  tags:
+    - aarch64
 
 test/linux/x86_64/python3.10:
   <<: *test

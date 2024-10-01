@@ -280,7 +280,7 @@ test/macos/arm64:
 # Test against development versions of certain upstream dependencies.
 test/dev-deps:
   <<: *test
-  image: python:3.10
+  image: python:3.12
   script:
     # Qhull is needed to build Matplotlib from source
     - apt-get update && apt-get -y install --no-install-recommends libqhull-dev
@@ -295,8 +295,6 @@ test/dev-deps:
     - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
   needs:
     - wheel/linux/x86_64
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
 
 #
 # Measure test coverage:

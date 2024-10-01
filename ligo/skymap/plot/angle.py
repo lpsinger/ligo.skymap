@@ -53,8 +53,8 @@ def wrapped_angle(a):
     Examples
     --------
 
-    >>> wrapped_angle(3 * np.pi)
-    np.float64(3.141592653589793)
+    >>> print(wrapped_angle(3 * np.pi))
+    3.141592653589793
     """
     return np.mod(a, 2 * np.pi)
 
@@ -65,7 +65,7 @@ def wrapped_angle_deg(a):
     Examples
     --------
 
-    >>> wrapped_angle_deg(540.)
-    np.float64(180.0)
+    >>> print(wrapped_angle_deg(540.))
+    180.0
     """
     return np.mod(a, 360)

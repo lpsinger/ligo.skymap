@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2013-2022  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -124,8 +124,8 @@ def iso8601_to_gps(iso8601):
     --------
     >>> gps_to_iso8601(1129501781.2)
     '2015-10-21T22:29:24.200000'
-    >>> iso8601_to_gps('2015-10-21T22:29:24.2')
-    np.float64(1129501781.2)
+    >>> print(iso8601_to_gps('2015-10-21T22:29:24.2'))
+    1129501781.2
 
     """
     return Time(iso8601, scale='utc').gps

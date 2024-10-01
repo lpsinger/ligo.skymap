@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2023  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -206,18 +206,18 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
 
     >>> prob = make_uniform_in_sin_theta(1)
     >>> ra, dec, a, b, pa, area = find_ellipse(prob)
-    >>> dec, a, b, area  # doctest: +FLOAT_CMP
-    (np.float64(89.90862520480792), np.float64(0.8703361458208101), np.float64(0.8703357768874356), np.float64(2.3788811576269793))
+    >>> print(dec, a, b, area)  # doctest: +FLOAT_CMP
+    89.90862520480792 0.8703361458208101 0.8703357768874356 2.3788811576269793
 
     >>> prob = make_uniform_in_sin_theta(10)
     >>> ra, dec, a, b, pa, area = find_ellipse(prob)
-    >>> dec, a, b, area  # doctest: +FLOAT_CMP
-    (np.float64(89.90827657529562), np.float64(9.024846562072115), np.float64(9.024842703023806), np.float64(255.11972196535515))
+    >>> print(dec, a, b, area)  # doctest: +FLOAT_CMP
+    89.90827657529562 9.024846562072115 9.024842703023806 255.11972196535515
 
     >>> prob = make_uniform_in_sin_theta(120)
     >>> ra, dec, a, b, pa, area = find_ellipse(prob)
-    >>> dec, a, b, area  # doctest: +FLOAT_CMP
-    (np.float64(90.0), np.float64(107.97450376105762), np.float64(107.97450376105755), np.float64(26988.70467497216))
+    >>> print(dec, a, b, area)  # doctest: +FLOAT_CMP
+    90.0 107.97450376105762 107.97450376105755 26988.70467497216
 
     **Example 4**
 
@@ -238,8 +238,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.square(np.deg2rad(1)))
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(45.0), np.float64(0.0), np.float64(2.1424077148886798), np.float64(2.1420790721225518), np.float64(90.0), np.float64(14.467701995920123))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    45.0 0.0 2.1424077148886798 2.1420790721225518 90.0 14.467701995920123
 
     This one is centered at RA=45°, Dec=0°, and is elongated in the north-south
     direction.
@@ -248,8 +248,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1/np.sqrt(2), 1/np.sqrt(2), 0],
     ...     np.diag(np.square(np.deg2rad([1, 1, 10]))))
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(45.0), np.float64(0.0), np.float64(13.587688827198997), np.float64(2.082984617824178), np.float64(90.0), np.float64(88.57796576937045))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    45.0 0.0 13.587688827198997 2.082984617824178 90.0 88.57796576937045
 
     This one is centered at RA=0°, Dec=0°, and is elongated in the east-west
     direction.
@@ -258,8 +258,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...     [1, 0, 0],
     ...     np.diag(np.square(np.deg2rad([1, 10, 1]))))
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(13.583918022027142), np.float64(2.082376991240146), np.float64(0.0), np.float64(88.54622940628768))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    0.0 0.0 13.583918022027142 2.082376991240146 0.0 88.54622940628768
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     10° to the west of north.
@@ -270,8 +270,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, -0.15],
     ...      [0, -0.15, 1]])
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(64.77133127092944), np.float64(33.50754131182688), np.float64(80.78231196786841), np.float64(6372.344658663043))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    0.0 0.0 64.77133127092944 33.50754131182688 80.78231196786841 6372.344658663043
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     10° to the east of north.
@@ -282,8 +282,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 0.1, 0.15],
     ...      [0, 0.15, 1]])
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(64.7713312709305), np.float64(33.507541311827445), np.float64(99.21768803213162), np.float64(6372.344658663096))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    0.0 0.0 64.7713312709305 33.507541311827445 99.21768803213162 6372.344658663096
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     80° to the east of north.
@@ -294,8 +294,8 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, 0.15],
     ...      [0, 0.15, 0.1]])
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(64.77564486039145), np.float64(33.509863018519894), np.float64(170.78252287327365), np.float64(6372.42573159241))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    0.0 0.0 64.77564486039145 33.509863018519894 170.78252287327365 6372.42573159241
 
     This one is centered at RA=0°, Dec=0°, and has its long axis tilted about
     80° to the west of north.
@@ -306,18 +306,18 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     ...      [0, 1, -0.15],
     ...      [0, -0.15, 0.1]])
     ...
-    >>> find_ellipse(prob)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(64.77564486039145), np.float64(33.50986301851988), np.float64(9.217477126726351), np.float64(6372.42573159241))
+    >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
+    0.0 0.0 64.77564486039145 33.50986301851988 9.217477126726351 6372.42573159241
 
     ***Example 5***
 
     You can ask for other credible levels:
-    >>> find_ellipse(prob, cl=50)  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), np.float64(37.05420765328508), np.float64(19.168955020016), np.float64(9.217477126726351), np.float64(2182.5580135410632))
+    >>> print(*find_ellipse(prob, cl=50))  # doctest: +FLOAT_CMP
+    0.0 0.0 37.05420765328508 19.168955020016 9.217477126726351 2182.5580135410632
 
     Or even for multiple credible levels:
-    >>> find_ellipse(prob, cl=[50, 90])  # doctest: +FLOAT_CMP
-    (np.float64(0.0), np.float64(0.0), array([37.05420765, 64.77564486]), array([19.16895502, 33.50986302]), np.float64(9.217477126726351), array([2182.55801354, 6372.42573159]))
+    >>> print(*find_ellipse(prob, cl=[50, 90]))  # doctest: +FLOAT_CMP
+    0.0 0.0 [37.05420765 64.77564486] [19.16895502 33.50986302] 9.217477126726351 [2182.55801354 6372.42573159]
     """  # noqa: E501
     try:
         prob['UNIQ']

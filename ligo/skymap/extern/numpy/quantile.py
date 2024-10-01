@@ -34,7 +34,12 @@
 import warnings
 
 import numpy as np
-import numpy._core.numeric as _nx
+
+try:
+    import numpy._core.numeric as _nx
+except ImportError:
+    # FIXME: Remove after we require Numpy >=2.0.0.
+    import numpy.core.numeric as _nx
 
 
 def _ureduce(a, func, **kwargs):

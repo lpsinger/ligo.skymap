@@ -42,7 +42,7 @@ dependencies = [
     "ligo-segments>=1.2.0",
     "matplotlib>=3.5.0",  # https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.6.0.html#pending-deprecation-top-level-cmap-registration-and-access-functions-in-mpl-cm
     "networkx",
-    "numpy>=2.0.0",  # https://github.com/astropy/astropy/issues/15095
+    "numpy>=1.23.0",  # https://github.com/astropy/astropy/issues/15095
     "pillow>=2.5.0",
     "ptemcee",
     "python-ligo-lw>=1.8.0",

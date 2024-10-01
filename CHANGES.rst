@@ -10,6 +10,8 @@ Changelog
 
   __ https://numpy.org/devdocs/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion
 
+- Restore support for Numpy 1.x while keeping support for Numpy 2.x.
+
 2.1.0 (2024-08-23)
 ==================
 

@@ -112,8 +112,8 @@ Test against numerical integral of pdf.
 
 For negative distances, it returns 0.
 
->>> conditional_cdf(-1, distmu, distsigma, distnorm)
-np.float64(0.0)
+>>> print(conditional_cdf(-1, distmu, distsigma, distnorm))
+0.0
 
 For infinite postive distance, it returns 1 (provided that distnorm normalizes
 the distribution).
@@ -417,8 +417,8 @@ Examples
 
 For negative distances, it returns 0.
 
->>> marginal_cdf(-1, prob, distmu, distsigma, distnorm)
-np.float64(0.0)
+>>> print(marginal_cdf(-1, prob, distmu, distsigma, distnorm))
+0.0
 
 For infinite postive distance, it returns the sum of prob
 (provided that distnorm normalizes the distribution).

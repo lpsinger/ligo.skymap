@@ -16,7 +16,12 @@
 #
 import functools
 import numpy as np
-from numpy._core.umath import _add_newdoc_ufunc
+
+try:
+    from numpy._core.umath import _add_newdoc_ufunc
+except ImportError:
+    # FIXME: Remove after we require Numpy >=2.0.0.
+    from numpy.core.umath import _add_newdoc_ufunc
 
 __all__ = ('add_newdoc_ufunc', 'require_contiguous_aligned')
 

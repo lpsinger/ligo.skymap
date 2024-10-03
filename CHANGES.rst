@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.1.1 (unreleased)
-==================
+2.1.1rc1 (2024-10-02)
+=====================
 
 - Fix blank volume rendering plots for very well-localized events due to
   `changes in data type promotion rules in Numpy 2.x`__.

@@ -5,7 +5,8 @@ Changelog
 2.1.2 (unreleased)
 ==================
 
-- No changes yet.
+- Add sign convention for `gstlal_inspiral_coinc_extractor`, the program that
+  is used to upload offline GstLAL events to GraceDB.
 
 2.1.1 (2024-10-03)
 ==================

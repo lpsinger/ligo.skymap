@@ -123,6 +123,7 @@ class LigoLWEventSource(dict, EventSource):
     _invert_phases = {
         'pycbc': False,
         'gstlal_inspiral': True,
+        'gstlal_inspiral_coinc_extractor': True,
         'gstlal_inspiral_postcohspiir_online': True,  # FIXME: wild guess
         'bayestar_realize_coincs': True,
         'bayestar-realize-coincs': True,

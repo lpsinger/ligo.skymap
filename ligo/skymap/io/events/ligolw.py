@@ -250,7 +250,7 @@ class LigoLWEventSource(dict, EventSource):
                 if elem.Name != lal.COMPLEX8TimeSeries.__name__:
                     continue
                 array.get_array(elem, 'snr')
-                event_id = param.get_pyvalue(elem, 'event_id')
+                event_id = param.Param.get_param(elem, 'event_id').value
             except (AttributeError, ValueError):
                 continue
             else:

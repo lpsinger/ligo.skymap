@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2022  Leo Singer
+# Copyright (C) 2020-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ _ilwd_regex = re.compile(r'\s*\w+:\w+:(\d+)\s*')
 def ilwd_to_int(ilwd):
     match = _ilwd_regex.fullmatch(ilwd)
     if not match:
-        raise ValueError(f'"{ilwd}" is not formatt like an ilwd')
+        raise ValueError(f'"{ilwd}" is not formatted like an ilwd')
     return int(match[1])
 
 

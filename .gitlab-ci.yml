@@ -117,7 +117,7 @@ wheel/linux/aarch64:
 wheel/macos/x86_64:
   <<: *wheel-macos
   tags:
-    - macos_bigsur_x86_64
+    - macos_ventura_x86_64
 
 wheel/macos/arm64:
   <<: *wheel-macos
@@ -266,7 +266,7 @@ test/linux/x86_64/python3.12:
 test/macos/x86_64:
   <<: *test-macos
   tags:
-    - macos_monterey_x86_64
+    - macos_ventura_x86_64
   needs:
     - wheel/macos/x86_64
 

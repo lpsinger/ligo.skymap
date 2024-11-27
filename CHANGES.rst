@@ -8,6 +8,11 @@ Changelog
 - Migrate dependencies from python-ligo-lw and ligo-segments to igwn-ligolw and
   igwn-segments.
 
+- Require Python >= 3.11 in accordance with
+  `SPEC 0 — Minimum Supported Dependencies`__.
+
+  __ https://scientific-python.org/specs/spec-0000/
+
 2.3.0 (2025-04-26)
 ==================
 

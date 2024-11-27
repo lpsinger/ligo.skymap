@@ -18,7 +18,9 @@
 common IMPLICIT indexing.
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():

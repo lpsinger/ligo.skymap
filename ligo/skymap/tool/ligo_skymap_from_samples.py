@@ -34,10 +34,9 @@ The output consist of two files:
 *  ``skymap.fits.gz``, a 3D localization in HEALPix/FITS format
 """
 
-from argparse import SUPPRESS
+from argparse import FileType, SUPPRESS
 
-from . import (
-    ArgumentParser, DirType, EnableAction, FileType, get_random_parser)
+from . import ArgumentParser, DirType, EnableAction, get_random_parser
 
 
 def parser():

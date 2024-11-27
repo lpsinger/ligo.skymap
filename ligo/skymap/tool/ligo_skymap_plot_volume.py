@@ -16,8 +16,9 @@
 #
 """Plot a volumetric posterior in three-projection view."""
 
+from argparse import FileType
 
-from . import ArgumentParser, FileType
+from . import ArgumentParser
 from .matplotlib import get_figure_parser
 
 

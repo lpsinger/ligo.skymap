@@ -23,7 +23,7 @@ import sys
 import matplotlib
 
 from ..plot import cmap  # noqa
-from . import FileType, HelpChoicesAction, type_with_sideeffect, version_string
+from . import HelpChoicesAction, type_with_sideeffect, version_string
 
 # Set no-op Matplotlib backend to defer importing anything that requires a GUI
 # until we have determined that it is necessary based on the command line
@@ -38,7 +38,7 @@ else:
 __all__ = ('get_figure_parser',)
 
 
-class MatplotlibFigureType(FileType):
+class MatplotlibFigureType(argparse.FileType):
 
     def __init__(self):
         super().__init__('wb')

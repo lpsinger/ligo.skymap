@@ -24,7 +24,9 @@ other input map(s). Only one input map can currently have distance
 information.
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():

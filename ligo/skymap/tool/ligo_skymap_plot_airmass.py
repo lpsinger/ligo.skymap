@@ -16,9 +16,11 @@
 #
 """Make an airmass chart for a LIGO/Virgo/KAGRA probability sky map."""
 
+from argparse import FileType
+
 import numpy as np
 
-from . import ArgumentParser, FileType, HelpChoicesAction
+from . import ArgumentParser, HelpChoicesAction
 from .matplotlib import get_figure_parser
 
 

@@ -20,7 +20,9 @@ The input is a HEALPix probability map.
 The output is a GeoJSON FeatureCollection (http://geojson.org/).
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():

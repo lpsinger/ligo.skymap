@@ -26,9 +26,11 @@ Public-domain cartographic data is courtesy of `Natural Earth
 <http://www.mapshaper.org>`_.
 """
 
+from argparse import FileType
+
 import numpy as np
 
-from . import ArgumentParser, FileType, SQLiteType
+from . import ArgumentParser, SQLiteType
 from .matplotlib import get_figure_parser
 
 

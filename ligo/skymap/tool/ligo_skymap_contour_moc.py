@@ -19,7 +19,9 @@ is a HEALPix FITS probability map. The output is a `Multi-Order Coverage (MOC)
 <http://ivoa.net/documents/MOC/>`_ FITS file.
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():

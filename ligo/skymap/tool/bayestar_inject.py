@@ -28,6 +28,7 @@ distribution and a uniform and isotropic spatial distribution with a redshift
 cutoff that is piecewise constant in the masses and spins.
 """
 
+from argparse import FileType
 from functools import partial
 
 from astropy import cosmology
@@ -43,8 +44,7 @@ from scipy.ndimage import maximum_filter
 from ..util import progress_map
 from ..bayestar.filter import sngl_inspiral_psd
 from . import (
-    ArgumentParser, FileType, get_random_parser, register_to_xmldoc,
-    write_fileobj)
+    ArgumentParser, get_random_parser, register_to_xmldoc, write_fileobj)
 
 
 def get_decisive_snr(snrs, min_triggers):

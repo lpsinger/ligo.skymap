@@ -18,9 +18,10 @@
 cumulatively by false alarm rate or SNR.
 """
 
+from argparse import FileType
 import os
 
-from . import ArgumentParser, FileType
+from . import ArgumentParser
 from .matplotlib import MatplotlibFigureType
 
 

@@ -18,10 +18,10 @@
 detectors by evaluating a model power noise sensitivity curve.
 """
 
-from argparse import SUPPRESS
+from argparse import FileType, SUPPRESS
 import inspect
 
-from . import ArgumentParser, FileType, register_to_xmldoc, write_fileobj
+from . import ArgumentParser, register_to_xmldoc, write_fileobj
 
 psd_name_prefix = 'SimNoisePSD'
 

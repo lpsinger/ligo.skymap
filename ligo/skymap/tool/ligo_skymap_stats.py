@@ -92,6 +92,7 @@ values with the following columns:
 
 """
 
+from argparse import FileType
 from functools import partial
 import sys
 
@@ -99,7 +100,7 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 import numpy as np
 
-from . import ArgumentParser, FileType, SQLiteType
+from . import ArgumentParser, SQLiteType
 from ..io import fits
 from ..postprocess import crossmatch
 

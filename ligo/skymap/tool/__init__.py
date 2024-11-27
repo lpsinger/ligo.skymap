@@ -53,25 +53,6 @@ class Namespace(argparse.Namespace):
             _try_close(value)
 
 
-class FileType(argparse.FileType):
-    """Inherit from :class:`argparse.FileType` to enable opening stdin or
-    stdout in binary mode.
-
-    This is a workaround for https://bugs.python.org/issue14156, which is fixed
-    in Python 3.9.12, 3.10.3, and >=3.11.0.
-
-    FIXME: Remove this when we drop support for Python 3.10.
-    """
-
-    def __call__(self, string):
-        if string == '-' and 'b' in self._mode:
-            if 'r' in self._mode:
-                return sys.stdin.buffer
-            elif 'w' in self._mode:
-                return sys.stdout.buffer
-        return super().__call__(string)
-
-
 class EnableAction(argparse.Action):
 
     def __init__(self,
@@ -354,7 +335,7 @@ class DirType:
         return string
 
 
-class SQLiteType(FileType):
+class SQLiteType(argparse.FileType):
     """Open an SQLite database, or fail if it does not exist.
 
     Here is an example of trying to open a file that does not exist for

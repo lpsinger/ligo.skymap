@@ -20,7 +20,9 @@ List most likely constellations for a localization.
 Just for fun, and for public outreach purposes.
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 
 
 def parser():

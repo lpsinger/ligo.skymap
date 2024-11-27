@@ -41,7 +41,7 @@ requirements:
 #
 
 sdist:
-  image: python:3.10
+  image: python:3.11
   stage: dist
   script:
     - pip install build
@@ -98,7 +98,7 @@ wheel/linux/aarch64:
   stage: dist
   script:
     - . /opt/local/share/macports/setupenv.bash
-    - PYVERS=3.10
+    - PYVERS=3.11
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -161,16 +161,16 @@ wheel/macos/arm64:
   tags:
     - executor-docker
 
-deps-aarch64/python3.10:
+# Pin Python patch version due to bug affecting doctests that has been fixed
+# but will not be backported to Python 3.11.
+# See https://github.com/python/cpython/issues/117692#issuecomment-2047800533.
+deps-aarch64/python3.11.8:
   <<: *deps
   tags:
     - aarch64
     # FIXME: Uncomment after the following issue is fixed.
     # https://git.ligo.org/computing/helpdesk/-/issues/5775
     # - executor-docker
-
-deps-x86_64/python3.10:
-  <<: *deps
 
 # Pin Python patch version due to bug affecting doctests that has been fixed
 # but will not be backported to Python 3.11.
@@ -186,7 +186,7 @@ deps-x86_64/python3.12:
 #
 
 docs:
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12:$CI_COMMIT_REF_SLUG
   stage: test
   <<: *in-tmpdir
   script:
@@ -195,7 +195,7 @@ docs:
     - make -C docs html
     - mv docs/_build/html ${CI_PROJECT_DIR}/
   needs:
-    - deps-x86_64/python3.10
+    - deps-x86_64/python3.12
     - sdist
   artifacts:
     paths:
@@ -217,21 +217,14 @@ docs:
       - pytest-mpl-results/
     when: always
 
-test/linux/aarch64/python3.10:
+test/linux/aarch64/python3.11.8:
   <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.10:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-aarch64/python3.11.8:$CI_COMMIT_REF_SLUG
   needs:
-    - deps-aarch64/python3.10
+    - deps-aarch64/python3.11.8
     - wheel/linux/aarch64
   tags:
     - aarch64
-
-test/linux/x86_64/python3.10:
-  <<: *test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
-  needs:
-    - deps-x86_64/python3.10
-    - wheel/linux/x86_64
 
 test/linux/x86_64/python3.11.8:
   <<: *test
@@ -252,7 +245,7 @@ test/linux/x86_64/python3.12:
   stage: test
   script:
     - . /opt/local/share/macports/setupenv.bash
-    - PYVERS=3.10
+    - PYVERS=3.12
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
@@ -313,7 +306,7 @@ test/dev-deps:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11.8:$CI_COMMIT_REF_SLUG
   variables:
     # -UNDEBUG
     #     enable C assertions
@@ -348,7 +341,7 @@ test/coverage:
     - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
     - if [[ "$FAILED" ]]; then false; fi
   needs:
-    - deps-x86_64/python3.10
+    - deps-x86_64/python3.11.8
     - sdist
   artifacts:
     paths:
@@ -370,10 +363,10 @@ test/coverage:
 lint:
   extends:
     - .python:flake8
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.10:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11.8:$CI_COMMIT_REF_SLUG
   stage: test
   needs:
-    - deps-x86_64/python3.10
+    - deps-x86_64/python3.11.8
 
 #
 # Acceptance tests.

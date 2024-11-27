@@ -28,6 +28,7 @@ there is a choice for how to generate perturbed time and phase measurements:
  - `gaussian-noise`: measurement error for a matched filter in Gaussian noise
 """
 
+from argparse import FileType
 import copy
 import functools
 
@@ -35,8 +36,8 @@ import lal
 import numpy as np
 
 from . import (
-    ArgumentParser, EnableAction, FileType, get_random_parser,
-    register_to_xmldoc, write_fileobj)
+    ArgumentParser, EnableAction, get_random_parser, register_to_xmldoc,
+    write_fileobj)
 
 
 def parser():

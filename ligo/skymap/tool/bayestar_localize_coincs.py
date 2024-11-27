@@ -31,9 +31,11 @@ A FITS file is created for each sky map, having a filename of the form
 card in the FITS header is also set to the integer row ID.
 """
 
+from argparse import FileType
+
 from . import (
-    ArgumentParser, FileType, get_waveform_parser, get_posterior_parser,
-    get_mcmc_parser, get_random_parser)
+    ArgumentParser, get_waveform_parser, get_posterior_parser, get_mcmc_parser,
+    get_random_parser)
 
 
 ROW_ID_COMMENT = [

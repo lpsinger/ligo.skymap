@@ -16,9 +16,11 @@
 #
 """Markov-Chain Monte Carlo sky localization."""
 
+from argparse import FileType
+
 from . import (
-    ArgumentParser, FileType, get_waveform_parser,
-    get_posterior_parser, get_random_parser)
+    ArgumentParser, get_waveform_parser, get_posterior_parser,
+    get_random_parser)
 
 
 def parser():

@@ -16,11 +16,12 @@
 #
 """Create a P-P plot to compare a posterior sample chain with a sky map."""
 
+from argparse import FileType
 import re
 
 import numpy as np
 
-from . import ArgumentParser, FileType
+from . import ArgumentParser
 from .matplotlib import get_figure_parser
 
 

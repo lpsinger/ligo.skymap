@@ -18,7 +18,9 @@
 Show a sky map's Bayes factor for coherence vs. incoherence as a bullet chart.
 """
 
-from . import ArgumentParser, FileType
+from argparse import FileType
+
+from . import ArgumentParser
 from .matplotlib import get_figure_parser
 
 

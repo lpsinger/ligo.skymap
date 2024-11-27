@@ -71,10 +71,10 @@ Python version support policy
 -----------------------------
 
 Generally, the latest release of `ligo.skymap` supports the Python versions
-specified by :doc:`neps:nep-0029-deprecation_policy`. We follow the lead of the
-main Scientific Python packages that we depend upon (Numpy, Scipy, Astropy) to
-determine when to drop support for older versions of Python and take advantage
-of new Python language features.
+specified by `SPEC 0 — Minimum Supported Dependencies`_. We follow the lead of
+the main Scientific Python packages that we depend upon (Numpy, Scipy, Astropy)
+to determine when to drop support for older versions of Python and take
+advantage of new Python language features.
 
 .. _`GSL`: https://www.gnu.org/software/gsl
 .. _`chealpix`: https://sourceforge.net/projects/healpix/files/Healpix_3.30/
@@ -85,3 +85,4 @@ of new Python language features.
 .. _`bundled sources`: https://git.ligo.org/lscsoft/ligo.skymap/tree/main/cextern/chealpix
 .. _`Instrumentation and Tracing Technology (ITT)`: https://software.intel.com/content/www/us/en/develop/documentation/vtune-help/top/api-support/instrumentation-and-tracing-technology-apis.html
 .. _`VTune Profiler`: https://software.intel.com/content/www/us/en/develop/tools/vtune-profiler.html`
+.. _`SPEC 0 — Minimum Supported Dependencies`: https://scientific-python.org/specs/spec-0000/

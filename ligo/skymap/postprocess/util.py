@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2020  Leo Singer
+# Copyright (C) 2013-2024  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ from astropy import units as u
 import healpy as hp
 import numpy as np
 
-__all__ = ('find_greedy_credible_levels', 'smooth_ud_grade', 'posterior_mean',
-           'posterior_max')
+__all__ = ('find_greedy_credible_levels', 'interp_greedy_credible_levels',
+           'smooth_ud_grade', 'posterior_mean', 'posterior_max')
 
 
 def find_greedy_credible_levels(p, ranking=None):
@@ -82,6 +82,22 @@ def smooth_ud_grade(m, nside, nest=False):
     theta, phi = hp.pix2ang(nside, np.arange(npix), nest=nest)
     new_m = hp.get_interp_val(m, theta, phi, nest=nest)
     return new_m * len(m) / len(new_m)
+
+
+def interp_greedy_credible_levels(x, xp, fp, right=None):
+    """Perform linear interpolation suitable for finding credible levels.
+
+    The linear interpolation is performed with the boundary condition that
+    :math:`f(x) = 0`.
+
+    Examples
+    --------
+    >>> xp = [1, 2, 3, 4, 5]
+    >>> fp = [0.2, 0.4, 0.6, 0.8, 1.0]
+    >>> interp_greedy_credible_levels([0, 0.5, 1.0, 1.5, 2.0], xp, fp)
+    array([0. , 0.1, 0.2, 0.3, 0.4])
+    """
+    return np.interp(x, np.pad(xp, (1, 0)), np.pad(fp, (1, 0)), right=right)
 
 
 def posterior_mean(prob, nest=False):

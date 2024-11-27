@@ -26,6 +26,8 @@ Public-domain cartographic data is courtesy of `Natural Earth
 <http://www.mapshaper.org>`_.
 """
 
+import numpy as np
+
 from . import ArgumentParser, FileType, SQLiteType
 from .matplotlib import get_figure_parser
 
@@ -67,6 +69,33 @@ def parser():
         'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
         default='-', nargs='?', help='Input FITS file')
     return parser
+
+
+def _format_area(area):
+    """Format area values for plot annotations.
+
+    Values are printed to at least three significant figures. Values with three
+    or more figures to the left of the decimal point are printed as integers.
+    A comma separator is added for the thousands place.
+
+    >>> _format_area(0.345678)
+    '0.346'
+    >>> _format_area(3.45678)
+    '3.46'
+    >>> _format_area(34.5678)
+    '34.6'
+    >>> _format_area(345.678)
+    '346'
+    >>> _format_area(3456.78)
+    '3,457'
+    >>> _format_area(34567.8)
+    '34,568'
+    """
+    if area <= 100:
+        return np.format_float_positional(
+            area, precision=3, fractional=False, trim='-')
+    else:
+        return f'{np.round(area).astype(int):,d}'
 
 
 def main(args=None):
@@ -159,15 +188,15 @@ def main(args=None):
                 text.append('event ID: {}'.format(objid))
             if opts.contour:
                 i = np.flipud(np.argsort(skymap['PROBDENSITY']))
-                areas = np.interp(
-                    opts.contour, cls[i], np.cumsum(dA[i]),
-                    left=0, right=4*np.pi)
+                areas = postprocess.interp_greedy_credible_levels(
+                    opts.contour, cls[i], np.cumsum(dA[i]), right=4*np.pi)
                 pp = np.round(opts.contour).astype(int)
-                ii = np.round(areas * sr_to_deg2).astype(int)
+                ii = areas * sr_to_deg2
                 for i, p in zip(ii, pp):
                     # FIXME: use Unicode symbol instead of TeX '$^2$'
                     # because of broken fonts on Scientific Linux 7.
-                    text.append('{:d}% area: {:,d} deg²'.format(p, i))
+                    text.append(
+                        '{:d}% area: {} deg²'.format(p, _format_area(i)))
             ax.text(1, 1, '\n'.join(text), transform=ax.transAxes, ha='right')
 
         # Plot sky map.

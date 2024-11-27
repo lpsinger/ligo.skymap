@@ -5,7 +5,13 @@ Changelog
 2.1.3 (unreleased)
 ==================
 
-- No changes yet.
+- Display at least three significant figures in the credible area shown in the
+  plots produced by the command line tool ``ligo-skymap-plot`` so that a
+  nonzero value is printed if the area is less than 1 deg2.
+
+- Adjust boundary conditions for linear interpolation of credible areas so that
+  nonzero values are reported when the credible region is smaller than one
+  pixel.
 
 2.1.2 (2024-10-22)
 ==================

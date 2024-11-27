@@ -25,6 +25,7 @@ import numpy as np
 
 from .. import distance
 from .. import moc
+from .util import interp_greedy_credible_levels
 
 from .cosmology import dVC_dVL_for_DL
 
@@ -339,12 +340,13 @@ def crossmatch(sky_map, coordinates=None,
 
     # For each of the given confidence levels, compute the area of the
     # smallest region containing that probability.
-    contour_areas = np.interp(
-        contours, prob, area, left=0, right=4*180**2/np.pi).tolist()
+    contour_areas = interp_greedy_credible_levels(
+        contours, prob, area, right=4*180**2/np.pi).tolist()
 
     # For each listed area, find the probability contained within the
     # smallest credible region of that area.
-    area_probs = np.interp(areas, area, prob, left=0, right=1).tolist()
+    area_probs = interp_greedy_credible_levels(
+        areas, area, prob, right=1).tolist()
 
     if modes:
         if true_ra is None:
@@ -380,15 +382,16 @@ def crossmatch(sky_map, coordinates=None,
         if true_dist is None:
             searched_prob_dist = np.nan
         else:
-            searched_prob_dist = np.interp(true_dist, r, P_r, left=0, right=1)
+            searched_prob_dist = interp_greedy_credible_levels(
+                true_dist, r, P_r, right=1)
         if len(contours) == 0:
             contour_dists = []
         else:
-            lo, hi = np.interp(
+            lo, hi = interp_greedy_credible_levels(
                 np.vstack((
                     0.5 * (1 - contours),
                     0.5 * (1 + contours)
-                )), P_r, r, left=0, right=np.inf)
+                )), P_r, r, right=np.inf)
             contour_dists = (hi - lo).tolist()
 
         # Calculate volume of each voxel, defined as the region within the
@@ -414,8 +417,8 @@ def crossmatch(sky_map, coordinates=None,
         P_flat = np.cumsum(dP.ravel()[i])
         V_flat = np.cumsum(dV.ravel()[i])
 
-        contour_vols = np.interp(
-            contours, P_flat, V_flat, left=0, right=np.inf).tolist()
+        contour_vols = interp_greedy_credible_levels(
+            contours, P_flat, V_flat, right=np.inf).tolist()
         P = np.empty_like(P_flat)
         V = np.empty_like(V_flat)
         P[i] = P_flat

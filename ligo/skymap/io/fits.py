@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-"""Reading and writing HEALPix FITS files.
+"""
+This module provides the functions :meth:`read_sky_map` and
+:meth:`write_sky_map` to read and write HEALPix sky maps in FITS format.
+They ensure that common columns are written with consistent units and that
+any provided metadata are encoded according to FTIS standards and conventions.
 
 An example FITS header looks like this:
 
@@ -55,12 +59,24 @@ An example FITS header looks like this:
     DATE    = '2013-04-08T21:50:32' / UTC date of file creation
     CREATOR = 'fits.py '           / Program that created this file
     RUNTIME =                 21.5 / Runtime in seconds of the CREATOR program
+
+.. _fits-keys:
+
+FITS metadata
+-------------
+
+The :meth:`read_sky_map` function accepts several optional keyword arguments
+that you can use to populate `standard or conventional FITS header keys`_:
+
+.. _`standard or conventional FITS header keys`: https://fits.gsfc.nasa.gov/fits_dictionary.html
 """  # noqa: E501
 
+from io import StringIO
 import logging
 import healpy as hp
 import numpy as np
 from astropy.io import fits
+from astropy.table import Table
 from astropy.time import Time
 from astropy import units as u
 from ligo.lw import lsctables
@@ -218,6 +234,14 @@ FITS_META_MAPPING = (
     ('build_date', 'DATE-BLD', 'Software build date',
      identity, identity))
 
+f = StringIO()
+Table(
+    rows=[row[:3] for row in FITS_META_MAPPING],
+    names=['Python keyword argument', 'FITS key', 'FITS comment']
+).write(f, format='ascii.rst')
+__doc__ += f.getvalue()
+del f
+
 
 def write_sky_map(filename, m, **kwargs):
     """Write a gravitational-wave sky map to a file, populating the header
@@ -229,15 +253,15 @@ def write_sky_map(filename, m, **kwargs):
         Path to the optionally gzip-compressed FITS file.
 
     m : `astropy.table.Table`, `numpy.array`
-        If a Numpy record array or astorpy.table.Table instance, and has a
-        column named 'UNIQ', then interpret the input as NUNIQ-style
+        If a Numpy record array or :class:`astropy.table.Table` instance, and
+        has a column named 'UNIQ', then interpret the input as NUNIQ-style
         multi-order map [1]_. Otherwise, interpret as a NESTED or RING ordered
         map.
 
     **kwargs
-        Additional metadata to add to FITS header. If m is an
-        `astropy.table.Table` instance, then the header is initialized from
-        both `m.meta` and `kwargs`.
+        Additional metadata to add to FITS header (see :ref:`fits-keys`). If
+        `m` is an :class:`astropy.table.Table` instance, then the header is
+        initialized from both `m.meta` and `kwargs`.
 
     References
     ----------

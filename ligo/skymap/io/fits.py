@@ -82,7 +82,6 @@ from astropy import units as u
 from ligo.lw import lsctables
 import itertools
 import astropy_healpix as ah
-from astropy.table import Table
 from .. import moc
 from ..util.ilwd import ilwd_to_int
 

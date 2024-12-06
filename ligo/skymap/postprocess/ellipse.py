@@ -309,7 +309,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     >>> print(*find_ellipse(prob))  # doctest: +FLOAT_CMP
     0.0 0.0 64.77564486039145 33.50986301851988 9.217477126726351 6372.42573159241
 
-    ***Example 5***
+    **Example 5**
 
     You can ask for other credible levels:
     >>> print(*find_ellipse(prob, cl=50))  # doctest: +FLOAT_CMP

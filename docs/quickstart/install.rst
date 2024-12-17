@@ -73,7 +73,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
-          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.5.0
+          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `NetworkX <https://networkx.github.io>`_
           *  `Numpy <http://www.numpy.org>`_ ≥ 1.23.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
@@ -95,7 +95,6 @@ You are now ready to get started using `ligo.skymap`.
 
           For building the documentation:
 
-          *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `Sphinx <https://www.sphinx-doc.org/>`_ ≥ 4.0
           *  `sphinx-argparse <https://sphinx-argparse.readthedocs.org/>`_ ≥ 0.3.0
           *  `sphinx-astropy <https://github.com/astropy/sphinx-astropy>`_

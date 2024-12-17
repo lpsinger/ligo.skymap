@@ -40,7 +40,7 @@ dependencies = [
     "lalsuite>=6.82, !=7.2",
     "ligo-gracedb>=2.0.1",
     "ligo-segments>=1.2.0",
-    "matplotlib>=3.5.0",  # https://matplotlib.org/stable/api/prev_api_changes/api_changes_3.6.0.html#pending-deprecation-top-level-cmap-registration-and-access-functions-in-mpl-cm
+    "matplotlib>=3.9.1",  # https://github.com/matplotlib/matplotlib/pull/28289
     "networkx",
     "numpy>=1.23.0",
     "pillow>=2.5.0",
@@ -60,7 +60,6 @@ test = [
     "pytest-mpl",
 ]
 docs = [
-    "matplotlib >= 3.9.1",  # https://github.com/matplotlib/matplotlib/pull/28289
     "sphinx >= 4.0",
     "sphinx-argparse >= 0.3.0",  # https://github.com/alex-rudakov/sphinx-argparse/pull/126
     "sphinx-astropy",

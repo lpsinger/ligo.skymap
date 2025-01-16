@@ -29,17 +29,17 @@ def run_entry_point(name, *args):
 
 def exec_ligolw(name, *args):
     main, = (entry_point.load() for entry_point
-             in metadata.distribution('python-ligo-lw').entry_points
+             in metadata.distribution('igwn-ligolw').entry_points
              if entry_point.name == name)
     sys.argv = [name, *args]
     main()
 
 
 def run_ligolw(name, *args):
-    """Run an external tool that is provided by python-ligo-lw.
+    """Run an external tool that is provided by igwn-ligolw.
 
-    This is trivial if python-ligo-lw has actually been installed and LALSuite
-    is in the PATH. If python-ligo-lw is not installed and is only present as
+    This is trivial if igwn-ligo has actually been installed and LALSuite
+    is in the PATH. If igwn-ligo is not installed and is only present as
     an egg, then things get more complicated.
     """
     path = shutil.which(name)

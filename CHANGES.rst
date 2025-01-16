@@ -5,7 +5,8 @@ Changelog
 2.3.1 (unreleased)
 ==================
 
-- No changes yet.
+- Migrate dependencies from python-ligo-lw and ligo-segments to igwn-ligolw and
+  igwn-segments.
 
 2.3.0 (2025-04-26)
 ==================

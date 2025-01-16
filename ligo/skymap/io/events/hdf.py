@@ -20,7 +20,7 @@ from itertools import groupby
 import h5py
 import numpy as np
 import lal
-from ligo.segments import segment, segmentlist
+from igwn_segments import segment, segmentlist
 
 from .base import Event, EventSource, SingleEvent
 

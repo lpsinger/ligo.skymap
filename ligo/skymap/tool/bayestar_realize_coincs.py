@@ -221,17 +221,17 @@ def main(args=None):
     p = parser()
     with p.parse_args(args) as opts:
         # LIGO-LW XML imports.
-        from ligo.lw import ligolw
-        from ligo.lw.param import Param
-        from ligo.lw.utils.search_summary import append_search_summary
-        from ligo.lw import utils as ligolw_utils
-        from ligo.lw.lsctables import (
+        from igwn_ligolw import ligolw
+        from igwn_ligolw.param import Param
+        from igwn_ligolw.utils.search_summary import append_search_summary
+        from igwn_ligolw import utils as ligolw_utils
+        from igwn_ligolw.lsctables import (
             New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
             CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
             SnglInspiralTable, TimeSlideTable)
 
         # glue, LAL and pylal imports.
-        from ligo import segments
+        import igwn_segments as segments
         import lal
         import lal.series
         import lalsimulation

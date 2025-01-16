@@ -70,15 +70,15 @@ You are now ready to get started using `ligo.skymap`.
           *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_
+          *  `igwn-ligolw <https://pypi.org/project/igwn-ligolw/>`_
+          *  `igwn-segments <https://pypi.org/project/igwn-segments/>`_
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
-          *  `ligo-segments <https://pypi.org/project/ligo-segments/>`_ ≥ 1.2.0
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `NetworkX <https://networkx.github.io>`_
           *  `Numpy <http://www.numpy.org>`_ ≥ 1.23.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
           *  `ptemcee <https://github.com/willvousden/ptemcee>`_
-          *  `python-ligo-lw <https://pypi.org/project/python-ligo-lw/>`_ ≥ 1.8.0
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
           *  `Scipy <https://www.scipy.org>`_ ≥ 0.14, ≠ 1.10.0
           *  `Shapely <https://shapely.readthedocs.io/>`_ ≥ 2.0.0

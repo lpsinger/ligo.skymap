@@ -17,10 +17,10 @@
 """Tools for adapting LIGO-LW row ID formats."""
 import re
 
-from ligo.lw.ligolw import Param
-from ligo.lw.lsctables import TableByName
-from ligo.lw.table import Column, TableStream
-from ligo.lw.types import FormatFunc, FromPyType
+from igwn_ligolw.ligolw import Param
+from igwn_ligolw.lsctables import TableByName
+from igwn_ligolw.table import Column, TableStream
+from igwn_ligolw.types import FormatFunc, FromPyType
 
 __all__ = ('use_in',)
 
@@ -44,18 +44,18 @@ def ilwd_to_int(ilwd):
 def use_in(ContentHandler):
     """Convert from old-style to new-style row IDs on the fly.
 
-    This is loosely adapted from :func:`ligo.lw.utils.ilwd.strip_ilwdchar`.
+    This is loosely adapted from :func:`igwn_ligolw.utils.ilwd.strip_ilwdchar`.
 
     Notes
     -----
     When building a ContentHandler, this must be the _outermost_ decorator,
-    outside of :func:`ligo.lw.lsctables.use_in`, :func:`ligo.lw.param.use_in`,
-    or :func:`ligo.lw.table.use_in`.
+    outside of :func:`igwn_ligolw.lsctables.use_in`,
+    :func:`igwn_ligolw.param.use_in`, or :func:`igwn_ligolw.table.use_in`.
 
     Examples
     --------
     >>> from importlib.resources import as_file, files
-    >>> from ligo.lw import array, ligolw, lsctables, param, table, utils
+    >>> from igwn_ligolw import array, ligolw, lsctables, param, table, utils
     >>> from ligo.skymap.util import ilwd
     >>> @ilwd.use_in
     ... @lsctables.use_in
@@ -90,7 +90,7 @@ def use_in(ContentHandler):
         Notes
         -----
         This method is adapted from
-        :func:`ligo.lw.utils.ilwd.strip_ilwdchar`.
+        :func:`igwn_ligolw.utils.ilwd.strip_ilwdchar`.
 
         """
         result = __orig_startColumn(self, parent, attrs)
@@ -120,7 +120,7 @@ def use_in(ContentHandler):
         Notes
         -----
         This method is adapted from
-        :meth:`ligo.lw.table.TableStream.config`.
+        :meth:`igwn_ligolw.table.TableStream.config`.
 
         """
         result = __orig_startStream(self, parent, attrs)

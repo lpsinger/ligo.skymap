@@ -16,7 +16,7 @@
 import logging
 
 from ligo.gracedb import rest
-from ligo.lw import ligolw
+from igwn_ligolw import ligolw
 
 from .base import EventSource
 from .ligolw import LigoLWEventSource, _read_xml

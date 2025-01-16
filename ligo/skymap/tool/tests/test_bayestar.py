@@ -1,5 +1,5 @@
-from ligo.lw import lsctables as lsctables
-from ligo.lw import utils as ligolw_utils
+from igwn_ligolw import lsctables as lsctables
+from igwn_ligolw import utils as ligolw_utils
 from lalinspiral.thinca import InspiralCoincDef
 import numpy as np
 import pytest
@@ -85,7 +85,7 @@ def coinc_without_inj(coinc, tmpdir):
 @pytest.fixture
 def coinc_sqlite(coinc, tmpdir):
     filename = str(tmpdir / 'coinc.sqlite')
-    run_ligolw('ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
+    run_ligolw('igwn_ligolw_sqlite', coinc, '-p', '-r', '-d', filename)
     return filename
 
 

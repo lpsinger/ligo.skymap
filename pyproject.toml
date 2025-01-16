@@ -36,15 +36,15 @@ dependencies = [
     "astropy-healpix>=0.3",  # https://github.com/astropy/astropy-healpix/pull/106
     "healpy",
     "h5py",
-    "lalsuite>=6.82, !=7.2",
+    "igwn-ligolw",
+    "igwn-segments",
+    "lalsuite>=7.25.2.dev20250503",
     "ligo-gracedb>=2.0.1",
-    "ligo-segments>=1.2.0",
     "matplotlib>=3.9.1",  # https://github.com/matplotlib/matplotlib/pull/28289
     "networkx",
     "numpy>=1.23.0",
     "pillow>=2.5.0",
     "ptemcee",
-    "python-ligo-lw>=1.8.0",
     "pytz",
     "reproject>=0.3.2",
     "scipy>=0.14, !=1.10.0",  # https://git.ligo.org/lscsoft/ligo.skymap/-/issues/36

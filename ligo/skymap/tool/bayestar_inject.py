@@ -284,9 +284,9 @@ def main(args=None):
         import warnings
 
         from astropy.table import Table
-        from ligo.lw import lsctables
-        from ligo.lw import utils as ligolw_utils
-        from ligo.lw import ligolw
+        from igwn_ligolw import lsctables
+        from igwn_ligolw import utils as ligolw_utils
+        from igwn_ligolw import ligolw
         import lal.series
         from scipy import stats
 

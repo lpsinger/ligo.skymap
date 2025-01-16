@@ -441,7 +441,7 @@ def _sanitize_arg_value_for_xmldoc(value):
 
 
 def register_to_xmldoc(xmldoc, parser, opts, **kwargs):
-    from ligo.lw.utils import process
+    from igwn_ligolw.utils import process
     params = {key: _sanitize_arg_value_for_xmldoc(value)
               for key, value in opts.__dict__.items()}
     return process.register_to_xmldoc(
@@ -488,10 +488,10 @@ _compress_arg_map = {
 
 
 def write_fileobj(xmldoc, f):
-    import ligo.lw.utils
+    from igwn_ligolw.utils import write_fileobj, SignalsTrap
 
     _, ext = os.path.splitext(f.name)
     compress = _compress_arg_map.get(ext.lower())
 
-    with ligo.lw.utils.SignalsTrap():
-        ligo.lw.utils.write_fileobj(xmldoc, f, compress=compress)
+    with SignalsTrap():
+        write_fileobj(xmldoc, f, compress=compress)

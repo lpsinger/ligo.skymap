@@ -79,7 +79,7 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
 from astropy import units as u
-from ligo.lw import lsctables
+from igwn_ligolw import lsctables
 import itertools
 import astropy_healpix as ah
 from .. import moc

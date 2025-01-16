@@ -17,7 +17,7 @@
 import os
 import sqlite3
 
-from ligo.lw import dbtables
+from igwn_ligolw import dbtables
 
 from ...util import sqlite
 from .ligolw import LigoLWEventSource

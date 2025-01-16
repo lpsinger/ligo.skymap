@@ -17,7 +17,7 @@
 import builtins
 import sqlite3
 
-from ligo.lw.ligolw import Element
+from igwn_ligolw.ligolw import Element
 import h5py
 
 from . import hdf, ligolw, sqlite

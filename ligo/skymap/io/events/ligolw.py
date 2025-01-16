@@ -22,12 +22,12 @@ import logging
 import operator
 import os
 
-from ligo.lw import array, lsctables, param
-from ligo.lw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
-from ligo.lw.lsctables import (
+from igwn_ligolw import array, lsctables, param
+from igwn_ligolw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
+from igwn_ligolw.lsctables import (
     CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
     SnglInspiralTable, TimeSlideID, TimeSlideTable)
-from ligo.lw.utils import load_filename, load_fileobj
+from igwn_ligolw.utils import load_filename, load_fileobj
 import lal
 import lal.series
 from lalinspiral.thinca import InspiralCoincDef
@@ -79,15 +79,15 @@ class LigoLWEventSource(dict, EventSource):
 
     Parameters
     ----------
-    f : str, file-like object, or `ligo.lw.ligolw.Document`
+    f : str, file-like object, or `igwn_ligolw.ligolw.Document`
         The name of the file, or the file object, or the XML document object,
         containing the trigger tables.
-    psd_file : str, file-like object, or `ligo.lw.ligolw.Document`
+    psd_file : str, file-like object, or `igwn_ligolw.ligolw.Document`
         The name of the file, or the file object, or the XML document object,
         containing the PSDs. If not supplied, then PSDs will be read
         automatically from any files mentioned in ``--reference-psd`` command
         line arguments stored in the ProcessParams table.
-    coinc_def : `ligo.lw.lsctables.CoincDef`, optional
+    coinc_def : `igwn_ligolw.lsctables.CoincDef`, optional
         An optional coinc definer to limit which events are read.
     fallbackpath : str, optional
         A directory to search for PSD files whose ``--reference-psd`` command

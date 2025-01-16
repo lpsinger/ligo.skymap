@@ -129,10 +129,10 @@ The output is saved in the current working directory to FITS files named
 -----------------------------
 
 Optionally, if you want to generate P-P plots, you need to convert the
-``coinc.xml`` file to SQLite using the ``ligolw_sqlite`` tool from
+``coinc.xml`` file to SQLite using the ``igwn_ligolw_sqlite`` tool from
 python-ligo-lw. Run the following command::
 
-    ligolw_sqlite --preserve-ids --replace --database coinc.sqlite coinc.xml
+    igwn_ligolw_sqlite --preserve-ids --replace --database coinc.sqlite coinc.xml
 
 The output is saved in SQLite format as ``coinc.sqlite``.
 

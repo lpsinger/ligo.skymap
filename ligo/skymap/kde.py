@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2020  Will M. Farr <will.farr@ligo.org>
+# Copyright (C) 2012-2025  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ import copyreg
 from functools import partial
 
 from astropy.coordinates import SkyCoord
+from astropy import units as u
 from astropy.utils.misc import NumpyRNGContext
 import healpy as hp
 import logging
@@ -387,11 +388,11 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
 
     @classmethod
     def transform(cls, pts):
-        pts = SkyCoord(*pts.T, unit='rad').transform_to(cls.frame).spherical
+        pts = SkyCoord(*pts.T, unit=u.rad).transform_to(cls.frame).spherical
         return np.column_stack((pts.lon.rad, np.sin(pts.lat.rad)))
 
     def __new__(cls, pts, *args, **kwargs):
-        frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit='rad'))
+        frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit=u.rad))
         name = '{:s}_{:x}'.format(cls.__name__, id(frame))
         new_cls = type(name, (cls,), {'frame': frame})
         return super().__new__(new_cls)
@@ -419,7 +420,7 @@ class Clustered3DSkyKDE(SkyKDE):
 
     @classmethod
     def transform(cls, pts):
-        return SkyCoord(*pts.T, unit='rad').cartesian.xyz.value.T
+        return SkyCoord(*pts.T, unit=u.rad).cartesian.xyz.value.T
 
     def __call__(self, pts, distances=False):
         """Given an array of positions in RA, DEC, compute the marginal sky

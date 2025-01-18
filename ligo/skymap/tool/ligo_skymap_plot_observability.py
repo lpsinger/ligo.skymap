@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2024  Leo Singer
+# Copyright (C) 2019-2025  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ def main(args=None):
         times = t0 + np.linspace(0, 1) * u.day
 
         theta, phi = moc.uniq2ang(m['UNIQ'])
-        coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
+        coords = SkyCoord(phi, 0.5 * np.pi - theta, unit=u.rad)
         prob = np.asarray(moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY'])
 
         constraints = [

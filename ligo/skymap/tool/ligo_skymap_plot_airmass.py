@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2023  Leo Singer
+# Copyright (C) 2018-2025  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ def main(args=None):
     times = Time(np.linspace(*ax.get_xlim()), format='plot_date')
 
     theta, phi = moc.uniq2ang(m['UNIQ'])
-    coords = SkyCoord(phi, 0.5 * np.pi - theta, unit='rad')
+    coords = SkyCoord(phi, 0.5 * np.pi - theta, unit=u.rad)
     prob = moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY']
 
     levels = np.arange(90, 0, -10)

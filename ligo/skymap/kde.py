@@ -452,7 +452,7 @@ class Clustered3DSkyKDE(SkyKDE):
         nside = 2 ** order.astype(int)
         theta, phi = hp.pix2ang(nside, ipix, nest=True)
         p = np.column_stack((phi, 0.5 * np.pi - theta))
-        print('evaluating distance layers ...')
+        log.info('evaluating distance layers ...')
         _, m['DISTMU'], m['DISTSIGMA'], m['DISTNORM'] = self(p, distances=True)
         return m
 

@@ -423,7 +423,7 @@ class Clustered3DSkyKDE(SkyKDE):
         return SkyCoord(*pts.T, unit=u.rad).cartesian.xyz.value.T
 
     def __call__(self, pts, distances=False):
-        """Given an array of positions in RA, DEC, compute the marginal sky
+        """Given an array of positions in RA, Dec, compute the marginal sky
         posterior and optinally the conditional distance parameters.
         """
         func = partial(distance.cartesian_kde_to_moments,

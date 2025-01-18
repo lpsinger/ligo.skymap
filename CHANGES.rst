@@ -13,9 +13,17 @@ Changelog
   nonzero values are reported when the credible region is smaller than one
   pixel.
 
-- Several improvements in ``ligo-skymap-from-samples``:
+- Several improvements in ``ligo-skymap-from-samples``, including a speedup
+  from about 1 min to 20 s for an input of 10,000 samples on high core count
+  (up to 128 core) x86_64 machines:
 
   - Parallelize the evaluation of the 2D KDE.
+
+  - Pre-whiten the data before clustering to avoid matrix inverses in an inner
+    loop. This speeds up the clustering by about 2x.
+
+  - Replace our pure Python implementation of the k-means assignment step with
+    the Cython implementation from ``scipy.cluster.vq``.
 
   - Add a progress bar for the HEALPix adaptive refinement step.
 

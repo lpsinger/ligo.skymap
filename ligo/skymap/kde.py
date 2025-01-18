@@ -25,6 +25,8 @@ from astropy.utils.misc import NumpyRNGContext
 import healpy as hp
 import logging
 import numpy as np
+from scipy import linalg
+from scipy.cluster.vq import vq
 from scipy.stats import gaussian_kde
 
 from . import distance
@@ -131,27 +133,43 @@ class BoundedKDE(gaussian_kde):
         return np.count_nonzero(self(self.dataset) < self(pt)) / self.n
 
 
-def km_assign(mus, cov, pts):
+def whiten(pts):
+    """Whiten a set of points, making its covariance the identity matrix.
+
+    Parameters
+    ----------
+    pts
+        An array of shape ``(npts, ndim)``
+
+    Returns
+    -------
+    whitened_pts
+        A new array of shape ``(npts, ndim)``
+
+    Example
+    -------
+
+    >>> x = np.random.uniform(size=(100, 3))
+    >>> x_whitened = whiten(x)
+    >>> np.cov(x_whitened, rowvar=0)  # doctest: +FLOAT_CMP
+    array([[1., 0., 0.],
+           [0., 1., 0.],
+           [0., 0., 1.]])
+    """
+    cov = np.cov(pts, rowvar=0)
+    cho_cov = linalg.cholesky(cov, lower=True)
+    return linalg.solve_triangular(cho_cov, pts.T, lower=True).T
+
+
+def km_assign(mus, pts):
     """Implement the assignment step in the k-means algorithm.
 
-    Given a set of centers, ``mus``, a covariance matrix used to produce a
-    metric on the space, ``cov``, and a set of points, ``pts`` (shape ``(npts,
-    ndim)``), assigns each point to its nearest center, returning an array of
-    indices of shape ``(npts,)`` giving the assignments.
+    Given a set of centers, ``mus`` and a set of points, ``pts`` (shape
+    ``(npts, ndim)``), assigns each point to its nearest center, returning an
+    array of indices of shape ``(npts,)`` giving the assignments.
     """
-    k = mus.shape[0]
-    n = pts.shape[0]
-
-    dists = np.empty((k, n))
-
-    for i, mu in enumerate(mus):
-        dx = pts - mu
-        try:
-            dists[i, :] = np.sum(dx * np.linalg.solve(cov, dx.T).T, axis=1)
-        except np.linalg.LinAlgError:
-            dists[i, :] = np.nan
-
-    return np.nanargmin(dists, axis=0)
+    assign, _ = vq(pts, mus, check_finite=False)
+    return assign
 
 
 def km_centroids(pts, assign, k):
@@ -179,8 +197,8 @@ def k_means(pts, k):
     Parameters
     ----------
     pts
-        Array of shape ``(npts, ndim)`` giving the points on which k-means is
-        to operate.
+        Array of shape ``(npts, ndim)`` giving the whitened points on which
+        k-means is to operate.
     k
         Positive integer giving the number of regions.
 
@@ -195,15 +213,13 @@ def k_means(pts, k):
     """
     assert pts.shape[0] > k, 'must have more points than means'
 
-    cov = np.cov(pts, rowvar=0)
-
     mus = np.random.permutation(pts)[:k, :]
-    assign = km_assign(mus, cov, pts)
+    assign = km_assign(mus, pts)
     while True:
         old_assign = assign
 
         mus = km_centroids(pts, assign, k)
-        assign = km_assign(mus, cov, pts)
+        assign = km_assign(mus, pts)
 
         if np.all(assign == old_assign):
             break
@@ -220,7 +236,7 @@ def _cluster(cls, pts, trials, i, seed, jobs):
             assign = np.zeros(len(pts), dtype=np.intp)
         else:
             with NumpyRNGContext(i + seed):
-                _, assign = k_means(pts, k)
+                _, assign = k_means(whiten(pts), k)
         obj = cls(pts, assign=assign)
     except np.linalg.LinAlgError:
         return -np.inf,

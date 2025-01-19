@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2024  Will M. Farr <will.farr@ligo.org>
+# Copyright (C) 2011-2025  Will M. Farr <will.farr@ligo.org>
 #                          Leo P. Singer <leo.singer@ligo.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -92,6 +92,7 @@ def main(args=None):
         from ..io.hdf5 import _remap_colnames
         from ..bayestar import rasterize
         from .. import version
+        from ..util.stopwatch import Stopwatch
         from astropy.table import Table
         from astropy.time import Time
         import numpy as np
@@ -113,6 +114,8 @@ def main(args=None):
             data = Table.read(args.samples, format='ascii')
             _remap_colnames(data)
 
+        stopwatch = Stopwatch()
+        stopwatch.start()
         if args.maxpts is not None and args.maxpts < len(data):
             log.info('taking random subsample of chain')
             data = data[
@@ -153,9 +156,11 @@ def main(args=None):
 
         log.info('making skymap')
         hpmap = skypost.as_healpix(top_nside=args.top_nside)
+        stopwatch.stop()
         if not args.enable_multiresolution:
             hpmap = rasterize(hpmap)
         hpmap.meta.update(io.fits.metadata_for_version_module(version))
+        hpmap.meta['runtime'] = stopwatch.real
         hpmap.meta['creator'] = _parser.prog
         hpmap.meta['origin'] = 'LIGO/Virgo/KAGRA'
         hpmap.meta['gps_creation_time'] = Time.now().gps

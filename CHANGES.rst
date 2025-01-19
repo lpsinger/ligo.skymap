@@ -17,6 +17,8 @@ Changelog
 
   - Add a progress bar for the HEALPix adaptive refinement step.
 
+  - Record the runtime in the output FITS file's header.
+
 2.1.2 (2024-10-22)
 ==================
 

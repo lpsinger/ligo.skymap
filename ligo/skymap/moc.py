@@ -180,7 +180,7 @@ def rasterize(moc_data, order=None):
     return _rasterize(moc_data, order=order)
 
 
-def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8, **kwargs):
+def bayestar_adaptive_grid(probdensity_func, *args, top_nside=16, rounds=8, **kwargs):
     """Create a sky map by evaluating a function on an adaptive grid.
 
     Perform the BAYESTAR adaptive mesh refinement scheme as described in
@@ -192,7 +192,7 @@ def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8, **kwargs)
 
     Parameters
     ----------
-    probdensity : callable
+    probdensity_func : callable
         Probability density function. The first argument consists of
         column-stacked array of right ascension and declination in radians.
         The return value must be a 1D array of the probability density in
@@ -208,37 +208,59 @@ def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8, **kwargs)
         An astropy Table with UNIQ and PROBDENSITY columns, representing
         a multi-ordered sky map
     """
-    top_npix = ah.nside_to_npix(top_nside)
-    nrefine = top_npix // 4
-    cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
-    for _ in tqdm(range(rounds + 1)):
-        cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1] ** 2)
-        new_nside, new_ipix = np.transpose(
-            [
-                (nside * 2, ipix * 4 + i)
-                for _, nside, ipix in cells[-nrefine:]
-                for i in range(4)
-            ]
-        )
-        ra, dec = ah.healpix_to_lonlat(new_ipix, new_nside, order="nested")
-        p = probdensity(np.column_stack((ra.value, dec.value)), *args, **kwargs)
-        cells[-nrefine:] = zip(p, new_nside, new_ipix)
 
-    """Return a HEALPix multi-order map of the posterior density."""
-    post, nside, ipix = zip(*cells)
-    post = np.asarray(list(post))
-    nside = np.asarray(list(nside))
-    ipix = np.asarray(list(ipix))
+    def func(nside, ipix):
+        ra, dec = ah.healpix_to_lonlat(ipix, nside, order="nested")
+        probdensity = probdensity_func(
+            np.column_stack((ra.rad, dec.rad)), *args, **kwargs
+        )
+        prob = probdensity / np.square(nside)
+        return probdensity, prob
+
+    end = ah.nside_to_npix(top_nside)
+    nrefine = end // 4
+    begin = end - nrefine
+
+    # Allocate full-sized output arrays
+    length_per_round = 3 * nrefine
+    length = end + length_per_round * rounds
+    probdensity = np.empty(length)
+    prob = np.empty(length)
+    nside = np.empty(length, dtype=np.intp)
+    ipix = np.empty(length, dtype=np.intp)
+
+    with tqdm(total=rounds + 1) as progress:
+        # Evaluate at top resolution
+        nside[:end] = new_nside = top_nside
+        ipix[:end] = new_ipix = np.arange(end)
+        probdensity[:end], prob[:end] = func(new_nside, new_ipix)
+        progress.update()
+
+        # Perform adaptive refinement rounds
+        for _ in range(rounds):
+            i = prob[:end].argpartition(begin - 1)
+            for array in nside, ipix, probdensity, prob:
+                array[:end] = array[i]
+            new_nside = np.tile(nside[begin:end] * 2, 4)
+            new_ipix = (ipix[begin:end] * 4 + np.arange(4)[:, np.newaxis]).ravel()
+            new_probdensity, new_prob = func(new_nside, new_ipix)
+            end += length_per_round
+            nside[begin:end] = new_nside
+            ipix[begin:end] = new_ipix
+            probdensity[begin:end] = new_probdensity
+            prob[begin:end] = new_prob
+            begin += length_per_round
+            progress.update()
 
     # Make sure that sky map is normalized (it should be already)
-    post /= np.sum(post * ah.nside_to_pixel_area(nside).to_value(u.sr))
+    probdensity /= np.sum(probdensity * ah.nside_to_pixel_area(nside).to_value(u.sr))
 
     # Convert from NESTED to UNIQ pixel indices
     order = np.log2(nside).astype(int)
     uniq = nest2uniq(order.astype(np.int8), ipix)
 
     # Done!
-    return table.Table([uniq, post], names=["UNIQ", "PROBDENSITY"], copy=False)
+    return table.Table([uniq, probdensity], names=["UNIQ", "PROBDENSITY"], copy=False)
 
 
 del add_newdoc_ufunc

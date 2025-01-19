@@ -15,6 +15,9 @@ Changelog
   __ https://github.com/lpsinger/ligo.skymap/issues/32
   __ https://github.com/nicholasjannsen
 
+- Speed up ``ligo.skymap.moc.bayestar_adaptive_grid`` by rewriting it with
+  Numpy so that it can make use of vectorized sampling functions.
+
 2.4.0 (2025-05-22)
 ==================
 

@@ -13,6 +13,10 @@ Changelog
   nonzero values are reported when the credible region is smaller than one
   pixel.
 
+- Several improvements in ``ligo-skymap-from-samples``:
+
+  - Add a progress bar for the HEALPix adaptive refinement step.
+
 2.1.2 (2024-10-22)
 ==================
 

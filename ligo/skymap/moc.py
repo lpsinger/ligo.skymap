@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2024  Leo Singer
+# Copyright (C) 2017-2025  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ from astropy import units as u
 import astropy_healpix as ah
 import numpy as np
 from numpy.lib.recfunctions import repack_fields
+from tqdm.auto import tqdm
 
 from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
 from .core import rasterize as _rasterize
@@ -194,9 +195,7 @@ def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
     top_npix = ah.nside_to_npix(top_nside)
     nrefine = top_npix // 4
     cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
-    for iround in range(rounds + 1):
-        print('adaptive refinement round {} of {} ...'.format(
-            iround, rounds))
+    for _ in tqdm(range(rounds + 1)):
         cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1]**2)
         new_nside, new_ipix = np.transpose([
             (nside * 2, ipix * 4 + i)

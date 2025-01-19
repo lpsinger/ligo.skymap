@@ -142,7 +142,7 @@ def km_assign(mus, cov, pts):
     k = mus.shape[0]
     n = pts.shape[0]
 
-    dists = np.zeros((k, n))
+    dists = np.empty((k, n))
 
     for i, mu in enumerate(mus):
         dx = pts - mu
@@ -162,7 +162,7 @@ def km_centroids(pts, assign, k):
     ``k``, returns an array of shape ``(k, ndim)`` giving the centroid of each
     region.
     """
-    mus = np.zeros((k, pts.shape[1]))
+    mus = np.empty((k, pts.shape[1]))
     for i in range(k):
         sel = assign == i
         if np.sum(sel) > 0:

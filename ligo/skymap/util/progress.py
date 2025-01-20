@@ -65,9 +65,15 @@ def _results_in_order(completed):
     assert not heap, 'The heap must be empty'
 
 
+_in_pool = False
+"""Flag to prevent nested multiprocessing pools."""
+
+
 def _init_process():
     """Disable OpenMP when using multiprocessing."""
+    global _in_pool
     omp.num_threads = 1
+    _in_pool = True
 
 
 def progress_map(func, *iterables, jobs=1, **kwargs):
@@ -77,8 +83,9 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
     that it is implemented using :mod:`tqdm` and so provides more detailed and
     accurate progress information.
     """
+    global _in_pool
     total = _get_total_estimate(*iterables)
-    if jobs == 1:
+    if _in_pool or jobs == 1:
         yield from tqdm(map(func, *iterables), total=total, **kwargs)
     else:
         with Pool(jobs, _init_process) as pool:

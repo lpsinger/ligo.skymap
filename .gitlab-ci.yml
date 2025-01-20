@@ -410,6 +410,7 @@ tests/review:
       ssh -T $REMOTE_HOST "bash -e" <<EOF
       cd public_html/$CI_JOB_ID
       source env/bin/activate
+      export LAL_DATA_PATH=/home/lalsimulation_data  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
       condor_submit_dag -include_env LAL_DATA_PATH -append accounting_group_user=leo.singer -batch-name pipeline/$CI_JOB_ID htcondor/acceptance-tests.dag
       tail --follow=descriptor --retry htcondor/acceptance-tests.dag.dagman.out &
       condor_wait htcondor/acceptance-tests.dag.dagman.log

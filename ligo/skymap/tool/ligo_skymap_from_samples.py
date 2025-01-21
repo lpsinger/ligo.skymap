@@ -40,6 +40,7 @@ from . import (
     ArgumentParser, DirType, EnableAction, FileType, get_random_parser)
 
 
+
 def parser():
     # Command line interface.
     parser = ArgumentParser(parents=[get_random_parser()])
@@ -81,6 +82,9 @@ def parser():
                         help='The name of the table to search for recursively '
                         'within the HDF5 file. By default, search for '
                         'posterior_samples')
+
+    parser.add_argument("--enable-dpgmm", default=False, action=EnableAction,
+                        help="Use the DPGMM density estimator instead of the KDE density estimator. ")
     return parser
 
 
@@ -100,6 +104,7 @@ def main(args=None):
         import sys
         import pickle
         from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
+        from ..dpgmm import SkyDPGMM
         import logging
         from textwrap import wrap
 
@@ -144,7 +149,7 @@ def main(args=None):
             if args.enable_distance_map:
                 cls = Clustered2Plus1DSkyKDE
             else:
-                cls = Clustered2DSkyKDE
+                cls = Clustered2DSkyKDE if not args.enable_dpgmm else SkyDPGMM
             skypost = cls(pts, trials=args.trials, jobs=args.jobs)
 
             log.info('pickling')

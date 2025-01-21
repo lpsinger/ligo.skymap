@@ -54,16 +54,12 @@ class SkyDPGMM:
 
         # build DPGMM model
         prior_pars = get_priors(self.bounds, pts)
-        model = DPGMM(self.bounds, prior_pars=prior_pars)
+        bounds = [[0, 2*np.pi], [-np.pi/2, np.pi/2]]
+        model = DPGMM(bounds, prior_pars=prior_pars)
         for s in tqdm(pts):
             model.add_new_point(s)
 
         self.model = model
-
-    @property
-    def bounds(self):
-        """Bounds on ra and dec"""
-        return [[0, 2*np.pi], [-np.pi/2, np.pi/2]]
 
     def __call__(self, pts):
         return self.model.pdf(self.transform(pts))

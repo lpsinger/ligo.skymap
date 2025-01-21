@@ -35,6 +35,7 @@ dependencies = [
     "astroplan>=0.7",  # https://github.com/astropy/astroplan/issues/479
     "astropy>=6.0",  # https://github.com/astropy/astropy/pull/14980
     "astropy-healpix>=0.3",  # https://github.com/astropy/astropy-healpix/pull/106
+    "figaro>=1.5.0",
     "healpy",
     "h5py",
     "lalsuite>=6.82, !=7.2",
@@ -51,8 +52,6 @@ dependencies = [
     "scipy>=0.14, !=1.10.0",  # https://git.ligo.org/lscsoft/ligo.skymap/-/issues/36
     "shapely>=2.0.0",
     "tqdm>=4.27.0",
-    "figaro>=1.5.0"
-
 ]
 
 [project.optional-dependencies]

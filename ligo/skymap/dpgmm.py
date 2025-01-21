@@ -53,7 +53,7 @@ class SkyDPGMM:
         pts = self.transform(pts)
 
         # build DPGMM model
-        prior_pars = None #get_priors(self.bounds, pts)
+        prior_pars = get_priors(self.bounds, pts)
         model = DPGMM(self.bounds, prior_pars=prior_pars)
         for s in tqdm(pts):
             model.add_new_point(s)

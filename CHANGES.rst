@@ -19,6 +19,9 @@ Changelog
 
   - Record the runtime in the output FITS file's header.
 
+  - Reuse the Python mulitprocessing pool to avoid the overhead of spawning
+    new workers for each parallel section.
+
 2.1.2 (2024-10-22)
 ==================
 

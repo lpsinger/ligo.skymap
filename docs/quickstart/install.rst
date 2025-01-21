@@ -68,6 +68,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `Astroplan <http://astroplan.readthedocs.io>`_ ≥ 0.7
           *  `Astropy`_ ≥ 6.0
           *  `astropy-healpix <https://astropy-healpix.readthedocs.io>`_ ≥ 0.3
+          *  `figaro <https://figaro.readthedocs.io>` ≥ 1.5.0
           *  `Healpy <http://healpy.readthedocs.io>`_
           *  `h5py <https://www.h5py.org>`_
           *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2

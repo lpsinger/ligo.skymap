@@ -15,6 +15,8 @@ Changelog
 
 - Several improvements in ``ligo-skymap-from-samples``:
 
+  - Parallelize the evaluation of the 2D KDE.
+
   - Add a progress bar for the HEALPix adaptive refinement step.
 
   - Record the runtime in the output FITS file's header.

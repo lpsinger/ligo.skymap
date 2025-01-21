@@ -404,6 +404,9 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
         factory_args = self.__class__.__name__, self.frame
         return _Clustered2DSkyKDE_factory, factory_args, self.__dict__
 
+    def __call__(self, pts):
+        return np.asarray(list(self._map(self.eval_kdes, self.transform(pts))))
+
     def eval_kdes(self, pts):
         base = super().eval_kdes
         dphis = (0.0, 2 * np.pi, -2 * np.pi)

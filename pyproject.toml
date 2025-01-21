@@ -51,6 +51,8 @@ dependencies = [
     "scipy>=0.14, !=1.10.0",  # https://git.ligo.org/lscsoft/ligo.skymap/-/issues/36
     "shapely>=2.0.0",
     "tqdm>=4.27.0",
+    "figaro>=1.5.0"
+
 ]
 
 [project.optional-dependencies]

@@ -36,4 +36,3 @@ class SkyDPGMM:
     def as_healpix(self, top_nside=16, rounds=8):
         return moc.bayestar_adaptive_grid(self, top_nside=top_nside,
                                           rounds=rounds)
-

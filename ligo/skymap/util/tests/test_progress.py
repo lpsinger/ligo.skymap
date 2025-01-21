@@ -34,3 +34,9 @@ def map2():
 def test_no_nested_pools():
     """Test that parallelism is disabled in nested calls to progress_map."""
     assert len(set(map2())) <= 8
+
+
+@pytest.mark.parametrize('jobs', [1, 8])
+def test_indefinite(jobs):
+    """Test iteration over a collection of indefinite length."""
+    assert list(progress_map(np.square, (i for i in range(3)))) == [0, 1, 4]

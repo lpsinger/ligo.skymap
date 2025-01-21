@@ -42,9 +42,7 @@ class WrappedFunc:
 
 def _get_total_estimate(*iterables):
     """Estimate total loop iterations for mapping over multiple iterables."""
-    estimates = (length_hint(iterable, -1) for iterable in iterables)
-    valid_estimates = (estimate for estimate in estimates if estimate != -1)
-    return min(valid_estimates, default=None)
+    return min(length_hint(iterable) for iterable in iterables)
 
 
 def _results_in_order(completed):
@@ -97,11 +95,18 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
             _pool = Pool(jobs, _init_process)
             _jobs = jobs
 
+        # Chunk size heuristic reproduced from
+        # https://github.com/python/cpython/blob/v3.13.1/Lib/multiprocessing/pool.py#L481-L483.
+        chunksize, extra = divmod(total, _jobs * 4)
+        if extra:
+            chunksize += 1
+
         yield from _results_in_order(
             tqdm(
                 _pool.imap_unordered(
                     WrappedFunc(func),
-                    enumerate(zip(*iterables))
+                    enumerate(zip(*iterables)),
+                    chunksize=chunksize
                 ),
                 total=total, **kwargs
             )

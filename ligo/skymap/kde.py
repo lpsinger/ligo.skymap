@@ -376,18 +376,6 @@ def _Clustered2DSkyKDE_factory(name, frame):  # noqa: N802
     return super(Clustered2DSkyKDE, Clustered2DSkyKDE).__new__(new_cls)
 
 
-class EigenFrameDensityEstimator:
-    @classmethod
-    def transform(cls, pts):
-        pts = SkyCoord(*pts.T, unit=u.rad).transform_to(cls.frame).spherical
-        return np.column_stack((pts.lon.rad, np.sin(pts.lat.rad)))
-
-    def __new__(cls, pts, *args, **kwargs):
-        frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit=u.rad))
-        name = '{:s}_{:x}'.format(cls.__name__, id(frame))
-        new_cls = type(name, (cls,), {'frame': frame})
-        return super().__new__(new_cls)
-
 class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
     r"""Represents a kernel-density estimate of a sky-position PDF that has
     been decomposed into clusters, using a different kernel for each

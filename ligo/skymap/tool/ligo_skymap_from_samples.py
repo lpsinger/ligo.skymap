@@ -40,7 +40,6 @@ from . import (
     ArgumentParser, DirType, EnableAction, FileType, get_random_parser)
 
 
-
 def parser():
     # Command line interface.
     parser = ArgumentParser(parents=[get_random_parser()])
@@ -83,7 +82,8 @@ def parser():
                         'within the HDF5 file. By default, search for '
                         'posterior_samples')
     parser.add_argument("--enable-dpgmm", default=False, action=EnableAction,
-                        help='Use a DPGMM instead of KDE for density esimation.')
+                        help='Use a DPGMM instead of KDE  '
+                        'for density esimation.')
     return parser
 
 

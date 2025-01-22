@@ -82,7 +82,7 @@ def parser():
                         'within the HDF5 file. By default, search for '
                         'posterior_samples')
     parser.add_argument("--enable-dpgmm", default=False, action=EnableAction,
-                        help='Use a DPGMM instead of KDE  '
+                        help='Use a DPGMM instead of KDE '
                         'for density esimation.')
     return parser
 

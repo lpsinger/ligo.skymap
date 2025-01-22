@@ -17,7 +17,7 @@ class SkyDPGMM:
         pts = self.transform(pts)
 
         # build DPGMM model
-        bounds = [[0, 2*np.pi], [-np.pi/2, np.pi/2]]
+        bounds = [[0, 2*np.pi], [-1, 1]]
         prior_pars = get_priors(bounds, pts)
 
         model = DPGMM(bounds, prior_pars=prior_pars)

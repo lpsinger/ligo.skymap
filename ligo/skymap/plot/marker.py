@@ -52,7 +52,7 @@ Examples
 sun = Path.unit_circle()
 sun = MarkerStyle(
     Path(
-        np.concatenate((sun.vertices, [[0, 0], [1e-15, 1e-15]])),
+        np.concatenate((sun.vertices, [[0, 0], [1e-3, 0]])),
         np.concatenate((sun.codes, [Path.MOVETO, Path.LINETO]))
     ),
     capstyle='round',

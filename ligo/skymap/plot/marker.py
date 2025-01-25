@@ -24,10 +24,13 @@ __all__ = ('earth', 'sun', 'reticle')
 
 
 earth = Path.unit_circle()
-verts = np.concatenate([earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]]])
-codes = np.concatenate([earth.codes, [Path.MOVETO, Path.LINETO] * 2])
-earth = MarkerStyle(Path(verts, codes), fillstyle='none')
-del verts, codes
+earth = MarkerStyle(
+    Path(
+        np.concatenate((earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]])),
+        np.concatenate((earth.codes, [Path.MOVETO, Path.LINETO] * 2))
+    ),
+    fillstyle='none'
+)
 earth.__doc__ = """
 The Earth symbol (circle and cross).
 
@@ -49,14 +52,9 @@ Examples
 sun = Path.unit_circle()
 sun = MarkerStyle(
     Path(
-        np.concatenate((
-            sun.vertices,
-            [[0, 0], [1e-15, 1e-15]]
-        )),
-        np.concatenate((
-            sun.codes,
-            [Path.MOVETO, Path.LINETO]
-        ))),
+        np.concatenate((sun.vertices, [[0, 0], [1e-15, 1e-15]])),
+        np.concatenate((sun.codes, [Path.MOVETO, Path.LINETO]))
+    ),
     capstyle='round',
     joinstyle='round',
     fillstyle='none'

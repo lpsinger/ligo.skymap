@@ -13,6 +13,9 @@ Changelog
   nonzero values are reported when the credible region is smaller than one
   pixel.
 
+- The Earth plot marker is now unfilled by default. It is no longer necessary
+  to specify ``markerfacecolor='none'``.
+
 - Several improvements in ``ligo-skymap-from-samples``, including a speedup
   from about 1 min to 20 s for an input of 10,000 samples on high core count
   (up to 128 core) x86_64 machines:

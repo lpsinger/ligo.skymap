@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019  Leo Singer
+# Copyright (C) 2016-2025  Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 #
 """Specialized markers."""
 
+from matplotlib.markers import MarkerStyle
 from matplotlib.path import Path
 import numpy as np
 
@@ -25,7 +26,7 @@ __all__ = ('earth', 'reticle')
 earth = Path.unit_circle()
 verts = np.concatenate([earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]]])
 codes = np.concatenate([earth.codes, [Path.MOVETO, Path.LINETO] * 2])
-earth = Path(verts, codes)
+earth = MarkerStyle(Path(verts, codes), fillstyle='none')
 del verts, codes
 earth.__doc__ = """
 The Earth symbol (circle and cross).
@@ -40,8 +41,7 @@ Examples
     from matplotlib import pyplot as plt
     from ligo.skymap.plot.marker import earth
 
-    plt.plot(0, 0, markersize=20, markeredgewidth=2,
-             markerfacecolor='none', marker=earth)
+    plt.plot(0, 0, marker=earth, markersize=20, markeredgewidth=2)
 
 """
 

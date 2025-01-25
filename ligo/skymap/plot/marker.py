@@ -20,7 +20,7 @@ from matplotlib.markers import MarkerStyle
 from matplotlib.path import Path
 import numpy as np
 
-__all__ = ('earth', 'reticle')
+__all__ = ('earth', 'sun', 'reticle')
 
 
 earth = Path.unit_circle()
@@ -42,6 +42,39 @@ Examples
     from ligo.skymap.plot.marker import earth
 
     plt.plot(0, 0, marker=earth, markersize=20, markeredgewidth=2)
+
+"""
+
+
+sun = Path.unit_circle()
+sun = MarkerStyle(
+    Path(
+        np.concatenate((
+            sun.vertices,
+            [[0, 0], [1e-15, 1e-15]]
+        )),
+        np.concatenate((
+            sun.codes,
+            [Path.MOVETO, Path.LINETO]
+        ))),
+    capstyle='round',
+    joinstyle='round',
+    fillstyle='none'
+)
+sun.__doc__ = """
+The Sun symbol (circle and dot).
+
+Examples
+--------
+.. plot::
+   :context: reset
+   :include-source:
+   :align: center
+
+    from matplotlib import pyplot as plt
+    from ligo.skymap.plot.marker import sun
+
+    plt.plot(0, 0, marker=sun, markersize=20, markeredgewidth=2)
 
 """
 

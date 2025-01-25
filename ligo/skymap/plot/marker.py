@@ -16,9 +16,9 @@
 #
 """Specialized markers."""
 
+import numpy as np
 from matplotlib.markers import MarkerStyle
 from matplotlib.path import Path
-import numpy as np
 
 __all__ = ('earth', 'sun', 'reticle')
 

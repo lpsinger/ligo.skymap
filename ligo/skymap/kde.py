@@ -227,7 +227,7 @@ def k_means(pts, k):
     return mus, assign
 
 
-def _cluster(cls, pts, trials, i, seed, jobs):
+def _cluster(cls, pts, whitened_pts, trials, i, seed, jobs):
     k = i // trials
     if k == 0:
         raise ValueError('Expected at least one cluster')
@@ -236,7 +236,7 @@ def _cluster(cls, pts, trials, i, seed, jobs):
             assign = np.zeros(len(pts), dtype=np.intp)
         else:
             with NumpyRNGContext(i + seed):
-                _, assign = k_means(whiten(pts), k)
+                _, assign = k_means(whitened_pts, k)
         obj = cls(pts, assign=assign)
     except np.linalg.LinAlgError:
         return -np.inf,
@@ -257,8 +257,8 @@ class ClusteredKDE:
             # The seed must be an unsigned 32-bit integer, so if there are n
             # threads, then s must be drawn from the interval [0, 2**32 - n).
             seed = np.random.randint(0, 2**32 - max_k * trials)
-            func = partial(_cluster, type(self), pts, trials, seed=seed,
-                           jobs=jobs)
+            func = partial(_cluster, type(self), pts, whiten(pts), trials,
+                           seed=seed, jobs=jobs)
             self.bic, self.k, self.kdes = max(
                 self._map(func, range(trials, (max_k + 1) * trials)),
                 key=lambda items: items[:2])

@@ -152,18 +152,17 @@ def test_rasterize_default(order):
     assert len(skymap_out) == npix
 
 
-def prob_test(pts):
-    ras, decs = pts.T
-    return ras + decs
-
-
 @pytest.mark.parametrize('order', range(1, 4))
 @pytest.mark.parametrize('rounds', range(3))
 def test_bayestar_adaptive_grid(order, rounds, benchmark):
+    def func(pts):
+        ras, decs = pts.T
+        return ras + decs
+
     top_nside = ah.level_to_nside(order)
 
     skymap_out = benchmark(
-        moc.bayestar_adaptive_grid, prob_test, top_nside=top_nside,
+        moc.bayestar_adaptive_grid, func, top_nside=top_nside,
         rounds=rounds)
 
     assert len(skymap_out) == ah.nside_to_npix(top_nside) * (1 + .75 * rounds)
@@ -172,8 +171,43 @@ def test_bayestar_adaptive_grid(order, rounds, benchmark):
     nside = ah.level_to_nside(level)
     area = ah.nside_to_pixel_area(nside).to_value(u.steradian)
     ra, dec = ah.healpix_to_lonlat(ipix, nside, order='nested')
-    expected = prob_test(np.column_stack((ra.rad, dec.rad)))
+    expected = func(np.column_stack((ra.rad, dec.rad)))
     expected /= (expected * area).sum()
     np.testing.assert_array_equal(skymap_out["PROBDENSITY"], expected)
 
     assert area.sum() == pytest.approx(4 * np.pi)
+
+
+@pytest.mark.parametrize('order', range(1, 4))
+def test_bayestar_adaptive_grid_refinement(order):
+    """Check that bayestar_adaptive_grid refines the correct pixels."""
+    top_nside = ah.level_to_nside(order)
+    top_hpx = ah.HEALPix(top_nside, order='nested')
+    high_prob_ipix = np.random.choice(
+        top_hpx.npix, top_hpx.npix // 4, replace=False)
+    low_prob_ipix = np.setdiff1d(np.arange(top_hpx.npix), high_prob_ipix)
+
+    high_prob_uniq = ah.level_ipix_to_uniq(
+        order + 1, (4 * high_prob_ipix + np.arange(4)[:, np.newaxis]).ravel())
+    low_prob_uniq = ah.level_ipix_to_uniq(order, (low_prob_ipix))
+
+    skymap_expected = table.Table({
+        'UNIQ': np.concatenate((high_prob_uniq, low_prob_uniq)),
+        'PROBDENSITY': np.concatenate(
+            (np.ones(high_prob_uniq.shape), np.zeros(low_prob_uniq.shape)))
+    })
+    skymap_expected['PROBDENSITY'] /= np.pi
+    skymap_expected.sort('UNIQ')
+
+    def func(pts):
+        ra, dec = pts.T
+        ipix = top_hpx.lonlat_to_healpix(ra * u.rad, dec * u.rad)
+        return np.isin(ipix, high_prob_ipix).astype(float)
+
+    skymap_out = moc.bayestar_adaptive_grid(
+        func, top_nside=top_nside, rounds=1)
+    skymap_out.sort('UNIQ')
+
+    for key in ['UNIQ', 'PROBDENSITY']:
+        np.testing.assert_array_almost_equal(
+            skymap_out[key], skymap_expected[key])

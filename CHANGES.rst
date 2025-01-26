@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.1.3 (unreleased)
-==================
+2.2.0rc1 (2025-01-26)
+=====================
 
 - Display at least three significant figures in the credible area shown in the
   plots produced by the command line tool ``ligo-skymap-plot`` so that a

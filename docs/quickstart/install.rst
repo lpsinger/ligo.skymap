@@ -91,6 +91,7 @@ You are now ready to get started using `ligo.skymap`.
 
           *  `astroquery <https://astroquery.readthedocs.io/>`_
           *  `pytest-astropy <https://github.com/astropy/pytest-astropy>`_
+          *  `pytest-benchmark <https://pytest-benchmark.readthedocs.io/en/latest/>`_
           *  `pytest-mpl <https://pytest-mpl.readthedocs.io/>`_
 
           For building the documentation:

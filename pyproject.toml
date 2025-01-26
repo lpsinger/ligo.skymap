@@ -57,6 +57,7 @@ dependencies = [
 test = [
     "astroquery",
     "pytest-astropy",
+    "pytest-benchmark",
     "pytest-mpl",
 ]
 docs = [

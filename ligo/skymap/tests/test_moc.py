@@ -1,5 +1,6 @@
 import astropy_healpix as ah
 from astropy import table
+from astropy import units as u
 import numpy as np
 import pytest
 
@@ -152,16 +153,27 @@ def test_rasterize_default(order):
 
 
 def prob_test(pts):
-    ras, decs = np.hsplit(pts, 2)
+    ras, decs = pts.T
     return ras + decs
 
 
 @pytest.mark.parametrize('order', range(1, 4))
-@pytest.mark.parametrize('round', range(3))
-def test_bayestar_adaptive_grid(order, round):
-    nside = ah.level_to_nside(order)
-    npix = ah.nside_to_npix(nside) * (1 + .75 * round)
+@pytest.mark.parametrize('rounds', range(3))
+def test_bayestar_adaptive_grid(order, rounds, benchmark):
+    top_nside = ah.level_to_nside(order)
 
-    skymap_out = moc.bayestar_adaptive_grid(
-        prob_test, top_nside=nside, rounds=round)
-    assert len(skymap_out) == npix
+    skymap_out = benchmark(
+        moc.bayestar_adaptive_grid, prob_test, top_nside=top_nside,
+        rounds=rounds)
+
+    assert len(skymap_out) == ah.nside_to_npix(top_nside) * (1 + .75 * rounds)
+
+    level, ipix = ah.uniq_to_level_ipix(skymap_out['UNIQ'])
+    nside = ah.level_to_nside(level)
+    area = ah.nside_to_pixel_area(nside).to_value(u.steradian)
+    ra, dec = ah.healpix_to_lonlat(ipix, nside, order='nested')
+    expected = prob_test(np.column_stack((ra.rad, dec.rad)))
+    expected /= (expected * area).sum()
+    np.testing.assert_array_equal(skymap_out["PROBDENSITY"], expected)
+
+    assert area.sum() == pytest.approx(4 * np.pi)

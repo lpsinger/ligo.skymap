@@ -303,7 +303,10 @@ class ClusteredKDE:
 
     def eval_kdes(self, pts):
         pts = pts.T
-        return sum(w * kde(pts) for w, kde in zip(self.weights, self.kdes))
+        result = sum(w * kde(pts) for w, kde in zip(self.weights, self.kdes))
+        if pts.ndim == 1:
+            result = result.item()
+        return result
 
     def __call__(self, pts):
         return self.eval_kdes(pts)
@@ -405,7 +408,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
     @classmethod
     def transform(cls, pts):
         pts = SkyCoord(*pts.T, unit=u.rad).transform_to(cls.frame).spherical
-        return np.column_stack((pts.lon.rad, np.sin(pts.lat.rad)))
+        return np.stack((pts.lon.rad, np.sin(pts.lat.rad))).T
 
     def __new__(cls, pts, *args, **kwargs):
         frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit=u.rad))
@@ -427,7 +430,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
         base = super().eval_kdes
         dphis = (0.0, 2 * np.pi, -2 * np.pi)
         phi, z = pts.T
-        return sum(base(np.column_stack((phi + dphi, z))) for dphi in dphis)
+        return sum(base(np.stack((phi + dphi, z)).T) for dphi in dphis)
 
 
 class Clustered3DSkyKDE(SkyKDE):

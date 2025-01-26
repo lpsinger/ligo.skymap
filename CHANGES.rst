@@ -18,7 +18,7 @@ Changelog
   - The Earth plot marker is now unfilled by default. It is no longer necessary
     to specify ``markerfacecolor='none'``.
 
-  - Added Sun symbol marker (circle with dot).
+  - Added markers for the Sun and Moon.
 
 - Several improvements in ``ligo-skymap-from-samples``, including a speedup
   from about 1 min to 20 s for an input of 10,000 samples on high core count

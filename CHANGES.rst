@@ -5,7 +5,9 @@ Changelog
 2.2.1 (unreleased)
 ==================
 
-- No changes yet.
+- Fix a bug in the last release that caused ``progress_map`` to raise an
+  exception when given the keyword argument ``jobs=None``, for a number of jobs
+  equal to the number of cores.
 
 2.2.0 (2025-01-29)
 ==================

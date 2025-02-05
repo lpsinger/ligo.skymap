@@ -97,8 +97,8 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
 
         # Chunk size heuristic reproduced from
         # https://github.com/python/cpython/blob/v3.13.1/Lib/multiprocessing/pool.py#L481-L483.
-        chunksize, extra = divmod(total, _jobs * 4)
-        if extra:
+        chunksize, extra = divmod(total, len(_pool._pool) * 4)
+        if extra or chunksize == 0:
             chunksize += 1
 
         yield from _results_in_order(

@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.2.1 (unreleased)
+2.2.1 (2025-02-05)
 ==================
 
 - Fix a bug in the last release that caused ``progress_map`` to raise an

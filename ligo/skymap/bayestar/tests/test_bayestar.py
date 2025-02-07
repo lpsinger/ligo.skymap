@@ -71,6 +71,7 @@ def run_interruptible(event, started, cancelled):
         cancelled.set()
 
 
+@pytest.mark.flaky(reruns=5)
 def test_localize_interruptible(mock_event):
     """Test that localize() stops swiftly and gracefully when interrupted."""
     with multiprocessing.Manager():

@@ -5,7 +5,8 @@ Changelog
 2.2.2 (unreleased)
 ==================
 
-- No changes yet.
+- Retry timing-sensitive unit tests a few times to fix occasional CI/CD
+  failures when building Conda packages.
 
 2.2.1 (2025-02-05)
 ==================

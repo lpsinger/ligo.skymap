@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.2.2 (unreleased)
+2.2.2 (2025-02-08)
 ==================
 
 - Retry timing-sensitive unit tests a few times to fix occasional CI/CD

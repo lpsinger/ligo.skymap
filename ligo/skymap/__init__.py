@@ -1,11 +1,10 @@
 # This file is adapted from the Astropy package template, which is licensed
 # under a 3-clause BSD style license - see licenses/TEMPLATE_LICENSE.rst
 
-# Packages may add whatever they like to this file, but
-# should keep this content at the top.
-# ----------------------------------------------------------------------------
-from ._astropy_init import *   # noqa
-# ----------------------------------------------------------------------------
+try:
+    from .version import version as __version__
+except ImportError:
+    __version__ = ''
 
 __all__ = ('omp',)
 

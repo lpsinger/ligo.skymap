@@ -125,7 +125,6 @@ filterwarnings = [
 [tool.coverage.run]
 source = ["{packagename}"]
 omit = [
-    "ligo/skymap/_astropy_init*",
     "ligo/skymap/conftest.py",
     "ligo/skymap/extern/*",
     "ligo/skymap/tests/*",
@@ -133,7 +132,6 @@ omit = [
     "ligo/skymap/*/*/tests/*",
     "ligo/skymap/version*",
     "ligo/skymap/plot/cylon.py",  # only used for generating color map
-    "*/ligo/skymap/_astropy_init*",
     "*/ligo/skymap/conftest.py",
     "*/ligo/skymap/extern/*",
     "*/ligo/skymap/tests/*",

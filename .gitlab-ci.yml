@@ -211,7 +211,7 @@ docs:
   stage: test
   script:
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
+    - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:
     paths:
       - pytest-mpl-results/
@@ -257,7 +257,7 @@ test/linux/x86_64/python3.12:
     - python${PYVERS} -m venv env
     - source env/bin/activate
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
+    - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:
     paths:
       - pytest-mpl-results/
@@ -292,7 +292,7 @@ test/dev-deps:
       'lalsuite>=0.0.0.dev0'
       git+https://github.com/astropy/astropy
       git+https://git.ligo.org/kipp.cannon/python-ligo-lw
-    - python -c 'import sys; from ligo.skymap import test; sys.exit(test(args="--doctest-plus --doctest-ufunc --mpl --mpl-results-path '${CI_PROJECT_DIR}'/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10"))'
+    - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   needs:
     - wheel/linux/x86_64
   allow_failure: true

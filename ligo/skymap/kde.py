@@ -446,7 +446,7 @@ class Clustered3DSkyKDE(SkyKDE):
 
     def __call__(self, pts, distances=False):
         """Given an array of positions in RA, Dec, compute the marginal sky
-        posterior and optinally the conditional distance parameters.
+        posterior and optionally the conditional distance parameters.
         """
         func = partial(distance.cartesian_kde_to_moments,
                        datasets=[_.dataset for _ in self.kdes],

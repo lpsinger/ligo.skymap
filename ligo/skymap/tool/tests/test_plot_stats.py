@@ -48,7 +48,7 @@ def test_plot_stats_missing(tmpdir):
 
 
 def test_plot_stats_invalid(tmpdir):
-    """Test ligo-skymap-plot-stats, with group by value invlaid."""
+    """Test ligo-skymap-plot-stats, with group by value invalid."""
     filename = str(tmpdir / '0.out')
     n = 250
 

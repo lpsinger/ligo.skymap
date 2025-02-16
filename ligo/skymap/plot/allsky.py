@@ -239,7 +239,7 @@ class WCSInsetConnectionPatch(ConnectionPatch):
     Notes
     -----
     FIXME: This class assumes that the projection of the circle in figure-inch
-    coordinates *is* a circle. It will have noticable artifacts if the
+    coordinates *is* a circle. It will have noticeable artifacts if the
     projection is very distorted."""
 
     _corners_map = {1: 3, 2: 1, 3: 0, 4: 2}

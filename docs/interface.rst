@@ -58,7 +58,7 @@ Sequence diagram for separate ``coinc.xml`` and ``psd.xml.gz`` files
 .. mermaid::
 
     sequenceDiagram
-    
+
         note over Search: New detection
         Search ->>+ GraceDB: Upload coinc.xml
         activate Search

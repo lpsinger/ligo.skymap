@@ -1372,7 +1372,7 @@ int bayestar_test(void)
     test_log_radial_integral(0, 0, 0, 1, 0, 0, 0);
     test_log_radial_integral(0, 0, exp(1), exp(2), 0, 0, -1);
     test_log_radial_integral(log(63), 0, 3, 6, 0, 0, 2);
-    /* Te integrand with p2>0, b=0 (from Mathematica). */
+    /* Tests of integrand with p2>0, b=0 (from Mathematica). */
     test_log_radial_integral(-0.480238, 1e-3, 1, 2, 1, 0, 0);
     test_log_radial_integral(0.432919, 1e-3, 1, 2, 1, 0, 2);
     test_log_radial_integral(-2.76076, 1e-3, 0, 1, 1, 0, 2);

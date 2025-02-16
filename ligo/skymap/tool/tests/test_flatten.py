@@ -103,7 +103,7 @@ def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
     skymap_2d = skymap['UNIQ', 'PROBDENSITY']
     del skymap_2d.meta['distmean']
     del skymap_2d.meta['diststd']
-    write_sky_map(input_filename, skymap_2d, moc=True, ovewrite=True)
+    write_sky_map(input_filename, skymap_2d, moc=True, overwrite=True)
 
     args = ['ligo-skymap-flatten', input_filename, output_filename]
     if nside_out is not None:

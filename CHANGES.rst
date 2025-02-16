@@ -163,7 +163,7 @@ Changelog
   inclination posteriors to sky map output.
 
 - Remove ``frameon=False`` in ``ligo-skymap-plot-volume`` so that it respects
-  the (lack of the) ``--transparent`` option. This improves text and label 
+  the (lack of the) ``--transparent`` option. This improves text and label
   readability against dark backgrounds when transparent mode is not on. Thanks
   go to Geoffrey Mo for this contribution.
 
@@ -514,7 +514,7 @@ Changelog
   effective in the related method :meth:`ligo.skymap.distance.marginal_ppf`.
 
   This change also fixes some rare corner cases where
-  :meth:`~ligo.skymap.distance.marginal_ppf` returned silly values becauses it
+  :meth:`~ligo.skymap.distance.marginal_ppf` returned silly values because it
   uses :meth:`~ligo.skymap.distance.conditional_ppf` internally to create its
   own initial guess. One example was the median distance for the binary neutron
   star candidate S191205ah. Before this patch, the result was negative and
@@ -540,7 +540,7 @@ Changelog
 - Increase the range of validity of the solver used in
   :meth:`ligo.skymap.distance.moments_to_parameters` for low-probability pixels
   that are very prior dominated. Sky maps that have many such pixels could have
-  credible volumes repoted as infinity. The incidence of such cases should now
+  credible volumes reported as infinity. The incidence of such cases should now
   be decreased.
 
 - Correct the alignment of Numpy record arrays passed to
@@ -725,7 +725,7 @@ Changelog
 - Change the license for the project as a whole to GPL 3.0 or later (GPLv3+).
   Previously, the source files had been a mix of GPLv2+ and GPLv3+.
 
-- Add ``ligo-skymap-contour-moc`` command line to create a credible region 
+- Add ``ligo-skymap-contour-moc`` command line to create a credible region
   in a MOC (Multi Order Coverage) data structure. The input can be either a
   multiresolution or a flattened HEALPix probability map.
 

@@ -115,7 +115,7 @@ For negative distances, it returns 0.
 >>> print(conditional_cdf(-1, distmu, distsigma, distnorm))
 0.0
 
-For infinite postive distance, it returns 1 (provided that distnorm normalizes
+For infinite positive distance, it returns 1 (provided that distnorm normalizes
 the distribution).
 
 
@@ -420,7 +420,7 @@ For negative distances, it returns 0.
 >>> print(marginal_cdf(-1, prob, distmu, distsigma, distnorm))
 0.0
 
-For infinite postive distance, it returns the sum of prob
+For infinite positive distance, it returns the sum of prob
 (provided that distnorm normalizes the distribution).
 
 >>> expected = 1.0

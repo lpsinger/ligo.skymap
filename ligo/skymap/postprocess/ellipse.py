@@ -59,7 +59,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     dec : float
         The ellipse center right ascension in degrees.
     a : float, np.ndarray
-        The lenth of the semimajor axis in degrees.
+        The length of the semimajor axis in degrees.
     b : float, np.ndarray
         The length of the semiminor axis in degrees.
     pa : float
@@ -185,7 +185,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     **Example 3**
 
     I'm not showing the `ra` or `pa` output from the examples below because
-    the right ascension is arbitary when dec=90° and the position angle is
+    the right ascension is arbitrary when dec=90° and the position angle is
     arbitrary when a=b; their arbitrary values may vary depending on your math
     library. Also, I add 0.0 to the outputs because on some platforms you tend
     to get values of dec or pa that get rounded to -0.0, which is within

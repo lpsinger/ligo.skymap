@@ -27,7 +27,6 @@ from .coordinates import EigenFrame
 from . import moc
 
 
-
 class SkyDPGMM:
 
     def __init__(self, pts, **kwargs):

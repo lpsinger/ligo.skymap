@@ -210,7 +210,7 @@ docs:
   <<: *in-tmpdir
   stage: test
   script:
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test,dpgmm]
     - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:
     paths:
@@ -256,7 +256,7 @@ test/linux/x86_64/python3.12:
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test,dpgmm]
     - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:
     paths:
@@ -284,7 +284,7 @@ test/dev-deps:
   script:
     # Qhull is needed to build Matplotlib from source
     - apt-get update && apt-get -y install --no-install-recommends libqhull-dev
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test,dpgmm]
     - >
       pip install --upgrade --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
       'numpy>=0.0.0.dev0'

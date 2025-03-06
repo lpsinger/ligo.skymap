@@ -16,9 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from figaro.mixture import DPGMM
-from figaro.utils import get_priors
-from .coordinates import EigenFrame
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from figaro.mixture import DPGMM
@@ -28,6 +25,7 @@ from tqdm import tqdm
 
 from .coordinates import EigenFrame
 from . import moc
+
 
 
 class SkyDPGMM:

@@ -62,6 +62,7 @@ def test_from_samples(samples, tmpdir, enable_dpgmm):
 
     if enable_dpgmm:
         args.append('--enable-dpgmm')
+        args.append('--disable-distance-map')
 
     run_entry_point(*args)
     table = Table.read(str(tmpdir / 'skymap.fits'), format='fits')

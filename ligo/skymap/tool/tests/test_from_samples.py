@@ -51,13 +51,7 @@ def samples_without_distance(samples, tmpdir):
     return filename
 
 
-@pytest.fixture(params=[True, False])
-def enable_dpgmm(request):
-    """Fixture to parametrize tests with and without the --enable-dpgmm flag.
-    """
-    return request.param
-
-
+@pytest.mark.parametrize(enable_dpgmm=[False, True])
 def test_from_samples(samples, tmpdir, enable_dpgmm):
     """Test ligo-skymap-from-samples."""
     args = ['ligo-skymap-from-samples', '--seed', '150914',

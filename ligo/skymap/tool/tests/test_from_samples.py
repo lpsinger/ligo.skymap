@@ -53,6 +53,7 @@ def samples_without_distance(samples, tmpdir):
 
 @pytest.mark.parametrize("enable_dpgmm", [False, True])
 def test_from_samples(samples, tmpdir, enable_dpgmm):
+    pytest.importorskip('figaro')
     """Test ligo-skymap-from-samples."""
     args = ['ligo-skymap-from-samples', '--seed', '150914',
             samples, '-o', str(tmpdir),

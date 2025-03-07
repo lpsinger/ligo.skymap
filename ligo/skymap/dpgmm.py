@@ -21,7 +21,7 @@ from astropy import units as u
 from figaro.mixture import DPGMM
 from figaro.utils import get_priors
 import numpy as np
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from .coordinates import EigenFrame
 from . import moc

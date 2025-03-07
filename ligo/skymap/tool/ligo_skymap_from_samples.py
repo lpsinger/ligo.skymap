@@ -105,7 +105,8 @@ def main(args=None):
         from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
         if args.enable_dpgmm:
             if args.enable_distance_map:
-                raise NotImplementedError('--enable-distance-map is not yet supported with --enable-dpgmm')
+                raise NotImplementedError('--enable-distance-map is not yet'
+                                          'supported with --enable-dpgmm')
             else:
                 from ..dpgmm import SkyDPGMM
                 cls = SkyDPGMM

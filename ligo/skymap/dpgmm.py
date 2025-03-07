@@ -18,8 +18,12 @@
 
 from astropy.coordinates import SkyCoord
 from astropy import units as u
-from figaro.mixture import DPGMM
-from figaro.utils import get_priors
+try:
+    from figaro.mixture import DPGMM
+    from figaro.utils import get_priors
+except ModuleNotFoundError as e:
+    raise RuntimeError("In order to use the DPGMM feature, you must install `figaro`") from e
+
 import numpy as np
 from tqdm.auto import tqdm
 

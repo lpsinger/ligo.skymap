@@ -103,11 +103,17 @@ def main(args=None):
         import sys
         import pickle
         from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
-        try:
-            from ..dpgmm import SkyDPGMM
-        except ModuleNotFoundError:
-            if args.enable_dpgmm:
-                raise
+        if args.enable_dpgmm:
+            if args.enable_distance_map:
+                raise NotImplementedError('--enable-distance-map is not yet supported with --enable-dpgmm')
+            else:
+                from ..dpgmm import SkyDPGMM
+                cls = SkyDPGMM
+        else:
+            if args.enable_distance_map:
+                cls = Clustered2Plus1DSkyKDE
+            else:
+                cls = Clustered2DSkyKDE
 
         import logging
         from textwrap import wrap
@@ -150,10 +156,7 @@ def main(args=None):
                 pts = np.column_stack((data['ra'], data['dec']))
             else:
                 pts = np.column_stack((data['ra'], data['dec'], dist))
-            if args.enable_distance_map:
-                cls = Clustered2Plus1DSkyKDE
-            else:
-                cls = SkyDPGMM if args.enable_dpgmm else Clustered2DSkyKDE
+
             skypost = cls(pts, trials=args.trials, jobs=args.jobs)
 
             log.info('pickling')

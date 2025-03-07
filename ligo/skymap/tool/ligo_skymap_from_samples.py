@@ -108,7 +108,7 @@ def main(args=None):
         except ModuleNotFoundError:
             if args.enable_dpgmm:
                 raise
-        
+
         import logging
         from textwrap import wrap
 

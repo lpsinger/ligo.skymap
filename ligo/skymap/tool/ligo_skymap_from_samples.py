@@ -103,7 +103,12 @@ def main(args=None):
         import sys
         import pickle
         from ..kde import Clustered2Plus1DSkyKDE, Clustered2DSkyKDE
-        from ..dpgmm import SkyDPGMM
+        try:
+            from ..dpgmm import SkyDPGMM
+        except ModuleNotFoundError:
+            if args.enable_dpgmm:
+                raise
+        
         import logging
         from textwrap import wrap
 

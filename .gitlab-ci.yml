@@ -210,7 +210,7 @@ docs:
   <<: *in-tmpdir
   stage: test
   script:
-    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test,dpgmm]
+    - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:
     paths:

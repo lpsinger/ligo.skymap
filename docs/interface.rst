@@ -141,7 +141,8 @@ order):
     * The value of those rows' :attr:`~ligo.lw.lsctables.Process.program`
       column MUST be one of ``pycbc``, ``gstlal_inspiral``,
       ``gstlal_inspiral_postcohspiir_online``, ``MBTAOnline``,
-      ``bayestar_realize_coincs``, or ``bayestar-realize-coincs``.
+      ``sgnl-inspiral``, ``bayestar_realize_coincs``, or
+      ``bayestar-realize-coincs``.
 
     * Additional valid columns of this table MAY be populated in order to
       identify the pipeline software version or include other metadata.

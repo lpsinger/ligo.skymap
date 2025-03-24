@@ -127,7 +127,8 @@ class LigoLWEventSource(dict, EventSource):
         'gstlal_inspiral_postcohspiir_online': True,  # FIXME: wild guess
         'bayestar_realize_coincs': True,
         'bayestar-realize-coincs': True,
-        'MBTAOnline': True
+        'MBTAOnline': True,
+        'sgnl-inspiral': True
     }
 
     @classmethod

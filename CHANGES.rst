@@ -5,7 +5,7 @@ Changelog
 2.2.3 (unreleased)
 ==================
 
-- No changes yet.
+- Add `sgnl-inspiral` to list of supported search pipelines.
 
 2.2.2 (2025-02-08)
 ==================

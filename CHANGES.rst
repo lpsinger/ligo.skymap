@@ -5,7 +5,12 @@ Changelog
 2.2.3 (unreleased)
 ==================
 
-- Add `sgnl-inspiral` to list of supported search pipelines.
+- Add to ``ligo-skymap-from-samples`` experimental support for fast 2D sky map
+  density estimation with `FIGARO`__.
+
+  __ https://figaro.readthedocs.io/en/latest/
+
+- Add support to BAYESTAR for SGNL, a new compact binary coalescence search.
 
 2.2.2 (2025-02-08)
 ==================

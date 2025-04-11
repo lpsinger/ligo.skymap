@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=64",
+    "setuptools>=77",
     "setuptools_scm>=8",
     "extension-helpers",
     "numpy>=2.0.0",
@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 name = "ligo.skymap"
 dynamic = ["version"]
 authors = [{name = "Leo Singer", email = "leo.singer@ligo.org"}]
-license = {text = "GPL-3.0-or-later"}
+license = "GPL-3.0-or-later"
 description = "Tools for reading, writing, manipulating, and making LIGO/Virgo/KAGRA sky maps"
 readme = "README.rst"
 classifiers = [

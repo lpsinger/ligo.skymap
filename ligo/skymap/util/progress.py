@@ -84,7 +84,7 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
     that it is implemented using :mod:`tqdm` and so provides more detailed and
     accurate progress information.
     """
-    global _in_pool, _jobs, _pool
+    global _jobs, _pool
     total = _get_total_estimate(*iterables)
     if _in_pool or jobs == 1:
         yield from tqdm(map(func, *iterables), total=total, **kwargs)

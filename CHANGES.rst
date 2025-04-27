@@ -2,8 +2,8 @@
 Changelog
 #########
 
-2.3.0rc1 (2025-04-24)
-=====================
+2.3.0 (2025-04-26)
+==================
 
 - Add to ``ligo-skymap-from-samples`` experimental support for fast 2D sky map
   density estimation with `FIGARO`__.

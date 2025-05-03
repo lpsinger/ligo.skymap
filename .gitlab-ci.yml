@@ -291,7 +291,7 @@ test/dev-deps:
       'matplotlib>=0.0.0.dev0'
       'lalsuite>=0.0.0.dev0'
       git+https://github.com/astropy/astropy
-      git+http://git.ligo.org/computing/software/igwn-ligolw
+      git+https://git.ligo.org/computing/software/igwn-ligolw
     - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   needs:
     - wheel/linux/x86_64

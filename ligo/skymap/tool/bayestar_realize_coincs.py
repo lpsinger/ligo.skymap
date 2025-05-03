@@ -222,7 +222,7 @@ def main(args=None):
     with p.parse_args(args) as opts:
         # LIGO-LW XML imports.
         from igwn_ligolw import ligolw
-        from igwn_ligolw.param import Param
+        from igwn_ligolw.ligolw import Param
         from igwn_ligolw.utils.search_summary import append_search_summary
         from igwn_ligolw import utils as ligolw_utils
         from igwn_ligolw.lsctables import (

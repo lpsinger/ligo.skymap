@@ -17,9 +17,8 @@
 """Tools for adapting LIGO-LW row ID formats."""
 import re
 
-from igwn_ligolw.ligolw import Param
+from igwn_ligolw.ligolw import Column, Param, Table
 from igwn_ligolw.lsctables import TableByName
-from igwn_ligolw.table import Column, TableStream
 from igwn_ligolw.types import FormatFunc, FromPyType
 
 __all__ = ('use_in',)
@@ -55,12 +54,9 @@ def use_in(ContentHandler):
     Examples
     --------
     >>> from importlib.resources import as_file, files
-    >>> from igwn_ligolw import array, ligolw, lsctables, param, table, utils
+    >>> from igwn_ligolw import ligolw, lsctables, utils
     >>> from ligo.skymap.util import ilwd
     >>> @ilwd.use_in
-    ... @lsctables.use_in
-    ... @param.use_in
-    ... @table.use_in
     ... class ContentHandler(ligolw.LIGOLWContentHandler):
     ...     pass
     >>> with as_file(files('ligo.skymap.io.tests.data').joinpath(
@@ -120,11 +116,11 @@ def use_in(ContentHandler):
         Notes
         -----
         This method is adapted from
-        :meth:`igwn_ligolw.table.TableStream.config`.
+        :meth:`igwn_ligolw.ligolw.Table.Stream.config`.
 
         """
         result = __orig_startStream(self, parent, attrs)
-        if isinstance(result, TableStream):
+        if isinstance(result, Table.Stream):
             loadcolumns = set(parent.columnnames)
             if parent.loadcolumns is not None:
                 # FIXME:  convert loadcolumns attributes to sets to

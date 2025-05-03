@@ -536,7 +536,8 @@ def main(args=None):
             cols[key] *= zp1
 
         # Populate sim_inspiral table
-        sims = xmlroot.appendChild(lsctables.New(lsctables.SimInspiralTable))
+        sims = xmlroot.appendChild(
+            ligolw.Table.new(lsctables.SimInspiralTable))
         for row in zip(*cols.values()):
             sims.appendRow(
                 **dict(

@@ -22,8 +22,8 @@ import logging
 import operator
 import os
 
-from igwn_ligolw import array, lsctables, param
-from igwn_ligolw.ligolw import Element, LIGOLWContentHandler, LIGO_LW
+from igwn_ligolw.ligolw import (
+    Array, Element, LIGOLWContentHandler, LIGO_LW, Param)
 from igwn_ligolw.lsctables import (
     CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
     SnglInspiralTable, TimeSlideID, TimeSlideTable)
@@ -41,9 +41,6 @@ log = logging.getLogger('BAYESTAR')
 
 
 @ilwd.use_in
-@array.use_in
-@lsctables.use_in
-@param.use_in
 class ContentHandler(LIGOLWContentHandler):
     pass
 
@@ -250,8 +247,8 @@ class LigoLWEventSource(dict, EventSource):
             try:
                 if elem.Name != lal.COMPLEX8TimeSeries.__name__:
                     continue
-                array.get_array(elem, 'snr')
-                event_id = param.Param.get_param(elem, 'event_id').value
+                Array.get_array(elem, 'snr')
+                event_id = Param.get_param(elem, 'event_id').value
             except (AttributeError, ValueError):
                 continue
             else:

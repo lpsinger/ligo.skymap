@@ -13,6 +13,8 @@ Changelog
 
   __ https://scientific-python.org/specs/spec-0000/
 
+- Run unit tests for Python 3.11 through 3.13.
+
 2.3.0 (2025-04-26)
 ==================
 

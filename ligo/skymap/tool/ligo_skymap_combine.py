@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2024  Tito Dal Canton, Eric Burns, Leo Singer
+# Copyright (C) 2018-2025  Tito Dal Canton, Eric Burns, Leo Singer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

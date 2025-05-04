@@ -32,7 +32,12 @@ from argparse import FileType
 from functools import partial
 
 from astropy import cosmology
-from astropy.cosmology._utils import vectorize_redshift_method
+try:
+    from astropy.cosmology._src.utils import vectorize_redshift_method
+except ModuleNotFoundError:
+    # astropy.cosmology._utils was renamed to astropy.cosmology._src.utils in
+    # https://github.com/astropy/astropy/pull/17543
+    from astropy.cosmology._utils import vectorize_redshift_method
 from astropy import units
 from astropy.units import dimensionless_unscaled
 import numpy as np

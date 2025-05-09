@@ -188,6 +188,13 @@ def main(args=None):
                 pass
             else:
                 text.append('event ID: {}'.format(objid))
+
+            try:
+                instruments = skymap.meta["instruments"]
+            except KeyError:
+                pass
+            else:
+                text.append('instruments: {}'.format(', '.join(instruments)))
             if opts.contour:
                 i = np.flipud(np.argsort(skymap['PROBDENSITY']))
                 areas = postprocess.interp_greedy_credible_levels(

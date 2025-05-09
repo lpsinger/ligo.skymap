@@ -252,6 +252,13 @@ def main(args=None):
                 else:
                     text.append('event ID: {}'.format(objid))
                 try:
+                    instruments = skymap.meta["instruments"]
+                except KeyError:
+                    pass
+                else:
+                    text.append('instruments: {}'.format(
+                                ', '.join(instruments)))
+                try:
                     distmean = skymap.meta['distmean']
                     diststd = skymap.meta['diststd']
                 except KeyError:

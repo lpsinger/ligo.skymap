@@ -72,7 +72,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `h5py <https://www.h5py.org>`_
           *  `igwn-ligolw <https://pypi.org/project/igwn-ligolw/>`_
           *  `igwn-segments <https://pypi.org/project/igwn-segments/>`_
-          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 6.53, ≠ 7.2
+          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 7.25
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `NetworkX <https://networkx.github.io>`_
@@ -111,25 +111,22 @@ Optional LALSimulation Data
 
 The following instructions are only relevant if you are installing ligo.skymap
 for the purpose of generating localizations with BAYESTAR (e.g., for analysis
-of LIGO/Virgo/KAGRA data or for simulations) and you are **not** using a LIGO
-Data Grid cluster.
+of LIGO/Virgo/KAGRA data or for simulations).
 
 Some gravitational waveform approximants in LALSuite (notably, reduced order
-models) rely on external data files. These data files are part of
-`lalsuite-extra`_, which must be installed separately. To install these data
-files, run the following commands::
+models) rely on `LALSuite extra waveform files <lalsuite-waveform-data>`_ that
+you must download and install separately. You can download the entire
+collection of waveform files by following the `instructions in LALSuite's
+README file <lalsuite-waveform-data>`_, or you can run the following command
+to download just the one file needed by ligo.skymap::
 
-    $ curl -OL https://software.igwn.org/lscsoft/source/lalsuite-extra-1.3.0.tar.gz
-    $ tar xf lalsuite-extra-1.3.0.tar.gz
-    $ cd lalsuite-extra-1.3.0
-    $ ./configure --prefix=$HOME/.local
-    $ make install
+    $ curl --create-dirs --output-dir ~/lalsuite-waveform-data -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5
 
 Then, add the following line to your shell profile script (``~/.profile``,
 ``~/.bashrc``, or similar)::
 
-    export LAL_DATA_PATH=$HOME/.local/share/lalsimulation
+    export LAL_DATA_PATH=$HOME/lalsuite-waveform-data
 
 Then log out and log back in.
 
-.. _`lalsuite-extra`: https://git.ligo.org/lscsoft/lalsuite-extra
+.. _`LALSuite Extra Waveform files`: https://git.ligo.org/lscsoft/lalsuite#lalsuite-extra-waveform-files

@@ -131,7 +131,7 @@ def main(args=None):
             axes_args['center'] = SkyCoord(opts.projection_center)
         if opts.zoom_radius is not None:
             axes_args['radius'] = opts.zoom_radius
-        ax = plt.axes(**axes_args)
+        ax = plt.figure().add_subplot(**axes_args)
         ax.grid()
 
         # Add contours.
@@ -150,8 +150,8 @@ def main(args=None):
 
         # Add continents.
         if opts.geo:
-            plt.plot(*plot.coastlines(), color='0.5', linewidth=0.5,
-                     transform=ax.get_transform('world'))
+            ax.plot(*plot.coastlines(), color='0.5', linewidth=0.5,
+                    transform=ax.get_transform('world'))
 
         radecs = opts.radec
         if opts.inj_database:

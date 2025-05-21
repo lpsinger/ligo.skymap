@@ -119,10 +119,9 @@ def main(args=None):
             getattr(AtNightConstraint, 'twilight_{}'.format(opts.twilight))(),
             AirmassConstraint(opts.max_airmass)]
 
-        fig = plt.figure()
-        width, height = fig.get_size_inches()
-        fig.set_size_inches(width, (len(observers) + 1) / 16 * width)
-        ax = plt.axes()
+        width, _ = plt.rcParams['figure.figsize']
+        height = (len(observers) + 1) / 16 * width
+        ax = plt.figure(figsize=(width, height)).add_subplot()
         locator = dates.AutoDateLocator()
         formatter = dates.DateFormatter('%H:%M')
         ax.set_xlim([times[0].plot_date, times[-1].plot_date])

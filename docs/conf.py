@@ -234,7 +234,7 @@ intersphinx_mapping.update({
     'gsl': ('https://www.gnu.org/software/gsl/doc/html/', None),
     'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/latest/', None),
-    'igwn-ligolw': ('https://docs.ligo.org/computing/software/igwn-ligolw/', None),
+    'igwn-ligolw': ('https://igwn-ligolw.readthedocs.io/en/latest/', None),
     'pytest': ('https://docs.pytest.org/en/latest/', None),
     'reproject': ('https://reproject.readthedocs.io/en/stable/', None),
 })

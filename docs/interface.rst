@@ -319,7 +319,7 @@ spectral density (PSD) series.
 
 * Each PSD MUST be stored inside a :class:`~igwn_ligolw.ligolw.LIGO_LW`
   element as a serialized :class:`~lal.REAL8FrequencySeries`. The
-  :func:`lal.sereries.build_COMPLEX8TimeSeries` function or the
+  :func:`lal.sereries.build_REAL8FrequencySeries` function or the
   :func:`lal.sereries.make_psd_xmldoc` function can be used to serialize
   :class:`~lal.REAL8FrequencySeries`.
 

@@ -278,6 +278,10 @@ detector.
   :func:`lal.sereries.build_COMPLEX8TimeSeries` can be used to serialize a
   :class:`~lal.COMPLEX8TimeSeries`.
 
+* Each SNR time series SHOULD be base64-encoded by passing the
+  ``encoding="base64"`` keyword argument to
+  :func:`lal.sereries.build_COMPLEX8TimeSeries`.
+
 * Each of the :class:`~igwn_ligolw.ligolw.LIGO_LW` elements for serialized SNR time
   series MUST contain a :class:`~igwn_ligolw.ligolw.Param` element to link it to a
   row in the :class:`sngl_inspiral <igwn_ligolw.lsctables.SnglInspiralTable>`. The
@@ -322,6 +326,11 @@ spectral density (PSD) series.
   :func:`lal.sereries.build_REAL8FrequencySeries` function or the
   :func:`lal.sereries.make_psd_xmldoc` function can be used to serialize
   :class:`~lal.REAL8FrequencySeries`.
+
+* Each PSD SHOULD be base64-encoded by passing the
+  ``encoding="base64"`` keyword argument to
+  :func:`lal.sereries.build_REAL8FrequencySeries` or
+  :func:`lal.sereries.make_psd_xmldoc`.
 
 * Each :class:`~igwn_ligolw.ligolw.LIGO_LW` element MUST contain a
   :class:`~igwn_ligolw.ligolw.Param` element to link it to a detector. The param's

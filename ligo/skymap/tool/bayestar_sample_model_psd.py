@@ -122,6 +122,6 @@ def main(args=None):
             series.data.data *= scale
             psds[detector] = series
 
-        xmldoc = lal.series.make_psd_xmldoc(psds)
+        xmldoc = lal.series.make_psd_xmldoc(psds, encoding="base64")
         register_to_xmldoc(xmldoc, p, opts)
         write_fileobj(xmldoc, opts.output)

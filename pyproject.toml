@@ -38,7 +38,7 @@ dependencies = [
     "h5py",
     "igwn-ligolw",
     "igwn-segments",
-    "lalsuite>=7.25.2.dev20250503",
+    "lalsuite>=7.26",  # https://git.ligo.org/lscsoft/lalsuite/-/merge_requests/2397
     "ligo-gracedb>=2.0.1",
     "matplotlib>=3.9.1",  # https://github.com/matplotlib/matplotlib/pull/28289
     "networkx",

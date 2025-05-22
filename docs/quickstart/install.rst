@@ -72,7 +72,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `h5py <https://www.h5py.org>`_
           *  `igwn-ligolw <https://pypi.org/project/igwn-ligolw/>`_
           *  `igwn-segments <https://pypi.org/project/igwn-segments/>`_
-          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 7.25
+          *  `LALSuite <https://pypi.python.org/pypi/lalsuite>`_ ≥ 7.26
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `NetworkX <https://networkx.github.io>`_

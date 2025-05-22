@@ -8,6 +8,8 @@ Changelog
 - Migrate dependencies from python-ligo-lw and ligo-segments to igwn-ligolw and
   igwn-segments.
 
+- Require LALSuite >= 7.26.
+
 - Require Python >= 3.11 in accordance with
   `SPEC 0 — Minimum Supported Dependencies`__.
 

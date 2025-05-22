@@ -422,7 +422,8 @@ def main(args=None):
                     sngl_inspiral_table.append(sngl_inspiral)
 
                     if opts.enable_snr_series:
-                        elem = lal.series.build_COMPLEX8TimeSeries(series)
+                        elem = lal.series.build_COMPLEX8TimeSeries(
+                            series, encoding="base64")
                         elem.appendChild(
                             Param.from_pyvalue(
                                 'event_id', sngl_inspiral.event_id))

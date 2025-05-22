@@ -129,4 +129,4 @@ Then, add the following line to your shell profile script (``~/.profile``,
 
 Then log out and log back in.
 
-.. _`LALSuite Extra Waveform files`: https://git.ligo.org/lscsoft/lalsuite#lalsuite-extra-waveform-files
+.. _`lalsuite-waveform-data`: https://git.ligo.org/lscsoft/lalsuite#lalsuite-extra-waveform-files

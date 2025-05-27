@@ -60,7 +60,7 @@ sdist:
   stage: dist
   script:
     # Build and install LALSuite
-    - PYPREFIX=/opt/python/cp310-cp310
+    - PYPREFIX=/opt/python/cp311-cp311
     - ${PYPREFIX}/bin/pip install build
     - ${PYPREFIX}/bin/python -m build -w
     - auditwheel repair dist/*.whl

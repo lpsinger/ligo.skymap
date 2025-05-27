@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # This file is adapted from the Astropy package template, which is licensed
 # under a 3-clause BSD style license - see licenses/TEMPLATE_LICENSE.rst
 

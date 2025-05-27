@@ -114,6 +114,9 @@ include = ["ligo.*"]
 "ligo.skymap.plot" = ["*.csv", "*.json"]
 "ligo.skymap.plot.tests" = ["baseline/*.png"]
 
+[tool.setuptools_scm]
+version_file = "ligo/skymap/version.py"
+
 [tool.pytest.ini_options]
 testpaths = "ligo/skymap"
 astropy_header = true

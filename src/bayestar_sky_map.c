@@ -377,6 +377,22 @@ static double log_radial_integral(double r1, double r2, double p, double b, int 
 static const size_t default_log_radial_integrator_size = 400;
 
 
+static void log_radial_integrator_free(log_radial_integrator *integrator)
+{
+    if (LIKELY(integrator))
+    {
+        bicubic_interp_free(integrator->region0);
+        integrator->region0 = NULL;
+        cubic_interp_free(integrator->region1);
+        integrator->region1 = NULL;
+        cubic_interp_free(integrator->region2);
+        integrator->region2 = NULL;
+    }
+    free(integrator);
+}
+
+
+__attribute__ ((malloc, malloc(log_radial_integrator_free)))
 static log_radial_integrator *log_radial_integrator_init(double r1, double r2, int k, int cosmology, double pmax, size_t size)
 {
     log_radial_integrator *integrator;
@@ -465,21 +481,6 @@ done:
     integrator->vmax = vmax;
     integrator->p0_limit = p0_limit;
     return integrator;
-}
-
-
-static void log_radial_integrator_free(log_radial_integrator *integrator)
-{
-    if (LIKELY(integrator))
-    {
-        bicubic_interp_free(integrator->region0);
-        integrator->region0 = NULL;
-        cubic_interp_free(integrator->region1);
-        integrator->region1 = NULL;
-        cubic_interp_free(integrator->region2);
-        integrator->region2 = NULL;
-    }
-    free(integrator);
 }
 
 

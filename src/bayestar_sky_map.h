@@ -70,6 +70,7 @@
 #ifndef __cplusplus
 
 #include <complex.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
 
@@ -80,7 +81,7 @@ typedef struct {
 
 
 /* Perform sky localization based on TDOAs, PHOAs, and amplitude. */
-__attribute__ ((malloc))
+__attribute__ ((malloc, malloc(free)))
 bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     size_t *out_len,                /* Number of returned pixels */
     double *out_log_bci,            /* log Bayes factor: coherent vs. incoherent */

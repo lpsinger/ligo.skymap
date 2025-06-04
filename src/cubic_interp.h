@@ -47,6 +47,11 @@
 typedef struct cubic_interp cubic_interp;
 typedef struct bicubic_interp bicubic_interp;
 
+/**
+ * Free a piecewise cubic interpolating function.
+ */
+void cubic_interp_free(cubic_interp *interp);
+
 __attribute__ ((malloc))
 /**
  * Create a 1D piecewise cubic interpolating function.
@@ -58,16 +63,16 @@ __attribute__ ((malloc))
 cubic_interp *cubic_interp_init(
     const double *data, int n, double tmin, double dt);
 
-/**
- * Free a piecewise cubic interpolating function.
- */
-void cubic_interp_free(cubic_interp *interp);
-
 __attribute__ ((pure))
 /**
  * Evaluate a piecewise cubic interpolating function.
  */
 double cubic_interp_eval(const cubic_interp *interp, double t);
+
+/**
+ * Free a piecewise bicubic interpolating function.
+ */
+void bicubic_interp_free(bicubic_interp *interp);
 
 __attribute__ ((malloc))
 /**
@@ -80,11 +85,6 @@ __attribute__ ((malloc))
 bicubic_interp *bicubic_interp_init(
     const double *data, int ns, int nt,
     double smin, double tmin, double ds, double dt);
-
-/**
- * Free a piecewise bicubic interpolating function.
- */
-void bicubic_interp_free(bicubic_interp *interp);
 
 __attribute__ ((pure))
 /**

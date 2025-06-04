@@ -48,24 +48,53 @@ typedef struct cubic_interp cubic_interp;
 typedef struct bicubic_interp bicubic_interp;
 
 __attribute__ ((malloc))
+/**
+ * Create a 1D piecewise cubic interpolating function.
+ *
+ * The interpolating function y=f(x) passes through the data points
+ * (x[i], y[i]) for all i from 0 to n-1, where x[i] = tmin + i * dt and
+ * y[i] = data[i].
+ */
 cubic_interp *cubic_interp_init(
     const double *data, int n, double tmin, double dt);
 
+/**
+ * Free a piecewise cubic interpolating function.
+ */
 void cubic_interp_free(cubic_interp *interp);
 
 __attribute__ ((pure))
+/**
+ * Evaluate a piecewise cubic interpolating function.
+ */
 double cubic_interp_eval(const cubic_interp *interp, double t);
 
 __attribute__ ((malloc))
+/**
+ * Create a 2D piecewise bicubic interpolating function.
+ *
+ * The interpolating function z=f(x, y) passes through the data points
+ * (x[i], y[j], z[i, j]) for all i from 0 to ns - 1 and all j from 0 to nt - 1,
+ * where x[i] = smin + i * ds, y[j] = tmin + j * dt, and z[i, j] = data[i, j].
+ */
 bicubic_interp *bicubic_interp_init(
     const double *data, int ns, int nt,
     double smin, double tmin, double ds, double dt);
 
+/**
+ * Free a piecewise bicubic interpolating function.
+ */
 void bicubic_interp_free(bicubic_interp *interp);
 
 __attribute__ ((pure))
+/**
+ * Evaluate a piecewise bicubic interpolating function.
+ */
 double bicubic_interp_eval(const bicubic_interp *interp, double s, double t);
 
+/**
+ * Run unit tests.
+ */
 int cubic_interp_test(void);
 
 #endif /* __cplusplus */

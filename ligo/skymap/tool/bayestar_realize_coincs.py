@@ -227,7 +227,7 @@ def main(args=None):
         from igwn_ligolw.utils.search_summary import append_search_summary
         from igwn_ligolw import utils as ligolw_utils
         from igwn_ligolw.lsctables import (
-            New, CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
+            CoincDefTable, CoincID, CoincInspiralTable, CoincMapTable,
             CoincTable, ProcessParamsTable, ProcessTable, SimInspiralTable,
             SnglInspiralTable, TimeSlideTable)
 
@@ -270,15 +270,15 @@ def main(args=None):
 
         # Create tables. Process and ProcessParams tables are copied from the
         # injection file.
-        coinc_def_table = xmlroot.appendChild(New(CoincDefTable))
-        coinc_inspiral_table = xmlroot.appendChild(New(CoincInspiralTable))
-        coinc_map_table = xmlroot.appendChild(New(CoincMapTable))
-        coinc_table = xmlroot.appendChild(New(CoincTable))
+        coinc_def_table = xmlroot.appendChild(CoincDefTable.new())
+        coinc_inspiral_table = xmlroot.appendChild(CoincInspiralTable.new())
+        coinc_map_table = xmlroot.appendChild(CoincMapTable.new())
+        coinc_table = xmlroot.appendChild(CoincTable.new())
         xmlroot.appendChild(ProcessParamsTable.get_table(inj_xmldoc))
         xmlroot.appendChild(ProcessTable.get_table(inj_xmldoc))
-        sim_inspiral_table = xmlroot.appendChild(New(SimInspiralTable))
-        sngl_inspiral_table = xmlroot.appendChild(New(SnglInspiralTable))
-        time_slide_table = xmlroot.appendChild(New(TimeSlideTable))
+        sim_inspiral_table = xmlroot.appendChild(SimInspiralTable.new())
+        sngl_inspiral_table = xmlroot.appendChild(SnglInspiralTable.new())
+        time_slide_table = xmlroot.appendChild(TimeSlideTable.new())
 
         # Write process metadata to output file.
         process = register_to_xmldoc(

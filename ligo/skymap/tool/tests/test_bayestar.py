@@ -48,7 +48,8 @@ def coinc(inj, psd, tmpdir):
     run_entry_point('bayestar-realize-coincs',
                     '--measurement-error', 'gaussian-noise', '--f-low', '25',
                     '--reference-psd', psd, '-o', filename, inj,
-                    '--enable-snr-series', '--detector', 'H1', 'L1', 'V1')
+                    '--enable-snr-series', '--detector', 'H1', 'L1', 'V1',
+                    '--seed', '42')
     return filename
 
 

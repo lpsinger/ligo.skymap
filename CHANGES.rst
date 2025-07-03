@@ -5,7 +5,7 @@ Changelog
 2.4.1 (unreleased)
 ==================
 
-- No changes yet.
+- Temporarily require scipy < 1.16.0 because that version broke the unit tests.
 
 2.4.0 (2025-05-22)
 ==================

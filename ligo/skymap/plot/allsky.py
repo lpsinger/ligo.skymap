@@ -559,7 +559,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
         Returns
         -------
-        countours : `matplotlib.contour.QuadContourSet`
+        contours : `matplotlib.contour.QuadContourSet`
 
         """  # noqa: E501
         img = self._reproject_hpx(data, hdu_in=hdu_in, order=order,

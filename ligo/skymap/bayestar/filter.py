@@ -15,16 +15,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Utility functions for BAYESTAR that are related to matched filtering."""
-from contextlib import contextmanager
+
 import logging
 import math
+from contextlib import contextmanager
 
 import lal
 import lalsimulation
 import numpy as np
-from scipy import interpolate
 from scipy import fftpack as fft
-from scipy import linalg
+from scipy import interpolate, linalg
 
 try:
     from numpy import trapezoid
@@ -32,16 +32,13 @@ except ImportError:
     # FIXME: Remove after we require Numpy >=2.0.0.
     from numpy import trapz as trapezoid
 
-log = logging.getLogger('BAYESTAR')
+log = logging.getLogger("BAYESTAR")
 
 
 @contextmanager
 def lal_ndebug():
     """Temporarily disable lal error messages, except for memory errors."""
-    mask = ~(lal.LALERRORBIT |
-             lal.LALWARNINGBIT |
-             lal.LALINFOBIT |
-             lal.LALTRACEBIT)
+    mask = ~(lal.LALERRORBIT | lal.LALWARNINGBIT | lal.LALINFOBIT | lal.LALTRACEBIT)
     old_level = lal.GetDebugLevel()
     lal.ClobberDebugLevel(old_level & mask)
     try:
@@ -94,8 +91,8 @@ def ceil_pow_2(n):
     # For positive numbers, mantissa is in [0.5, 1.).
     mantissa, exponent = math.frexp(n)
     return math.ldexp(
-        1 if mantissa >= 0 else float('nan'),
-        exponent - 1 if mantissa == 0.5 else exponent
+        1 if mantissa >= 0 else float("nan"),
+        exponent - 1 if mantissa == 0.5 else exponent,
     )
 
 
@@ -206,13 +203,13 @@ def truncated_ifft(y, nsamples_out=None):
         nsamples_out = nsamples
     elif nsamples_out > nsamples:
         raise ValueError(
-            'Input is too short: you gave me an input of length {0}, '
-            'but you asked for an IFFT of length {1}.'.format(
-                nsamples, nsamples_out))
+            "Input is too short: you gave me an input of length {0}, "
+            "but you asked for an IFFT of length {1}.".format(nsamples, nsamples_out)
+        )
     elif nsamples & (nsamples - 1):
         raise NotImplementedError(
-            'I am too lazy to implement for nsamples that is '
-            'not a power of 2.')
+            "I am too lazy to implement for nsamples that is not a power of 2."
+        )
 
     # Find number of FFTs.
     # FIXME: only works if nsamples is a power of 2.
@@ -254,7 +251,7 @@ def get_approximant_and_orders_from_string(s):
         phase_order = lalsimulation.GetOrderFromString(s)
     except RuntimeError:
         phase_order = -1
-    if 'restricted' in s or 'Restricted' in s:
+    if "restricted" in s or "Restricted" in s:
         amplitude_order = 0
     else:
         amplitude_order = phase_order
@@ -265,51 +262,58 @@ def get_f_lso(mass1, mass2):
     """Calculate the GW frequency during the last stable orbit of a compact
     binary.
     """
-    return 1 / (6 ** 1.5 * np.pi * (mass1 + mass2) * lal.MTSUN_SI)
+    return 1 / (6**1.5 * np.pi * (mass1 + mass2) * lal.MTSUN_SI)
 
 
-def sngl_inspiral_psd(waveform, mass1, mass2,
-                      f_min=10, f_final=None, f_ref=None, **kwargs):
+def sngl_inspiral_psd(
+    waveform, mass1, mass2, f_min=10, f_final=None, f_ref=None, **kwargs
+):
     # FIXME: uberbank mass criterion. Should find a way to get this from
     # pipeline output metadata.
-    if waveform == 'o1-uberbank':
-        log.warning('Template is unspecified; '
-                    'using ER8/O1 uberbank criterion')
+    if waveform == "o1-uberbank":
+        log.warning("Template is unspecified; using ER8/O1 uberbank criterion")
         if mass1 + mass2 < 4:
-            waveform = 'TaylorF2threePointFivePN'
+            waveform = "TaylorF2threePointFivePN"
         else:
-            waveform = 'SEOBNRv2_ROM_DoubleSpin'
-    elif waveform == 'o2-uberbank':
-        log.warning('Template is unspecified; '
-                    'using ER10/O2 uberbank criterion')
+            waveform = "SEOBNRv2_ROM_DoubleSpin"
+    elif waveform == "o2-uberbank":
+        log.warning("Template is unspecified; using ER10/O2 uberbank criterion")
         if mass1 + mass2 < 4:
-            waveform = 'TaylorF2threePointFivePN'
+            waveform = "TaylorF2threePointFivePN"
         else:
-            waveform = 'SEOBNRv4_ROM'
+            waveform = "SEOBNRv4_ROM"
     approx, ampo, phaseo = get_approximant_and_orders_from_string(waveform)
-    log.info('Selected template: %s', waveform)
+    log.info("Selected template: %s", waveform)
 
     # Generate conditioned template.
     params = lal.CreateDict()
     lalsimulation.SimInspiralWaveformParamsInsertPNPhaseOrder(params, phaseo)
     lalsimulation.SimInspiralWaveformParamsInsertPNAmplitudeOrder(params, ampo)
     hplus, hcross = lalsimulation.SimInspiralFD(
-        m1=float(mass1) * lal.MSUN_SI, m2=float(mass2) * lal.MSUN_SI,
-        S1x=float(kwargs.get('spin1x') or 0),
-        S1y=float(kwargs.get('spin1y') or 0),
-        S1z=float(kwargs.get('spin1z') or 0),
-        S2x=float(kwargs.get('spin2x') or 0),
-        S2y=float(kwargs.get('spin2y') or 0),
-        S2z=float(kwargs.get('spin2z') or 0),
-        distance=1e6 * lal.PC_SI, inclination=0, phiRef=0,
-        longAscNodes=0, eccentricity=0, meanPerAno=0,
-        deltaF=0, f_min=f_min,
+        m1=float(mass1) * lal.MSUN_SI,
+        m2=float(mass2) * lal.MSUN_SI,
+        S1x=float(kwargs.get("spin1x") or 0),
+        S1y=float(kwargs.get("spin1y") or 0),
+        S1z=float(kwargs.get("spin1z") or 0),
+        S2x=float(kwargs.get("spin2x") or 0),
+        S2y=float(kwargs.get("spin2y") or 0),
+        S2z=float(kwargs.get("spin2z") or 0),
+        distance=1e6 * lal.PC_SI,
+        inclination=0,
+        phiRef=0,
+        longAscNodes=0,
+        eccentricity=0,
+        meanPerAno=0,
+        deltaF=0,
+        f_min=f_min,
         # Note: code elsewhere ensures that the sample rate is at least two
         # times f_final; the factor of 2 below is just a safety factor to make
         # sure that the sample rate is 2-4 times f_final.
         f_max=ceil_pow_2(2 * (f_final or 2048)),
         f_ref=float(f_ref or 0),
-        LALparams=params, approximant=approx)
+        LALparams=params,
+        approximant=approx,
+    )
 
     # Force `plus' and `cross' waveform to be in quadrature.
     h = 0.5 * (hplus.data.data + 1j * hcross.data.data)
@@ -322,7 +326,8 @@ def sngl_inspiral_psd(waveform, mass1, mass2,
         lalsimulation.SpinTaylorF2,
         lalsimulation.TaylorF2RedSpin,
         lalsimulation.TaylorF2RedSpinTidal,
-        lalsimulation.SpinTaylorT4Fourier)
+        lalsimulation.SpinTaylorT4Fourier,
+    )
     if approx in inspiral_only_waveforms:
         h[abscissa(hplus) >= get_f_lso(mass1, mass2)] = 0
 
@@ -335,7 +340,8 @@ def sngl_inspiral_psd(waveform, mass1, mass2,
 
     # Create output frequency series.
     psd = lal.CreateREAL8FrequencySeries(
-        'signal PSD', 0, hplus.f0, hcross.deltaF, hplus.sampleUnits**2, len(h))
+        "signal PSD", 0, hplus.f0, hcross.deltaF, hplus.sampleUnits**2, len(h)
+    )
     psd.data.data = abs2(h)
 
     # Done!
@@ -346,7 +352,8 @@ def signal_psd_series(H, S):
     n = H.data.data.size
     f = H.f0 + np.arange(1, n) * H.deltaF
     ret = lal.CreateREAL8FrequencySeries(
-        'signal PSD / noise PSD', 0, H.f0, H.deltaF, lal.DimensionlessUnit, n)
+        "signal PSD / noise PSD", 0, H.f0, H.deltaF, lal.DimensionlessUnit, n
+    )
     ret.data.data[0] = 0
     ret.data.data[1:] = H.data.data[1:] / S(f)
     return ret
@@ -411,7 +418,7 @@ class vectorize_swig_psd_func:  # noqa: N801
     """
 
     def __init__(self, str):
-        self.__func = getattr(lalsimulation, str + 'Ptr')
+        self.__func = getattr(lalsimulation, str + "Ptr")
         self.__npyfunc = np.frompyfunc(getattr(lalsimulation, str), 1, 1)
 
     def __call__(self, f):
@@ -420,7 +427,8 @@ class vectorize_swig_psd_func:  # noqa: N801
         if fa.ndim == 1 and df.size > 1 and np.all(df[0] == df[1:]):
             fa = np.concatenate((fa, [fa[-1] + df[0]]))
             ret = lal.CreateREAL8FrequencySeries(
-                None, 0, fa[0], df[0], lal.DimensionlessUnit, fa.size)
+                None, 0, fa[0], df[0], lal.DimensionlessUnit, fa.size
+            )
             lalsimulation.SimNoisePSD(ret, 0, self.__func)
             ret = ret.data.data[:-1]
         else:
@@ -448,15 +456,20 @@ class InterpolatedPSD(interpolate.interp1d):
         # PSD conditioning. Remove this when the issue is fixed upstream.
         if f_high_truncate < 1.0:
             log.warning(
-                'Truncating PSD at %g of maximum frequency to suppress '
-                'rolloff artifacts. This option may be removed in the future.',
-                f_high_truncate)
-            keep = (f <= f_high_truncate * max(f))
+                "Truncating PSD at %g of maximum frequency to suppress "
+                "rolloff artifacts. This option may be removed in the future.",
+                f_high_truncate,
+            )
+            keep = f <= f_high_truncate * max(f)
             f = f[keep]
             S = S[keep]
         super().__init__(
-            np.log(f), np.log(S),
-            kind='linear', bounds_error=False, fill_value=np.log(fill_value))
+            np.log(f),
+            np.log(S),
+            kind="linear",
+            bounds_error=False,
+            fill_value=np.log(fill_value),
+        )
         self._f_min = min(f)
         self._f_max = max(f)
 
@@ -472,15 +485,24 @@ class InterpolatedPSD(interpolate.interp1d):
         f_min = np.min(f)
         f_max = np.max(f)
         if f_min < self._f_min:
-            log.warning('Assuming PSD is infinite at %g Hz because PSD is '
-                        'only sampled down to %g Hz', f_min, self._f_min)
+            log.warning(
+                "Assuming PSD is infinite at %g Hz because PSD is "
+                "only sampled down to %g Hz",
+                f_min,
+                self._f_min,
+            )
         if f_max > self._f_max:
-            log.warning('Assuming PSD is infinite at %g Hz because PSD is '
-                        'only sampled up to %g Hz', f_max, self._f_max)
+            log.warning(
+                "Assuming PSD is infinite at %g Hz because PSD is "
+                "only sampled up to %g Hz",
+                f_max,
+                self._f_max,
+            )
         return np.where(
             (f >= self._f_min) & (f <= self._f_max),
             np.exp(super().__call__(np.log(f))),
-            np.exp(self.fill_value))
+            np.exp(self.fill_value),
+        )
 
 
 class SignalModel:
@@ -548,7 +570,7 @@ class SignalModel:
         self.w = 2 * np.pi * f
 
         # Throw away leading and trailing zeros.
-        h = h.data.data[first_nonzero:last_nonzero + 1]
+        h = h.data.data[first_nonzero : last_nonzero + 1]
 
         self.denom_integrand = 4 / (2 * np.pi) * h
         self.den = trapezoid(self.denom_integrand, dx=self.dw)

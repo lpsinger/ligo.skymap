@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 import functools
+
 import numpy as np
 
 try:
@@ -23,7 +24,7 @@ except ImportError:
     # FIXME: Remove after we require Numpy >=2.0.0.
     from numpy.core.umath import _add_newdoc_ufunc
 
-__all__ = ('add_newdoc_ufunc', 'require_contiguous_aligned')
+__all__ = ("add_newdoc_ufunc", "require_contiguous_aligned")
 
 
 def add_newdoc_ufunc(func, doc):  # pragma: no cover
@@ -44,7 +45,7 @@ def add_newdoc_ufunc(func, doc):  # pragma: no cover
     try:
         _add_newdoc_ufunc(func, doc)
     except ValueError as e:
-        msg = 'Cannot change docstring of ufunc with non-NULL docstring'
+        msg = "Cannot change docstring of ufunc with non-NULL docstring"
         if e.args[0] == msg:
             pass
 
@@ -53,11 +54,16 @@ def require_contiguous_aligned(func):
     """Wrap a Numpy ufunc to guarantee that all of its inputs are
     C-contiguous arrays.
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         n = func.nin
-        args = [arg if i >= n or np.isscalar(arg)
-                else np.require(arg, requirements={'CONTIGUOUS', 'ALIGNED'})
-                for i, arg in enumerate(args)]
+        args = [
+            arg
+            if i >= n or np.isscalar(arg)
+            else np.require(arg, requirements={"CONTIGUOUS", "ALIGNED"})
+            for i, arg in enumerate(args)
+        ]
         return func(*args, **kwargs)
+
     return wrapper

@@ -5,32 +5,31 @@
 
 import warnings
 
-from astropy.version import version as astropy_version
 import pytest
 
 try:
     from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
+
     ASTROPY_HEADER = True
 except ImportError:
     ASTROPY_HEADER = False
 
 
 def pytest_configure(config):
-
     if ASTROPY_HEADER:
-
         config.option.astropy_header = True
 
         # Customize the following lines to add/remove entries from the list of
         # packages for which version numbers are displayed when running the tests.
-        PYTEST_HEADER_MODULES.pop('Pandas', None)
-        PYTEST_HEADER_MODULES['astropy'] = 'astropy'
-        PYTEST_HEADER_MODULES['astropy-healpix'] = 'astropy_healpix'
-        PYTEST_HEADER_MODULES['healpy'] = 'healpy'
-        PYTEST_HEADER_MODULES['reproject'] = 'reproject'
+        PYTEST_HEADER_MODULES.pop("Pandas", None)
+        PYTEST_HEADER_MODULES["astropy"] = "astropy"
+        PYTEST_HEADER_MODULES["astropy-healpix"] = "astropy_healpix"
+        PYTEST_HEADER_MODULES["healpy"] = "healpy"
+        PYTEST_HEADER_MODULES["reproject"] = "reproject"
 
         from . import __version__
-        packagename = 'ligo.skymap'
+
+        packagename = "ligo.skymap"
         TESTED_VERSIONS[packagename] = __version__
 
 
@@ -48,7 +47,7 @@ def pytest_configure(config):
 # enable_deprecations_as_exceptions()
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope="session")
 def treat_unclosed_files_as_errors():
     """Treat warnings abnout unclosed files as errors
 
@@ -57,6 +56,5 @@ def treat_unclosed_files_as_errors():
     this as an error.
 
     """
-    warnings.filterwarnings('error', 'unclosed file .*', ResourceWarning)
-    warnings.filterwarnings(
-        'error', category=pytest.PytestUnraisableExceptionWarning)
+    warnings.filterwarnings("error", "unclosed file .*", ResourceWarning)
+    warnings.filterwarnings("error", category=pytest.PytestUnraisableExceptionWarning)

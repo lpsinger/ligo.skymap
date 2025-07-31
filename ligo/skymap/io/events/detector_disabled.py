@@ -14,9 +14,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Modify events by artificially disabling specified detectors."""
+
 from .base import Event, EventSource
 
-__all__ = ('DetectorDisabledEventSource', 'DetectorDisabledError')
+__all__ = ("DetectorDisabledEventSource", "DetectorDisabledError")
 
 
 class DetectorDisabledError(ValueError):
@@ -24,7 +25,6 @@ class DetectorDisabledError(ValueError):
 
 
 class DetectorDisabledEventSource(EventSource):
-
     def __init__(self, base_source, disabled_detectors, raises=True):
         self.base_source = base_source
         self.disabled_detectors = set(disabled_detectors)
@@ -41,7 +41,6 @@ class DetectorDisabledEventSource(EventSource):
 
 
 class DetectorDisabledEvent(Event):
-
     def __init__(self, source, base_event):
         self.source = source
         self.base_event = base_event
@@ -53,18 +52,23 @@ class DetectorDisabledEvent(Event):
             detectors = {s.detector for s in self.base_event.singles}
             if not detectors & disabled_detectors:
                 raise DetectorDisabledError(
-                    'Disabling detectors {{{}}} would have no effect on this '
-                    'event with detectors {{{}}}'.format(
-                        ' '.join(sorted(disabled_detectors)),
-                        ' '.join(sorted(detectors))))
+                    "Disabling detectors {{{}}} would have no effect on this "
+                    "event with detectors {{{}}}".format(
+                        " ".join(sorted(disabled_detectors)),
+                        " ".join(sorted(detectors)),
+                    )
+                )
             if not detectors - disabled_detectors:
                 raise DetectorDisabledError(
-                    'Disabling detectors {{{}}} would exclude all data for '
-                    'this event with detectors {{{}}}'.format(
-                        ' '.join(sorted(disabled_detectors)),
-                        ' '.join(sorted(detectors))))
-        return tuple(s for s in self.base_event.singles
-                     if s.detector not in disabled_detectors)
+                    "Disabling detectors {{{}}} would exclude all data for "
+                    "this event with detectors {{{}}}".format(
+                        " ".join(sorted(disabled_detectors)),
+                        " ".join(sorted(detectors)),
+                    )
+                )
+        return tuple(
+            s for s in self.base_event.singles if s.detector not in disabled_detectors
+        )
 
     @property
     def template_args(self):

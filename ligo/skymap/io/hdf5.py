@@ -15,42 +15,44 @@
 #
 """Read HDF5 posterior sample chain HDF5 files."""
 
-import numpy as np
 import h5py
+import numpy as np
 from astropy.table import Column, Table
 
 # Constants from lalinference module
-POSTERIOR_SAMPLES = 'posterior_samples'
+POSTERIOR_SAMPLES = "posterior_samples"
 LINEAR = 0
 CIRCULAR = 1
 FIXED = 2
 OUTPUT = 3
 
-__all__ = ('read_samples', 'write_samples')
+__all__ = ("read_samples", "write_samples")
 
 
 def _identity(x):
     return x
 
 
-_colname_map = (('rightascension', 'ra', _identity),
-                ('right_ascension', 'ra', _identity),
-                ('declination', 'dec', _identity),
-                ('logdistance', 'dist', np.exp),
-                ('distance', 'dist', _identity),
-                ('luminosity_distance', 'dist', _identity),
-                ('polarisation', 'psi', _identity),
-                ('chirpmass', 'mc', _identity),
-                ('chirp_mass', 'mc', _identity),
-                ('a_spin1', 'a1', _identity),
-                ('a_1', 'a1', _identity),
-                ('a_spin2', 'a2', _identity),
-                ('a_2', 'a2', _identity),
-                ('tilt_spin1', 'tilt1', _identity),
-                ('tilt_1', 'tilt1', _identity),
-                ('tilt_spin2', 'tilt2', _identity),
-                ('tilt_2', 'tilt2', _identity),
-                ('geocent_time', 'time', _identity))
+_colname_map = (
+    ("rightascension", "ra", _identity),
+    ("right_ascension", "ra", _identity),
+    ("declination", "dec", _identity),
+    ("logdistance", "dist", np.exp),
+    ("distance", "dist", _identity),
+    ("luminosity_distance", "dist", _identity),
+    ("polarisation", "psi", _identity),
+    ("chirpmass", "mc", _identity),
+    ("chirp_mass", "mc", _identity),
+    ("a_spin1", "a1", _identity),
+    ("a_1", "a1", _identity),
+    ("a_spin2", "a2", _identity),
+    ("a_2", "a2", _identity),
+    ("tilt_spin1", "tilt1", _identity),
+    ("tilt_1", "tilt1", _identity),
+    ("tilt_spin2", "tilt2", _identity),
+    ("tilt_2", "tilt2", _identity),
+    ("geocent_time", "time", _identity),
+)
 
 
 def _remap_colnames(table):
@@ -125,20 +127,23 @@ def _find_table(group, tablename):
     results = {}
 
     def visitor(key, value):
-        _, _, name = key.rpartition('/')
+        _, _, name = key.rpartition("/")
         if name == tablename:
             results[key] = value
 
     group.visititems(visitor)
 
     if len(results) == 0:
-        raise KeyError('Table not found: {0}'.format(tablename))
+        raise KeyError("Table not found: {0}".format(tablename))
 
     if len(results) > 1:
-        raise KeyError('Multiple tables called {0} exist: {1}'.format(
-            tablename, ', '.join(sorted(results.keys()))))
+        raise KeyError(
+            "Multiple tables called {0} exist: {1}".format(
+                tablename, ", ".join(sorted(results.keys()))
+            )
+        )
 
-    table, = results.values()
+    (table,) = results.values()
     return table
 
 
@@ -188,7 +193,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
     ['uvw', 'opq', 'lmn', 'ijk', 'def', 'abc', 'ghi', 'rst']
 
     """
-    with h5py.File(filename, 'r') as f:
+    with h5py.File(filename, "r") as f:
         if path is not None:  # Look for a given path
             table = f[path]
         else:  # Look for a given table name
@@ -197,18 +202,20 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     # Restore vary types.
     for i, column in enumerate(table.columns.values()):
-        column.meta['vary'] = table.meta.get(
-            'FIELD_{0}_VARY'.format(i), OUTPUT)
+        column.meta["vary"] = table.meta.get("FIELD_{0}_VARY".format(i), OUTPUT)
 
     # Restore fixed columns from table attributes.
     for key, value in table.meta.items():
         # Skip attributes from H5TB interface
         # (https://www.hdfgroup.org/HDF5/doc/HL/H5TB_Spec.html).
-        if key == 'CLASS' or key == 'VERSION' or key == 'TITLE' or \
-                key.startswith('FIELD_'):
+        if (
+            key == "CLASS"
+            or key == "VERSION"
+            or key == "TITLE"
+            or key.startswith("FIELD_")
+        ):
             continue
-        table.add_column(Column([value] * len(table), name=key,
-                         meta={'vary': FIXED}))
+        table.add_column(Column([value] * len(table), name=key, meta={"vary": FIXED}))
 
     # Delete remaining table attributes.
     table.meta.clear()
@@ -245,7 +252,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     >>> write_samples(table, 'bar.hdf5', 'bat/baz')
     Traceback (most recent call last):
         ...
-    AssertionError: 
+    AssertionError:
     Arrays are not equal
     Column foo is a fixed column, but its values are not identical
     ...
@@ -273,30 +280,35 @@ def write_samples(table, filename, metadata=None, **kwargs):
 
     # Make sure that all tables have a 'vary' type.
     for column in table.columns.values():
-        if 'vary' not in column.meta:
+        if "vary" not in column.meta:
             if np.all(column[0] == column[1:]):
-                column.meta['vary'] = FIXED
+                column.meta["vary"] = FIXED
             else:
-                column.meta['vary'] = OUTPUT
+                column.meta["vary"] = OUTPUT
     # Reconstruct table attributes.
     for colname, column in tuple(table.columns.items()):
-        if column.meta['vary'] == FIXED:
-            np.testing.assert_array_equal(column[1:], column[0],
-                                          'Column {0} is a fixed column, but '
-                                          'its values are not identical'
-                                          .format(column.name))
+        if column.meta["vary"] == FIXED:
+            np.testing.assert_array_equal(
+                column[1:],
+                column[0],
+                "Column {0} is a fixed column, but its values are not identical".format(
+                    column.name
+                ),
+            )
             table.meta[colname] = column[0]
             del table[colname]
     for i, column in enumerate(table.columns.values()):
-        table.meta['FIELD_{0}_VARY'.format(i)] = column.meta.pop('vary')
-    table.write(filename, format='hdf5', **kwargs)
+        table.meta["FIELD_{0}_VARY".format(i)] = column.meta.pop("vary")
+    table.write(filename, format="hdf5", **kwargs)
     if metadata:
-        with h5py.File(filename, 'r+') as hdf:
+        with h5py.File(filename, "r+") as hdf:
             for internal_path, attributes in metadata.items():
                 for key, value in attributes.items():
                     try:
                         hdf[internal_path].attrs[key] = value
                     except KeyError:
                         raise KeyError(
-                            'Unable to set metadata {0}[{1}] = {2}'.format(
-                                internal_path, key, value))
+                            "Unable to set metadata {0}[{1}] = {2}".format(
+                                internal_path, key, value
+                            )
+                        )

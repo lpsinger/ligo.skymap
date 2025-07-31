@@ -27,11 +27,10 @@ from tqdm.auto import tqdm
 
 from .. import omp
 
-__all__ = ('progress_map',)
+__all__ = ("progress_map",)
 
 
 class WrappedFunc:
-
     def __init__(self, func):
         self.func = func
 
@@ -60,7 +59,7 @@ def _results_in_order(completed):
                 current += 1
         else:
             heappush(heap, i_result)
-    assert not heap, 'The heap must be empty'
+    assert not heap, "The heap must be empty"
 
 
 _in_pool = False
@@ -104,10 +103,9 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
         yield from _results_in_order(
             tqdm(
                 _pool.imap_unordered(
-                    WrappedFunc(func),
-                    enumerate(zip(*iterables)),
-                    chunksize=chunksize
+                    WrappedFunc(func), enumerate(zip(*iterables)), chunksize=chunksize
                 ),
-                total=total, **kwargs
+                total=total,
+                **kwargs,
             )
         )

@@ -33,27 +33,48 @@ References
 
 """
 
-from astropy.table import Table
 import astropy_healpix as ah
-import numpy as np
 import healpy as hp
+import numpy as np
 import scipy.special
-from .core import (conditional_pdf, conditional_cdf, conditional_ppf,
-                   moments_to_parameters, parameters_to_moments,
-                   volume_render as _volume_render, marginal_pdf, marginal_cdf,
-                   marginal_ppf)
-from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
-from .healpix_tree import HEALPIX_MACHINE_ORDER
+from astropy.table import Table
+
 from . import moc
+from .core import (
+    conditional_cdf,
+    conditional_pdf,
+    conditional_ppf,
+    marginal_cdf,
+    marginal_pdf,
+    marginal_ppf,
+    moments_to_parameters,
+    parameters_to_moments,
+)
+from .core import volume_render as _volume_render
+from .healpix_tree import HEALPIX_MACHINE_ORDER
+from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
 
-__all__ = ('conditional_pdf', 'conditional_cdf', 'conditional_ppf',
-           'moments_to_parameters', 'parameters_to_moments', 'volume_render',
-           'marginal_pdf', 'marginal_cdf', 'marginal_ppf', 'ud_grade',
-           'conditional_kde', 'cartesian_kde_to_moments', 'principal_axes',
-           'parameters_to_moments')
+__all__ = (
+    "conditional_pdf",
+    "conditional_cdf",
+    "conditional_ppf",
+    "moments_to_parameters",
+    "parameters_to_moments",
+    "volume_render",
+    "marginal_pdf",
+    "marginal_cdf",
+    "marginal_ppf",
+    "ud_grade",
+    "conditional_kde",
+    "cartesian_kde_to_moments",
+    "principal_axes",
+    "parameters_to_moments",
+)
 
 
-add_newdoc_ufunc(conditional_pdf, """\
+add_newdoc_ufunc(
+    conditional_pdf,
+    """\
 Conditional distance probability density function (ansatz).
 
 Parameters
@@ -72,10 +93,13 @@ Returns
 pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(conditional_cdf, """\
+add_newdoc_ufunc(
+    conditional_cdf,
+    """\
 Cumulative conditional distribution of distance (ansatz).
 
 Parameters
@@ -123,10 +147,13 @@ the distribution).
 >>> result = conditional_cdf(np.inf, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(result, expected)
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(conditional_ppf, """\
+add_newdoc_ufunc(
+    conditional_ppf,
+    """\
 Point percent function (inverse cdf) of distribution of distance (ansatz).
 
 Parameters
@@ -159,10 +186,13 @@ Test against numerical estimate.
 >>> r16 = conditional_ppf(p, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(r16, expected_r16)
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(moments_to_parameters, """\
+add_newdoc_ufunc(
+    moments_to_parameters,
+    """\
 Convert ansatz moments to parameters.
 
 This function is the inverse of `parameters_to_moments`.
@@ -183,10 +213,13 @@ distsigma : `numpy.ndarray`
 distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(parameters_to_moments, """\
+add_newdoc_ufunc(
+    parameters_to_moments,
+    """\
 Convert ansatz parameters to moments.
 
 This function is the inverse of `moments_to_parameters`.
@@ -246,7 +279,8 @@ Check some more arbitrary values using numerical quadrature:
 ...     np.testing.assert_approx_equal(std, expected_std, 5)
 ...     np.testing.assert_approx_equal(norm, expected_norm, 5)
 
-""")
+""",
+)
 
 
 _volume_render = require_contiguous_aligned(_volume_render)
@@ -334,18 +368,30 @@ def volume_render(x, y, max_distance, axis0, axis1, R, skymap):
 
     """  # noqa: E501
     skymap = Table(skymap)
-    uniq = skymap.columns.pop('UNIQ')
+    uniq = skymap.columns.pop("UNIQ")
     nside = 1 << np.int64(moc.uniq2order(uniq.max()))
     order, nest = moc.uniq2nest(uniq)
-    skymap['NEST'] = nest << np.int64(2 * (HEALPIX_MACHINE_ORDER - order))
-    skymap.sort('NEST')
+    skymap["NEST"] = nest << np.int64(2 * (HEALPIX_MACHINE_ORDER - order))
+    skymap.sort("NEST")
     return _volume_render(
-        x, y, max_distance, axis0, axis1, R, nside,
-        skymap['NEST'], skymap['PROBDENSITY'], skymap['DISTMU'],
-        skymap['DISTSIGMA'], skymap['DISTNORM'])
+        x,
+        y,
+        max_distance,
+        axis0,
+        axis1,
+        R,
+        nside,
+        skymap["NEST"],
+        skymap["PROBDENSITY"],
+        skymap["DISTMU"],
+        skymap["DISTSIGMA"],
+        skymap["DISTNORM"],
+    )
 
 
-add_newdoc_ufunc(marginal_pdf, """\
+add_newdoc_ufunc(
+    marginal_pdf,
+    """\
 Calculate all-sky marginal pdf (ansatz).
 
 Parameters
@@ -377,11 +423,14 @@ Examples
 >>> pdf = marginal_pdf(r, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(pdf, pdf_expected, rtol=1e-4)
 
-""")
+""",
+)
 marginal_pdf = require_contiguous_aligned(marginal_pdf)
 
 
-add_newdoc_ufunc(marginal_cdf, """\
+add_newdoc_ufunc(
+    marginal_cdf,
+    """\
 Calculate all-sky marginal cdf (ansatz).
 
 Parameters
@@ -427,11 +476,14 @@ For infinite positive distance, it returns the sum of prob
 >>> result = marginal_cdf(np.inf, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(result, expected)
 
-""")
+""",
+)
 marginal_cdf = require_contiguous_aligned(marginal_cdf)
 
 
-add_newdoc_ufunc(marginal_ppf, """\
+add_newdoc_ufunc(
+    marginal_ppf,
+    """\
 Point percent function (inverse cdf) of marginal distribution of distance
 (ansatz).
 
@@ -465,7 +517,8 @@ Examples
 >>> r = marginal_ppf(cdf, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(r, r_expected, rtol=1e-4)
 
-""")
+""",
+)
 marginal_ppf = require_contiguous_aligned(marginal_ppf)
 
 
@@ -517,15 +570,20 @@ def _conditional_kde(n, X, Cinv, W):
     Cinv_n = np.dot(Cinv, n)
     cinv = np.dot(n, Cinv_n)
     x = np.dot(Cinv_n, X) / cinv
-    w = W * (0.5 / np.pi) * np.sqrt(np.linalg.det(Cinv) / cinv) * np.exp(
-        0.5 * (np.square(x) * cinv - (np.dot(Cinv, X) * X).sum(0)))
+    w = (
+        W
+        * (0.5 / np.pi)
+        * np.sqrt(np.linalg.det(Cinv) / cinv)
+        * np.exp(0.5 * (np.square(x) * cinv - (np.dot(Cinv, X) * X).sum(0)))
+    )
     return x, cinv, w
 
 
 def conditional_kde(n, datasets, inverse_covariances, weights):
     return [
         _conditional_kde(n, X, Cinv, W)
-        for X, Cinv, W in zip(datasets, inverse_covariances, weights)]
+        for X, Cinv, W in zip(datasets, inverse_covariances, weights)
+    ]
 
 
 def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
@@ -643,7 +701,7 @@ def cartesian_kde_to_moments(n, datasets, inverse_covariances, weights):
         r2bar += np.mean(w * r2bar_)
 
     # Normalize moments.
-    with np.errstate(invalid='ignore'):
+    with np.errstate(invalid="ignore"):
         r1bar /= r0bar
         r2bar /= r0bar
     var = r2bar - np.square(r1bar)
@@ -678,16 +736,16 @@ def principal_axes(prob, distmu, distsigma, nest=False):
 
 def principal_axes_moc(skymap):
     skymap = skymap[
-        np.isfinite(skymap['PROBDENSITY']) &
-        np.isfinite(skymap['DISTMU']) &
-        np.isfinite(skymap['DISTNORM'])]
+        np.isfinite(skymap["PROBDENSITY"])
+        & np.isfinite(skymap["DISTMU"])
+        & np.isfinite(skymap["DISTNORM"])
+    ]
 
-    prob = skymap['PROBDENSITY'] * moc.uniq2pixarea(skymap['UNIQ'])
-    distmean, diststd, _ = parameters_to_moments(
-        skymap['DISTMU'], skymap['DISTSIGMA'])
+    prob = skymap["PROBDENSITY"] * moc.uniq2pixarea(skymap["UNIQ"])
+    distmean, diststd, _ = parameters_to_moments(skymap["DISTMU"], skymap["DISTSIGMA"])
     mass = prob * (np.square(diststd) + np.square(distmean))
 
-    order, ipix = moc.uniq2nest(skymap['UNIQ'])
+    order, ipix = moc.uniq2nest(skymap["UNIQ"])
     nside = 1 << np.int64(order)
     xyz = np.asarray(hp.pix2vec(nside, ipix, nest=True))
 

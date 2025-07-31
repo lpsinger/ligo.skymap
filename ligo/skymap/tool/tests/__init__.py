@@ -1,5 +1,3 @@
-from importlib import metadata
-from importlib.resources import as_file, files
 import multiprocessing
 import os
 import shutil
@@ -7,15 +5,19 @@ import stat
 import subprocess
 import sys
 import tempfile
+from importlib import metadata
+from importlib.resources import as_file, files
 
-dist = 'ligo.skymap'
-group = 'console_scripts'
+dist = "ligo.skymap"
+group = "console_scripts"
 
-__all__ = ('entry_points', 'run_entry_point', 'run_ligolw', 'run_lalsuite')
+__all__ = ("entry_points", "run_entry_point", "run_ligolw", "run_lalsuite")
 
-entry_points = {entry_point.name: entry_point
-                for entry_point in metadata.distribution(dist).entry_points
-                if entry_point.group == group}
+entry_points = {
+    entry_point.name: entry_point
+    for entry_point in metadata.distribution(dist).entry_points
+    if entry_point.group == group
+}
 
 
 def run_entry_point(name, *args):
@@ -28,9 +30,11 @@ def run_entry_point(name, *args):
 
 
 def exec_ligolw(name, *args):
-    main, = (entry_point.load() for entry_point
-             in metadata.distribution('igwn-ligolw').entry_points
-             if entry_point.name == name)
+    (main,) = (
+        entry_point.load()
+        for entry_point in metadata.distribution("igwn-ligolw").entry_points
+        if entry_point.name == name
+    )
     sys.argv = [name, *args]
     main()
 
@@ -49,13 +53,11 @@ def run_ligolw(name, *args):
     else:
         # The tool has not been installed, so we have to try to run it using
         # importlib.metadata.
-        process = multiprocessing.Process(
-            target=exec_ligolw, args=[name, *args])
+        process = multiprocessing.Process(target=exec_ligolw, args=[name, *args])
         process.start()
         process.join()
         if process.exitcode != 0:
-            raise subprocess.CalledProcessError(
-                process.exitcode, [name, *args])
+            raise subprocess.CalledProcessError(process.exitcode, [name, *args])
 
 
 def run_lalsuite(name, *args):
@@ -73,12 +75,12 @@ def run_lalsuite(name, *args):
     else:
         # The tool has not been installed, so we have to find the underlying
         # binary inside the lalapps module.
-        with as_file(files('lalapps.bin').joinpath(name)) as path:
+        with as_file(files("lalapps.bin").joinpath(name)) as path:
             # Copy to a temporary file so that we can make it executable.
             # For some reason, when eggs are extracted, permissions are not
             # preserved.
             with tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as tmp:
-                with open(path, 'rb') as orig:
+                with open(path, "rb") as orig:
                     shutil.copyfileobj(orig, tmp)
                 tmp.flush()
                 fd = tmp.fileno()

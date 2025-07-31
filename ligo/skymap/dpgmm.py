@@ -16,24 +16,25 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from astropy.coordinates import SkyCoord
 from astropy import units as u
+from astropy.coordinates import SkyCoord
+
 try:
     from figaro.mixture import DPGMM
     from figaro.utils import get_priors
 except ModuleNotFoundError as e:
-    raise RuntimeError('In order to use the DPGMM feature'
-                       'you must install `figaro`') from e
+    raise RuntimeError(
+        "In order to use the DPGMM featureyou must install `figaro`"
+    ) from e
 
 import numpy as np
 from tqdm.auto import tqdm
 
-from .coordinates import EigenFrame
 from . import moc
+from .coordinates import EigenFrame
 
 
 class SkyDPGMM:
-
     def __init__(self, pts, **kwargs):
         self.frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit=u.rad))
 
@@ -41,7 +42,7 @@ class SkyDPGMM:
         pts = self.transform(pts)
 
         # build DPGMM model
-        bounds = [[0, 2*np.pi], [-1, 1]]
+        bounds = [[0, 2 * np.pi], [-1, 1]]
         prior_pars = get_priors(bounds, pts)
 
         model = DPGMM(bounds, prior_pars=prior_pars)
@@ -58,5 +59,4 @@ class SkyDPGMM:
         return self.model.pdf(self.transform(pts))
 
     def as_healpix(self, top_nside=16, rounds=8):
-        return moc.bayestar_adaptive_grid(self, top_nside=top_nside,
-                                          rounds=rounds)
+        return moc.bayestar_adaptive_grid(self, top_nside=top_nside, rounds=rounds)

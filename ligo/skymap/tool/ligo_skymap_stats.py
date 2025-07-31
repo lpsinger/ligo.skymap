@@ -92,59 +92,91 @@ values with the following columns:
 
 """
 
+import sys
 from argparse import FileType
 from functools import partial
-import sys
 
-from astropy.coordinates import SkyCoord
-from astropy import units as u
 import numpy as np
+from astropy import units as u
+from astropy.coordinates import SkyCoord
 
-from . import ArgumentParser, SQLiteType
 from ..io import fits
 from ..postprocess import crossmatch
+from . import ArgumentParser, SQLiteType
 
 
 def parser():
     parser = ArgumentParser()
     parser.add_argument(
-        '-o', '--output', metavar='OUT.dat', type=FileType('w'), default='-',
-        help='Name of output file')
+        "-o",
+        "--output",
+        metavar="OUT.dat",
+        type=FileType("w"),
+        default="-",
+        help="Name of output file",
+    )
     parser.add_argument(
-        '-j', '--jobs', type=int, default=1, const=None, nargs='?',
-        help='Number of threads')
+        "-j",
+        "--jobs",
+        type=int,
+        default=1,
+        const=None,
+        nargs="?",
+        help="Number of threads",
+    )
     parser.add_argument(
-        '-p', '--contour', default=[], nargs='+', type=float,
-        metavar='PERCENT',
-        help='Report the area of the smallest contour and the number of modes '
-        'containing this much probability.')
+        "-p",
+        "--contour",
+        default=[],
+        nargs="+",
+        type=float,
+        metavar="PERCENT",
+        help="Report the area of the smallest contour and the number of modes "
+        "containing this much probability.",
+    )
     parser.add_argument(
-        '-a', '--area', default=[], nargs='+', type=float, metavar='DEG2',
-        help='Report the largest probability contained within any region '
-        'of this area in square degrees. Can be repeated multiple times.')
+        "-a",
+        "--area",
+        default=[],
+        nargs="+",
+        type=float,
+        metavar="DEG2",
+        help="Report the largest probability contained within any region "
+        "of this area in square degrees. Can be repeated multiple times.",
+    )
     parser.add_argument(
-        '--modes', action='store_true',
-        help='Compute number of disjoint modes')
+        "--modes", action="store_true", help="Compute number of disjoint modes"
+    )
     parser.add_argument(
-        '-d', '--database', type=SQLiteType('r'), metavar='DB.sqlite',
-        help='Input SQLite database from search pipeline')
+        "-d",
+        "--database",
+        type=SQLiteType("r"),
+        metavar="DB.sqlite",
+        help="Input SQLite database from search pipeline",
+    )
     parser.add_argument(
-        'fitsfilenames', metavar='GLOB.fits[.gz]', nargs='+', action='glob',
-        help='Input FITS filenames and/or globs')
+        "fitsfilenames",
+        metavar="GLOB.fits[.gz]",
+        nargs="+",
+        action="glob",
+        help="Input FITS filenames and/or globs",
+    )
     parser.add_argument(
-        '--cosmology', action='store_true',
-        help='Report volume localizations as comoving volumes.')
+        "--cosmology",
+        action="store_true",
+        help="Report volume localizations as comoving volumes.",
+    )
     return parser
 
 
 def process(fitsfilename, db, contours, modes, areas, cosmology):
     sky_map = fits.read_sky_map(fitsfilename, moc=True)
 
-    coinc_event_id = sky_map.meta.get('objid')
+    coinc_event_id = sky_map.meta.get("objid")
     try:
-        runtime = sky_map.meta['runtime']
+        runtime = sky_map.meta["runtime"]
     except KeyError:
-        runtime = float('nan')
+        runtime = float("nan")
 
     contour_pvalues = 0.01 * np.asarray(contours)
 
@@ -164,7 +196,9 @@ def process(fitsfilename, db, contours, modes, areas, cosmology):
             ON (cem2.event_id = ci.coinc_event_id)
             WHERE cem1.table_name = 'sim_inspiral'
             AND cem2.table_name = 'coinc_event' AND cem2.event_id = ?
-            """, (coinc_event_id,)).fetchone()
+            """,
+            (coinc_event_id,),
+        ).fetchone()
         if row is None:
             return None
         simulation_id, true_ra, true_dec, true_dist, far, snr = row
@@ -174,34 +208,54 @@ def process(fitsfilename, db, contours, modes, areas, cosmology):
     elif true_dist is None:
         true_coord = SkyCoord(true_ra * u.rad, true_dec * u.rad)
     else:
-        true_coord = SkyCoord(true_ra * u.rad, true_dec * u.rad,
-                              true_dist * u.Mpc)
+        true_coord = SkyCoord(true_ra * u.rad, true_dec * u.rad, true_dist * u.Mpc)
 
     (
-        searched_area, searched_prob, offset, searched_modes, contour_areas,
-        area_probs, contour_modes, searched_prob_dist, contour_dists,
-        searched_vol, searched_prob_vol, contour_vols, probdensity,
-        probdensity_vol
+        searched_area,
+        searched_prob,
+        offset,
+        searched_modes,
+        contour_areas,
+        area_probs,
+        contour_modes,
+        searched_prob_dist,
+        contour_dists,
+        searched_vol,
+        searched_prob_vol,
+        contour_vols,
+        probdensity,
+        probdensity_vol,
     ) = crossmatch(
-        sky_map, true_coord,
-        contours=contour_pvalues, areas=areas, modes=modes, cosmology=cosmology
+        sky_map,
+        true_coord,
+        contours=contour_pvalues,
+        areas=areas,
+        modes=modes,
+        cosmology=cosmology,
     )
 
     if snr is None:
         snr = np.nan
     if far is None:
         far = np.nan
-    distmean = sky_map.meta.get('distmean', np.nan)
-    diststd = sky_map.meta.get('diststd', np.nan)
-    log_bci = sky_map.meta.get('log_bci', np.nan)
-    log_bsn = sky_map.meta.get('log_bsn', np.nan)
+    distmean = sky_map.meta.get("distmean", np.nan)
+    diststd = sky_map.meta.get("diststd", np.nan)
+    log_bci = sky_map.meta.get("log_bci", np.nan)
+    log_bsn = sky_map.meta.get("log_bsn", np.nan)
 
     ret = [coinc_event_id]
     if db is not None:
         ret += [
-            simulation_id, far, snr, searched_area,
-            searched_prob, searched_prob_dist, searched_vol, searched_prob_vol,
-            offset]
+            simulation_id,
+            far,
+            snr,
+            searched_area,
+            searched_prob,
+            searched_prob_dist,
+            searched_vol,
+            searched_prob_vol,
+            offset,
+        ]
     ret += [runtime, distmean, diststd, log_bci, log_bsn]
     ret += contour_areas + area_probs + contour_dists + contour_vols
     if modes:
@@ -217,29 +271,42 @@ def main(args=None):
         from ..util.progress import progress_map
 
         if args is None:
-            print('#', *sys.argv, file=opts.output)
+            print("#", *sys.argv, file=opts.output)
         else:
-            print('#', p.prog, *args, file=opts.output)
+            print("#", p.prog, *args, file=opts.output)
 
-        colnames = ['coinc_event_id']
+        colnames = ["coinc_event_id"]
         if opts.database is not None:
-            colnames += ['simulation_id', 'far', 'snr', 'searched_area',
-                         'searched_prob', 'searched_prob_dist', 'searched_vol',
-                         'searched_prob_vol', 'offset']
-        colnames += ['runtime', 'distmean', 'diststd', 'log_bci', 'log_bsn']
-        colnames += ['area({0:g})'.format(_) for _ in opts.contour]
-        colnames += ['prob({0:g})'.format(_) for _ in opts.area]
-        colnames += ['dist({0:g})'.format(_) for _ in opts.contour]
-        colnames += ['vol({0:g})'.format(_) for _ in opts.contour]
+            colnames += [
+                "simulation_id",
+                "far",
+                "snr",
+                "searched_area",
+                "searched_prob",
+                "searched_prob_dist",
+                "searched_vol",
+                "searched_prob_vol",
+                "offset",
+            ]
+        colnames += ["runtime", "distmean", "diststd", "log_bci", "log_bsn"]
+        colnames += ["area({0:g})".format(_) for _ in opts.contour]
+        colnames += ["prob({0:g})".format(_) for _ in opts.area]
+        colnames += ["dist({0:g})".format(_) for _ in opts.contour]
+        colnames += ["vol({0:g})".format(_) for _ in opts.contour]
         if opts.modes:
             if opts.database is not None:
-                colnames += ['searched_modes']
+                colnames += ["searched_modes"]
             colnames += ["modes({0:g})".format(p) for p in opts.contour]
         print(*colnames, sep="\t", file=opts.output)
 
-        func = partial(process, db=opts.database, contours=opts.contour,
-                       modes=opts.modes, areas=opts.area,
-                       cosmology=opts.cosmology)
+        func = partial(
+            process,
+            db=opts.database,
+            contours=opts.contour,
+            modes=opts.modes,
+            areas=opts.area,
+            cosmology=opts.cosmology,
+        )
         for record in progress_map(func, opts.fitsfilenames, jobs=opts.jobs):
             if record is not None:
                 print(*record, sep="\t", file=opts.output)

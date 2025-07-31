@@ -28,35 +28,46 @@ from . import ArgumentParser
 def parser():
     parser = ArgumentParser()
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
-        default='-', nargs='?', help='Input FITS file')
+        "input",
+        metavar="INPUT.fits[.gz]",
+        type=FileType("rb"),
+        default="-",
+        nargs="?",
+        help="Input FITS file",
+    )
     parser.add_argument(
-        '-o', '--output', metavar='OUT.dat', type=FileType('w'), default='-',
-        help='Name of output file')
+        "-o",
+        "--output",
+        metavar="OUT.dat",
+        type=FileType("w"),
+        default="-",
+        help="Name of output file",
+    )
     return parser
 
 
 def main(args=None):
     with parser().parse_args(args) as opts:
         # Late imports
-        from ..io import fits
         import astropy_healpix as ah
-        from astropy.coordinates import SkyCoord
-        from astropy.table import Table
-        from astropy import units as u
         import healpy as hp
         import numpy as np
+        from astropy import units as u
+        from astropy.coordinates import SkyCoord
+        from astropy.table import Table
+
+        from ..io import fits
 
         prob, meta = fits.read_sky_map(opts.input.name, nest=None)
         npix = len(prob)
         nside = ah.npix_to_nside(npix)
         ipix = np.arange(npix)
-        ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta['nest'])
+        ra, dec = hp.pix2ang(nside, ipix, lonlat=True, nest=meta["nest"])
         coord = SkyCoord(ra * u.deg, dec * u.deg)
         table = Table(
-            {'prob': prob, 'constellation': coord.get_constellation()},
-            copy=False)
-        table = table.group_by('constellation').groups.aggregate(np.sum)
-        table.sort('prob')
+            {"prob": prob, "constellation": coord.get_constellation()}, copy=False
+        )
+        table = table.group_by("constellation").groups.aggregate(np.sum)
+        table.sort("prob")
         table.reverse()
-        table.write(opts.output, format='ascii.tab')
+        table.write(opts.output, format="ascii.tab")

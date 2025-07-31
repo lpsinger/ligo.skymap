@@ -21,16 +21,16 @@ from matplotlib.markers import MarkerStyle
 from matplotlib.path import Path
 from matplotlib.transforms import Affine2D
 
-__all__ = ('earth', 'sun', 'moon', 'reticle')
+__all__ = ("earth", "sun", "moon", "reticle")
 
 
 earth = Path.unit_circle()
 earth = MarkerStyle(
     Path(
         np.concatenate((earth.vertices, [[-1, 0], [1, 0], [0, -1], [0, 1]])),
-        np.concatenate((earth.codes, [Path.MOVETO, Path.LINETO] * 2))
+        np.concatenate((earth.codes, [Path.MOVETO, Path.LINETO] * 2)),
     ),
-    fillstyle='none'
+    fillstyle="none",
 )
 earth.__doc__ = """
 The Earth symbol (circle and cross).
@@ -54,11 +54,11 @@ sun = Path.unit_circle()
 sun = MarkerStyle(
     Path(
         np.concatenate((sun.vertices, [[0, 0], [1e-3, 0]])),
-        np.concatenate((sun.codes, [Path.MOVETO, Path.LINETO]))
+        np.concatenate((sun.codes, [Path.MOVETO, Path.LINETO])),
     ),
-    capstyle='round',
-    joinstyle='round',
-    fillstyle='none'
+    capstyle="round",
+    joinstyle="round",
+    fillstyle="none",
 )
 sun.__doc__ = """
 The Sun symbol (circle and dot).
@@ -144,14 +144,14 @@ def moon(phase, shadow=False):
         np.concatenate((path1.codes, path3.codes[:0:-1], [Path.CLOSEPOLY])),
     )
 
-    markerstyle = MarkerStyle(light_path, joinstyle='miter')
+    markerstyle = MarkerStyle(light_path, joinstyle="miter")
     if shadow:
         markerstyle._alt_path = dark_path
         markerstyle._alt_transform = markerstyle._transform
     return markerstyle
 
 
-def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
+def reticle(inner=0.5, outer=1.0, angle=0.0, which="lrtb"):
     """Create a reticle or crosshairs marker.
 
     Parameters
@@ -194,7 +194,7 @@ def reticle(inner=0.5, outer=1.0, angle=0.0, which='lrtb'):
     x = np.cos(angle)
     y = np.sin(angle)
     rotation = [[x, y], [-y, x]]
-    vertdict = {'l': [-1, 0], 'r': [1, 0], 'b': [0, -1], 't': [0, 1]}
+    vertdict = {"l": [-1, 0], "r": [1, 0], "b": [0, -1], "t": [0, 1]}
     verts = [vertdict[direction] for direction in which]
     codes = [Path.MOVETO, Path.LINETO] * len(verts)
     verts = np.dot(verts, rotation)

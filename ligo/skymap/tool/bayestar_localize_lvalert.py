@@ -31,33 +31,62 @@ terminal, or redirected from a fifo)::
 """
 
 from . import (
-    ArgumentParser, EnableAction, get_waveform_parser, get_posterior_parser,
-    get_mcmc_parser, get_random_parser, iterlines)
+    ArgumentParser,
+    EnableAction,
+    get_mcmc_parser,
+    get_posterior_parser,
+    get_random_parser,
+    get_waveform_parser,
+    iterlines,
+)
 
 
 def parser():
     parser = ArgumentParser(
-        parents=[get_waveform_parser(), get_posterior_parser(),
-                 get_mcmc_parser(), get_random_parser()])
+        parents=[
+            get_waveform_parser(),
+            get_posterior_parser(),
+            get_mcmc_parser(),
+            get_random_parser(),
+        ]
+    )
     parser.add_argument(
-        '-d', '--disable-detector', metavar='X1', type=str, nargs='+',
-        help='disable certain detectors')
+        "-d",
+        "--disable-detector",
+        metavar="X1",
+        type=str,
+        nargs="+",
+        help="disable certain detectors",
+    )
     parser.add_argument(
-        '-N', '--dry-run', action='store_true',
-        help='Dry run; do not update GraceDB entry')
+        "-N",
+        "--dry-run",
+        action="store_true",
+        help="Dry run; do not update GraceDB entry",
+    )
     parser.add_argument(
-        '--no-tag', action='store_true',
-        help='Do not set lvem tag for GraceDB entry')
+        "--no-tag", action="store_true", help="Do not set lvem tag for GraceDB entry"
+    )
     parser.add_argument(
-        '-o', '--output', metavar='FILE.fits[.gz]', default='bayestar.fits',
-        help='Name for uploaded file')
+        "-o",
+        "--output",
+        metavar="FILE.fits[.gz]",
+        default="bayestar.fits",
+        help="Name for uploaded file",
+    )
     parser.add_argument(
-        '--enable-multiresolution', action=EnableAction, default=True,
-        help='generate a multiresolution HEALPix map')
+        "--enable-multiresolution",
+        action=EnableAction,
+        default=True,
+        help="generate a multiresolution HEALPix map",
+    )
     parser.add_argument(
-        'graceid', metavar='G123456', nargs='*',
-        help='Run on these GraceDB IDs. If no GraceDB IDs are listed on the '
-        'command line, then read newline-separated GraceDB IDs from stdin.')
+        "graceid",
+        metavar="G123456",
+        nargs="*",
+        help="Run on these GraceDB IDs. If no GraceDB IDs are listed on the "
+        "command line, then read newline-separated GraceDB IDs from stdin.",
+    )
     return parser
 
 
@@ -69,17 +98,18 @@ def main(args=None):
         import sys
         import tempfile
         import urllib.parse
-        from ..bayestar import localize, rasterize
-        from ..io import fits
-        from ..io import events
-        from .. import omp
-        from ..util.file import rename
+
         import ligo.gracedb.logging
         import ligo.gracedb.rest
 
-        log = logging.getLogger('BAYESTAR')
+        from .. import omp
+        from ..bayestar import localize, rasterize
+        from ..io import events, fits
+        from ..util.file import rename
 
-        log.info('Using %d OpenMP thread(s)', omp.num_threads)
+        log = logging.getLogger("BAYESTAR")
+
+        log.info("Using %d OpenMP thread(s)", omp.num_threads)
 
         # If no GraceDB IDs were specified on the command line, then read them
         # from stdin line-by-line.
@@ -91,16 +121,15 @@ def main(args=None):
         # service URL. It would be nice to get this behavior into the gracedb
         # package itself.
         gracedb = ligo.gracedb.rest.GraceDb(
-            os.environ.get(
-                'GRACEDB_SERVICE_URL', ligo.gracedb.rest.DEFAULT_SERVICE_URL))
+            os.environ.get("GRACEDB_SERVICE_URL", ligo.gracedb.rest.DEFAULT_SERVICE_URL)
+        )
 
         # Determine the base URL for event pages.
         scheme, netloc, *_ = urllib.parse.urlparse(gracedb._service_url)
-        base_url = urllib.parse.urlunparse(
-            (scheme, netloc, 'events', '', '', ''))
+        base_url = urllib.parse.urlunparse((scheme, netloc, "events", "", "", ""))
 
         if opts.chain_dump:
-            chain_dump = re.sub(r'.fits(.gz)?$', r'.hdf5', opts.output)
+            chain_dump = re.sub(r".fits(.gz)?$", r".hdf5", opts.output)
         else:
             chain_dump = None
 
@@ -112,54 +141,63 @@ def main(args=None):
 
         if opts.disable_detector:
             event_source = events.detector_disabled.open(
-                event_source, opts.disable_detector)
+                event_source, opts.disable_detector
+            )
 
         for graceid in event_source.keys():
-
             try:
                 event = event_source[graceid]
             except:  # noqa: E722
-                log.exception('failed to read event %s from GraceDB', graceid)
+                log.exception("failed to read event %s from GraceDB", graceid)
                 continue
 
             # Send log messages to GraceDb too
             if not opts.dry_run:
-                handler = ligo.gracedb.logging.GraceDbLogHandler(
-                    gracedb, graceid)
+                handler = ligo.gracedb.logging.GraceDbLogHandler(gracedb, graceid)
                 handler.setLevel(logging.INFO)
                 logging.root.addHandler(handler)
 
             # A little bit of Cylon humor
-            log.info('by your command...')
+            log.info("by your command...")
 
             try:
                 # perform sky localization
                 log.info("starting sky localization")
                 sky_map = localize(
-                    event, opts.waveform, opts.f_low, opts.min_distance,
-                    opts.max_distance, opts.prior_distance_power,
-                    opts.cosmology, mcmc=opts.mcmc, chain_dump=chain_dump,
+                    event,
+                    opts.waveform,
+                    opts.f_low,
+                    opts.min_distance,
+                    opts.max_distance,
+                    opts.prior_distance_power,
+                    opts.cosmology,
+                    mcmc=opts.mcmc,
+                    chain_dump=chain_dump,
                     enable_snr_series=opts.enable_snr_series,
                     f_high_truncate=opts.f_high_truncate,
-                    rescale_loglikelihood=opts.rescale_loglikelihood)
+                    rescale_loglikelihood=opts.rescale_loglikelihood,
+                )
                 if not opts.enable_multiresolution:
                     sky_map = rasterize(sky_map)
-                sky_map.meta['objid'] = str(graceid)
-                sky_map.meta['url'] = '{}/{}'.format(base_url, graceid)
+                sky_map.meta["objid"] = str(graceid)
+                sky_map.meta["url"] = "{}/{}".format(base_url, graceid)
                 log.info("sky localization complete")
 
                 # upload FITS file
                 with tempfile.TemporaryDirectory() as fitsdir:
                     fitspath = os.path.join(fitsdir, opts.output)
                     fits.write_sky_map(fitspath, sky_map, nest=True)
-                    log.debug('wrote FITS file: %s', opts.output)
+                    log.debug("wrote FITS file: %s", opts.output)
                     if opts.dry_run:
-                        rename(fitspath, os.path.join('.', opts.output))
+                        rename(fitspath, os.path.join(".", opts.output))
                     else:
                         gracedb.writeLog(
-                            graceid, "BAYESTAR rapid sky localization ready",
-                            filename=fitspath, tagname=tags)
-                    log.debug('uploaded FITS file')
+                            graceid,
+                            "BAYESTAR rapid sky localization ready",
+                            filename=fitspath,
+                            tagname=tags,
+                        )
+                    log.debug("uploaded FITS file")
             except KeyboardInterrupt:
                 # Produce log message and then exit if we receive SIGINT
                 # (ctrl-C).

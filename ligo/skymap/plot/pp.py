@@ -64,19 +64,20 @@ Or, you can call the constructor of `PPPlot` directly.
     ax.add_diagonal()
 
 """
+
 import matplotlib
+import numpy as np
+import scipy.stats
 from matplotlib import axes
 from matplotlib.projections import projection_registry
-import scipy.stats
-import numpy as np
 
-__all__ = ('PPPlot',)
+__all__ = ("PPPlot",)
 
 
 class PPPlot(axes.Axes):
     """Construct a probability--probability (P--P) plot."""
 
-    name = 'pp_plot'
+    name = "pp_plot"
 
     def __init__(self, *args, **kwargs):
         # Call parent constructor
@@ -93,13 +94,13 @@ class PPPlot(axes.Axes):
             if np.ndim(ps) == 1:
                 ps = np.sort(np.atleast_1d(ps))
                 n = len(ps)
-                xs = np.concatenate(([0.], ps, [1.]))
-                ys = np.concatenate(([0.], np.arange(1, n + 1) / n, [1.]))
+                xs = np.concatenate(([0.0], ps, [1.0]))
+                ys = np.concatenate(([0.0], np.arange(1, n + 1) / n, [1.0]))
             elif np.ndim(ps) == 2:
-                xs = np.concatenate(([0.], ps[0], [1.]))
-                ys = np.concatenate(([0.], ps[1], [1.]))
+                xs = np.concatenate(([0.0], ps[0], [1.0]))
+                ys = np.concatenate(([0.0], ps[1], [1.0]))
             else:
-                raise ValueError('All series must be 1- or 2-dimensional')
+                raise ValueError("All series must be 1- or 2-dimensional")
             yield xs
             yield ys
 
@@ -138,11 +139,11 @@ class PPPlot(axes.Axes):
 
         # Make copy of kwargs to pass to plot()
         kwargs = dict(kwargs)
-        ds = kwargs.pop('drawstyle', 'default')
-        if (ds == 'default' and 2 * min_n > self.bbox.width) or ds == 'lines':
-            kwargs['drawstyle'] = 'default'
+        ds = kwargs.pop("drawstyle", "default")
+        if (ds == "default" and 2 * min_n > self.bbox.width) or ds == "lines":
+            kwargs["drawstyle"] = "default"
         else:
-            kwargs['drawstyle'] = 'steps-post'
+            kwargs["drawstyle"] = "steps-post"
 
         return self.plot(*args, **kwargs)
 
@@ -162,17 +163,21 @@ class PPPlot(axes.Axes):
             y = ys[i]
             if y == x:
                 continue
-            self.plot([x, x, 0], [0, y, y], '--', color='black', linewidth=0.5)
+            self.plot([x, x, 0], [0, y, y], "--", color="black", linewidth=0.5)
             if y < x:
-                self.plot([x, y], [y, y], '-', color='black', linewidth=1)
+                self.plot([x, y], [y, y], "-", color="black", linewidth=1)
                 self.text(
-                    x, y, ' {0:.02f} '.format(np.around(x - y, 2)),
-                    ha='left', va='top')
+                    x, y, " {0:.02f} ".format(np.around(x - y, 2)), ha="left", va="top"
+                )
             else:
-                self.plot([x, x], [x, y], '-', color='black', linewidth=1)
+                self.plot([x, x], [x, y], "-", color="black", linewidth=1)
                 self.text(
-                    x, y, ' {0:.02f} '.format(np.around(y - x, 2)),
-                    ha='right', va='bottom')
+                    x,
+                    y,
+                    " {0:.02f} ".format(np.around(y - x, 2)),
+                    ha="right",
+                    va="bottom",
+                )
 
     def add_diagonal(self, *args, **kwargs):
         """Add a diagonal line to the plot, running from (0, 0) to (1, 1).
@@ -185,9 +190,9 @@ class PPPlot(axes.Axes):
         """
         # Make copy of kwargs to pass to plot()
         kwargs = dict(kwargs)
-        kwargs.setdefault('color', 'black')
-        kwargs.setdefault('linestyle', 'dashed')
-        kwargs.setdefault('linewidth', 0.5)
+        kwargs.setdefault("color", "black")
+        kwargs.setdefault("linestyle", "dashed")
+        kwargs.setdefault("linewidth", 0.5)
 
         # Plot diagonal line
         return self.plot([0, 1], [0, 1], *args, **kwargs)
@@ -214,15 +219,14 @@ class PPPlot(axes.Axes):
 
         # Make copy of kwargs to pass to plot()
         kwargs = dict(kwargs)
-        kwargs.setdefault('color', 'black')
-        kwargs.setdefault('alpha', 0.5)
-        kwargs.setdefault('linewidth', 0.25)
+        kwargs.setdefault("color", "black")
+        kwargs.setdefault("alpha", 0.5)
+        kwargs.setdefault("linewidth", 0.25)
 
         # Plot series
         return self.add_series(*args, **kwargs)
 
-    def add_confidence_band(
-            self, nsamples, alpha=0.95, annotate=True, **kwargs):
+    def add_confidence_band(self, nsamples, alpha=0.95, annotate=True, **kwargs):
         """Add a target confidence band.
 
         Parameters
@@ -247,30 +251,35 @@ class PPPlot(axes.Axes):
 
         # Make copy of kwargs to pass to fill_betweenx()
         kwargs = dict(kwargs)
-        kwargs.setdefault('color', 'lightgray')
-        kwargs.setdefault('edgecolor', 'gray')
-        kwargs.setdefault('linewidth', 0.5)
-        fontsize = kwargs.pop('fontsize', 'x-small')
+        kwargs.setdefault("color", "lightgray")
+        kwargs.setdefault("edgecolor", "gray")
+        kwargs.setdefault("linewidth", 0.5)
+        fontsize = kwargs.pop("fontsize", "x-small")
 
         if annotate:
-            percent_sign = r'\%' if matplotlib.rcParams['text.usetex'] else '%'
-            label = 'target {0:g}{1:s}\nconfidence band'.format(
-                100 * alpha, percent_sign)
+            percent_sign = r"\%" if matplotlib.rcParams["text.usetex"] else "%"
+            label = "target {0:g}{1:s}\nconfidence band".format(
+                100 * alpha, percent_sign
+            )
 
             self.annotate(
                 label,
                 xy=(1, 1),
                 xytext=(0, 0),
-                xycoords='axes fraction',
-                textcoords='offset points',
+                xycoords="axes fraction",
+                textcoords="offset points",
                 annotation_clip=False,
-                horizontalalignment='right',
-                verticalalignment='bottom',
+                horizontalalignment="right",
+                verticalalignment="bottom",
                 fontsize=fontsize,
                 arrowprops=dict(
                     arrowstyle="->",
-                    shrinkA=0, shrinkB=2, linewidth=0.5,
-                    connectionstyle="angle,angleA=0,angleB=45,rad=0"))
+                    shrinkA=0,
+                    shrinkB=2,
+                    linewidth=0.5,
+                    connectionstyle="angle,angleA=0,angleB=45,rad=0",
+                ),
+            )
 
         return self.fill_betweenx(p, ci_lo, ci_hi, **kwargs)
 

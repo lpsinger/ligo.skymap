@@ -62,14 +62,20 @@ References
        :doi:`10.3847/2041-8205/826/1/L13`
 
 """  # noqa: E501
-from astropy.coordinates import (
-    CartesianRepresentation, DynamicMatrixTransform, EarthLocationAttribute,
-    frame_transform_graph, ITRS, SphericalRepresentation)
-from astropy.coordinates.matrix_utilities import matrix_transpose
-from astropy import units as u
-import numpy as np
 
-__all__ = ('DetectorFrame',)
+import numpy as np
+from astropy import units as u
+from astropy.coordinates import (
+    ITRS,
+    CartesianRepresentation,
+    DynamicMatrixTransform,
+    EarthLocationAttribute,
+    SphericalRepresentation,
+    frame_transform_graph,
+)
+from astropy.coordinates.matrix_utilities import matrix_transpose
+
+__all__ = ("DetectorFrame",)
 
 
 class DetectorFrame(ITRS):
@@ -85,16 +91,15 @@ class DetectorFrame(ITRS):
 
 @frame_transform_graph.transform(DynamicMatrixTransform, ITRS, DetectorFrame)
 def itrs_to_detectorframe(from_coo, to_frame):
-    e_z = CartesianRepresentation(u.Quantity(to_frame.site_1.geocentric) -
-                                  u.Quantity(to_frame.site_2.geocentric))
+    e_z = CartesianRepresentation(
+        u.Quantity(to_frame.site_1.geocentric) - u.Quantity(to_frame.site_2.geocentric)
+    )
     e_z /= e_z.norm()
     e_x = CartesianRepresentation(0, 0, 1).cross(e_z)
     e_x /= e_x.norm()
     e_y = e_z.cross(e_x)
 
-    return np.vstack((e_x.xyz.value,
-                      e_y.xyz.value,
-                      e_z.xyz.value))
+    return np.vstack((e_x.xyz.value, e_y.xyz.value, e_z.xyz.value))
 
 
 @frame_transform_graph.transform(DynamicMatrixTransform, DetectorFrame, ITRS)

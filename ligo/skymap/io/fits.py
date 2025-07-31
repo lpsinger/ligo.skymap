@@ -71,17 +71,19 @@ that you can use to populate `standard or conventional FITS header keys`_:
 .. _`standard or conventional FITS header keys`: https://fits.gsfc.nasa.gov/fits_dictionary.html
 """  # noqa: E501
 
-from io import StringIO
+import itertools
 import logging
+from io import StringIO
+
+import astropy_healpix as ah
 import healpy as hp
 import numpy as np
+from astropy import units as u
 from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
-from astropy import units as u
 from igwn_ligolw import lsctables
-import itertools
-import astropy_healpix as ah
+
 from .. import moc
 from ..util.ilwd import ilwd_to_int
 
@@ -119,7 +121,7 @@ def gps_to_iso8601(gps_time):
     '2011-09-14T02:00:00.000000'
 
     """
-    return Time(float(gps_time), format='gps', precision=6).utc.isot
+    return Time(float(gps_time), format="gps", precision=6).utc.isot
 
 
 def iso8601_to_gps(iso8601):
@@ -143,7 +145,7 @@ def iso8601_to_gps(iso8601):
     1129501781.2
 
     """
-    return Time(iso8601, scale='utc').gps
+    return Time(iso8601, scale="utc").gps
 
 
 def gps_to_mjd(gps_time):
@@ -165,7 +167,7 @@ def gps_to_mjd(gps_time):
     '57316.937085648'
 
     """
-    return Time(gps_time, format='gps').utc.mjd
+    return Time(gps_time, format="gps").utc.mjd
 
 
 def identity(x):
@@ -183,7 +185,7 @@ def instruments_from_fits(value):
 
 
 def metadata_for_version_module(version):
-    return {'vcs_version': version.__spec__.parent + ' ' + version.version}
+    return {"vcs_version": version.__spec__.parent + " " + version.version}
 
 
 def normalize_objid(objid):
@@ -196,48 +198,88 @@ def normalize_objid(objid):
             return str(objid)
 
 
-DEFAULT_NUNIQ_NAMES = ('PROBDENSITY', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
+DEFAULT_NUNIQ_NAMES = ("PROBDENSITY", "DISTMU", "DISTSIGMA", "DISTNORM")
 DEFAULT_NUNIQ_UNITS = (u.steradian**-1, u.Mpc, u.Mpc, u.Mpc**-2)
-DEFAULT_NESTED_NAMES = ('PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM')
+DEFAULT_NESTED_NAMES = ("PROB", "DISTMU", "DISTSIGMA", "DISTNORM")
 DEFAULT_NESTED_UNITS = (u.pix**-1, u.Mpc, u.Mpc, u.Mpc**-2)
 FITS_META_MAPPING = (
-    ('objid', 'OBJECT', 'Unique identifier for this event',
-     normalize_objid, normalize_objid),
-    ('url', 'REFERENC', 'URL of this event', identity, identity),
-    ('instruments', 'INSTRUME', 'Instruments that triggered this event',
-     instruments_to_fits, instruments_from_fits),
-    ('gps_time', 'DATE-OBS', 'UTC date of the observation',
-     gps_to_iso8601, iso8601_to_gps),
-    ('gps_time', 'MJD-OBS', 'modified Julian date of the observation',
-     gps_to_mjd, None),
-    ('gps_creation_time', 'DATE', 'UTC date of file creation',
-     gps_to_iso8601, iso8601_to_gps),
-    ('creator', 'CREATOR', 'Program that created this file',
-     identity, identity),
-    ('origin', 'ORIGIN', 'Organization responsible for this FITS file',
-     identity, identity),
-    ('runtime', 'RUNTIME', 'Runtime in seconds of the CREATOR program',
-     identity, identity),
-    ('distmean', 'DISTMEAN', 'Posterior mean distance (Mpc)',
-     identity, identity),
-    ('diststd', 'DISTSTD', 'Posterior standard deviation of distance (Mpc)',
-     identity, identity),
-    ('log_bci', 'LOGBCI', 'Log Bayes factor: coherent vs. incoherent',
-     identity, identity),
-    ('log_bsn', 'LOGBSN', 'Log Bayes factor: signal vs. noise',
-     identity, identity),
-    ('vcs_version', 'VCSVERS', 'Software version',
-     identity, identity),
-    ('vcs_revision', 'VCSREV', 'Software revision (Git)',
-     identity, identity),
-    ('build_date', 'DATE-BLD', 'Software build date',
-     identity, identity))
+    (
+        "objid",
+        "OBJECT",
+        "Unique identifier for this event",
+        normalize_objid,
+        normalize_objid,
+    ),
+    ("url", "REFERENC", "URL of this event", identity, identity),
+    (
+        "instruments",
+        "INSTRUME",
+        "Instruments that triggered this event",
+        instruments_to_fits,
+        instruments_from_fits,
+    ),
+    (
+        "gps_time",
+        "DATE-OBS",
+        "UTC date of the observation",
+        gps_to_iso8601,
+        iso8601_to_gps,
+    ),
+    (
+        "gps_time",
+        "MJD-OBS",
+        "modified Julian date of the observation",
+        gps_to_mjd,
+        None,
+    ),
+    (
+        "gps_creation_time",
+        "DATE",
+        "UTC date of file creation",
+        gps_to_iso8601,
+        iso8601_to_gps,
+    ),
+    ("creator", "CREATOR", "Program that created this file", identity, identity),
+    (
+        "origin",
+        "ORIGIN",
+        "Organization responsible for this FITS file",
+        identity,
+        identity,
+    ),
+    (
+        "runtime",
+        "RUNTIME",
+        "Runtime in seconds of the CREATOR program",
+        identity,
+        identity,
+    ),
+    ("distmean", "DISTMEAN", "Posterior mean distance (Mpc)", identity, identity),
+    (
+        "diststd",
+        "DISTSTD",
+        "Posterior standard deviation of distance (Mpc)",
+        identity,
+        identity,
+    ),
+    (
+        "log_bci",
+        "LOGBCI",
+        "Log Bayes factor: coherent vs. incoherent",
+        identity,
+        identity,
+    ),
+    ("log_bsn", "LOGBSN", "Log Bayes factor: signal vs. noise", identity, identity),
+    ("vcs_version", "VCSVERS", "Software version", identity, identity),
+    ("vcs_revision", "VCSREV", "Software revision (Git)", identity, identity),
+    ("build_date", "DATE-BLD", "Software build date", identity, identity),
+)
 
 f = StringIO()
 Table(
     rows=[row[:3] for row in FITS_META_MAPPING],
-    names=['Python keyword argument', 'FITS key', 'FITS comment']
-).write(f, format='ascii.rst')
+    names=["Python keyword argument", "FITS key", "FITS comment"],
+).write(f, format="ascii.rst")
 __doc__ += f.getvalue()
 del f
 
@@ -338,46 +380,42 @@ def write_sky_map(filename, m, **kwargs):
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
     """  # noqa: E501
-    log.debug('normalizing metadata')
+    log.debug("normalizing metadata")
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
         m = Table(m, copy=False)
     else:
         if np.ndim(m) == 1:
             m = [m]
-        m = Table(m, names=DEFAULT_NESTED_NAMES[:len(m)], copy=False)
+        m = Table(m, names=DEFAULT_NESTED_NAMES[: len(m)], copy=False)
     m.meta.update(kwargs)
 
-    if 'UNIQ' in m.colnames:
+    if "UNIQ" in m.colnames:
         default_names = DEFAULT_NUNIQ_NAMES
         default_units = DEFAULT_NUNIQ_UNITS
         extra_header = [
-            ('PIXTYPE', 'HEALPIX',
-             'HEALPIX pixelisation'),
-            ('ORDERING', 'NUNIQ',
-             'Pixel ordering scheme: RING, NESTED, or NUNIQ'),
-            ('COORDSYS', 'C',
-             'Ecliptic, Galactic or Celestial (equatorial)'),
-            ('MOCORDER', moc.uniq2order(m['UNIQ'].max()),
-             'MOC resolution (best order)'),
-            ('INDXSCHM', 'EXPLICIT',
-             'Indexing: IMPLICIT or EXPLICIT')]
+            ("PIXTYPE", "HEALPIX", "HEALPIX pixelisation"),
+            ("ORDERING", "NUNIQ", "Pixel ordering scheme: RING, NESTED, or NUNIQ"),
+            ("COORDSYS", "C", "Ecliptic, Galactic or Celestial (equatorial)"),
+            (
+                "MOCORDER",
+                moc.uniq2order(m["UNIQ"].max()),
+                "MOC resolution (best order)",
+            ),
+            ("INDXSCHM", "EXPLICIT", "Indexing: IMPLICIT or EXPLICIT"),
+        ]
         # Ignore nest keyword argument if present
-        m.meta.pop('nest', False)
+        m.meta.pop("nest", False)
     else:
         default_names = DEFAULT_NESTED_NAMES
         default_units = DEFAULT_NESTED_UNITS
-        ordering = 'NESTED' if m.meta.pop('nest', False) else 'RING'
+        ordering = "NESTED" if m.meta.pop("nest", False) else "RING"
         extra_header = [
-            ('PIXTYPE', 'HEALPIX',
-             'HEALPIX pixelisation'),
-            ('ORDERING', ordering,
-             'Pixel ordering scheme: RING, NESTED, or NUNIQ'),
-            ('COORDSYS', 'C',
-             'Ecliptic, Galactic or Celestial (equatorial)'),
-            ('NSIDE', ah.npix_to_nside(len(m)),
-             'Resolution parameter of HEALPIX'),
-            ('INDXSCHM', 'IMPLICIT',
-             'Indexing: IMPLICIT or EXPLICIT')]
+            ("PIXTYPE", "HEALPIX", "HEALPIX pixelisation"),
+            ("ORDERING", ordering, "Pixel ordering scheme: RING, NESTED, or NUNIQ"),
+            ("COORDSYS", "C", "Ecliptic, Galactic or Celestial (equatorial)"),
+            ("NSIDE", ah.npix_to_nside(len(m)), "Resolution parameter of HEALPIX"),
+            ("INDXSCHM", "IMPLICIT", "Indexing: IMPLICIT or EXPLICIT"),
+        ]
 
     for key, rows in itertools.groupby(FITS_META_MAPPING, lambda row: row[0]):
         try:
@@ -388,8 +426,7 @@ def write_sky_map(filename, m, **kwargs):
             for row in rows:
                 _, fits_key, fits_comment, to_fits, _ = row
                 if to_fits is not None:
-                    extra_header.append(
-                        (fits_key, to_fits(value), fits_comment))
+                    extra_header.append((fits_key, to_fits(value), fits_comment))
 
     for default_name, default_unit in zip(default_names, default_units):
         try:
@@ -400,11 +437,11 @@ def write_sky_map(filename, m, **kwargs):
             if not col.unit:
                 col.unit = default_unit
 
-    log.debug('converting from Astropy table to FITS HDU list')
+    log.debug("converting from Astropy table to FITS HDU list")
     hdu = fits.table_to_hdu(m)
     hdu.header.extend(extra_header)
     hdulist = fits.HDUList([fits.PrimaryHDU(), hdu])
-    log.debug('saving')
+    log.debug("saving")
     hdulist.writeto(filename, overwrite=True)
 
 
@@ -453,35 +490,42 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     ...     np.testing.assert_array_equal(m, hp.ring2nest(nside, ipix_nest))
 
     """
-    m = Table.read(filename, format='fits', **kwargs)
+    m = Table.read(filename, format="fits", **kwargs)
 
     # Remove some keys that we do not need
     for key in (
-            'PIXTYPE', 'EXTNAME', 'NSIDE', 'FIRSTPIX', 'LASTPIX', 'INDXSCHM',
-            'MOCORDER'):
+        "PIXTYPE",
+        "EXTNAME",
+        "NSIDE",
+        "FIRSTPIX",
+        "LASTPIX",
+        "INDXSCHM",
+        "MOCORDER",
+    ):
         m.meta.pop(key, None)
 
-    if m.meta.pop('COORDSYS', 'C') != 'C':
-        raise ValueError('ligo.skymap only reads and writes sky maps in '
-                         'equatorial coordinates.')
+    if m.meta.pop("COORDSYS", "C") != "C":
+        raise ValueError(
+            "ligo.skymap only reads and writes sky maps in equatorial coordinates."
+        )
 
     try:
-        value = m.meta.pop('ORDERING')
+        value = m.meta.pop("ORDERING")
     except KeyError:
         pass
     else:
-        if value == 'RING':
-            m.meta['nest'] = False
-        elif value == 'NESTED':
-            m.meta['nest'] = True
-        elif value == 'NUNIQ':
+        if value == "RING":
+            m.meta["nest"] = False
+        elif value == "NESTED":
+            m.meta["nest"] = True
+        elif value == "NUNIQ":
             pass
         else:
             raise ValueError(
-                'ORDERING card in header has unknown value: {0}'.format(value))
+                "ORDERING card in header has unknown value: {0}".format(value)
+            )
 
-    for fits_key, rows in itertools.groupby(
-            FITS_META_MAPPING, lambda row: row[1]):
+    for fits_key, rows in itertools.groupby(FITS_META_MAPPING, lambda row: row[1]):
         try:
             value = m.meta.pop(fits_key)
         except KeyError:
@@ -497,65 +541,69 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
     #
     # Fermi may change to our convention in the future, but for now we
     # rename the column.
-    if 'PROBABILITY' in m.colnames:
-        m.rename_column('PROBABILITY', 'PROB')
+    if "PROBABILITY" in m.colnames:
+        m.rename_column("PROBABILITY", "PROB")
 
     # For a long time, we produced files with a UNIQ column that was an
     # unsigned integer. Cast it here to a signed integer so that the user
     # can handle old or new sky maps the same way.
-    if 'UNIQ' in m.colnames:
-        m['UNIQ'] = m['UNIQ'].astype(np.int64)
+    if "UNIQ" in m.colnames:
+        m["UNIQ"] = m["UNIQ"].astype(np.int64)
 
-    if 'UNIQ' not in m.colnames:
+    if "UNIQ" not in m.colnames:
         m = Table([col.ravel() for col in m.columns.values()], meta=m.meta)
 
-    if 'UNIQ' in m.colnames and not moc:
+    if "UNIQ" in m.colnames and not moc:
         from ..bayestar import rasterize
+
         m = rasterize(m)
-        m.meta['nest'] = True
-    elif 'UNIQ' not in m.colnames and moc:
+        m.meta["nest"] = True
+    elif "UNIQ" not in m.colnames and moc:
         from ..bayestar import derasterize
-        if not m.meta['nest']:
+
+        if not m.meta["nest"]:
             npix = len(m)
             nside = ah.npix_to_nside(npix)
             m = m[hp.nest2ring(nside, np.arange(npix))]
         m = derasterize(m)
-        m.meta.pop('nest', None)
+        m.meta.pop("nest", None)
 
-    if 'UNIQ' not in m.colnames:
+    if "UNIQ" not in m.colnames:
         npix = len(m)
         nside = ah.npix_to_nside(npix)
 
         if nest is None:
             pass
-        elif m.meta['nest'] and not nest:
+        elif m.meta["nest"] and not nest:
             m = m[hp.ring2nest(nside, np.arange(npix))]
-        elif not m.meta['nest'] and nest:
+        elif not m.meta["nest"] and nest:
             m = m[hp.nest2ring(nside, np.arange(npix))]
 
     if moc:
         return m
     elif distances:
-        return tuple(
-            np.asarray(m[name]) for name in DEFAULT_NESTED_NAMES), m.meta
+        return tuple(np.asarray(m[name]) for name in DEFAULT_NESTED_NAMES), m.meta
     else:
         return np.asarray(m[DEFAULT_NESTED_NAMES[0]]), m.meta
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import os
+
     nside = 128
     npix = ah.nside_to_npix(nside)
     prob = np.random.random(npix)
     prob /= sum(prob)
 
     write_sky_map(
-        'test.fits.gz', prob,
-        objid='FOOBAR 12345',
+        "test.fits.gz",
+        prob,
+        objid="FOOBAR 12345",
         gps_time=1049492268.25,
         creator=os.path.basename(__file__),
-        url='http://www.youtube.com/watch?v=0ccKPSVQcFk',
-        origin='LIGO Scientific Collaboration',
-        runtime=21.5)
+        url="http://www.youtube.com/watch?v=0ccKPSVQcFk",
+        origin="LIGO Scientific Collaboration",
+        runtime=21.5,
+    )
 
-    print(read_sky_map('test.fits.gz'))
+    print(read_sky_map("test.fits.gz"))

@@ -1,10 +1,10 @@
 import astropy_healpix as ah
+import healpy as hp
+import numpy as np
+import pytest
+from astropy import units as u
 from astropy.coordinates import CartesianRepresentation, SkyCoord
 from astropy.table import Table
-from astropy import units as u
-import numpy as np
-import healpy as hp
-import pytest
 from scipy import stats
 
 from ...distance import cartesian_kde_to_moments, moments_to_parameters
@@ -36,17 +36,22 @@ def cartesian_gaussian_to_skymap(level, mean, cov):
     means = mean[np.newaxis, ..., np.newaxis]
     inv_covs = np.linalg.inv(cov)[np.newaxis, ...]
     weights = np.ones(1)
-    probdensity, distmean, diststd = np.transpose([
-        cartesian_kde_to_moments(n, means, inv_covs, weights) for n in coords])
+    probdensity, distmean, diststd = np.transpose(
+        [cartesian_kde_to_moments(n, means, inv_covs, weights) for n in coords]
+    )
 
     # Create 3D, multi-order sky map.
     uniq = nest2uniq(level, ipix)
     distmu, distsigma, distnorm = moments_to_parameters(distmean, diststd)
-    return Table({'UNIQ': uniq,
-                  'PROBDENSITY': probdensity,
-                  'DISTMU': distmu,
-                  'DISTSIGMA': distsigma,
-                  'DISTNORM': distnorm})
+    return Table(
+        {
+            "UNIQ": uniq,
+            "PROBDENSITY": probdensity,
+            "DISTMU": distmu,
+            "DISTSIGMA": distsigma,
+            "DISTNORM": distnorm,
+        }
+    )
 
 
 @pytest.fixture(params=range(3))
@@ -55,9 +60,10 @@ def contours(request):
     return np.random.uniform(size=request.param)
 
 
-@pytest.mark.parametrize('n_coordinates', [None, *range(3)])
+@pytest.mark.parametrize("n_coordinates", [None, *range(3)])
 def test_crossmatch_cartesian_gaussian_distribution(
-        cartesian_gaussian, contours, n_coordinates):
+    cartesian_gaussian, contours, n_coordinates
+):
     """Test on a Cartesian Gaussian distribution.
 
     This distribution has closed-form expressions for the following outputs:
@@ -67,19 +73,21 @@ def test_crossmatch_cartesian_gaussian_distribution(
     * searched_vol
     """
     skymap = cartesian_gaussian_to_skymap(
-        6, cartesian_gaussian.mean, cartesian_gaussian.cov)
+        6, cartesian_gaussian.mean, cartesian_gaussian.cov
+    )
 
     if n_coordinates is None:
         coordinates = None
     else:
         coordinates_xyz = cartesian_gaussian.rvs(size=n_coordinates)
-        coordinates = SkyCoord(*coordinates_xyz.T * u.Mpc,
-                               representation_type=CartesianRepresentation)
+        coordinates = SkyCoord(
+            *coordinates_xyz.T * u.Mpc, representation_type=CartesianRepresentation
+        )
 
     result = crossmatch(skymap, contours=contours, coordinates=coordinates)
 
-    standard_vol = 4/3*np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
-    expected = standard_vol * stats.chi(3).ppf(contours)**3
+    standard_vol = 4 / 3 * np.pi * np.sqrt(np.linalg.det(cartesian_gaussian.cov))
+    expected = standard_vol * stats.chi(3).ppf(contours) ** 3
     np.testing.assert_allclose(result.contour_vols, expected, rtol=2e-3)
 
     if coordinates is None:
@@ -95,11 +103,9 @@ def test_crossmatch_cartesian_gaussian_distribution(
         np.testing.assert_allclose(result.probdensity_vol, expected, rtol=4e-2)
 
         d = coordinates_xyz - cartesian_gaussian.mean
-        r = np.sqrt(np.sum(((d @ np.linalg.inv(cartesian_gaussian.cov)) * d),
-                           axis=-1))
+        r = np.sqrt(np.sum(((d @ np.linalg.inv(cartesian_gaussian.cov)) * d), axis=-1))
         expected = stats.chi(3).cdf(r)
-        np.testing.assert_allclose(result.searched_prob_vol, expected,
-                                   atol=1e-2)
+        np.testing.assert_allclose(result.searched_prob_vol, expected, atol=1e-2)
 
         expected = standard_vol * r**3
         np.testing.assert_allclose(result.searched_vol, expected, rtol=6e-2)

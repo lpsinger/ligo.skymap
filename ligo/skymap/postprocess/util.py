@@ -17,14 +17,22 @@
 """Postprocessing utilities for HEALPix sky maps."""
 
 import astropy_healpix as ah
-from astropy.coordinates import (CartesianRepresentation, SkyCoord,
-                                 UnitSphericalRepresentation)
-from astropy import units as u
 import healpy as hp
 import numpy as np
+from astropy import units as u
+from astropy.coordinates import (
+    CartesianRepresentation,
+    SkyCoord,
+    UnitSphericalRepresentation,
+)
 
-__all__ = ('find_greedy_credible_levels', 'interp_greedy_credible_levels',
-           'smooth_ud_grade', 'posterior_mean', 'posterior_max')
+__all__ = (
+    "find_greedy_credible_levels",
+    "interp_greedy_credible_levels",
+    "smooth_ud_grade",
+    "posterior_mean",
+    "posterior_max",
+)
 
 
 def find_greedy_credible_levels(p, ranking=None):
@@ -114,5 +122,4 @@ def posterior_max(prob, nest=False):
     npix = len(prob)
     nside = ah.npix_to_nside(npix)
     i = np.argmax(prob)
-    return SkyCoord(
-        *hp.pix2ang(nside, i, nest=nest, lonlat=True), unit=u.deg)
+    return SkyCoord(*hp.pix2ang(nside, i, nest=nest, lonlat=True), unit=u.deg)

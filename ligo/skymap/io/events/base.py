@@ -18,12 +18,12 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Mapping
 
-__all__ = ('EventSource', 'Event', 'SingleEvent')
+__all__ = ("EventSource", "Event", "SingleEvent")
 
 
 def _fmt(obj, keys):
-    kvs = ', '.join('{}={!r}'.format(key, getattr(obj, key)) for key in keys)
-    return '<{}({})>'.format(obj.__class__.__name__, kvs)
+    kvs = ", ".join("{}={!r}".format(key, getattr(obj, key)) for key in keys)
+    return "<{}({})>".format(obj.__class__.__name__, kvs)
 
 
 class EventSource(Mapping):
@@ -37,20 +37,21 @@ class EventSource(Mapping):
         try:
             length = len(self)
         except (NotImplementedError, TypeError):
-            contents = '...'
+            contents = "..."
         else:
-            contents = '...{} items...'.format(length)
-        return '<{}({{{}}})>'.format(self.__class__.__name__, contents)
+            contents = "...{} items...".format(length)
+        return "<{}({{{}}})>".format(self.__class__.__name__, contents)
 
     def __repr__(self):
         try:
             len(self)
         except NotImplementedError:
-            contents = '...'
+            contents = "..."
         else:
-            contents = ', '.join('{}: {!r}'.format(key, value)
-                                 for key, value in self.items())
-        return '{}({{{}}})'.format(self.__class__.__name__, contents)
+            contents = ", ".join(
+                "{}: {!r}".format(key, value) for key, value in self.items()
+            )
+        return "{}({{{}}})".format(self.__class__.__name__, contents)
 
 
 class Event(metaclass=ABCMeta):
@@ -75,7 +76,7 @@ class Event(metaclass=ABCMeta):
     def template_args(self):
         raise NotImplementedError
 
-    __str_keys = ('singles',)
+    __str_keys = ("singles",)
 
     def __str__(self):
         return _fmt(self, self.__str_keys)
@@ -139,12 +140,12 @@ class SingleEvent(metaclass=ABCMeta):
     def snr_series(self):
         return None
 
-    __str_keys = ('detector', 'snr', 'phase', 'time')
+    __str_keys = ("detector", "snr", "phase", "time")
 
     def __str__(self):
         keys = self.__str_keys
         if self.time != self.zerolag_time:
-            keys += ('zerolag_time',)
+            keys += ("zerolag_time",)
         return _fmt(self, keys)
 
     __repr__ = __str__

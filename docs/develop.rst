@@ -42,6 +42,19 @@ Then install it with pip::
 
     $ pip install .
 
+.. _pre-commit-hook:
+
+Pre-commit hooks and linting
+----------------------------
+
+If you are preparing to contribute to ligo.skymap, then after cloning the git
+repository, please install the `pre-commit hooks`_ to automatically format your
+code consistently using the `pre-commit`_ and `ruff`_ tools. Run the following
+commands::
+
+    $ pip install pre-commit
+    $ pre-commit install
+
 Environment variables that control the build
 --------------------------------------------
 
@@ -86,3 +99,6 @@ advantage of new Python language features.
 .. _`Instrumentation and Tracing Technology (ITT)`: https://software.intel.com/content/www/us/en/develop/documentation/vtune-help/top/api-support/instrumentation-and-tracing-technology-apis.html
 .. _`VTune Profiler`: https://software.intel.com/content/www/us/en/develop/tools/vtune-profiler.html`
 .. _`SPEC 0 — Minimum Supported Dependencies`: https://scientific-python.org/specs/spec-0000/
+.. _`pre-commit hooks`: https://git-scm.com/book/ms/v2/Customizing-Git-Git-Hooks
+.. _`pre-commit`: https://pre-commit.com/
+.. _`ruff`: https://docs.astral.sh/ruff/

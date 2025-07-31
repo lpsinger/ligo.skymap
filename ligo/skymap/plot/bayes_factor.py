@@ -16,17 +16,21 @@
 #
 """Bullet charts for Bayes factors."""
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 
-__all__ = ('plot_bayes_factor',)
+__all__ = ("plot_bayes_factor",)
 
 
-def plot_bayes_factor(logb,
-                      values=(1, 3, 5),
-                      labels=('', 'strong', 'very strong'),
-                      xlim=7, title=None, palette='RdYlBu',
-                      var_label="B"):
+def plot_bayes_factor(
+    logb,
+    values=(1, 3, 5),
+    labels=("", "strong", "very strong"),
+    xlim=7,
+    title=None,
+    palette="RdYlBu",
+    var_label="B",
+):
     """Visualize a Bayes factor as a `bullet graph`_.
 
     Make a bar chart of a log Bayes factor as compared to a set of subjective
@@ -67,43 +71,60 @@ def plot_bayes_factor(logb,
         plot_bayes_factor(6.3, title='BAYESTAR is awesome')
 
     """
-    with plt.style.context('seaborn-v0_8-notebook'):
+    with plt.style.context("seaborn-v0_8-notebook"):
         fig, ax = plt.subplots(figsize=(6, 1.7), tight_layout=True)
         ax.set_xlim(-xlim, xlim)
         ax.set_ylim(-0.5, 0.5)
         ax.set_yticks([])
         ax.set_title(title)
-        ax.set_ylabel(r'$\ln\,{}$'.format(var_label), rotation=0,
-                      rotation_mode='anchor',
-                      ha='right', va='center')
+        ax.set_ylabel(
+            r"$\ln\,{}$".format(var_label),
+            rotation=0,
+            rotation_mode="anchor",
+            ha="right",
+            va="center",
+        )
 
         # Add human-friendly labels
         ticks = (*(-x for x in reversed(values)), 0, *values)
         ticklabels = (
-            *(f'{s}\nevidence\nagainst'.strip() for s in reversed(labels)), '',
-            *(f'{s}\nevidence\nfor'.strip() for s in labels))
+            *(f"{s}\nevidence\nagainst".strip() for s in reversed(labels)),
+            "",
+            *(f"{s}\nevidence\nfor".strip() for s in labels),
+        )
         ax.set_xticks(ticks)
         ax.set_xticklabels(ticklabels)
         plt.setp(ax.get_xticklines(), visible=False)
-        plt.setp(ax.get_xticklabels()[:len(ticks) // 2], ha='right')
-        plt.setp(ax.get_xticklabels()[len(ticks) // 2:], ha='left')
+        plt.setp(ax.get_xticklabels()[: len(ticks) // 2], ha="right")
+        plt.setp(ax.get_xticklabels()[len(ticks) // 2 :], ha="left")
 
         # Plot colored bands for confidence thresholds
-        fmt = plt.FuncFormatter(lambda x, _: f'{x:+g}'.replace('+0', '0'))
+        fmt = plt.FuncFormatter(lambda x, _: f"{x:+g}".replace("+0", "0"))
         ax2 = ax.twiny()
         ax2.set_xlim(*ax.get_xlim())
         ax2.set_xticks(ticks)
         ax2.xaxis.set_major_formatter(fmt)
         levels = (-xlim, *ticks, xlim)
         colors = plt.get_cmap(palette)(np.arange(1, len(levels)) / len(levels))
-        ax.barh(0, np.diff(levels), 1, levels[:-1],
-                linewidth=plt.rcParams['xtick.major.width'],
-                color=colors, edgecolor='white')
+        ax.barh(
+            0,
+            np.diff(levels),
+            1,
+            levels[:-1],
+            linewidth=plt.rcParams["xtick.major.width"],
+            color=colors,
+            edgecolor="white",
+        )
 
         # Plot bar for log Bayes factor value
-        ax.barh(0, logb, 0.5, color='black',
-                linewidth=plt.rcParams['xtick.major.width'],
-                edgecolor='white')
+        ax.barh(
+            0,
+            logb,
+            0.5,
+            color="black",
+            linewidth=plt.rcParams["xtick.major.width"],
+            edgecolor="white",
+        )
 
         for ax_ in fig.axes:
             ax_.grid(False)

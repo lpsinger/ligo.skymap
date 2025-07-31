@@ -28,46 +28,69 @@ from . import ArgumentParser
 def parser():
     parser = ArgumentParser()
     parser.add_argument(
-        '-o', '--output', metavar='FILE.geojson',
-        default='-', type=FileType('w'), help='output file [default: stdout]')
+        "-o",
+        "--output",
+        metavar="FILE.geojson",
+        default="-",
+        type=FileType("w"),
+        help="output file [default: stdout]",
+    )
     parser.add_argument(
-        '--contour', metavar='PERCENT', type=float, nargs='+', required=True,
-        help='plot contour enclosing this percentage of probability mass')
+        "--contour",
+        metavar="PERCENT",
+        type=float,
+        nargs="+",
+        required=True,
+        help="plot contour enclosing this percentage of probability mass",
+    )
     parser.add_argument(
-        '-i', '--interpolate',
-        choices='nearest nested bilinear'.split(), default='nearest',
-        help='resampling interpolation method')
+        "-i",
+        "--interpolate",
+        choices="nearest nested bilinear".split(),
+        default="nearest",
+        help="resampling interpolation method",
+    )
     parser.add_argument(
-        '-s', '--simplify', action='store_true', help='simplify contour paths')
+        "-s", "--simplify", action="store_true", help="simplify contour paths"
+    )
     parser.add_argument(
-        '-n', '--nside', metavar='NSIDE', type=int,
-        help='optionally resample to the specified resolution '
-        ' before generating contours')
+        "-n",
+        "--nside",
+        metavar="NSIDE",
+        type=int,
+        help="optionally resample to the specified resolution "
+        " before generating contours",
+    )
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
-        default='-', nargs='?', help='Input FITS file')
+        "input",
+        metavar="INPUT.fits[.gz]",
+        type=FileType("rb"),
+        default="-",
+        nargs="?",
+        help="Input FITS file",
+    )
     return parser
 
 
 def main(args=None):
     with parser().parse_args(args) as opts:
-        import healpy as hp
-        import numpy as np
         import json
 
-        from ..io import fits
+        import healpy as hp
+        import numpy as np
+
         from .. import postprocess
+        from ..io import fits
 
         # Read input file
         prob, _ = fits.read_sky_map(opts.input.name, nest=True)
 
         # Resample if requested
-        if opts.nside is not None and opts.interpolate in (
-                'nearest', 'nested'):
-            prob = hp.ud_grade(prob, opts.nside, order_in='NESTED', power=-2)
-        elif opts.nside is not None and opts.interpolate == 'bilinear':
+        if opts.nside is not None and opts.interpolate in ("nearest", "nested"):
+            prob = hp.ud_grade(prob, opts.nside, order_in="NESTED", power=-2)
+        elif opts.nside is not None and opts.interpolate == "bilinear":
             prob = postprocess.smooth_ud_grade(prob, opts.nside, nest=True)
-        if opts.interpolate == 'nested':
+        if opts.interpolate == "nested":
             prob = postprocess.interpolate_nested(prob, nest=True)
 
         # Find credible levels
@@ -77,23 +100,23 @@ def main(args=None):
         cls[i] = cumsum * 100
 
         # Generate contours
-        paths = list(postprocess.contour(
-            cls, opts.contour, nest=True, degrees=True,
-            simplify=opts.simplify))
+        paths = list(
+            postprocess.contour(
+                cls, opts.contour, nest=True, degrees=True, simplify=opts.simplify
+            )
+        )
 
-        json.dump({
-            'type': 'FeatureCollection',
-            'features': [
-                {
-                    'type': 'Feature',
-                    'properties': {
-                        'credible_level': contour
-                    },
-                    'geometry': {
-                        'type': 'MultiLineString',
-                        'coordinates': path
+        json.dump(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"credible_level": contour},
+                        "geometry": {"type": "MultiLineString", "coordinates": path},
                     }
-                }
-                for contour, path in zip(opts.contour, paths)
-            ]
-        }, opts.output)
+                    for contour, path in zip(opts.contour, paths)
+                ],
+            },
+            opts.output,
+        )

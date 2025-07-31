@@ -58,12 +58,13 @@ Example
     fig.tight_layout()
 
 """
+
 import numpy as np
 from scipy import optimize
 
 from .filter import abs2, exp_i, unwrap
 
-__all__ = ('interpolate_max',)
+__all__ = ("interpolate_max",)
 
 
 #
@@ -93,9 +94,10 @@ def interpolate_max_lanczos(imax, y, window_length):
     """Find the time and maximum absolute value of a time series by Lanczos
     interpolation.
     """
-    yi = y[(imax - window_length):(imax + window_length + 1)]
+    yi = y[(imax - window_length) : (imax + window_length + 1)]
     tmax = optimize.fminbound(
-        lanczos_interpolant_utility_func, -1., 1., (yi,), xtol=1e-5)
+        lanczos_interpolant_utility_func, -1.0, 1.0, (yi,), xtol=1e-5
+    )
     tmax = tmax.item()
     ymax = lanczos_interpolant(tmax, yi).item()
     return imax + tmax, ymax
@@ -107,16 +109,17 @@ def interpolate_max_lanczos(imax, y, window_length):
 
 
 def poly_catmull_rom(y):
-    return np.poly1d([
-        -0.5 * y[0] + 1.5 * y[1] - 1.5 * y[2] + 0.5 * y[3],
-        y[0] - 2.5 * y[1] + 2 * y[2] - 0.5 * y[3],
-        -0.5 * y[0] + 0.5 * y[2],
-        y[1]
-    ])
+    return np.poly1d(
+        [
+            -0.5 * y[0] + 1.5 * y[1] - 1.5 * y[2] + 0.5 * y[3],
+            y[0] - 2.5 * y[1] + 2 * y[2] - 0.5 * y[3],
+            -0.5 * y[0] + 0.5 * y[2],
+            y[1],
+        ]
+    )
 
 
 def interpolate_max_catmull_rom_even(y):
-
     # Construct Catmull-Rom interpolating polynomials for
     # real and imaginary parts
     poly_re = poly_catmull_rom(y.real)
@@ -126,11 +129,11 @@ def interpolate_max_catmull_rom_even(y):
     roots = (poly_re * poly_re.deriv() + poly_im * poly_im.deriv()).r
 
     # Find which of the two matched interior points has a greater magnitude
-    t_max = 0.
+    t_max = 0.0
     y_max = y[1]
     y_max_abs2 = abs2(y_max)
 
-    new_t_max = 1.
+    new_t_max = 1.0
     new_y_max = y[2]
     new_y_max_abs2 = abs2(new_y_max)
 
@@ -156,12 +159,11 @@ def interpolate_max_catmull_rom_even(y):
 
 
 def interpolate_max_catmull_rom(imax, y, window_length):
-    t_max, y_max = interpolate_max_catmull_rom_even(y[imax - 2:imax + 2])
+    t_max, y_max = interpolate_max_catmull_rom_even(y[imax - 2 : imax + 2])
     y_max_abs2 = abs2(y_max)
     t_max = t_max - 1
 
-    new_t_max, new_y_max = interpolate_max_catmull_rom_even(
-        y[imax - 1:imax + 3])
+    new_t_max, new_y_max = interpolate_max_catmull_rom_even(y[imax - 1 : imax + 3])
     new_y_max_abs2 = abs2(new_y_max)
 
     if new_y_max_abs2 > y_max_abs2:
@@ -178,7 +180,6 @@ def interpolate_max_catmull_rom(imax, y, window_length):
 
 
 def interpolate_max_catmull_rom_amp_phase_even(y):
-
     # Construct Catmull-Rom interpolating polynomials for
     # real and imaginary parts
     poly_abs = poly_catmull_rom(np.abs(y))
@@ -188,11 +189,11 @@ def interpolate_max_catmull_rom_amp_phase_even(y):
     roots = poly_abs.r
 
     # Find which of the two matched interior points has a greater magnitude
-    t_max = 0.
+    t_max = 0.0
     y_max = y[1]
     y_max_abs2 = abs2(y_max)
 
-    new_t_max = 1.
+    new_t_max = 1.0
     new_y_max = y[2]
     new_y_max_abs2 = abs2(new_y_max)
 
@@ -218,13 +219,13 @@ def interpolate_max_catmull_rom_amp_phase_even(y):
 
 
 def interpolate_max_catmull_rom_amp_phase(imax, y, window_length):
-    t_max, y_max = interpolate_max_catmull_rom_amp_phase_even(
-        y[imax - 2:imax + 2])
+    t_max, y_max = interpolate_max_catmull_rom_amp_phase_even(y[imax - 2 : imax + 2])
     y_max_abs2 = abs2(y_max)
     t_max = t_max - 1
 
     new_t_max, new_y_max = interpolate_max_catmull_rom_amp_phase_even(
-        y[imax - 1:imax + 3])
+        y[imax - 1 : imax + 3]
+    )
     new_y_max_abs2 = abs2(new_y_max)
 
     if new_y_max_abs2 > y_max_abs2:
@@ -244,17 +245,17 @@ def interpolate_max_quadratic_fit(imax, y, window_length):
     """Quadratic fit to absolute value of y. Note that this one does not alter
     the value at the maximum.
     """
-    t = np.arange(-window_length, window_length + 1.)
-    y = y[imax - window_length:imax + window_length + 1]
+    t = np.arange(-window_length, window_length + 1.0)
+    y = y[imax - window_length : imax + window_length + 1]
     y_abs = np.abs(y)
     a, b, c = np.polyfit(t, y_abs, 2)
 
     # Find which of the two matched interior points has a greater magnitude
-    t_max = -1.
+    t_max = -1.0
     y_max = y[window_length - 1]
     y_max_abs = y_abs[window_length - 1]
 
-    new_t_max = 1.
+    new_t_max = 1.0
     new_y_max = y[window_length + 1]
     new_y_max_abs = y_abs[window_length + 1]
 
@@ -292,14 +293,15 @@ def interpolate_max_nearest_neighbor(imax, y, window_length):
 
 
 _interpolants = {
-    'catmull-rom-amp-phase': interpolate_max_catmull_rom_amp_phase,
-    'catmull-rom': interpolate_max_catmull_rom,
-    'lanczos': interpolate_max_lanczos,
-    'nearest-neighbor': interpolate_max_nearest_neighbor,
-    'quadratic-fit': interpolate_max_quadratic_fit}
+    "catmull-rom-amp-phase": interpolate_max_catmull_rom_amp_phase,
+    "catmull-rom": interpolate_max_catmull_rom,
+    "lanczos": interpolate_max_lanczos,
+    "nearest-neighbor": interpolate_max_nearest_neighbor,
+    "quadratic-fit": interpolate_max_quadratic_fit,
+}
 
 
-def interpolate_max(imax, y, window_length, method='catmull-rom-amp-phase'):
+def interpolate_max(imax, y, window_length, method="catmull-rom-amp-phase"):
     """Perform sub-sample interpolation to find the phase and amplitude
     at the maximum of the absolute value of a complex series.
 

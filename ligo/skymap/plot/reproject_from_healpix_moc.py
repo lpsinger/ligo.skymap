@@ -16,16 +16,14 @@
 #
 import astropy_healpix as ah
 import numpy as np
-from reproject.utils import parse_output_projection
 from reproject.healpix.utils import parse_coord_system
+from reproject.utils import parse_output_projection
 
-from ..healpix_tree import HEALPIX_MACHINE_ORDER, HEALPIX_MACHINE_NSIDE
+from ..healpix_tree import HEALPIX_MACHINE_NSIDE, HEALPIX_MACHINE_ORDER
 from ..moc import uniq2nest
 
 
-def reproject_from_healpix_moc(
-    input_data, output_projection, shape_out=None
-):
+def reproject_from_healpix_moc(input_data, output_projection, shape_out=None):
     """
     Reproject multiorder HEALPIX data to a standard projection.
     Adapted from :meth:`reproject.reproject_from_healpix`.
@@ -58,22 +56,21 @@ def reproject_from_healpix_moc(
     """
     array_in, coord_system_in = input_data
     coord_system_in = parse_coord_system(coord_system_in)
-    wcs_out, shape_out = parse_output_projection(
-        output_projection, shape_out=shape_out)
+    wcs_out, shape_out = parse_output_projection(output_projection, shape_out=shape_out)
 
     # Look up lon, lat of pixels in reference system and convert celestial
     # coordinates
     yinds, xinds = np.indices(shape_out)
-    world_in = wcs_out.pixel_to_world(xinds, yinds).transform_to(
-        coord_system_in)
+    world_in = wcs_out.pixel_to_world(xinds, yinds).transform_to(coord_system_in)
     world_in_cart = world_in.represent_as("cartesian").xyz.value
 
     hpx_in = ah.xyz_to_healpix(
-        *world_in_cart, nside=HEALPIX_MACHINE_NSIDE, order='nested')
-    order, hpx_data = uniq2nest(array_in['UNIQ'])
+        *world_in_cart, nside=HEALPIX_MACHINE_NSIDE, order="nested"
+    )
+    order, hpx_data = uniq2nest(array_in["UNIQ"])
     hpx_data <<= 2 * (HEALPIX_MACHINE_ORDER - order)
     sorter = np.argsort(hpx_data)
-    i = np.searchsorted(hpx_data, hpx_in, 'right', sorter=sorter) - 1
+    i = np.searchsorted(hpx_data, hpx_in, "right", sorter=sorter) - 1
     data = array_in.columns[1][sorter][i]
 
     footprint = (hpx_in != -1).astype(float)

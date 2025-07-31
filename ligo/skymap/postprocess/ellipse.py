@@ -16,18 +16,18 @@
 #
 
 import astropy_healpix as ah
-from astropy import units as u
-from astropy.wcs import WCS
 import healpy as hp
 import numpy as np
+from astropy import units as u
+from astropy.wcs import WCS
 
 from .. import moc
 from ..extern.numpy.quantile import quantile
 
-__all__ = ('find_ellipse',)
+__all__ = ("find_ellipse",)
 
 
-def find_ellipse(prob, cl=90, projection='ARC', nest=False):
+def find_ellipse(prob, cl=90, projection="ARC", nest=False):
     """For a HEALPix map, find an ellipse that contains a given probability.
 
     The orientation is defined as the angle of the semimajor axis
@@ -320,37 +320,35 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     0.0 0.0 [37.05420765 64.77564486] [19.16895502 33.50986302] 9.217477126726351 [2182.55801354 6372.42573159]
     """  # noqa: E501
     try:
-        prob['UNIQ']
+        prob["UNIQ"]
     except (IndexError, KeyError, ValueError):
         npix = len(prob)
         nside = ah.npix_to_nside(npix)
         ipix = range(npix)
         area = ah.nside_to_pixel_area(nside).to_value(u.deg**2)
     else:
-        order, ipix = moc.uniq2nest(prob['UNIQ'])
+        order, ipix = moc.uniq2nest(prob["UNIQ"])
         nside = 1 << order.astype(int)
         ipix = ipix.astype(int)
         area = ah.nside_to_pixel_area(nside).to_value(u.sr)
-        prob = prob['PROBDENSITY'] * area
+        prob = prob["PROBDENSITY"] * area
         area *= np.square(180 / np.pi)
         nest = True
 
     # Find median a posteriori sky position.
-    xyz0 = [quantile(x, 0.5, weights=prob)
-            for x in hp.pix2vec(nside, ipix, nest=nest)]
+    xyz0 = [quantile(x, 0.5, weights=prob) for x in hp.pix2vec(nside, ipix, nest=nest)]
     (ra,), (dec,) = hp.vec2ang(np.asarray(xyz0), lonlat=True)
 
     # Construct WCS with the specified projection
     # and centered on mean direction.
     w = WCS()
     w.wcs.crval = [ra, dec]
-    w.wcs.ctype = ['RA---' + projection, 'DEC--' + projection]
+    w.wcs.ctype = ["RA---" + projection, "DEC--" + projection]
 
     # Transform HEALPix to the specified projection.
     xy = w.wcs_world2pix(
-        np.transpose(
-            hp.pix2ang(
-                nside, ipix, nest=nest, lonlat=True)), 1)
+        np.transpose(hp.pix2ang(nside, ipix, nest=nest, lonlat=True)), 1
+    )
 
     # Keep only values that were inside the projection.
     keep = np.logical_and.reduce(np.isfinite(xy), axis=1)
@@ -365,7 +363,7 @@ def find_ellipse(prob, cl=90, projection='ARC', nest=False):
     for _ in range(3):
         c = np.cov(xy[keep], aweights=prob[keep], rowvar=False)
         nsigmas = np.sqrt(np.sum(xy.T * np.linalg.solve(c, xy.T), axis=0))
-        keep &= (nsigmas < 3)
+        keep &= nsigmas < 3
 
     # Find the number of sigma that enclose the cl% credible level.
     i = np.argsort(nsigmas)

@@ -24,11 +24,11 @@ color components (the `a` and `b` coordinates).
 This particular color map was selected from 20 random realizations of this
 construction."""
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
+    import numpy as np
     from colormath.color_conversions import convert_color
     from colormath.color_objects import LabColor, sRGBColor
     from scipy.interpolate import interp1d
-    import numpy as np
 
     def lab_to_rgb(*args):
         """Convert Lab color to sRGB, with components clipped to (0, 1)."""
@@ -38,25 +38,15 @@ if __name__ == '__main__':  # pragma: no cover
 
     L_samples = np.linspace(100, 0, 5)
 
-    a_samples = (
-        33.34664938,
-        98.09940562,
-        84.48361516,
-        76.62970841,
-        21.43276891)
+    a_samples = (33.34664938, 98.09940562, 84.48361516, 76.62970841, 21.43276891)
 
-    b_samples = (
-        62.73345997,
-        2.09003022,
-        37.28252236,
-        76.22507582,
-        16.24862535)
+    b_samples = (62.73345997, 2.09003022, 37.28252236, 76.22507582, 16.24862535)
 
     L = np.linspace(100, 0, 255)
-    a = interp1d(L_samples, a_samples[::-1], 'cubic')(L)
-    b = interp1d(L_samples, b_samples[::-1], 'cubic')(L)
+    a = interp1d(L_samples, a_samples[::-1], "cubic")(L)
+    b = interp1d(L_samples, b_samples[::-1], "cubic")(L)
 
     for line in __doc__.splitlines():
-        print('#', line)
+        print("#", line)
     for L, a, b in zip(L, a, b):
-        print(*lab_to_rgb(L, a, b), sep=',')
+        print(*lab_to_rgb(L, a, b), sep=",")

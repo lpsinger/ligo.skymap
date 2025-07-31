@@ -15,21 +15,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Catalog cross matching for HEALPix sky maps."""
+
 from collections import namedtuple
 
 import astropy_healpix as ah
-from astropy.coordinates import ICRS, SkyCoord, SphericalRepresentation
-from astropy import units as u
 import healpy as hp
 import numpy as np
+from astropy import units as u
+from astropy.coordinates import ICRS, SkyCoord, SphericalRepresentation
 
-from .. import distance
-from .. import moc
+from .. import distance, moc
+from .cosmology import dVC_dVL_for_DL
 from .util import interp_greedy_credible_levels
 
-from .cosmology import dVC_dVL_for_DL
-
-__all__ = ('crossmatch', 'CrossmatchResult')
+__all__ = ("crossmatch", "CrossmatchResult")
 
 
 def flood_fill(nside, ipix, m, nest=False):
@@ -75,10 +74,9 @@ def count_modes(m, nest=False):
 
 def count_modes_moc(uniq, i):
     n = len(uniq)
-    mask = np.concatenate((np.ones(i + 1, dtype=bool),
-                           np.zeros(n - i - 1, dtype=bool)))
-    sky_map = np.rec.fromarrays((uniq, mask), names=('UNIQ', 'MASK'))
-    sky_map = moc.rasterize(sky_map)['MASK']
+    mask = np.concatenate((np.ones(i + 1, dtype=bool), np.zeros(n - i - 1, dtype=bool)))
+    sky_map = np.rec.fromarrays((uniq, mask), names=("UNIQ", "MASK"))
+    sky_map = moc.rasterize(sky_map)["MASK"]
     return count_modes(sky_map, nest=True)
 
 
@@ -86,9 +84,9 @@ def cos_angle_distance(theta0, phi0, theta1, phi1):
     """Cosine of angular separation in radians between two points on the
     unit sphere.
     """
-    cos_angle_distance = (
-        np.cos(phi1 - phi0) * np.sin(theta0) * np.sin(theta1) +
-        np.cos(theta0) * np.cos(theta1))
+    cos_angle_distance = np.cos(phi1 - phi0) * np.sin(theta0) * np.sin(theta1) + np.cos(
+        theta0
+    ) * np.cos(theta1)
     return np.clip(cos_angle_distance, -1, 1)
 
 
@@ -99,10 +97,11 @@ def angle_distance(theta0, phi0, theta1, phi1):
 
 # Class to hold return value of find_injection method
 CrossmatchResult = namedtuple(
-    'CrossmatchResult',
-    'searched_area searched_prob offset searched_modes contour_areas '
-    'area_probs contour_modes searched_prob_dist contour_dists '
-    'searched_vol searched_prob_vol contour_vols probdensity probdensity_vol')
+    "CrossmatchResult",
+    "searched_area searched_prob offset searched_modes contour_areas "
+    "area_probs contour_modes searched_prob_dist contour_dists "
+    "searched_vol searched_prob_vol contour_vols probdensity probdensity_vol",
+)
 """Cross match result as returned by
 :func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.
 
@@ -118,58 +117,101 @@ Notes
    volumes are comoving volumes.
 
 """
-_same_length_as_coordinates = ''' \
+_same_length_as_coordinates = """ \
 Same length as the `coordinates` argument passed to \
-:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.'''
-_same_length_as_contours = ''' \
+:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`."""
+_same_length_as_contours = """ \
 of the probabilities specified by the `contour` argument passed to \
-:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.'''
-_same_length_as_areas = ''' \
+:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`."""
+_same_length_as_areas = """ \
 of the areas specified by the `areas` argument passed to
-:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`.'''
-CrossmatchResult.searched_area.__doc__ = '''\
+:func:`~ligo.skymap.postprocess.crossmatch.crossmatch`."""
+CrossmatchResult.searched_area.__doc__ = (
+    """\
 Area within the 2D credible region containing each target \
-position.''' + _same_length_as_coordinates
-CrossmatchResult.searched_prob.__doc__ = '''\
+position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.searched_prob.__doc__ = (
+    """\
 Probability within the 2D credible region containing each target \
-position.''' + _same_length_as_coordinates
-CrossmatchResult.offset.__doc__ = '''\
+position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.offset.__doc__ = (
+    """\
 Angles on the sky between the target positions and the maximum a posteriori \
-position.''' + _same_length_as_coordinates
-CrossmatchResult.searched_modes.__doc__ = '''\
+position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.searched_modes.__doc__ = (
+    """\
 Number of disconnected regions within the 2D credible regions \
-containing each target position.''' + _same_length_as_coordinates
-CrossmatchResult.contour_areas.__doc__ = '''\
-Area within the 2D credible regions''' + _same_length_as_contours
-CrossmatchResult.area_probs.__doc__ = '''\
-Probability within the 2D credible regions''' + _same_length_as_areas
-CrossmatchResult.contour_modes.__doc__ = '''\
+containing each target position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.contour_areas.__doc__ = (
+    """\
+Area within the 2D credible regions"""
+    + _same_length_as_contours
+)
+CrossmatchResult.area_probs.__doc__ = (
+    """\
+Probability within the 2D credible regions"""
+    + _same_length_as_areas
+)
+CrossmatchResult.contour_modes.__doc__ = (
+    """\
 Number of disconnected regions within the 2D credible \
-regions''' + _same_length_as_contours
-CrossmatchResult.searched_prob_dist.__doc__ = '''\
+regions"""
+    + _same_length_as_contours
+)
+CrossmatchResult.searched_prob_dist.__doc__ = (
+    """\
 Cumulative CDF of distance, marginalized over sky position, at the distance \
-of each of the targets.''' + _same_length_as_coordinates
-CrossmatchResult.contour_dists.__doc__ = '''\
+of each of the targets."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.contour_dists.__doc__ = (
+    """\
 Distance credible interval, marginalized over sky \
-position,''' + _same_length_as_coordinates
-CrossmatchResult.searched_vol.__doc__ = '''\
+position,"""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.searched_vol.__doc__ = (
+    """\
 Volume within the 3D credible region containing each target \
-position.''' + _same_length_as_coordinates
-CrossmatchResult.searched_prob_vol.__doc__ = '''\
+position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.searched_prob_vol.__doc__ = (
+    """\
 Probability within the 3D credible region containing each target \
-position.''' + _same_length_as_coordinates
-CrossmatchResult.contour_vols.__doc__ = '''\
-Volume within the 3D credible regions''' + _same_length_as_contours
-CrossmatchResult.probdensity.__doc__ = '''\
+position."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.contour_vols.__doc__ = (
+    """\
+Volume within the 3D credible regions"""
+    + _same_length_as_contours
+)
+CrossmatchResult.probdensity.__doc__ = (
+    """\
 2D probability density per steradian at the positions of each of the \
-targets.''' + _same_length_as_coordinates
-CrossmatchResult.probdensity_vol.__doc__ = '''\
+targets."""
+    + _same_length_as_coordinates
+)
+CrossmatchResult.probdensity_vol.__doc__ = (
+    """\
 3D probability density per cubic megaparsec at the positions of each of the \
-targets.''' + _same_length_as_coordinates
+targets."""
+    + _same_length_as_coordinates
+)
 
 
-def crossmatch(sky_map, coordinates=None,
-               contours=(), areas=(), modes=False, cosmology=False):
+def crossmatch(
+    sky_map, coordinates=None, contours=(), areas=(), modes=False, cosmology=False
+):
     """Cross match a sky map with a catalog of points.
 
     Given a sky map and the true right ascension and declination (in radians),
@@ -279,9 +321,9 @@ def crossmatch(sky_map, coordinates=None,
         true_ra = true_dec = true_dist = None
     else:
         # Ensure that coordinates are in proper frame and representation
-        coordinates = SkyCoord(coordinates,
-                               representation_type=SphericalRepresentation,
-                               frame=ICRS)
+        coordinates = SkyCoord(
+            coordinates, representation_type=SphericalRepresentation, frame=ICRS
+        )
         true_ra = coordinates.ra.rad
         true_dec = coordinates.dec.rad
         if np.any(coordinates.distance != 1):
@@ -292,10 +334,10 @@ def crossmatch(sky_map, coordinates=None,
     contours = np.asarray(contours)
 
     # Sort the pixels by descending posterior probability.
-    sky_map = np.flipud(np.sort(sky_map, order='PROBDENSITY'))
+    sky_map = np.flipud(np.sort(sky_map, order="PROBDENSITY"))
 
     # Find the pixel that contains the injection.
-    order, ipix = moc.uniq2nest(sky_map['UNIQ'])
+    order, ipix = moc.uniq2nest(sky_map["UNIQ"])
     max_order = np.max(order)
     max_nside = ah.level_to_nside(max_order)
     max_ipix = ipix << np.int64(2 * (max_order - order))
@@ -307,17 +349,15 @@ def crossmatch(sky_map, coordinates=None,
         true_idx = i[np.digitize(true_pix, max_ipix[i]) - 1]
 
     # Find the angular offset between the mode and true locations.
-    mode_theta, mode_phi = hp.pix2ang(
-        ah.level_to_nside(order[0]), ipix[0], nest=True)
+    mode_theta, mode_phi = hp.pix2ang(ah.level_to_nside(order[0]), ipix[0], nest=True)
     if true_ra is None:
         offset = np.nan
     else:
-        offset = np.rad2deg(
-            angle_distance(true_theta, true_phi, mode_theta, mode_phi))
+        offset = np.rad2deg(angle_distance(true_theta, true_phi, mode_theta, mode_phi))
 
     # Calculate the cumulative area in deg2 and the cumulative probability.
-    dA = moc.uniq2pixarea(sky_map['UNIQ'])
-    dP = sky_map['PROBDENSITY'] * dA
+    dA = moc.uniq2pixarea(sky_map["UNIQ"])
+    dP = sky_map["PROBDENSITY"] * dA
     prob = np.cumsum(dP)
     area = np.cumsum(dA) * np.square(180 / np.pi)
 
@@ -333,7 +373,7 @@ def crossmatch(sky_map, coordinates=None,
         searched_prob = prob[true_idx]
 
         # Find the probability density.
-        probdensity = sky_map['PROBDENSITY'][true_idx]
+        probdensity = sky_map["PROBDENSITY"][true_idx]
 
     # Find the contours of the given credible levels.
     contour_idxs = np.digitize(contours, prob) - 1
@@ -341,38 +381,40 @@ def crossmatch(sky_map, coordinates=None,
     # For each of the given confidence levels, compute the area of the
     # smallest region containing that probability.
     contour_areas = interp_greedy_credible_levels(
-        contours, prob, area, right=4*180**2/np.pi).tolist()
+        contours, prob, area, right=4 * 180**2 / np.pi
+    ).tolist()
 
     # For each listed area, find the probability contained within the
     # smallest credible region of that area.
-    area_probs = interp_greedy_credible_levels(
-        areas, area, prob, right=1).tolist()
+    area_probs = interp_greedy_credible_levels(areas, area, prob, right=1).tolist()
 
     if modes:
         if true_ra is None:
             searched_modes = np.nan
         else:
             # Count up the number of modes in each of the given contours.
-            searched_modes = count_modes_moc(sky_map['UNIQ'], true_idx)
-        contour_modes = [
-            count_modes_moc(sky_map['UNIQ'], i) for i in contour_idxs]
+            searched_modes = count_modes_moc(sky_map["UNIQ"], true_idx)
+        contour_modes = [count_modes_moc(sky_map["UNIQ"], i) for i in contour_idxs]
     else:
         searched_modes = np.nan
         contour_modes = np.nan
 
     # Distance stats now...
-    if 'DISTMU' in sky_map.dtype.names:
-        dP_dA = sky_map['PROBDENSITY']
-        mu = sky_map['DISTMU']
-        sigma = sky_map['DISTSIGMA']
-        norm = sky_map['DISTNORM']
+    if "DISTMU" in sky_map.dtype.names:
+        dP_dA = sky_map["PROBDENSITY"]
+        mu = sky_map["DISTMU"]
+        sigma = sky_map["DISTSIGMA"]
+        norm = sky_map["DISTNORM"]
 
         # Set up distance grid.
         n_r = 1000
         distmean, _ = distance.parameters_to_marginal_moments(dP, mu, sigma)
         max_r = 6 * distmean
-        if true_dist is not None and np.size(true_dist) != 0 \
-                and np.max(true_dist) > max_r:
+        if (
+            true_dist is not None
+            and np.size(true_dist) != 0
+            and np.max(true_dist) > max_r
+        ):
             max_r = np.max(true_dist)
         d_r = max_r / n_r
 
@@ -383,15 +425,17 @@ def crossmatch(sky_map, coordinates=None,
             searched_prob_dist = np.nan
         else:
             searched_prob_dist = interp_greedy_credible_levels(
-                true_dist, r, P_r, right=1)
+                true_dist, r, P_r, right=1
+            )
         if len(contours) == 0:
             contour_dists = []
         else:
             lo, hi = interp_greedy_credible_levels(
-                np.vstack((
-                    0.5 * (1 - contours),
-                    0.5 * (1 + contours)
-                )), P_r, r, right=np.inf)
+                np.vstack((0.5 * (1 - contours), 0.5 * (1 + contours))),
+                P_r,
+                r,
+                right=np.inf,
+            )
             contour_dists = (hi - lo).tolist()
 
         # Calculate volume of each voxel, defined as the region within the
@@ -400,11 +444,16 @@ def crossmatch(sky_map, coordinates=None,
         dV = (np.square(r) + np.square(d_r) / 12) * d_r * dA.reshape(-1, 1)
 
         # Calculate probability within each voxel.
-        dP = np.exp(
-            -0.5 * np.square(
-                (r.reshape(1, -1) - mu.reshape(-1, 1)) / sigma.reshape(-1, 1)
+        dP = (
+            np.exp(
+                -0.5
+                * np.square(
+                    (r.reshape(1, -1) - mu.reshape(-1, 1)) / sigma.reshape(-1, 1)
+                )
             )
-        ) * (dP_dA * norm / (sigma * np.sqrt(2 * np.pi))).reshape(-1, 1) * dV
+            * (dP_dA * norm / (sigma * np.sqrt(2 * np.pi))).reshape(-1, 1)
+            * dV
+        )
         dP[np.isnan(dP)] = 0  # Suppress invalid values
 
         # Calculate probability density per unit volume.
@@ -418,7 +467,8 @@ def crossmatch(sky_map, coordinates=None,
         V_flat = np.cumsum(dV.ravel()[i])
 
         contour_vols = interp_greedy_credible_levels(
-            contours, P_flat, V_flat, right=np.inf).tolist()
+            contours, P_flat, V_flat, right=np.inf
+        ).tolist()
         P = np.empty_like(P_flat)
         V = np.empty_like(V_flat)
         P[i] = P_flat
@@ -434,14 +484,24 @@ def crossmatch(sky_map, coordinates=None,
             searched_prob_vol = P[i_radec, i_dist]
             searched_vol = V[i_radec, i_dist]
     else:
-        searched_vol = searched_prob_vol = searched_prob_dist \
-            = probdensity_vol = np.nan
+        searched_vol = searched_prob_vol = searched_prob_dist = probdensity_vol = np.nan
         contour_dists = [np.nan] * len(contours)
         contour_vols = [np.nan] * len(contours)
 
     # Done.
     return CrossmatchResult(
-        searched_area, searched_prob, offset, searched_modes, contour_areas,
-        area_probs, contour_modes, searched_prob_dist, contour_dists,
-        searched_vol, searched_prob_vol, contour_vols, probdensity,
-        probdensity_vol)
+        searched_area,
+        searched_prob,
+        offset,
+        searched_modes,
+        contour_areas,
+        area_probs,
+        contour_modes,
+        searched_prob_dist,
+        contour_dists,
+        searched_vol,
+        searched_prob_vol,
+        contour_vols,
+        probdensity,
+        probdensity_vol,
+    )

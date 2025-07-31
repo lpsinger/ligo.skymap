@@ -1,13 +1,13 @@
 import astropy_healpix as ah
-from astropy import table
-from astropy import units as u
 import numpy as np
 import pytest
+from astropy import table
+from astropy import units as u
 
-from . import run_entry_point
-from ...distance import moments_to_parameters, parameters_to_marginal_moments
 from ... import moc
+from ...distance import moments_to_parameters, parameters_to_marginal_moments
 from ...io.fits import read_sky_map, write_sky_map
+from . import run_entry_point
 
 
 def input_skymap(order1, d_order, fraction):
@@ -45,52 +45,54 @@ def input_skymap(order1, d_order, fraction):
     distmu, distsigma, distnorm = moments_to_parameters(distmean, diststd)
     assert np.all(np.isfinite(distmu))
 
-    data1 = table.Table({
-        'UNIQ': moc.nest2uniq(order1, ipix1),
-        'PROBDENSITY': probdensity,
-        'DISTMU': distmu,
-        'DISTSIGMA': distsigma,
-        'DISTNORM': distnorm
-    })
+    data1 = table.Table(
+        {
+            "UNIQ": moc.nest2uniq(order1, ipix1),
+            "PROBDENSITY": probdensity,
+            "DISTMU": distmu,
+            "DISTSIGMA": distsigma,
+            "DISTNORM": distnorm,
+        }
+    )
 
     # Add some upsampled pixels.
     data2 = table.Table(np.repeat(data1, npix2 // npix1))
-    data2['UNIQ'] = moc.nest2uniq(order2, ipix2)
+    data2["UNIQ"] = moc.nest2uniq(order2, ipix2)
     n = int(npix1 * (1 - fraction))
-    result = table.vstack((data1[:n], data2[n * npix2 // npix1:]))
+    result = table.vstack((data1[:n], data2[n * npix2 // npix1 :]))
 
     # Add marginal distance mean and standard deviation.
     rbar = (prob * distmean).sum()
     r2bar = (prob * (np.square(diststd) + np.square(distmean))).sum()
-    result.meta['distmean'] = rbar
-    result.meta['diststd'] = np.sqrt(r2bar - np.square(rbar))
+    result.meta["distmean"] = rbar
+    result.meta["diststd"] = np.sqrt(r2bar - np.square(rbar))
 
     return result
 
 
-@pytest.mark.parametrize('order_in', [2])
-@pytest.mark.parametrize('d_order_in', range(3))
-@pytest.mark.parametrize('fraction_in', [0, 0.25, 0.5, 1])
-@pytest.mark.parametrize('nside_out', [None, 1, 2, 4, 8, 512])
+@pytest.mark.parametrize("order_in", [2])
+@pytest.mark.parametrize("d_order_in", range(3))
+@pytest.mark.parametrize("fraction_in", [0, 0.25, 0.5, 1])
+@pytest.mark.parametrize("nside_out", [None, 1, 2, 4, 8, 512])
 def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
     """Test ligo-skymap-flatten."""
-    input_filename = str(tmpdir / 'bayestar.fits')
-    output_filename = str(tmpdir / 'bayestar.fits.gz')
+    input_filename = str(tmpdir / "bayestar.fits")
+    output_filename = str(tmpdir / "bayestar.fits.gz")
 
     skymap = input_skymap(order_in, d_order_in, fraction_in)
     write_sky_map(input_filename, skymap, moc=True)
-    expected_distmean = skymap.meta['distmean']
-    expected_diststd = skymap.meta['diststd']
+    expected_distmean = skymap.meta["distmean"]
+    expected_diststd = skymap.meta["diststd"]
 
-    args = ['ligo-skymap-flatten', input_filename, output_filename]
+    args = ["ligo-skymap-flatten", input_filename, output_filename]
     if nside_out is not None:
-        args.extend(['--nside', str(nside_out)])
+        args.extend(["--nside", str(nside_out)])
     run_entry_point(*args)
 
     (prob, distmu, distsigma, distnorm), _ = read_sky_map(
-        output_filename, distances=True)
-    distmean, diststd = parameters_to_marginal_moments(
-        prob, distmu, distsigma)
+        output_filename, distances=True
+    )
+    distmean, diststd = parameters_to_marginal_moments(prob, distmu, distsigma)
 
     if nside_out is not None:
         assert len(prob) == ah.nside_to_npix(nside_out)
@@ -100,14 +102,14 @@ def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
     assert diststd == pytest.approx(expected_diststd)
 
     # Now try removing the distance information.
-    skymap_2d = skymap['UNIQ', 'PROBDENSITY']
-    del skymap_2d.meta['distmean']
-    del skymap_2d.meta['diststd']
+    skymap_2d = skymap["UNIQ", "PROBDENSITY"]
+    del skymap_2d.meta["distmean"]
+    del skymap_2d.meta["diststd"]
     write_sky_map(input_filename, skymap_2d, moc=True, overwrite=True)
 
-    args = ['ligo-skymap-flatten', input_filename, output_filename]
+    args = ["ligo-skymap-flatten", input_filename, output_filename]
     if nside_out is not None:
-        args.extend(['--nside', str(nside_out)])
+        args.extend(["--nside", str(nside_out)])
     run_entry_point(*args)
 
     prob_2d, _ = read_sky_map(output_filename)

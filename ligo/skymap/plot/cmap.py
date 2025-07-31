@@ -18,17 +18,16 @@
 
 from importlib.resources import files
 
-from matplotlib import colormaps
-from matplotlib import colors
 import numpy as np
+from matplotlib import colormaps, colors
 
 __all__ = ()
 
 
-for name in ['cylon']:
+for name in ["cylon"]:
     # Read in color map RGB data.
-    with files(__package__).joinpath(f'{name}.csv').open() as f:
-        data = np.loadtxt(f, delimiter=',')
+    with files(__package__).joinpath(f"{name}.csv").open() as f:
+        data = np.loadtxt(f, delimiter=",")
 
     # Create color map.
     cmap = colors.LinearSegmentedColormap.from_list(name, data)
@@ -38,7 +37,7 @@ for name in ['cylon']:
     colormaps.register(cmap=cmap, force=True)
 
     # Generate reversed color map.
-    name += '_r'
+    name += "_r"
     data = data[::-1]
     cmap = colors.LinearSegmentedColormap.from_list(name, data)
     # Assign in module.

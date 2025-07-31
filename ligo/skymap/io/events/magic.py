@@ -14,15 +14,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Read events from either HDF or LIGO-LW files."""
+
 import builtins
 import sqlite3
 
-from igwn_ligolw.ligolw import Element
 import h5py
+from igwn_ligolw.ligolw import Element
 
 from . import hdf, ligolw, sqlite
 
-__all__ = ('MagicEventSource', 'open')
+__all__ = ("MagicEventSource", "open")
 
 
 def _read_file_header(f, nbytes=16):
@@ -72,17 +73,19 @@ def MagicEventSource(f, *args, **kwargs):  # noqa: N802
         opener = ligolw.open
     else:
         fileheader = _read_file_header(f)
-        if fileheader.startswith(b'\x89HDF\r\n\x1a\n'):
+        if fileheader.startswith(b"\x89HDF\r\n\x1a\n"):
             opener = hdf.open
-        elif fileheader.startswith(b'SQLite format 3'):
+        elif fileheader.startswith(b"SQLite format 3"):
             opener = sqlite.open
-        elif fileheader.startswith((
-                b'<?xml',  # XML
-                b'\x1f\x8b\x08',  # GZIP
-        )):
+        elif fileheader.startswith(
+            (
+                b"<?xml",  # XML
+                b"\x1f\x8b\x08",  # GZIP
+            )
+        ):
             opener = ligolw.open
         else:
-            raise IOError('Unknown file format')
+            raise IOError("Unknown file format")
     return opener(f, *args, **kwargs)
 
 

@@ -4,9 +4,9 @@
 try:
     from .version import version as __version__
 except ImportError:
-    __version__ = ''
+    __version__ = ""
 
-__all__ = ('omp',)
+__all__ = ("omp",)
 
 
 class Omp:
@@ -24,15 +24,17 @@ class Omp:
     @property
     def num_threads(self):
         from .core import get_num_threads
+
         return get_num_threads()
 
     @num_threads.setter
     def num_threads(self, value):
         from .core import set_num_threads
+
         set_num_threads(value)
 
 
-class Itt():
+class Itt:
     """Context manager to run code with Intel ITT tracing temporarily enabled.
 
     If you use this context manager, then you should start profiling with
@@ -43,11 +45,13 @@ class Itt():
 
     def __enter__(self):
         from .core import itt_resume
+
         itt_resume()
         return self
 
     def __exit__(self, *args, **kwargs):
         from .core import itt_pause
+
         itt_pause()
 
 

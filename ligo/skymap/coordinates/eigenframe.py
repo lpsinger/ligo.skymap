@@ -19,16 +19,21 @@ Astropy coordinate frame for eigendecomposition of a cloud of points or a 3D
 sky map.
 """
 
-from astropy.coordinates import (
-    BaseCoordinateFrame, CartesianRepresentation, DynamicMatrixTransform,
-    frame_transform_graph, ICRS, SphericalRepresentation)
-from astropy.coordinates import CartesianRepresentationAttribute
-from astropy.units import dimensionless_unscaled
 import numpy as np
+from astropy.coordinates import (
+    ICRS,
+    BaseCoordinateFrame,
+    CartesianRepresentation,
+    CartesianRepresentationAttribute,
+    DynamicMatrixTransform,
+    SphericalRepresentation,
+    frame_transform_graph,
+)
+from astropy.units import dimensionless_unscaled
 
 from ..distance import principal_axes
 
-__all__ = ('EigenFrame',)
+__all__ = ("EigenFrame",)
 
 
 class EigenFrame(BaseCoordinateFrame):
@@ -38,13 +43,16 @@ class EigenFrame(BaseCoordinateFrame):
 
     e_x = CartesianRepresentationAttribute(
         default=CartesianRepresentation(1, 0, 0, unit=dimensionless_unscaled),
-        unit=dimensionless_unscaled)
+        unit=dimensionless_unscaled,
+    )
     e_y = CartesianRepresentationAttribute(
         default=CartesianRepresentation(0, 1, 0, unit=dimensionless_unscaled),
-        unit=dimensionless_unscaled)
+        unit=dimensionless_unscaled,
+    )
     e_z = CartesianRepresentationAttribute(
         default=CartesianRepresentation(0, 0, 1, unit=dimensionless_unscaled),
-        unit=dimensionless_unscaled)
+        unit=dimensionless_unscaled,
+    )
 
     default_representation = SphericalRepresentation
 
@@ -103,13 +111,13 @@ class EigenFrame(BaseCoordinateFrame):
 
 @frame_transform_graph.transform(DynamicMatrixTransform, ICRS, EigenFrame)
 def icrs_to_eigenframe(from_coo, to_frame):
-    return np.vstack((to_frame.e_x.xyz.value,
-                      to_frame.e_y.xyz.value,
-                      to_frame.e_z.xyz.value))
+    return np.vstack(
+        (to_frame.e_x.xyz.value, to_frame.e_y.xyz.value, to_frame.e_z.xyz.value)
+    )
 
 
 @frame_transform_graph.transform(DynamicMatrixTransform, EigenFrame, ICRS)
 def eigenframe_to_icrs(from_coo, to_frame):
-    return np.column_stack((from_coo.e_x.xyz.value,
-                            from_coo.e_y.xyz.value,
-                            from_coo.e_z.xyz.value))
+    return np.column_stack(
+        (from_coo.e_x.xyz.value, from_coo.e_y.xyz.value, from_coo.e_z.xyz.value)
+    )

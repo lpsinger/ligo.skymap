@@ -15,22 +15,23 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Tools for adapting LIGO-LW row ID formats."""
+
 import re
 
 from igwn_ligolw.ligolw import Column, Param, Table
 from igwn_ligolw.lsctables import TableByName
 from igwn_ligolw.types import FormatFunc, FromPyType
 
-__all__ = ('use_in',)
+__all__ = ("use_in",)
 
-IDTypes = {'ilwd:char', 'ilwd:char_u'}
+IDTypes = {"ilwd:char", "ilwd:char_u"}
 
 ROWID_PYTYPE = int
 ROWID_TYPE = FromPyType[ROWID_PYTYPE]
 ROWID_FORMATFUNC = FormatFunc[ROWID_TYPE]
 
 
-_ilwd_regex = re.compile(r'\s*\w+:\w+:(\d+)\s*')
+_ilwd_regex = re.compile(r"\s*\w+:\w+:(\d+)\s*")
 
 
 def ilwd_to_int(ilwd):
@@ -68,8 +69,9 @@ def use_in(ContentHandler):
 
     """
 
-    def endElementNS(self, uri_localname, qname,
-                     __orig_endElementNS=ContentHandler.endElementNS):
+    def endElementNS(
+        self, uri_localname, qname, __orig_endElementNS=ContentHandler.endElementNS
+    ):
         """Convert values of <Param> elements from ilwdchar to int."""
         if isinstance(self.current, Param) and self.current.Type in IDTypes:
             new_value = ilwd_to_int(self.current.pcdata)
@@ -79,8 +81,7 @@ def use_in(ContentHandler):
 
     remapped = {}
 
-    def startColumn(self, parent, attrs,
-                    __orig_startColumn=ContentHandler.startColumn):
+    def startColumn(self, parent, attrs, __orig_startColumn=ContentHandler.startColumn):
         """Convert types in <Column> elements from ilwdchar to int.
 
         Notes
@@ -102,15 +103,16 @@ def use_in(ContentHandler):
             validcolumns = TableByName[parent.Name].validcolumns
             if result.Name not in validcolumns:
                 stripped_column_to_valid_column = {
-                    Column.ColumnName(name): name for name in validcolumns}
+                    Column.ColumnName(name): name for name in validcolumns
+                }
                 if result.Name in stripped_column_to_valid_column:
                     result.setAttribute(
-                        'Name', stripped_column_to_valid_column[result.Name])
+                        "Name", stripped_column_to_valid_column[result.Name]
+                    )
 
         return result
 
-    def startStream(self, parent, attrs,
-                    __orig_startStream=ContentHandler.startStream):
+    def startStream(self, parent, attrs, __orig_startStream=ContentHandler.startStream):
         """Convert values in table <Stream> elements from ilwdchar to int.
 
         Notes
@@ -126,11 +128,16 @@ def use_in(ContentHandler):
                 # FIXME:  convert loadcolumns attributes to sets to
                 # avoid the conversion.
                 loadcolumns &= set(parent.loadcolumns)
-            result._tokenizer.set_types([
-                (remapped.pop((id(parent), colname), pytype)
-                 if colname in loadcolumns else None)
-                for pytype, colname
-                in zip(parent.columnpytypes, parent.columnnames)])
+            result._tokenizer.set_types(
+                [
+                    (
+                        remapped.pop((id(parent), colname), pytype)
+                        if colname in loadcolumns
+                        else None
+                    )
+                    for pytype, colname in zip(parent.columnpytypes, parent.columnnames)
+                ]
+            )
         return result
 
     ContentHandler.endElementNS = endElementNS

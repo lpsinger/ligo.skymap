@@ -15,29 +15,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """Miscellaneous plotting utilities."""
-import matplotlib
-from matplotlib import text
-from matplotlib import ticker
-from matplotlib import patheffects
 
-__all__ = ('colorbar', 'outline_text')
+import matplotlib
+from matplotlib import patheffects, text, ticker
+
+__all__ = ("colorbar", "outline_text")
 
 
 def colorbar(*args):
     from matplotlib import pyplot as plt
 
-    usetex = matplotlib.rcParams['text.usetex']
+    usetex = matplotlib.rcParams["text.usetex"]
     locator = ticker.AutoLocator()
     formatter = ticker.ScalarFormatter(useMathText=not usetex)
     formatter.set_scientific(True)
     formatter.set_powerlimits((1e-1, 100))
 
     # Plot colorbar
-    cb = plt.colorbar(*args,
-                      orientation='horizontal', shrink=0.4,
-                      ticks=locator, format=formatter)
+    cb = plt.colorbar(
+        *args, orientation="horizontal", shrink=0.4, ticks=locator, format=formatter
+    )
 
-    if cb.orientation == 'vertical':
+    if cb.orientation == "vertical":
         axis = cb.ax.yaxis
     else:
         axis = cb.ax.xaxis
@@ -46,13 +45,13 @@ def colorbar(*args):
     ticklabels = [label.get_text() for label in axis.get_ticklabels()]
     # Avoid putting two '$' next to each other if we are in tex mode.
     if usetex:
-        fmt = '{{{0}}}{{{1}}}'
+        fmt = "{{{0}}}{{{1}}}"
     else:
-        fmt = '{0}{1}'
+        fmt = "{0}{1}"
     ticklabels[-1] = fmt.format(ticklabels[-1], formatter.get_offset())
     axis.set_ticklabels(ticklabels)
     last_ticklabel = axis.get_ticklabels()[-1]
-    last_ticklabel.set_horizontalalignment('left')
+    last_ticklabel.set_horizontalalignment("left")
 
     # Draw edges in colorbar bands to correct thin white bands that
     # appear in buggy PDF viewers. See:
@@ -67,6 +66,6 @@ def outline_text(ax):
     """Add a white outline to all text to make it stand out from the
     background.
     """
-    effects = [patheffects.withStroke(linewidth=2, foreground='w')]
+    effects = [patheffects.withStroke(linewidth=2, foreground="w")]
     for artist in ax.findobj(text.Text):
         artist.set_path_effects(effects)

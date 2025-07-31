@@ -14,6 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Read events from a GstLal-style SQLite output."""
+
 import os
 import sqlite3
 
@@ -22,7 +23,7 @@ from igwn_ligolw import dbtables
 from ...util import sqlite
 from .ligolw import LigoLWEventSource
 
-__all__ = ('SQLiteEventSource',)
+__all__ = ("SQLiteEventSource",)
 
 
 class SQLiteEventSource(LigoLWEventSource):
@@ -44,12 +45,12 @@ class SQLiteEventSource(LigoLWEventSource):
             db = f
             filename = sqlite.get_filename(f)
         else:
-            if hasattr(f, 'read'):
+            if hasattr(f, "read"):
                 filename = f.name
                 f.close()
             else:
                 filename = f
-            db = sqlite.open(filename, 'r')
+            db = sqlite.open(filename, "r")
         super().__init__(dbtables.get_xml(db), *args, **kwargs)
         self._fallbackpath = os.path.dirname(filename) if filename else None
 

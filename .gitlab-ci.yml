@@ -367,16 +367,16 @@ test/coverage:
   timeout: 2 hours
 
 #
-# Run flake8 linter to enforce code style.
+# Run all pre-commit hooks to enforce code style.
 #
 
 lint:
-  extends:
-    - .python:flake8
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.11.8:$CI_COMMIT_REF_SLUG
+  image: python
   stage: test
-  needs:
-    - deps-x86_64/python3.11.8
+  needs: []
+  script:
+    - pip install pre-commit
+    - pre-commit run --all-files
 
 #
 # Acceptance tests.

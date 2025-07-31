@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # This file is adapted from the Astropy package template, which is licensed
 # under a 3-clause BSD style license - see licenses/TEMPLATE_LICENSE.rst
@@ -27,31 +26,32 @@
 # Thus, any C-extensions that are needed to build the documentation will *not*
 # be accessible, and the documentation will not build correctly.
 
+import datetime
 import os
 import sys
-import datetime
-from importlib import import_module
 import tomllib
+from importlib import import_module
 
 try:
-    from sphinx_astropy.conf.v1 import *  # noqa
+    from sphinx_astropy.conf.v1 import *  # noqa: F403
 except ImportError:
-    print('ERROR: the documentation requires the sphinx-astropy package to be installed')
+    print(
+        "ERROR: the documentation requires the sphinx-astropy package to be installed"
+    )
     sys.exit(1)
 
 # Get configuration information from pyproject.toml
 
-with open(os.path.join(
-        os.path.dirname(__file__), '..', 'pyproject.toml'), 'rb') as f:
-    project_metadata = tomllib.load(f)['project']
+with open(os.path.join(os.path.dirname(__file__), "..", "pyproject.toml"), "rb") as f:
+    project_metadata = tomllib.load(f)["project"]
 
 # -- General configuration ----------------------------------------------------
 
 # By default, highlight as Python 3.
-highlight_language = 'python3'
+highlight_language = "python3"
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.2'
+# needs_sphinx = '1.2'
 
 # To perform a Sphinx version check that needs to be more specific than
 # major.minor, call `check_sphinx_version("x.y.z")` here.
@@ -59,34 +59,33 @@ highlight_language = 'python3'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns.append('_templates')
+exclude_patterns.append("_templates")  # noqa: F405
 
 # This is added to the end of RST files - a good place to put substitutions to
 # be used globally.
 rst_epilog += """
-"""
+"""  # noqa: F405
 
 # -- Project information ------------------------------------------------------
 
 # This does not *have* to match the package name, but typically does
-project = project_metadata['name']
-author = project_metadata['authors'][0]['name']
-copyright = '{0}, {1}'.format(
-    datetime.datetime.now().year, author)
+project = project_metadata["name"]
+author = project_metadata["authors"][0]["name"]
+copyright = "{0}, {1}".format(datetime.datetime.now().year, author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-import_module(project_metadata['name'])
-package = sys.modules[project_metadata['name']]
+import_module(project_metadata["name"])
+package = sys.modules[project_metadata["name"]]
 
 # The short X.Y version.
-version = package.__version__.split('-', 1)[0]
+version = package.__version__.split("-", 1)[0]
 # The full version, including alpha/beta/rc tags.
 release = package.__version__
 
-extensions.extend(['sphinx.ext.extlinks'])
+extensions.extend(["sphinx.ext.extlinks"])  # noqa: F405
 
 
 # -- Options for HTML output --------------------------------------------------
@@ -101,73 +100,72 @@ extensions.extend(['sphinx.ext.extlinks'])
 
 # Add any paths that contain custom themes here, relative to this directory.
 # To use a different custom theme, add the directory containing the theme.
-#html_theme_path = []
+# html_theme_path = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes. To override the custom theme, set this to the
 # name of a builtin theme or the name of a custom theme in html_theme_path.
-#html_theme = None
+# html_theme = None
 
-html_static_path = ['_static']
-html_css_files = ['fix-sidebar-textwrap.css']
+html_static_path = ["_static"]
+html_css_files = ["fix-sidebar-textwrap.css"]
 
 # Please update these texts to match the name of your package.
 html_theme_options = {
-    'logotext1': 'ligo',  # white,  semi-bold
-    'logotext2': '.skymap',  # orange, light
-    'logotext3': ':docs'   # white,  light
-    }
+    "logotext1": "ligo",  # white,  semi-bold
+    "logotext2": ".skymap",  # orange, light
+    "logotext3": ":docs",  # white,  light
+}
 
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+# html_sidebars = {}
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = ''
+# html_logo = ''
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = ''
+# html_favicon = ''
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = ''
+# html_last_updated_fmt = ''
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = '{0} v{1}'.format(project, release)
+html_title = "{0} v{1}".format(project, release)
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = project + 'doc'
+htmlhelp_basename = project + "doc"
 
-manpages_url = 'https://man7.org/linux/man-pages/man{section}/{page}.{section}.html'
+manpages_url = "https://man7.org/linux/man-pages/man{section}/{page}.{section}.html"
 
 
 # -- Options for LaTeX output -------------------------------------------------
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [('index', project + '.tex', project + u' Documentation',
-                    author, 'manual')]
+latex_documents = [
+    ("index", project + ".tex", project + " Documentation", author, "manual")
+]
 
 
 # -- Options for manual page output -------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [('index', project.lower(), project + u' Documentation',
-              [author], 1)]
+man_pages = [("index", project.lower(), project + " Documentation", [author], 1)]
 
 
 # -- Options for the edit_on_github extension ---------------------------------
 
-if project_metadata.get('edit_on_github'):
+if project_metadata.get("edit_on_github"):
+    extensions += ["sphinx_astropy.ext.edit_on_github"]  # noqa: F405
 
-    extensions += ['sphinx_astropy.ext.edit_on_github']
-
-    edit_on_github_project = project_metadata['github_project']
+    edit_on_github_project = project_metadata["github_project"]
     edit_on_github_branch = "main"
 
     edit_on_github_source_root = ""
@@ -204,41 +202,43 @@ if project_metadata.get('edit_on_github'):
 
 # -- Options for the sphinx-argparse extension --------------------------------
 
-extensions += ['sphinxarg.ext']
+extensions += ["sphinxarg.ext"]
 
 # -- Options for the sphinx-doctest extension ---------------------------------
 
-extensions += ['sphinx.ext.doctest']
+extensions += ["sphinx.ext.doctest"]
 
 # -- Options for the matplotlib.sphinxext extension ---------------------------
 
-extensions += ['matplotlib.sphinxext.roles']
+extensions += ["matplotlib.sphinxext.roles"]
 
 # -- Options for extlinks extension ------------------------------------------
 
 extlinks = {
-    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:%s'),
-    'dcc': ('https://dcc.ligo.org/LIGO-%s/public', 'LIGO-%s'),
-    'doi': ('https://doi.org/%s', 'doi:%s')
+    "arxiv": ("https://arxiv.org/abs/%s", "arXiv:%s"),
+    "dcc": ("https://dcc.ligo.org/LIGO-%s/public", "LIGO-%s"),
+    "doi": ("https://doi.org/%s", "doi:%s"),
 }
 
 # -- Options for the module index ---------------------------------------------
 
-modindex_common_prefix = [package.__name__ + '.']
+modindex_common_prefix = [package.__name__ + "."]
 
 # -- Options for intersphinx --------------------------------------------------
 
-intersphinx_mapping.update({
-    'celery': ('https://docs.celeryq.dev/en/stable/', None),
-    'gracedb': ('https://gracedb.ligo.org/documentation/', None),
-    'gsl': ('https://www.gnu.org/software/gsl/doc/html/', None),
-    'gwcelery': ('https://gwcelery.readthedocs.io/en/latest/', None),
-    'gwpy': ('https://gwpy.github.io/docs/latest/', None),
-    'igwn-ligolw': ('https://igwn-ligolw.readthedocs.io/en/latest/', None),
-    'pytest': ('https://docs.pytest.org/en/latest/', None),
-    'reproject': ('https://reproject.readthedocs.io/en/stable/', None),
-})
+intersphinx_mapping.update(  # noqa: F405
+    {
+        "celery": ("https://docs.celeryq.dev/en/stable/", None),
+        "gracedb": ("https://gracedb.ligo.org/documentation/", None),
+        "gsl": ("https://www.gnu.org/software/gsl/doc/html/", None),
+        "gwcelery": ("https://gwcelery.readthedocs.io/en/latest/", None),
+        "gwpy": ("https://gwpy.github.io/docs/latest/", None),
+        "igwn-ligolw": ("https://igwn-ligolw.readthedocs.io/en/latest/", None),
+        "pytest": ("https://docs.pytest.org/en/latest/", None),
+        "reproject": ("https://reproject.readthedocs.io/en/stable/", None),
+    }
+)
 
 # -- Options for mermaid ------------------------------------------------------
 
-extensions += ['sphinxcontrib.mermaid']
+extensions += ["sphinxcontrib.mermaid"]

@@ -27,22 +27,31 @@ References
 
 """
 
-from astropy import table
-from astropy import units as u
 import astropy_healpix as ah
 import numpy as np
+from astropy import table
+from astropy import units as u
 from numpy.lib.recfunctions import repack_fields
 from tqdm.auto import tqdm
 
-from .core import nest2uniq, uniq2nest, uniq2order, uniq2pixarea, uniq2ang
+from .core import nest2uniq, uniq2ang, uniq2nest, uniq2order, uniq2pixarea
 from .core import rasterize as _rasterize
 from .util.numpy import add_newdoc_ufunc
 
-__all__ = ('nest2uniq', 'uniq2nest', 'uniq2order', 'uniq2pixarea',
-           'uniq2ang', 'rasterize', 'bayestar_adaptive_grid')
+__all__ = (
+    "nest2uniq",
+    "uniq2nest",
+    "uniq2order",
+    "uniq2pixarea",
+    "uniq2ang",
+    "rasterize",
+    "bayestar_adaptive_grid",
+)
 
 
-add_newdoc_ufunc(nest2uniq, """\
+add_newdoc_ufunc(
+    nest2uniq,
+    """\
 Convert a pixel index from NESTED to NUNIQ ordering.
 
 Parameters
@@ -57,10 +66,13 @@ Returns
 uniq : `numpy.ndarray`
     NUNIQ pixel index
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(uniq2order, """\
+add_newdoc_ufunc(
+    uniq2order,
+    """\
 Determine the HEALPix resolution order of a HEALPix NESTED index.
 
 Parameters
@@ -73,10 +85,13 @@ Returns
 order : `numpy.ndarray`
     HEALPix resolution order, the logarithm base 2 of `nside`
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(uniq2pixarea, """\
+add_newdoc_ufunc(
+    uniq2pixarea,
+    """\
 Determine the area of a HEALPix NESTED index.
 
 Parameters
@@ -89,10 +104,13 @@ Returns
 area : `numpy.ndarray`
     The pixel's area in steradians
 
-""")
+""",
+)
 
 
-add_newdoc_ufunc(uniq2nest, """\
+add_newdoc_ufunc(
+    uniq2nest,
+    """\
 Convert a pixel index from NUNIQ to NESTED ordering.
 
 Parameters
@@ -107,7 +125,8 @@ order : `numpy.ndarray`
 ipix : `numpy.ndarray`
     NESTED pixel index
 
-""")
+""",
+)
 
 
 def rasterize(moc_data, order=None):
@@ -132,11 +151,11 @@ def rasterize(moc_data, order=None):
 
     """
     if np.ndim(moc_data) != 1:
-        raise ValueError('expected 1D structured array or Astropy table')
+        raise ValueError("expected 1D structured array or Astropy table")
     elif order is None or order < 0:
         order = -1
     else:
-        orig_order, orig_nest = uniq2nest(moc_data['UNIQ'])
+        orig_order, orig_nest = uniq2nest(moc_data["UNIQ"])
         to_downsample = order < orig_order
         if np.any(to_downsample):
             to_keep = table.Table(moc_data[~to_downsample], copy=False)
@@ -147,12 +166,10 @@ def rasterize(moc_data, order=None):
             ratio = 1 << (2 * np.int64(orig_order - order))
             weights = 1.0 / ratio
             for colname, column in to_downsample.columns.items():
-                if colname != 'UNIQ':
+                if colname != "UNIQ":
                     column *= weights
-            to_downsample['UNIQ'] = nest2uniq(
-                np.int8(order), orig_nest // ratio)
-            to_downsample = to_downsample.group_by(
-                'UNIQ').groups.aggregate(np.sum)
+            to_downsample["UNIQ"] = nest2uniq(np.int8(order), orig_nest // ratio)
+            to_downsample = to_downsample.group_by("UNIQ").groups.aggregate(np.sum)
 
             moc_data = table.vstack((to_keep, to_downsample))
 
@@ -163,8 +180,7 @@ def rasterize(moc_data, order=None):
     return _rasterize(moc_data, order=order)
 
 
-def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
-                           **kwargs):
+def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8, **kwargs):
     """Create a sky map by evaluating a function on an adaptive grid.
 
     Perform the BAYESTAR adaptive mesh refinement scheme as described in
@@ -196,13 +212,16 @@ def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
     nrefine = top_npix // 4
     cells = zip([0] * nrefine, [top_nside // 2] * nrefine, range(nrefine))
     for _ in tqdm(range(rounds + 1)):
-        cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1]**2)
-        new_nside, new_ipix = np.transpose([
-            (nside * 2, ipix * 4 + i)
-            for _, nside, ipix in cells[-nrefine:] for i in range(4)])
-        ra, dec = ah.healpix_to_lonlat(new_ipix, new_nside, order='nested')
-        p = probdensity(np.column_stack((ra.value, dec.value)),
-                        *args, **kwargs)
+        cells = sorted(cells, key=lambda p_n_i: p_n_i[0] / p_n_i[1] ** 2)
+        new_nside, new_ipix = np.transpose(
+            [
+                (nside * 2, ipix * 4 + i)
+                for _, nside, ipix in cells[-nrefine:]
+                for i in range(4)
+            ]
+        )
+        ra, dec = ah.healpix_to_lonlat(new_ipix, new_nside, order="nested")
+        p = probdensity(np.column_stack((ra.value, dec.value)), *args, **kwargs)
         cells[-nrefine:] = zip(p, new_nside, new_ipix)
 
     """Return a HEALPix multi-order map of the posterior density."""
@@ -219,8 +238,7 @@ def bayestar_adaptive_grid(probdensity, *args, top_nside=16, rounds=8,
     uniq = nest2uniq(order.astype(np.int8), ipix)
 
     # Done!
-    return table.Table([uniq, post], names=['UNIQ', 'PROBDENSITY'],
-                       copy=False)
+    return table.Table([uniq, post], names=["UNIQ", "PROBDENSITY"], copy=False)
 
 
 del add_newdoc_ufunc

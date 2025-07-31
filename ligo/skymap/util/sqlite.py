@@ -15,8 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Tools for reading and writing SQLite databases."""
+
 import copyreg
 import sqlite3
+
 _open = open
 
 
@@ -25,17 +27,18 @@ def _open_a(string):
 
 
 def _open_r(string):
-    return sqlite3.connect('file:{}?mode=ro'.format(string),
-                           check_same_thread=False, uri=True)
+    return sqlite3.connect(
+        "file:{}?mode=ro".format(string), check_same_thread=False, uri=True
+    )
 
 
 def _open_w(string):
-    with _open(string, 'wb'):
+    with _open(string, "wb"):
         pass
     return sqlite3.connect(string, check_same_thread=False)
 
 
-_openers = {'a': _open_a, 'r': _open_r, 'w': _open_w}
+_openers = {"a": _open_a, "r": _open_r, "w": _open_w}
 
 
 def open(string, mode):
@@ -87,17 +90,20 @@ def open(string, mode):
     ValueError: Invalid mode "x". Must be one of "arw".
 
     """
-    if string in {'-', '/dev/stdin', '/dev/stdout'}:
-        raise ValueError('Cannot open stdin/stdout as an SQLite database')
+    if string in {"-", "/dev/stdin", "/dev/stdout"}:
+        raise ValueError("Cannot open stdin/stdout as an SQLite database")
     try:
         opener = _openers[mode]
     except KeyError:
-        raise ValueError('Invalid mode "{}". Must be one of "{}".'.format(
-            mode, ''.join(sorted(_openers.keys()))))
+        raise ValueError(
+            'Invalid mode "{}". Must be one of "{}".'.format(
+                mode, "".join(sorted(_openers.keys()))
+            )
+        )
     try:
         return opener(string)
     except (OSError, sqlite3.Error) as e:
-        raise OSError('Failed to open database {}: {}'.format(string, e))
+        raise OSError("Failed to open database {}: {}".format(string, e))
 
 
 def get_filename(connection):
@@ -140,11 +146,11 @@ def get_filename(connection):
     RuntimeError: Expected exactly one attached database
 
     """
-    result = connection.execute('pragma database_list').fetchall()
+    result = connection.execute("pragma database_list").fetchall()
     try:
-        (_, _, filename), = result
+        ((_, _, filename),) = result
     except ValueError:
-        raise RuntimeError('Expected exactly one attached database')
+        raise RuntimeError("Expected exactly one attached database")
     return filename
 
 

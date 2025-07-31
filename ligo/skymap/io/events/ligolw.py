@@ -14,30 +14,37 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 """Read events from pipedown/GstLal-style XML output."""
-from collections import defaultdict
+
 import errno
-from functools import lru_cache
 import itertools
 import logging
 import operator
 import os
+from collections import defaultdict
+from functools import lru_cache
 
-from igwn_ligolw.ligolw import (
-    Array, Element, LIGOLWContentHandler, LIGO_LW, Param)
-from igwn_ligolw.lsctables import (
-    CoincDefTable, CoincMapTable, CoincTable, ProcessTable, ProcessParamsTable,
-    SnglInspiralTable, TimeSlideID, TimeSlideTable)
-from igwn_ligolw.utils import load_filename, load_fileobj
 import lal
 import lal.series
+from igwn_ligolw.ligolw import LIGO_LW, Array, Element, LIGOLWContentHandler, Param
+from igwn_ligolw.lsctables import (
+    CoincDefTable,
+    CoincMapTable,
+    CoincTable,
+    ProcessParamsTable,
+    ProcessTable,
+    SnglInspiralTable,
+    TimeSlideID,
+    TimeSlideTable,
+)
+from igwn_ligolw.utils import load_filename, load_fileobj
 from lalinspiral.thinca import InspiralCoincDef
 
-from .base import Event, EventSource, SingleEvent
 from ...util import ilwd
+from .base import Event, EventSource, SingleEvent
 
-__all__ = ('LigoLWEventSource',)
+__all__ = ("LigoLWEventSource",)
 
-log = logging.getLogger('BAYESTAR')
+log = logging.getLogger("BAYESTAR")
 
 
 @ilwd.use_in
@@ -50,13 +57,12 @@ def _read_xml(f, fallbackpath=None):
         doc = filename = None
     elif isinstance(f, Element):
         doc = f
-        filename = ''
+        filename = ""
     elif isinstance(f, (str, os.PathLike)):
         try:
             doc = load_filename(f, contenthandler=ContentHandler)
         except IOError as e:
-            if e.errno == errno.ENOENT and fallbackpath and \
-                    not os.path.isabs(f):
+            if e.errno == errno.ENOENT and fallbackpath and not os.path.isabs(f):
                 f = os.path.join(fallbackpath, f)
                 doc = load_filename(f, contenthandler=ContentHandler)
             else:
@@ -67,7 +73,7 @@ def _read_xml(f, fallbackpath=None):
         try:
             filename = f.name
         except AttributeError:
-            filename = ''
+            filename = ""
     return doc, filename
 
 
@@ -97,35 +103,35 @@ class LigoLWEventSource(dict, EventSource):
 
     """
 
-    def __init__(self, f, psd_file=None, coinc_def=InspiralCoincDef,
-                 fallbackpath=None, **kwargs):
+    def __init__(
+        self, f, psd_file=None, coinc_def=InspiralCoincDef, fallbackpath=None, **kwargs
+    ):
         doc, filename = _read_xml(f)
-        self._fallbackpath = (
-            os.path.dirname(filename) if filename else fallbackpath)
+        self._fallbackpath = os.path.dirname(filename) if filename else fallbackpath
         self._psds_for_file = lru_cache(maxsize=None)(self._psds_for_file)
         super().__init__(self._make_events(doc, psd_file, coinc_def))
 
     def __str__(self):
         contents = repr(self)
-        return '<{}>'.format(contents)
+        return "<{}>".format(contents)
 
     def __repr__(self):
         contents = super().__repr__()
-        return '{}({})'.format(self.__class__.__name__, contents)
+        return "{}({})".format(self.__class__.__name__, contents)
 
-    _template_keys = '''mass1 mass2
+    _template_keys = """mass1 mass2
                         spin1x spin1y spin1z spin2x spin2y spin2z
-                        f_final'''.split()
+                        f_final""".split()
 
     _invert_phases = {
-        'pycbc': False,
-        'gstlal_inspiral': True,
-        'gstlal_inspiral_coinc_extractor': True,
-        'gstlal_inspiral_postcohspiir_online': True,  # FIXME: wild guess
-        'bayestar_realize_coincs': True,
-        'bayestar-realize-coincs': True,
-        'MBTAOnline': True,
-        'sgnl-inspiral': True
+        "pycbc": False,
+        "gstlal_inspiral": True,
+        "gstlal_inspiral_coinc_extractor": True,
+        "gstlal_inspiral_postcohspiir_online": True,  # FIXME: wild guess
+        "bayestar_realize_coincs": True,
+        "bayestar-realize-coincs": True,
+        "MBTAOnline": True,
+        "sgnl-inspiral": True,
     }
 
     @classmethod
@@ -134,8 +140,11 @@ class LigoLWEventSource(dict, EventSource):
             return cls._invert_phases[program]
         except KeyError:
             raise KeyError(
-                ('The pipeline "{}" is unknown, so the phase '
-                 'convention could not be deduced.').format(program))
+                (
+                    'The pipeline "{}" is unknown, so the phase '
+                    "convention could not be deduced."
+                ).format(program)
+            )
 
     def _psds_for_file(self, f):
         doc, _ = _read_xml(f, self._fallbackpath)
@@ -154,32 +163,36 @@ class LigoLWEventSource(dict, EventSource):
             offsets_by_time_slide_id = time_slide_table.as_dict()
 
         # Indices to speed up lookups by ID.
-        key = operator.attrgetter('coinc_event_id')
+        key = operator.attrgetter("coinc_event_id")
         event_ids_by_coinc_event_id = {
-            coinc_event_id:
-                tuple(coinc_map.event_id for coinc_map in coinc_maps
-                      if coinc_map.table_name == SnglInspiralTable.tableName)
-            for coinc_event_id, coinc_maps
-            in itertools.groupby(sorted(coinc_map_table, key=key), key=key)}
-        sngl_inspirals_by_event_id = {
-            row.event_id: row for row in sngl_inspiral_table}
+            coinc_event_id: tuple(
+                coinc_map.event_id
+                for coinc_map in coinc_maps
+                if coinc_map.table_name == SnglInspiralTable.tableName
+            )
+            for coinc_event_id, coinc_maps in itertools.groupby(
+                sorted(coinc_map_table, key=key), key=key
+            )
+        }
+        sngl_inspirals_by_event_id = {row.event_id: row for row in sngl_inspiral_table}
 
         # Filter rows by coinc_def if requested.
         if coinc_def is not None:
             coinc_def_table = CoincDefTable.get_table(doc)
             coinc_def_ids = {
-                row.coinc_def_id for row in coinc_def_table
-                if (row.search, row.search_coinc_type) ==
-                (coinc_def.search, coinc_def.search_coinc_type)}
+                row.coinc_def_id
+                for row in coinc_def_table
+                if (row.search, row.search_coinc_type)
+                == (coinc_def.search, coinc_def.search_coinc_type)
+            }
             coinc_table = [
-                row for row in coinc_table
-                if row.coinc_def_id in coinc_def_ids]
+                row for row in coinc_table if row.coinc_def_id in coinc_def_ids
+            ]
 
         snr_dict = dict(self._snr_series_by_sngl_inspiral(doc))
 
         process_table = ProcessTable.get_table(doc)
-        program_for_process_id = {
-            row.process_id: row.program for row in process_table}
+        program_for_process_id = {row.process_id: row.program for row in process_table}
 
         try:
             process_params_table = ProcessParamsTable.get_table(doc)
@@ -189,31 +202,38 @@ class LigoLWEventSource(dict, EventSource):
             psd_filenames_by_process_id = {
                 process_param.process_id: process_param.value
                 for process_param in process_params_table
-                if process_param.param == '--reference-psd'}
+                if process_param.param == "--reference-psd"
+            }
 
         ts0 = TimeSlideID(0)
         for time_slide_id in {coinc.time_slide_id for coinc in coinc_table}:
             if offsets_by_time_slide_id is None and time_slide_id == ts0:
                 log.warning(
-                    'Time slide record is missing for %s, '
-                    'guessing that this is zero-lag', time_slide_id)
+                    "Time slide record is missing for %s, "
+                    "guessing that this is zero-lag",
+                    time_slide_id,
+                )
 
-        for program in {program_for_process_id[coinc.process_id]
-                        for coinc in coinc_table}:
+        for program in {
+            program_for_process_id[coinc.process_id] for coinc in coinc_table
+        }:
             invert_phases = self._phase_convention(program)
             if invert_phases:
                 log.warning(
-                    'Using anti-FINDCHIRP phase convention; inverting phases. '
-                    'This is currently the default and it is appropriate for '
-                    'gstlal and MBTA but not pycbc as of observing run 1 '
+                    "Using anti-FINDCHIRP phase convention; inverting phases. "
+                    "This is currently the default and it is appropriate for "
+                    "gstlal and MBTA but not pycbc as of observing run 1 "
                     '("O1"). The default setting is likely to change in the '
-                    'future.')
+                    "future."
+                )
 
         for coinc in coinc_table:
             coinc_event_id = coinc.coinc_event_id
             coinc_event_num = int(coinc_event_id)
-            sngls = [sngl_inspirals_by_event_id[event_id] for event_id
-                     in event_ids_by_coinc_event_id[coinc_event_id]]
+            sngls = [
+                sngl_inspirals_by_event_id[event_id]
+                for event_id in event_ids_by_coinc_event_id[coinc_event_id]
+            ]
             if offsets_by_time_slide_id is None and coinc.time_slide_id == ts0:
                 offsets = defaultdict(float)
             else:
@@ -221,21 +241,32 @@ class LigoLWEventSource(dict, EventSource):
 
             template_args = [
                 {key: getattr(sngl, key) for key in self._template_keys}
-                for sngl in sngls]
+                for sngl in sngls
+            ]
             if any(d != template_args[0] for d in template_args[1:]):
                 raise ValueError(
-                    'Template arguments are not identical for all detectors!')
+                    "Template arguments are not identical for all detectors!"
+                )
             template_args = template_args[0]
 
             invert_phases = self._phase_convention(
-                program_for_process_id[coinc.process_id])
+                program_for_process_id[coinc.process_id]
+            )
 
-            singles = tuple(LigoLWSingleEvent(
-                self, sngl.ifo, sngl.snr, sngl.coa_phase,
-                float(sngl.end + offsets[sngl.ifo]), float(sngl.end),
-                psd_file or psd_filenames_by_process_id.get(sngl.process_id),
-                snr_dict.get(sngl.event_id), invert_phases)
-                for sngl in sngls)
+            singles = tuple(
+                LigoLWSingleEvent(
+                    self,
+                    sngl.ifo,
+                    sngl.snr,
+                    sngl.coa_phase,
+                    float(sngl.end + offsets[sngl.ifo]),
+                    float(sngl.end),
+                    psd_file or psd_filenames_by_process_id.get(sngl.process_id),
+                    snr_dict.get(sngl.event_id),
+                    invert_phases,
+                )
+                for sngl in sngls
+            )
 
             event = LigoLWEvent(coinc_event_num, singles, template_args)
 
@@ -247,8 +278,8 @@ class LigoLWEventSource(dict, EventSource):
             try:
                 if elem.Name != lal.COMPLEX8TimeSeries.__name__:
                     continue
-                Array.get_array(elem, 'snr')
-                event_id = Param.get_param(elem, 'event_id').value
+                Array.get_array(elem, "snr")
+                event_id = Param.get_param(elem, "event_id").value
             except (AttributeError, ValueError):
                 continue
             else:
@@ -256,7 +287,6 @@ class LigoLWEventSource(dict, EventSource):
 
 
 class LigoLWEvent(Event):
-
     def __init__(self, id, singles, template_args):
         self._id = id
         self._singles = singles
@@ -272,9 +302,18 @@ class LigoLWEvent(Event):
 
 
 class LigoLWSingleEvent(SingleEvent):
-
-    def __init__(self, source, detector, snr, phase, time, zerolag_time,
-                 psd_file, snr_series, invert_phases):
+    def __init__(
+        self,
+        source,
+        detector,
+        snr,
+        phase,
+        time,
+        zerolag_time,
+        psd_file,
+        snr_series,
+        invert_phases,
+    ):
         self._source = source
         self._detector = detector
         self._snr = snr

@@ -1,18 +1,16 @@
-from astropy import units as u
 import numpy as np
 import pytest
+from astropy import units as u
 
-from ..cosmology import cosmo, dVC_dVL_for_DL, dVC_dVL_for_z, dDL_dz_for_z
 from ...util.math import derivative
+from ..cosmology import cosmo, dDL_dz_for_z, dVC_dVL_for_DL, dVC_dVL_for_z
 
-redshift_range = pytest.mark.parametrize('z', np.logspace(-6, 2))
+redshift_range = pytest.mark.parametrize("z", np.logspace(-6, 2))
 
 
 @redshift_range
 def test_dDL_dz(z):
-    expected = derivative(
-        cosmo.luminosity_distance, z, dx=0.001 * z
-    ).to_value(u.Mpc)
+    expected = derivative(cosmo.luminosity_distance, z, dx=0.001 * z).to_value(u.Mpc)
     result = dDL_dz_for_z(z).to_value(u.Mpc)
     assert expected == pytest.approx(result)
 

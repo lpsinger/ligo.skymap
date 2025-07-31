@@ -15,11 +15,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import astropy_healpix as ah
-from astropy import units as u
 import healpy as hp
 import numpy as np
+from astropy import units as u
 
-__all__ = ('contour', 'simplify')
+__all__ = ("contour", "simplify")
 
 
 def _norm_squared(vertices):
@@ -27,9 +27,12 @@ def _norm_squared(vertices):
 
 
 def _adjacent_triangle_area_squared(vertices):
-    return 0.25 * _norm_squared(np.cross(
-        np.roll(vertices, -1, axis=0) - vertices,
-        np.roll(vertices, +1, axis=0) - vertices))
+    return 0.25 * _norm_squared(
+        np.cross(
+            np.roll(vertices, -1, axis=0) - vertices,
+            np.roll(vertices, +1, axis=0) - vertices,
+        )
+    )
 
 
 def _vec2radec(vertices, degrees=False):
@@ -132,17 +135,16 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
     # Loop over the requested contours.
     paths = []
     for level in levels:
-
         # Find credible region.
-        indicator = (m >= level)
+        indicator = m >= level
 
         # Find all faces that lie on the boundary.
         # This speeds up the doubly nested ``for`` loop below by allowing us to
         # skip the vast majority of faces that are on the interior or the
         # exterior of the contour.
         tovisit = np.flatnonzero(
-            np.any(indicator.reshape(-1, 1) !=
-                   indicator[neighbors[:, ::2]], axis=1))
+            np.any(indicator.reshape(-1, 1) != indicator[neighbors[:, ::2]], axis=1)
+        )
 
         # Construct a graph of the edges of the contour.
         graph = nx.Graph()
@@ -168,7 +170,8 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
                 # Label each vertex with the set of faces that they share.
                 graph.add_edge(
                     frozenset((ipix1, *neighborhood[2:5])),
-                    frozenset((ipix1, *neighborhood[4:7])))
+                    frozenset((ipix1, *neighborhood[4:7])),
+                )
         graph = nx.freeze(graph)
 
         # Find contours by detecting cycles in the graph.
@@ -176,9 +179,13 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
 
         # Construct the coordinates of the vertices by averaging the
         # coordinates of the connected faces.
-        cycles = [[
-            np.sum(hp.pix2vec(nside, [i for i in v if i != -1], nest=nest), 1)
-            for v in cycle] for cycle in cycles]
+        cycles = [
+            [
+                np.sum(hp.pix2vec(nside, [i for i in v if i != -1], nest=nest), 1)
+                for v in cycle
+            ]
+            for cycle in cycles
+        ]
 
         # Simplify paths if requested.
         if simplify:
@@ -186,8 +193,7 @@ def contour(m, levels, nest=False, degrees=False, simplify=True):
             cycles = [cycle for cycle in cycles if len(cycle) > 2]
 
         # Convert to angles.
-        cycles = [
-            _vec2radec(cycle, degrees=degrees).tolist() for cycle in cycles]
+        cycles = [_vec2radec(cycle, degrees=degrees).tolist() for cycle in cycles]
 
         # Add to output paths.
         paths.append([cycle + [cycle[0]] for cycle in cycles])

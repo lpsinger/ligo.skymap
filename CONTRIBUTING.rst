@@ -12,3 +12,6 @@ https://git.ligo.org/lscsoft/ligo.skymap.
 Contributors who are not members of LIGO, Virgo, or KAGRA can submit issues or
 pull requests through the project's GitHub mirror at
 https://github.com/lpsinger/ligo.skymap.
+
+See :doc:`develop` for instructions on checking out the code and configuring
+the environment on your machine for ligo.skymap development.

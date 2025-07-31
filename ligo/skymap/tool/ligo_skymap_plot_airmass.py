@@ -26,36 +26,51 @@ from .matplotlib import get_figure_parser
 
 def parser():
     from astropy.coordinates import EarthLocation
+
     site_names = EarthLocation.get_site_names()
     parser = ArgumentParser(parents=[get_figure_parser()])
     parser.add_argument(
-        '-v', '--verbose', action='store_true',
-        help='Print airmass table to stdout')
+        "-v", "--verbose", action="store_true", help="Print airmass table to stdout"
+    )
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
-        default='-', nargs='?', help='Input FITS file')
+        "input",
+        metavar="INPUT.fits[.gz]",
+        type=FileType("rb"),
+        default="-",
+        nargs="?",
+        help="Input FITS file",
+    )
+    parser.add_argument("--time", help="UTC time")
     parser.add_argument(
-        '--time', help='UTC time')
+        "--site", metavar="SITE", choices=site_names, help="Observatory site"
+    )
+    parser.add_argument("--help-site", action=HelpChoicesAction, choices=site_names)
     parser.add_argument(
-        '--site', metavar='SITE', choices=site_names, help='Observatory site')
+        "--site-longitude",
+        metavar="DEG",
+        type=float,
+        help="Observatory longitude on the WGS84 ellipsoid. "
+        "Mutually exclusive with --site.",
+    )
     parser.add_argument(
-        '--help-site', action=HelpChoicesAction, choices=site_names)
+        "--site-latitude",
+        metavar="DEG",
+        type=float,
+        help="Observatory latitude on the WGS84 ellipsoid. "
+        "Mutually exclusive with --site.",
+    )
     parser.add_argument(
-        '--site-longitude', metavar='DEG', type=float,
-        help='Observatory longitude on the WGS84 ellipsoid. '
-        'Mutually exclusive with --site.')
+        "--site-height",
+        metavar="METERS",
+        type=float,
+        help="Observatory height from the WGS84 ellipsoid. "
+        "Mutually exclusive with --site.",
+    )
     parser.add_argument(
-        '--site-latitude', metavar='DEG', type=float,
-        help='Observatory latitude on the WGS84 ellipsoid. '
-        'Mutually exclusive with --site.')
-    parser.add_argument(
-        '--site-height', metavar='METERS', type=float,
-        help='Observatory height from the WGS84 ellipsoid. '
-        'Mutually exclusive with --site.')
-    parser.add_argument(
-        '--site-timezone',
+        "--site-timezone",
         help='Observatory time zone, e.g. "US/Pacific". '
-        'Mutually exclusive with --site.')
+        "Mutually exclusive with --site.",
+    )
     return parser
 
 
@@ -78,44 +93,53 @@ def main(args=None):
     import operator
     import sys
 
+    import pytz
     from astroplan import Observer
     from astroplan.plots import plot_airmass
+    from astropy import units as u
     from astropy.coordinates import EarthLocation, SkyCoord
     from astropy.table import Table
     from astropy.time import Time
-    from astropy import units as u
     from matplotlib import dates
+    from matplotlib import pyplot as plt
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
     from matplotlib.patches import Patch
-    from matplotlib import pyplot as plt
     from tqdm import tqdm
-    import pytz
 
-    from ..io import fits
-    from .. import moc
-    from .. import plot  # noqa
+    from .. import (
+        moc,
+        plot,  # noqa: F401
+    )
     from ..extern.numpy.quantile import percentile
+    from ..io import fits
 
     if opts.site is None:
         if opts.site_longitude is None or opts.site_latitude is None:
-            p.error('must specify either --site or both '
-                    '--site-longitude and --site-latitude')
+            p.error(
+                "must specify either --site or both "
+                "--site-longitude and --site-latitude"
+            )
         location = EarthLocation(
             lon=opts.site_longitude * u.deg,
             lat=opts.site_latitude * u.deg,
-            height=(opts.site_height or 0) * u.m)
+            height=(opts.site_height or 0) * u.m,
+        )
         if opts.site_timezone is not None:
-            location.info.meta = {'timezone': opts.site_timezone}
+            location.info.meta = {"timezone": opts.site_timezone}
         observer = Observer(location)
     else:
-        if not ((opts.site_longitude is None) and
-                (opts.site_latitude is None) and
-                (opts.site_height is None) and
-                (opts.site_timezone is None)):
-            p.error('argument --site not allowed with arguments '
-                    '--site-longitude, --site-latitude, '
-                    '--site-height, or --site-timezone')
+        if not (
+            (opts.site_longitude is None)
+            and (opts.site_latitude is None)
+            and (opts.site_height is None)
+            and (opts.site_timezone is None)
+        ):
+            p.error(
+                "argument --site not allowed with arguments "
+                "--site-longitude, --site-latitude, "
+                "--site-height, or --site-timezone"
+            )
         observer = Observer.at_site(opts.site)
 
     m = fits.read_sky_map(opts.input.name, moc=True)
@@ -128,22 +152,26 @@ def main(args=None):
     # Remove the fake source and determine times that were used for the plot.
     for artist in ax.lines:
         artist.remove()
-    times = Time(np.linspace(*ax.get_xlim()), format='plot_date')
+    times = Time(np.linspace(*ax.get_xlim()), format="plot_date")
 
-    theta, phi = moc.uniq2ang(m['UNIQ'])
+    theta, phi = moc.uniq2ang(m["UNIQ"])
     coords = SkyCoord(phi, 0.5 * np.pi - theta, unit=u.rad)
-    prob = moc.uniq2pixarea(m['UNIQ']) * m['PROBDENSITY']
+    prob = moc.uniq2pixarea(m["UNIQ"]) * m["PROBDENSITY"]
 
     levels = np.arange(90, 0, -10)
     nlevels = len(levels)
     percentiles = np.concatenate((50 - 0.5 * levels, 50 + 0.5 * levels))
 
-    airmass = np.column_stack([
-        percentile(
-            condition_secz(coords.transform_to(observer.altaz(t)).secz),
-            percentiles,
-            weights=prob)
-        for t in tqdm(times)])
+    airmass = np.column_stack(
+        [
+            percentile(
+                condition_secz(coords.transform_to(observer.altaz(t)).secz),
+                percentiles,
+                weights=prob,
+            )
+            for t in tqdm(times)
+        ]
+    )
 
     cmap = ScalarMappable(Normalize(0, 100), plt.get_cmap())
     for level, lo, hi in zip(levels, airmass[:nlevels], airmass[nlevels:]):
@@ -151,71 +179,85 @@ def main(args=None):
             times.plot_date,
             clip_verylarge(lo),  # Clip infinities to large but finite values
             clip_verylarge(hi),  # because fill_between cannot handle inf
-            color=cmap.to_rgba(level), zorder=2)
+            color=cmap.to_rgba(level),
+            zorder=2,
+        )
 
     ax.legend(
         [Patch(facecolor=cmap.to_rgba(level)) for level in levels],
-        ['{}%'.format(level) for level in levels])
+        ["{}%".format(level) for level in levels],
+    )
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
     # Adapted from astroplan
     start = times[0]
     twilights = [
         (times[0].datetime, 0.0),
-        (observer.sun_set_time(
-            Time(start), which='next').datetime, 0.0),
-        (observer.twilight_evening_civil(
-            Time(start), which='next').datetime, 0.1),
-        (observer.twilight_evening_nautical(
-            Time(start), which='next').datetime, 0.2),
-        (observer.twilight_evening_astronomical(
-            Time(start), which='next').datetime, 0.3),
-        (observer.twilight_morning_astronomical(
-            Time(start), which='next').datetime, 0.4),
-        (observer.twilight_morning_nautical(
-            Time(start), which='next').datetime, 0.3),
-        (observer.twilight_morning_civil(
-            Time(start), which='next').datetime, 0.2),
-        (observer.sun_rise_time(
-            Time(start), which='next').datetime, 0.1),
+        (observer.sun_set_time(Time(start), which="next").datetime, 0.0),
+        (observer.twilight_evening_civil(Time(start), which="next").datetime, 0.1),
+        (observer.twilight_evening_nautical(Time(start), which="next").datetime, 0.2),
+        (
+            observer.twilight_evening_astronomical(Time(start), which="next").datetime,
+            0.3,
+        ),
+        (
+            observer.twilight_morning_astronomical(Time(start), which="next").datetime,
+            0.4,
+        ),
+        (observer.twilight_morning_nautical(Time(start), which="next").datetime, 0.3),
+        (observer.twilight_morning_civil(Time(start), which="next").datetime, 0.2),
+        (observer.sun_rise_time(Time(start), which="next").datetime, 0.1),
         (times[-1].datetime, 0.0),
     ]
 
     twilights.sort(key=operator.itemgetter(0))
     for i, twi in enumerate(twilights[1:], 1):
         if twi[1] != 0:
-            ax.axvspan(twilights[i - 1][0], twilights[i][0],
-                       ymin=0, ymax=1, color='grey', alpha=twi[1], linewidth=0)
+            ax.axvspan(
+                twilights[i - 1][0],
+                twilights[i][0],
+                ymin=0,
+                ymax=1,
+                color="grey",
+                alpha=twi[1],
+                linewidth=0,
+            )
         if twi[1] != 0.4:
-            ax.axvspan(twilights[i - 1][0], twilights[i][0],
-                       ymin=0, ymax=1, color='white', alpha=0.8 - 2 * twi[1],
-                       zorder=3, linewidth=0)
+            ax.axvspan(
+                twilights[i - 1][0],
+                twilights[i][0],
+                ymin=0,
+                ymax=1,
+                color="white",
+                alpha=0.8 - 2 * twi[1],
+                zorder=3,
+                linewidth=0,
+            )
 
     # Add local time axis
-    timezone = (observer.location.info.meta or {}).get('timezone')
+    timezone = (observer.location.info.meta or {}).get("timezone")
     if timezone:
         tzinfo = pytz.timezone(timezone)
         ax2 = ax.twiny()
         ax2.set_xlim(ax.get_xlim())
         ax2.set_xticks(ax.get_xticks())
-        ax2.xaxis.set_major_formatter(dates.DateFormatter('%H:%M', tz=tzinfo))
-        plt.setp(ax2.get_xticklabels(), rotation=-30, ha='right')
-        ax2.set_xlabel("Time from {} [{}]".format(
-            min(times).to_datetime(tzinfo).date(),
-            timezone))
+        ax2.xaxis.set_major_formatter(dates.DateFormatter("%H:%M", tz=tzinfo))
+        plt.setp(ax2.get_xticklabels(), rotation=-30, ha="right")
+        ax2.set_xlabel(
+            "Time from {} [{}]".format(min(times).to_datetime(tzinfo).date(), timezone)
+        )
 
     if opts.verbose:
         # Write airmass table to stdout.
-        times.format = 'isot'
+        times.format = "isot"
         table = Table(masked=True)
-        table['time'] = times
-        table['sun_alt'] = np.ma.masked_greater_equal(
-            observer.sun_altaz(times).alt, 0)
-        table['sun_alt'].format = lambda x: '{}'.format(int(np.round(x)))
+        table["time"] = times
+        table["sun_alt"] = np.ma.masked_greater_equal(observer.sun_altaz(times).alt, 0)
+        table["sun_alt"].format = lambda x: "{}".format(int(np.round(x)))
         for p, data in sorted(zip(percentiles, airmass)):
             table[str(p)] = np.ma.masked_invalid(data)
-            table[str(p)].format = lambda x: '{:.01f}'.format(np.around(x, 1))
-        table.write(sys.stdout, format='ascii.fixed_width')
+            table[str(p)].format = lambda x: "{:.01f}".format(np.around(x, 1))
+        table.write(sys.stdout, format="ascii.fixed_width")
 
     # Show or save output.
     opts.output()

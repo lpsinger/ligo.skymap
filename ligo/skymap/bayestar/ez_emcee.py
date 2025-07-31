@@ -18,16 +18,25 @@ from tqdm import tqdm
 
 from .ptemcee import Sampler
 
-__all__ = ('ez_emcee',)
+__all__ = ("ez_emcee",)
 
 
 def logp(x, lo, hi):
     return np.where(((x >= lo) & (x <= hi)).all(-1), 0.0, -np.inf)
 
 
-def ez_emcee(log_prob_fn, lo, hi, nindep=200,
-             ntemps=10, nwalkers=None, nburnin=500,
-             args=(), kwargs={}, **options):
+def ez_emcee(
+    log_prob_fn,
+    lo,
+    hi,
+    nindep=200,
+    ntemps=10,
+    nwalkers=None,
+    nburnin=500,
+    args=(),
+    kwargs={},
+    **options,
+):
     r'''Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
     automated convergence monitoring, progress tracking, and thinning.
 
@@ -114,31 +123,36 @@ def ez_emcee(log_prob_fn, lo, hi, nindep=200,
     nsteps = 64
 
     with tqdm(total=nburnin + nindep * nsteps) as progress:
-
-        sampler = Sampler(nwalkers, ndim, log_prob_fn, logp,
-                          ntemps=ntemps, loglargs=args, loglkwargs=kwargs,
-                          logpargs=[lo, hi], random=np.random, **options)
+        sampler = Sampler(
+            nwalkers,
+            ndim,
+            log_prob_fn,
+            logp,
+            ntemps=ntemps,
+            loglargs=args,
+            loglkwargs=kwargs,
+            logpargs=[lo, hi],
+            random=np.random,
+            **options,
+        )
         pos = np.random.uniform(lo, hi, (ntemps, nwalkers, ndim))
 
         # Burn in
-        progress.set_description('Burning in')
-        for pos, _, _ in sampler.sample(
-                pos, iterations=nburnin, storechain=False):
+        progress.set_description("Burning in")
+        for pos, _, _ in sampler.sample(pos, iterations=nburnin, storechain=False):
             progress.update()
 
         sampler.reset()
         acl = np.nan
         while not np.isfinite(acl) or sampler.time < nindep * acl:
-
             # Advance the chain
-            progress.total = nburnin + max(sampler.time + nsteps,
-                                           nindep * acl)
-            progress.set_description('Sampling')
+            progress.total = nburnin + max(sampler.time + nsteps, nindep * acl)
+            progress.set_description("Sampling")
             for pos, _, _ in sampler.sample(pos, iterations=nsteps):
                 progress.update()
 
             # Refresh convergence statistics
-            progress.set_description('Checking')
+            progress.set_description("Checking")
             acl = sampler.get_autocorr_time()[0].max()
             if np.isfinite(acl):
                 acl = max(1, int(np.ceil(acl)))

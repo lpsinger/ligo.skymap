@@ -38,6 +38,12 @@ Unit tests in ligo.skymap come in three forms:
    :c:func:`bayestar_test` in `src/bayestar_sky_map.c`_ and
    :c:func:`cubic_interp_test` in `src/cubic_interp_test.c`_.
 
+Static code analysis
+--------------------
+
+Static code analysis and linting is performed by `ruff`_ which is run as
+a :ref:`pre-commit hook <pre-commit-hook>`.
+
 Coverage analysis
 -----------------
 
@@ -125,3 +131,4 @@ corresponding ticket in the LSC
 .. _`private wiki`: https://git.ligo.org/lscsoft/ligo.skymap/-/wikis/home
 .. _`Review label`: https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests?label_name%5B%5D=Review
 .. _`Software Change Control Board (SCCB) issue tracker (private link)`: https://git.ligo.org/computing/sccb/-/issues
+.. _`ruff`: https://docs.astral.sh/ruff/

@@ -17,16 +17,23 @@
 """
 Multiresolution HEALPix trees
 """
-import astropy_healpix as ah
-from astropy import units as u
-import numpy as np
-import healpy as hp
+
 import collections
 import itertools
 
-__all__ = ('HEALPIX_MACHINE_ORDER', 'HEALPIX_MACHINE_NSIDE', 'HEALPixTree',
-           'adaptive_healpix_histogram', 'interpolate_nested',
-           'reconstruct_nested')
+import astropy_healpix as ah
+import healpy as hp
+import numpy as np
+from astropy import units as u
+
+__all__ = (
+    "HEALPIX_MACHINE_ORDER",
+    "HEALPIX_MACHINE_NSIDE",
+    "HEALPixTree",
+    "adaptive_healpix_histogram",
+    "interpolate_nested",
+    "reconstruct_nested",
+)
 
 
 # Maximum 64-bit HEALPix resolution.
@@ -35,11 +42,11 @@ HEALPIX_MACHINE_NSIDE = ah.level_to_nside(HEALPIX_MACHINE_ORDER)
 
 
 _HEALPixTreeVisitExtra = collections.namedtuple(
-    'HEALPixTreeVisit', 'nside full_nside ipix ipix0 ipix1 value')
+    "HEALPixTreeVisit", "nside full_nside ipix ipix0 ipix1 value"
+)
 
 
-_HEALPixTreeVisit = collections.namedtuple(
-    'HEALPixTreeVisit', 'nside ipix')
+_HEALPixTreeVisit = collections.namedtuple("HEALPixTreeVisit", "nside ipix")
 
 
 class HEALPixTree:
@@ -47,8 +54,8 @@ class HEALPixTree:
     adaptive_healpix_histogram()."""
 
     def __init__(
-            self, samples, max_samples_per_pixel, max_order,
-            order=0, needs_sort=True):
+        self, samples, max_samples_per_pixel, max_order, order=0, needs_sort=True
+    ):
         if needs_sort:
             samples = np.sort(samples)
         if len(samples) >= max_samples_per_pixel and order < max_order:
@@ -57,14 +64,17 @@ class HEALPixTree:
             nchildren = 12 if order == 0 else 4
             self.samples = None
             self.children = [
-                HEALPixTree(
-                    [], max_samples_per_pixel, max_order, order=order + 1)
-                for i in range(nchildren)]
-            for ipix, samples in itertools.groupby(
-                    samples, self.key_for_order(order)):
+                HEALPixTree([], max_samples_per_pixel, max_order, order=order + 1)
+                for i in range(nchildren)
+            ]
+            for ipix, samples in itertools.groupby(samples, self.key_for_order(order)):
                 self.children[ipix % nchildren] = HEALPixTree(
-                    list(samples), max_samples_per_pixel, max_order,
-                    order=order + 1, needs_sort=False)
+                    list(samples),
+                    max_samples_per_pixel,
+                    max_order,
+                    order=order + 1,
+                    needs_sort=False,
+                )
         else:
             # There are few enough samples that we can make this cell a leaf.
             self.samples = list(samples)
@@ -73,8 +83,7 @@ class HEALPixTree:
     @staticmethod
     def key_for_order(order):
         """Create a function that downsamples full-resolution pixel indices."""
-        return lambda ipix: ipix >> np.int64(
-            2 * (HEALPIX_MACHINE_ORDER - order))
+        return lambda ipix: ipix >> np.int64(2 * (HEALPIX_MACHINE_ORDER - order))
 
     @property
     def order(self):
@@ -93,13 +102,13 @@ class HEALPixTree:
             ipix1 = (ipix + 1) << 2 * (full_order - order)
             if extra:
                 yield _HEALPixTreeVisitExtra(
-                    nside, full_nside, ipix, ipix0, ipix1, self.samples)
+                    nside, full_nside, ipix, ipix0, ipix1, self.samples
+                )
             else:
                 yield _HEALPixTreeVisit(nside, ipix)
         else:
             for i, child in enumerate(self.children):
-                yield from child._visit(
-                    order + 1, full_order, (ipix << 2) + i, extra)
+                yield from child._visit(order + 1, full_order, (ipix << 2) + i, extra)
 
     def _visit_depthfirst(self, extra):
         order = self.order
@@ -107,10 +116,9 @@ class HEALPixTree:
             yield from child._visit(0, order, ipix, extra)
 
     def _visit_breadthfirst(self, extra):
-        return sorted(
-            self._visit_depthfirst(extra), lambda _: (_.nside, _.ipix))
+        return sorted(self._visit_depthfirst(extra), lambda _: (_.nside, _.ipix))
 
-    def visit(self, order='depthfirst', extra=True):
+    def visit(self, order="depthfirst", extra=True):
         """Traverse the leaves of the HEALPix tree.
 
         Parameters
@@ -152,8 +160,10 @@ class HEALPixTree:
         >>> [tuple(_) for _ in tree.visit(extra=False)]
         [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11)]
         """
-        funcs = {'depthfirst': self._visit_depthfirst,
-                 'breadthfirst': self._visit_breadthfirst}
+        funcs = {
+            "depthfirst": self._visit_depthfirst,
+            "breadthfirst": self._visit_breadthfirst,
+        }
         func = funcs[order]
         yield from func(extra)
 
@@ -168,7 +178,8 @@ class HEALPixTree:
 
 
 def adaptive_healpix_histogram(
-        theta, phi, max_samples_per_pixel, nside=-1, max_nside=-1, nest=False):
+    theta, phi, max_samples_per_pixel, nside=-1, max_nside=-1, nest=False
+):
     """Adaptively histogram the posterior samples represented by the
     (theta, phi) points using a recursively subdivided HEALPix tree. Nodes are
     subdivided until each leaf contains no more than max_samples_per_pixel
@@ -200,7 +211,7 @@ def adaptive_healpix_histogram(
 
     # If requested, resample the tree to the output resolution.
     if nside != -1:
-        p = hp.ud_grade(p, nside, order_in='NESTED', order_out='NESTED')
+        p = hp.ud_grade(p, nside, order_in="NESTED", order_out="NESTED")
 
     # Normalize.
     p /= np.sum(p)
@@ -220,9 +231,8 @@ def _interpolate_level(m):
     if npix > 12:
         # Determine which pixels comprise multi-pixel tiles.
         ipix = np.flatnonzero(
-            (m[0::4] == m[1::4]) &
-            (m[0::4] == m[2::4]) &
-            (m[0::4] == m[3::4]))
+            (m[0::4] == m[1::4]) & (m[0::4] == m[2::4]) & (m[0::4] == m[3::4])
+        )
 
         if len(ipix):
             ipix = 4 * ipix + np.expand_dims(np.arange(4, dtype=np.intp), 1)
@@ -231,15 +241,15 @@ def _interpolate_level(m):
             nside = ah.npix_to_nside(npix)
 
             # Downsample.
-            m_lores = hp.ud_grade(
-                m, nside // 2, order_in='NESTED', order_out='NESTED')
+            m_lores = hp.ud_grade(m, nside // 2, order_in="NESTED", order_out="NESTED")
 
             # Interpolate recursively.
             _interpolate_level(m_lores)
 
             # Record interpolated multi-pixel tiles.
             m[ipix] = hp.get_interp_val(
-                m_lores, *hp.pix2ang(nside, ipix, nest=True), nest=True)
+                m_lores, *hp.pix2ang(nside, ipix, nest=True), nest=True
+            )
 
 
 def interpolate_nested(m, nest=False):
@@ -329,21 +339,20 @@ def _reconstruct_nested_breadthfirst(m, extra):
             seen[ipix0:ipix1] = True
             if extra:
                 yield _HEALPixTreeVisitExtra(
-                    nside, max_nside, ipix, ipix0, ipix1, m[ipix0])
+                    nside, max_nside, ipix, ipix0, ipix1, m[ipix0]
+                )
             else:
                 yield _HEALPixTreeVisit(nside, ipix)
 
 
 def _reconstruct_nested_depthfirst(m, extra):
-    result = sorted(
-        _reconstruct_nested_breadthfirst(m, True),
-        key=lambda _: _.ipix0)
+    result = sorted(_reconstruct_nested_breadthfirst(m, True), key=lambda _: _.ipix0)
     if not extra:
         result = (_HEALPixTreeVisit(_.nside, _.ipix) for _ in result)
     return result
 
 
-def reconstruct_nested(m, order='depthfirst', extra=True):
+def reconstruct_nested(m, order="depthfirst", extra=True):
     """Reconstruct the leaves of a multiresolution tree.
 
     Parameters
@@ -528,7 +537,9 @@ def reconstruct_nested(m, order='depthfirst', extra=True):
            [ 2, 46],
            [ 2, 47]])
     """
-    funcs = {'depthfirst': _reconstruct_nested_depthfirst,
-             'breadthfirst': _reconstruct_nested_breadthfirst}
+    funcs = {
+        "depthfirst": _reconstruct_nested_depthfirst,
+        "breadthfirst": _reconstruct_nested_breadthfirst,
+    }
     func = funcs[order]
     yield from func(m, extra)

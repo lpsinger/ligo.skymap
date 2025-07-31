@@ -27,28 +27,34 @@ from .matplotlib import get_figure_parser
 def parser():
     parser = ArgumentParser(parents=[get_figure_parser()])
     parser.add_argument(
-        'input', metavar='INPUT.fits[.gz]', type=FileType('rb'),
-        default='-', nargs='?', help='Input FITS file')
-    parser.set_defaults(colormap='RdYlBu')
+        "input",
+        metavar="INPUT.fits[.gz]",
+        type=FileType("rb"),
+        default="-",
+        nargs="?",
+        help="Input FITS file",
+    )
+    parser.set_defaults(colormap="RdYlBu")
     return parser
 
 
 def main(args=None):
     with parser().parse_args(args) as opts:
         # Late imports
-        from astropy.io import fits
         import numpy as np
+        from astropy.io import fits
+
         from ..plot import plot_bayes_factor
 
         header = fits.getheader(opts.input, 1)
-        logb = header['LOGBCI']
-        objid = header.get('OBJECT')
+        logb = header["LOGBCI"]
+        objid = header.get("OBJECT")
 
-        title = 'Coherence'
+        title = "Coherence"
         if objid:
-            title += f' of {objid}'
-        logb_string = np.format_float_positional(logb, 1, trim='0', sign=True)
-        title += fr' $[\ln\,B = {logb_string}]$'
+            title += f" of {objid}"
+        logb_string = np.format_float_positional(logb, 1, trim="0", sign=True)
+        title += rf" $[\ln\,B = {logb_string}]$"
 
         plot_bayes_factor(logb, title=title, palette=opts.colormap)
 

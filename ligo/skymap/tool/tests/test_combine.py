@@ -1,21 +1,20 @@
 import astropy_healpix as ah
-from astropy import units as u
 import healpy as hp
 import numpy as np
 import pytest
+from astropy import units as u
 
-from ... import io
-from ... import distance
+from ... import distance, io
 from . import run_entry_point
 
 
 # Suppress Healpy's printing of diagnostics when reading FITS files.
-@pytest.mark.filterwarnings('ignore::UserWarning:healpy.fitsfunc')
+@pytest.mark.filterwarnings("ignore::UserWarning:healpy.fitsfunc")
 def test_combine(tmpdir):
     """Test ligo-skymap-combine."""
-    fn1 = str(tmpdir / 'skymap1.fits.gz')
-    fn2 = str(tmpdir / 'skymap2.fits.gz')
-    fn3 = str(tmpdir / 'joint_skymap.fits.gz')
+    fn1 = str(tmpdir / "skymap1.fits.gz")
+    fn2 = str(tmpdir / "skymap2.fits.gz")
+    fn3 = str(tmpdir / "joint_skymap.fits.gz")
 
     # generate a hemisphere of constant probability
     nside1 = 32
@@ -24,8 +23,9 @@ def test_combine(tmpdir):
     disc_idx = hp.query_disc(nside1, (1, 0, 0), np.pi / 2)
     m1[disc_idx] = 1
     m1 /= m1.sum()
-    hp.write_map(fn1, m1, column_names=['PROBABILITY'],
-                 extra_header=[('INSTRUME', 'X1')])
+    hp.write_map(
+        fn1, m1, column_names=["PROBABILITY"], extra_header=[("INSTRUME", "X1")]
+    )
 
     # generate another hemisphere of constant probability
     # but with higher resolution and rotated 90 degrees
@@ -35,10 +35,11 @@ def test_combine(tmpdir):
     disc_idx = hp.query_disc(nside2, (0, 1, 0), np.pi / 2)
     m2[disc_idx] = 1
     m2 /= m2.sum()
-    hp.write_map(fn2, m2, column_names=['PROBABILITY'],
-                 extra_header=[('INSTRUME', 'Y1')])
+    hp.write_map(
+        fn2, m2, column_names=["PROBABILITY"], extra_header=[("INSTRUME", "Y1")]
+    )
 
-    run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
+    run_entry_point("ligo-skymap-combine", fn1, fn2, fn3)
 
     m3 = hp.read_map(fn3, nest=True)
     npix3 = len(m3)
@@ -59,11 +60,11 @@ def test_combine(tmpdir):
     d_norm = np.ones_like(m1)
     io.write_sky_map(fn1, [m1, d_mu, d_sigma, d_norm])
 
-    run_entry_point('ligo-skymap-combine', fn1, fn2, fn3)
+    run_entry_point("ligo-skymap-combine", fn1, fn2, fn3)
 
     m3, meta3 = io.read_sky_map(fn3, nest=True, distances=True)
 
     # check that marginal distance moments match what was simulated
     mean, std, _ = distance.parameters_to_moments(d_mu[0], d_sigma[0])
-    assert meta3['distmean'] == pytest.approx(mean)
-    assert meta3['diststd'] == pytest.approx(std)
+    assert meta3["distmean"] == pytest.approx(mean)
+    assert meta3["diststd"] == pytest.approx(std)

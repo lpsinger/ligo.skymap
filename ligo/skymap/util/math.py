@@ -16,7 +16,7 @@
 #
 """Math utilities."""
 
-__all__ = ('derivative',)
+__all__ = ("derivative",)
 
 
 def derivative(func, x0, dx=1.0):

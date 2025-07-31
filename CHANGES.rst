@@ -23,8 +23,8 @@ Changelog
 - Run unit tests for Python 3.11 through 3.13.
 
 - Annotate instruments in ``ligo-skymap-plot`` and ``ligo-skymap-plot-volume``
-  if ``--annotate`` flag is specified and the input FITS file metadata 
-  contains the ``INSTRUME`` field.
+  if ``--annotate`` flag is specified and the input FITS file metadata contains
+  the ``INSTRUME`` field.
 
 2.3.0 (2025-04-26)
 ==================

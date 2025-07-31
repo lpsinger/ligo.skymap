@@ -1,10 +1,10 @@
 # RGB data for the "Cylon red" color map.
-# 
+#
 # A print- and screen-friendly color map designed specifically for plotting
 # LSC/Virgo/KAGRA sky maps. The color map is constructed in CIE Lab space,
 # following a linear ramp in lightness (the `l` coordinate) and a cubic spline
 # in color components (the `a` and `b` coordinates).
-# 
+#
 # This particular color map was selected from 20 random realizations of this
 # construction.
 1.0,0.939165516411,0.880255669068

@@ -82,7 +82,7 @@ def parser():
                         'posterior_samples')
     parser.add_argument("--enable-dpgmm", default=False, action=EnableAction,
                         help='Use a DPGMM instead of KDE '
-                        'for density esimation.')
+                        'for density estimation.')
     return parser
 
 

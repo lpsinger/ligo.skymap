@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2024  Leo Singer, Rainer Corley
+# Copyright (C) 2013-2025  Leo Singer, Rainer Corley
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

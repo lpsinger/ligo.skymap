@@ -193,13 +193,18 @@ from warnings import warn
 
 import numpy as np
 from astropy import units as u
-from astropy.coordinates import SkyCoord, UnitSphericalRepresentation
+from astropy.coordinates import (
+    BaseCoordinateFrame,
+    SkyCoord,
+    UnitSphericalRepresentation,
+)
 from astropy.io.fits import Header
 from astropy.time import Time
 from astropy.visualization.wcsaxes import SphericalCircle, WCSAxes
 from astropy.visualization.wcsaxes.formatter_locator import AngleFormatterLocator
 from astropy.visualization.wcsaxes.frame import EllipticalFrame
 from astropy.wcs import WCS
+from astropy.wcs.utils import wcs_to_celestial_frame
 from matplotlib import rcParams
 from matplotlib.offsetbox import AnchoredOffsetbox
 from matplotlib.patches import ConnectionPatch, FancyArrowPatch, PathPatch
@@ -317,7 +322,7 @@ class AutoScaledWCSAxes(WCSAxes):
 
     name = "astro wcs"
 
-    def __init__(self, *args, header, obstime=None, **kwargs):
+    def __init__(self, *args, header, obstime=None, center=None, **kwargs):
         super().__init__(*args, aspect=1, **kwargs)
         h = Header(header, copy=True)
         naxis1 = h["NAXIS1"]
@@ -334,6 +339,15 @@ class AutoScaledWCSAxes(WCSAxes):
         if obstime is not None:
             h["MJD-OBS"] = Time(obstime).utc.mjd
             h["DATE-OBS"] = Time(obstime).utc.isot
+        if center is not None:
+            frame = wcs_to_celestial_frame(WCS(h))
+            if isinstance(center, (SkyCoord, BaseCoordinateFrame)):
+                center = center.transform_to(frame)
+            else:
+                center = SkyCoord(center, frame=frame)
+            center = center.represent_as(UnitSphericalRepresentation)
+            h["CRVAL1"] = center.lon.deg
+            h["CRVAL2"] = center.lat.deg
         self.reset_wcs(WCS(h))
         self.set_xlim(-0.5, h["NAXIS1"] - 0.5)
         self.set_ylim(-0.5, h["NAXIS2"] - 0.5)
@@ -812,15 +826,12 @@ class Hours:
 
 class Globe(AutoScaledWCSAxes):
     def __init__(self, *args, center="0d 0d", rotate=None, **kwargs):
-        center = SkyCoord(center, representation_type=UnitSphericalRepresentation).icrs
         header = {
             "NAXIS": 2,
             "NAXIS1": 180,
             "NAXIS2": 180,
             "CRPIX1": 90.5,
             "CRPIX2": 90.5,
-            "CRVAL1": center.ra.deg,
-            "CRVAL2": center.dec.deg,
             "CDELT1": -2 / np.pi,
             "CDELT2": 2 / np.pi,
             "CTYPE1": self._xcoord + "-SIN",
@@ -829,12 +840,13 @@ class Globe(AutoScaledWCSAxes):
         }
         if rotate is not None:
             header["LONPOLE"] = u.Quantity(rotate).to_value(u.deg)
-        super().__init__(*args, frame_class=EllipticalFrame, header=header, **kwargs)
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, center=center, **kwargs
+        )
 
 
 class Zoom(AutoScaledWCSAxes):
     def __init__(self, *args, center="0d 0d", radius="1 deg", rotate=None, **kwargs):
-        center = SkyCoord(center, representation_type=UnitSphericalRepresentation).icrs
         radius = u.Quantity(radius).to(u.deg).value
         header = {
             "NAXIS": 2,
@@ -842,8 +854,6 @@ class Zoom(AutoScaledWCSAxes):
             "NAXIS2": 512,
             "CRPIX1": 256.5,
             "CRPIX2": 256.5,
-            "CRVAL1": center.ra.deg,
-            "CRVAL2": center.dec.deg,
             "CDELT1": -radius / 256,
             "CDELT2": radius / 256,
             "CTYPE1": self._xcoord + "-TAN",
@@ -852,7 +862,7 @@ class Zoom(AutoScaledWCSAxes):
         }
         if rotate is not None:
             header["LONPOLE"] = u.Quantity(rotate).to_value(u.deg)
-        super().__init__(*args, header=header, **kwargs)
+        super().__init__(*args, header=header, center=center, **kwargs)
 
 
 class AllSkyAxes(AutoScaledWCSAxes):
@@ -861,22 +871,21 @@ class AllSkyAxes(AutoScaledWCSAxes):
     def __init__(self, *args, center=None, **kwargs):
         if center is None:
             center = f"{self._crval1}d 0d"
-        center = SkyCoord(center, representation_type=UnitSphericalRepresentation).icrs
         header = {
             "NAXIS": 2,
             "NAXIS1": 360,
             "NAXIS2": 180,
             "CRPIX1": 180.5,
             "CRPIX2": 90.5,
-            "CRVAL1": center.ra.deg,
-            "CRVAL2": center.dec.deg,
             "CDELT1": -2 * np.sqrt(2) / np.pi,
             "CDELT2": 2 * np.sqrt(2) / np.pi,
             "CTYPE1": self._xcoord + "-" + self._wcsprj,
             "CTYPE2": self._ycoord + "-" + self._wcsprj,
             "RADESYS": self._radesys,
         }
-        super().__init__(*args, frame_class=EllipticalFrame, header=header, **kwargs)
+        super().__init__(
+            *args, frame_class=EllipticalFrame, header=header, center=center, **kwargs
+        )
         self.coords[0].set_ticks(spacing=45 * u.deg)
         self.coords[1].set_ticks(spacing=30 * u.deg)
         self.coords[0].set_ticklabel(exclude_overlapping=True)

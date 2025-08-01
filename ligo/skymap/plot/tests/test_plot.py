@@ -3,7 +3,7 @@ from itertools import chain, combinations, product
 
 import astropy_healpix as ah
 import matplotlib
-from astropy.coordinates import CartesianRepresentation, SkyCoord
+from astropy.coordinates import ICRS, CartesianRepresentation, SkyCoord
 
 matplotlib.use("agg")
 import healpy as hp  # noqa: E402
@@ -188,6 +188,24 @@ def test_reticle():
 def test_center_projections(rcparams, proj, cent):
     fig = plt.figure(figsize=(4, 4))
     ax = fig.add_axes(111, projection=f"astro {proj}", center=cent)
+    ax.grid()
+    return fig
+
+
+@pytest.mark.parametrize("frame", ["astro", "galactic"])
+@pytest.mark.mpl_image_compare(remove_text=True, tolerance=1.5)
+def test_center_galactic(rcparams, frame):
+    """Regression test for https://github.com/lpsinger/ligo.skymap/issues/32"""
+    center = SkyCoord(95.31043, -47.88693, frame=ICRS(), unit=u.deg)
+    fig = plt.figure(figsize=(3, 3))
+    ax = plt.axes(
+        projection=f"{frame} degrees zoom",
+        center=center,
+        radius="30 deg",
+        rotate="180 deg",
+    )
+    ax.scalebar((0.05, 0.05), 10 * u.deg).label()
+    ax.compass(0.95, 0.05, 0.1)
     ax.grid()
     return fig
 

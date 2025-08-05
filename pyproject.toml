@@ -55,7 +55,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "astroquery",
-    "figaro>=1.7.8 ; python_version < \"3.13\"",
+    "figaro>=1.7.8",
     "pytest-astropy",
     "pytest-benchmark",
     "pytest-mpl",

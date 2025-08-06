@@ -32,7 +32,7 @@ if "matplotlib.pyplot" in sys.modules:
 
     plt.switch_backend("Template")
 else:
-    matplotlib.use("Template", warn=False, force=True)
+    matplotlib.use("Template", force=True)
     from matplotlib import pyplot as plt
 
 __all__ = ("get_figure_parser",)

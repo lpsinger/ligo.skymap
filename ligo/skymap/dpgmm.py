@@ -24,7 +24,7 @@ try:
     from figaro.utils import get_priors
 except ModuleNotFoundError as e:
     raise RuntimeError(
-        "In order to use the DPGMM featureyou must install `figaro`"
+        "In order to use the DPGMM feature you must install `figaro`"
     ) from e
 
 import numpy as np

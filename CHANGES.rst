@@ -20,6 +20,10 @@ Changelog
    - Rewrite ``ligo.skymap.moc.bayestar_adaptive_grid`` in Numpy so that it can
      make use of vectorized sampling functions.
 
+   - When evaluating Numpy vectorized functions using Python multiprocessing,
+     pass the entire chunk to the vector function. See
+     ``ligo.skymap.util.progress_map_vectorized``.
+
    - Refactor final distance columns computation so that it is executed only
      once, not twice.
 

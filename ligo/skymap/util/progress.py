@@ -23,11 +23,12 @@ except ImportError:
 from heapq import heappop, heappush
 from operator import length_hint
 
+import numpy as np
 from tqdm.auto import tqdm
 
 from .. import omp
 
-__all__ = ("progress_map",)
+__all__ = ("progress_map", "progress_map_vectorized")
 
 
 class WrappedFunc:
@@ -37,6 +38,15 @@ class WrappedFunc:
     def __call__(self, i_args):
         i, args = i_args
         return i, self.func(*args)
+
+
+class WrappedFuncWithLength:
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, i_args):
+        i, args = i_args
+        return len(args[0]), (i, self.func(*args))
 
 
 def _get_total_estimate(*iterables):
@@ -79,6 +89,17 @@ def _init_process():
 def progress_map(func, *iterables, jobs=1, **kwargs):
     """Map a function across iterables of arguments.
 
+    Parameters
+    ----------
+    func : callable
+        Function to evaluate.
+    iterables
+        Input argument iterables.
+    jobs : int
+        Number of subprocesses.
+    kwargs : dict
+        Additional keyword arguments passed to :obj:`tqdm.tqdm`.
+
     This is comparable to :meth:`astropy.utils.console.ProgressBar.map`, except
     that it is implemented using :mod:`tqdm` and so provides more detailed and
     accurate progress information.
@@ -109,3 +130,79 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
                 **kwargs,
             )
         )
+
+
+def progress_map_vectorized(func, *iterables, jobs=1, nout=1, **kwargs):
+    """Map a Numpy vectorized function across iterables of arguments.
+
+    Optional parallelization is applied across the first axis of the
+    iterables.
+
+    Parameters
+    ----------
+    func : callable
+        Function to evaluate.
+    iterables
+        Input argument arrays.
+    jobs : int
+        Number of subprocesses.
+    nout : int
+        Number of outputs of the function.
+    kwargs : dict
+        Additional keyword arguments passed to :obj:`tqdm.tqdm`.
+
+    Notes
+    -----
+    All of the iterables must have equal length.
+    """
+    global _jobs, _pool
+    if _in_pool or jobs == 1:
+        return func(*iterables)
+    else:
+        # Check that all iterables have the same length
+        total, *rest = (len(iterable) for iterable in iterables)
+        for i, item in enumerate(rest):
+            if item != total:
+                raise ValueError(
+                    f"Length of argument {i} ({item}) does not match length of argument 0 ({total})"
+                )
+
+        if jobs != _jobs:
+            if _pool is not None:
+                _pool.close()
+            _pool = Pool(jobs, _init_process)
+            _jobs = jobs
+
+        # Chunk size heuristic reproduced from
+        # https://github.com/python/cpython/blob/v3.13.1/Lib/multiprocessing/pool.py#L481-L483.
+        chunks = min(total, len(_pool._pool) * 4)
+
+        with tqdm(total=total, **kwargs) as progress:
+
+            def update(n_result):
+                n, result = n_result
+                progress.update(n)
+                return result
+
+            result = list(
+                _results_in_order(
+                    update(n_result)
+                    for n_result in _pool.imap_unordered(
+                        WrappedFuncWithLength(func),
+                        enumerate(
+                            zip(
+                                *(
+                                    np.array_split(iterable, chunks)
+                                    for iterable in iterables
+                                )
+                            )
+                        ),
+                        chunksize=1,
+                    )
+                )
+            )
+
+            if nout == 1:
+                return np.concatenate(result)
+            else:
+                return np.column_stack(result)

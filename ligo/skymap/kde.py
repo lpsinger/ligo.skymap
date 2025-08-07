@@ -31,7 +31,7 @@ from scipy.stats import gaussian_kde
 
 from . import distance, moc
 from .coordinates import EigenFrame
-from .util import progress_map
+from .util import progress_map, progress_map_vectorized
 
 log = logging.getLogger()
 
@@ -318,8 +318,11 @@ class ClusteredKDE:
         w = np.asarray([kde.n for kde in self.kdes])
         return w / np.sum(w)
 
-    def _map(self, func, items):
+    def _map(self, func, items, *args, **kwargs):
         return progress_map(func, items, jobs=self.jobs)
+
+    def _map_vectorized(self, func, items, *args, **kwargs):
+        return progress_map_vectorized(func, items, jobs=self.jobs, *args, **kwargs)
 
 
 class SkyKDE(ClusteredKDE):
@@ -420,7 +423,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
         return _Clustered2DSkyKDE_factory, factory_args, self.__dict__
 
     def __call__(self, pts):
-        return np.asarray(list(self._map(self.eval_kdes, self.transform(pts))))
+        return self._map_vectorized(self.eval_kdes, self.transform(pts))
 
     def eval_kdes(self, pts):
         base = super().eval_kdes

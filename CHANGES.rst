@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.4.1rc1 (2025-08-04)
+2.4.1rc2 (unreleased)
 =====================
 
 - Require scipy >= 1.10.1.

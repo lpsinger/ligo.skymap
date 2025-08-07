@@ -336,8 +336,8 @@ class SkyKDE(ClusteredKDE):
     def __call__(self, pts):
         return super().__call__(self.transform(pts))
 
-    def as_healpix(self, top_nside=16, rounds=8):
-        return moc.bayestar_adaptive_grid(self, top_nside=top_nside, rounds=rounds)
+    def as_healpix(self, *args, **kwargs):
+        return moc.bayestar_adaptive_grid(self, *args, **kwargs)
 
 
 # We have to put in some hooks to make instances of Clustered2DSkyKDE picklable
@@ -463,11 +463,11 @@ class Clustered3DSkyKDE(SkyKDE):
         """
         return super().__call__(pts)
 
-    def as_healpix(self, top_nside=16):
+    def as_healpix(self, *args, **kwargs):
         """Return a HEALPix multi-order map of the posterior density and
         conditional distance distribution parameters.
         """
-        m = super().as_healpix(top_nside=top_nside)
+        m = super().as_healpix(*args, **kwargs)
         order, ipix = moc.uniq2nest(m["UNIQ"])
         nside = 2 ** order.astype(int)
         theta, phi = hp.pix2ang(nside, ipix, nest=True)

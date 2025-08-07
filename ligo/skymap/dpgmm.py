@@ -58,5 +58,5 @@ class SkyDPGMM:
     def __call__(self, pts):
         return self.model.pdf(self.transform(pts))
 
-    def as_healpix(self, top_nside=16, rounds=8):
-        return moc.bayestar_adaptive_grid(self, top_nside=top_nside, rounds=rounds)
+    def as_healpix(self, *args, **kwargs):
+        return moc.bayestar_adaptive_grid(self, *args, **kwargs)

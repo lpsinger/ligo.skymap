@@ -20,6 +20,9 @@ Changelog
    - Rewrite ``ligo.skymap.moc.bayestar_adaptive_grid`` in Numpy so that it can
      make use of vectorized sampling functions.
 
+   - Refactor final distance columns computation so that it is executed only
+     once, not twice.
+
 2.4.0 (2025-05-22)
 ==================
 

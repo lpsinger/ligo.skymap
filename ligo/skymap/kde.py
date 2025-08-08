@@ -457,6 +457,10 @@ class Clustered3DSkyKDE(SkyKDE):
         else:
             return probdensity
 
+    def eval_distances(self, pts):
+        _, *result = self(pts, distances=True)
+        return result
+
     def posterior_spherical(self, pts):
         """Evaluate the posterior probability density in spherical polar
         coordinates, as a function of (ra, dec, distance).
@@ -473,7 +477,7 @@ class Clustered3DSkyKDE(SkyKDE):
         theta, phi = hp.pix2ang(nside, ipix, nest=True)
         p = np.column_stack((phi, 0.5 * np.pi - theta))
         log.info("evaluating distance layers ...")
-        _, m["DISTMU"], m["DISTSIGMA"], m["DISTNORM"] = self(p, distances=True)
+        m["DISTMU"], m["DISTSIGMA"], m["DISTNORM"] = self.eval_distances(p)
         return m
 
 
@@ -490,13 +494,12 @@ class Clustered2Plus1DSkyKDE(Clustered3DSkyKDE):
             )
         super().__init__(pts, max_k=max_k, trials=trials, assign=assign, jobs=jobs)
 
-    def __call__(self, pts, distances=False):
-        probdensity = self.twod(pts)
-        if distances:
-            _, distmu, distsigma, distnorm = super().__call__(pts, distances=True)
-            return probdensity, distmu, distsigma, distnorm
-        else:
-            return probdensity
+    def __call__(self, pts):
+        return self.twod(pts)
+
+    def eval_distances(self, pts):
+        _, *result = super().__call__(pts, distances=True)
+        return result
 
     def posterior_spherical(self, pts):
         """Evaluate the posterior probability density in spherical polar

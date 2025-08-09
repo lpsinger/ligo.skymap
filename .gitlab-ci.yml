@@ -364,7 +364,7 @@ test/coverage:
       junit: junit.xml
     expire_in: 1 day
     when: always
-  timeout: 2 hours
+  timeout: 4 hours
 
 #
 # Run all pre-commit hooks to enforce code style.

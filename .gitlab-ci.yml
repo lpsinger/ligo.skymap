@@ -382,7 +382,7 @@ lint:
 # Acceptance tests.
 #
 
-tests/review:
+test/review:
   stage: test
   image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
@@ -440,7 +440,7 @@ tests/review:
 # Run benchmark.
 #
 
-tests/benchmark:
+test/benchmark:
   stage: test
   image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
@@ -490,18 +490,44 @@ tests/benchmark:
 # Gather coverage reports and docs for GitLab pages and build badges.
 #
 
-pages:
+pages/docs:
   stage: deploy
-  script:
-    - mv html public
-    - mv coverage.html public/coverage.html
+  script: mv html public
   needs:
     - docs
+  pages: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+pages/coverage:
+  stage: deploy
+  script: mv coverage.html public/index.html
+  needs:
     - test/coverage
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
+  pages:
+    path_prefix: coverage
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+pages/review:
+  stage: deploy
+  script: mv site public
+  needs:
+    - test/review
+  pages:
+    path_prefix: review
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+pages/benchmark:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - mv benchmark.svg roofline.html perf.svg public
+  needs:
+    - test/benchmark
+  pages:
+    path_prefix: benchmark
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 

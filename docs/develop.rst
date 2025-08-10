@@ -27,8 +27,8 @@ also need:
 You also need a C compiler with good support for the C11 standard. The
 following compilers are known to work:
 
-*  `GCC`_ ≥ 5 (≥ 8 recommended)
-*  `Clang`_ ≥ 5.0
+*  `GCC`_ ≥ 11
+*  `Clang`_ ≥ 22
 *  `Intel C/C++ Compiler`_
 
 Building from source

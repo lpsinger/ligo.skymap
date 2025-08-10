@@ -210,9 +210,10 @@ def k_means(pts, k):
         (exclusive) indicating the assignment of each point to a region.
 
     """
-    assert pts.shape[0] > k, "must have more points than means"
+    n = len(pts)
+    assert n > k, "must have more points than means"
 
-    mus = np.random.permutation(pts)[:k, :]
+    mus = pts[np.random.choice(n, k, replace=False)]
     assign = km_assign(mus, pts)
     while True:
         old_assign = assign
@@ -221,9 +222,7 @@ def k_means(pts, k):
         assign = km_assign(mus, pts)
 
         if np.all(assign == old_assign):
-            break
-
-    return mus, assign
+            return mus, assign
 
 
 def _cluster(cls, pts, whitened_pts, trials, i, seed, jobs):

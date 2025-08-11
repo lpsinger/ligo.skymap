@@ -346,16 +346,16 @@ test/coverage:
     # Merge coverage reports.
     - ${CI_PROJECT_DIR}/.gitlab/combine-coverage.py py-coverage.xml c-coverage.xml coverage.xml
     # Write human-readable report.
-    - pycobertura show coverage.xml -f html -o coverage.html
+    - pycobertura show coverage.xml -f html -o index.html
     - pycobertura show coverage.xml
-    - cp coverage.html coverage.xml ${CI_PROJECT_DIR}
+    - cp index.html coverage.xml ${CI_PROJECT_DIR}
     - if [[ "$FAILED" ]]; then false; fi
   needs:
     - deps-x86_64/python3.11.8
     - sdist
   artifacts:
     paths:
-      - coverage.html
+      - index.html
       - pytest-mpl-results/
     reports:
       coverage_report:
@@ -501,7 +501,9 @@ pages/docs:
 
 pages/coverage:
   stage: deploy
-  script: mv coverage.html public/index.html
+  script:
+    - mkdir -p public
+    - mv index.html pytest-mpl-results public/
   needs:
     - test/coverage
   pages:

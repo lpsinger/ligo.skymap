@@ -485,6 +485,7 @@ test/benchmark:
       - perf.svg
     expose_as: benchmark
     expire_in: 1 week
+  timeout: 4 hours
 
 #
 # Gather coverage reports and docs for GitLab pages and build badges.

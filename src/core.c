@@ -450,7 +450,8 @@ static PyObject *rasterize(
     static const char *keywords[] = {"array", "order", NULL};
 
     /* Parse arguments */
-    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
+    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const.
+     * Remove warning control after we require Python >= 3.13. */
     WARNINGS_PUSH
     WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i",
@@ -768,7 +769,8 @@ static PyObject *sky_map_toa_phoa_snr(
         NULL};
 
     /* Parse arguments */
-    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const */
+    /* FIXME: PyArg_ParseTupleAndKeywords should expect keywords to be const.
+     * Remove warning control after we require Python >= 3.13. */
     WARNINGS_PUSH
     WARNINGS_IGNORE_INCOMPATIBLE_POINTER_TYPES
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddiidfOOOOOf",

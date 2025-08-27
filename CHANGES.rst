@@ -15,7 +15,9 @@ Changelog
   __ https://github.com/lpsinger/ligo.skymap/issues/32
   __ https://github.com/nicholasjannsen
 
-- Several performance improvements in ``ligo-skymap-from-samples``:
+- Several performance improvements in ``ligo-skymap-from-samples`` that
+  together result in reduction in run time from 15 seconds to 11 seconds on the
+  LIGO-Caltech computing cluster:
 
    - Rewrite ``ligo.skymap.moc.bayestar_adaptive_grid`` in Numpy so that it can
      make use of vectorized sampling functions.

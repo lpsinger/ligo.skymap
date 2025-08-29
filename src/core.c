@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <stddef.h>
+#include <string.h>
 #include <chealpix.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_nan.h>

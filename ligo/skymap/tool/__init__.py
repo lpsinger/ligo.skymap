@@ -446,14 +446,9 @@ class SQLiteType(argparse.FileType):
     (0,)
     """
 
-    def __init__(self, mode):
-        if mode not in "arw":
-            raise ValueError("Unknown file mode: {}".format(mode))
-        self.mode = mode
-
     def __call__(self, string):
         try:
-            return sqlite.open(string, self.mode)
+            return sqlite.open(string, self._mode)
         except OSError as e:
             raise argparse.ArgumentTypeError(e)
 

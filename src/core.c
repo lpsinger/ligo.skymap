@@ -489,7 +489,7 @@ static PyObject *rasterize(
     if (!PyArg_ParseTuple(uniq_field, "Oi", &uniq_dtype, &uniq_offset))
         return NULL;
 
-    if (!PyArray_DescrCheck(uniq_dtype))
+    if (!PyArray_DescrCheck((PyObject *) uniq_dtype))
     {
         PyErr_SetString(PyExc_ValueError, "not a dtype");
         goto done;
@@ -571,7 +571,7 @@ static PyObject *rasterize(
     }
 
 done:
-    Py_XDECREF(arr);
+    Py_XDECREF((PyObject *) arr);
     Py_XDECREF(uniq_key);
     Py_XDECREF(new_fields);
     Py_XDECREF(capsule);
@@ -703,7 +703,7 @@ static void uniq2ang_loop(
 #define FREE_INPUT_LIST_OF_ARRAYS(NAME) \
 { \
     for (unsigned int iifo = 0; iifo < nifos; iifo ++) \
-        Py_XDECREF(NAME##_npy[iifo]); \
+        Py_XDECREF((PyObject *) NAME##_npy[iifo]); \
 }
 
 #define INPUT_VECTOR_NIFOS(CTYPE, NAME, NPYTYPE) \
@@ -912,11 +912,11 @@ static PyObject *sky_map_toa_phoa_snr(
     }
 
 fail: /* Cleanup */
-    Py_XDECREF(epochs_npy);
+    Py_XDECREF((PyObject *) epochs_npy);
     FREE_INPUT_LIST_OF_ARRAYS(snrs)
     FREE_INPUT_LIST_OF_ARRAYS(responses)
     FREE_INPUT_LIST_OF_ARRAYS(locations)
-    Py_XDECREF(horizons_npy);
+    Py_XDECREF((PyObject *) horizons_npy);
     if (out) {
         out = Py_BuildValue("Ndd", out, log_bci, log_bsn);
     }

@@ -151,8 +151,7 @@ wheel/macos/arm64:
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
       RUN pip --no-cache-dir install pytest-cov gcovr\<8 pycobertura flake8 coverage 'pip>=24'
       COPY requirements.txt .
-      # FIXME: temporarily install numpy<2 so that we test Numpy 1.x here and cover newer versions in the dev deps test. Remove when we require numpy>=2.
-      RUN pip --no-cache-dir install numpy\<2 -r requirements.txt && rm -f requirements.txt
+      RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG

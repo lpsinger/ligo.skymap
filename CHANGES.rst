@@ -5,7 +5,7 @@ Changelog
 2.4.1rc3 (unreleased)
 =====================
 
-- Require scipy >= 1.10.1.
+- Require numpy >= 2.0.0 and scipy >= 1.10.1.
 
 - Fix centering of WCS axes plots using SkyCoord instances in frames that are
   different from the WCS axes' frame (for example, supplying a center in ICRS

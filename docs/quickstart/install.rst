@@ -76,7 +76,7 @@ You are now ready to get started using `ligo.skymap`.
           *  `ligo-gracedb <https://pypi.org/project/ligo-gracedb/>`_ ≥ 2.0.1
           *  `Matplotlib <https://matplotlib.org>`_ ≥ 3.9.1
           *  `NetworkX <https://networkx.github.io>`_
-          *  `Numpy <http://www.numpy.org>`_ ≥ 1.23.0
+          *  `Numpy <http://www.numpy.org>`_ ≥ 2.0.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
           *  `ptemcee <https://github.com/willvousden/ptemcee>`_
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2

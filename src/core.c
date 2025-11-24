@@ -927,9 +927,13 @@ fail: /* Cleanup */
 static void log_posterior_toa_phoa_snr_loop(
     char **args, const npy_intp *dimensions, const npy_intp *steps, void *NPY_UNUSED(data))
 {
-    const npy_intp n = dimensions[0],
-               nifos = dimensions[1],
-            nsamples = dimensions[2];
+    /* FIXME: initializing these symbols as const results in an internal
+     * compiler error on GCC on macOS. As a temporary workaround, remove the
+     * const. */
+
+    /* const */ npy_intp n = dimensions[0],
+                     nifos = dimensions[1],
+                  nsamples = dimensions[2];
 
     /* Check core dimensions. */
     assert(dimensions[3] == 2);

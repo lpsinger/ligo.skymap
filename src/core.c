@@ -929,7 +929,10 @@ static void log_posterior_toa_phoa_snr_loop(
 {
     /* FIXME: initializing these symbols as const results in an internal
      * compiler error on GCC on macOS. As a temporary workaround, remove the
-     * const. */
+     * const.
+     *
+     * See https://git.ligo.org/lscsoft/ligo.skymap/-/issues/59.
+     */
 
     /* const */ npy_intp n = dimensions[0],
                      nifos = dimensions[1],

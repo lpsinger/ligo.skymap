@@ -82,7 +82,7 @@ def ez_emcee(
     ----------------
     kwargs :
         Extra keyword arguments for `ptemcee.Sampler`.
-        *Tip:* Consider setting the `pool` or `vectorized` keyword arguments in
+        *Tip:* Consider setting the `pool` or `vectorize` keyword arguments in
         order to speed up likelihood evaluations.
 
     Notes

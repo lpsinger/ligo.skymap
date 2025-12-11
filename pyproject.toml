@@ -66,7 +66,6 @@ docs = [
     "sphinx-argparse >= 0.3.0",  # https://github.com/alex-rudakov/sphinx-argparse/pull/126
     "sphinx-astropy",
     "sphinxcontrib-mermaid >= 0.7.1",  # https://github.com/mgaitan/sphinxcontrib-mermaid/issues/72
-    "tomli >= 1.1.0 ; python_version < \"3.11\"",
 ]
 dpgmm = [
     "figaro>=1.7.8"

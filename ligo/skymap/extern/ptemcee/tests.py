@@ -28,8 +28,6 @@ Defines various nose unit tests.
 
 '''
 
-from __future__ import division
-
 import numpy as np
 from .sampler import Sampler
 

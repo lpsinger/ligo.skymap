@@ -24,9 +24,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from __future__ import (division, print_function, absolute_import,
-                        unicode_literals)
-
 __all__ = ["MPIPool"]
 
 # If mpi4py is installed, import it.

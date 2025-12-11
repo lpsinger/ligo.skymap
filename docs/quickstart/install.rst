@@ -78,7 +78,6 @@ You are now ready to get started using `ligo.skymap`.
           *  `NetworkX <https://networkx.github.io>`_
           *  `Numpy <http://www.numpy.org>`_ ≥ 2.0.0
           *  `Pillow <http://pillow.readthedocs.io>`_ ≥ 2.5.0
-          *  `ptemcee <https://github.com/willvousden/ptemcee>`_
           *  `Reproject <https://reproject.readthedocs.io>`_ ≥ 0.3.2
           *  `Scipy <https://www.scipy.org>`_ ≥ 1.10.1
           *  `Shapely <https://shapely.readthedocs.io/>`_ ≥ 2.0.0

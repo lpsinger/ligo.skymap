@@ -16,7 +16,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from .ptemcee import Sampler
+from ..extern.ptemcee import Sampler
 
 __all__ = ("ez_emcee",)
 

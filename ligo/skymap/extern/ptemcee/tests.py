@@ -27,6 +27,8 @@ Defines various nose unit tests.
 
 '''
 
+import unittest
+
 import numpy as np
 from .sampler import Sampler
 
@@ -101,7 +103,7 @@ class LogPriorGaussian:
         else:
             return 0.0
 
-class Tests:
+class Tests(unittest.TestCase):
     def setUp(self):
         np.seterr(all='raise')
 

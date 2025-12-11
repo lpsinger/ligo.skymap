@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 # Copied and adapted from https://github.com/willvousden/ptemcee
 #
 # The MIT License (MIT)

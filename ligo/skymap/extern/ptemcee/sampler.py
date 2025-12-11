@@ -145,19 +145,22 @@ class LikePriorEvaluator:
         self.logpkwargs = logpkwargs
 
     def __call__(self, x):
+        s = x.shape
+        x = x.reshape((-1, x.shape[-1]))
+
         lp = self.logp(x, *self.logpargs, **self.logpkwargs)
-        if np.isnan(lp):
+        if np.any(np.isnan(lp)):
             raise ValueError('Prior function returned NaN.')
 
-        if lp == float('-inf'):
-            # Can't return -inf, since this messes with beta=0 behaviour.
-            ll = 0
-        else:
-            ll = self.logl(x, *self.loglargs, **self.loglkwargs)
-            if np.isnan(ll).any():
-                raise ValueError('Log likelihood function returned NaN.')
+        # Can't return -inf, since this messes with beta=0 behaviour.
+        ll = np.empty_like(lp)
+        bad = (lp == -np.inf)
+        ll[bad] = 0
+        ll[~bad] = self.logl(x[~bad], *self.loglargs, **self.loglkwargs)
+        if np.any(np.isnan(ll)):
+            raise ValueError('Log likelihood function returned NaN.')
 
-        return ll, lp
+        return ll.reshape(s[:-1]), lp.reshape(s[:-1])
 
 class Sampler:
     """
@@ -215,6 +218,11 @@ class Sampler:
     :param adaptation_time: (optional)
         Time-scale for temperature dynamics.  Default: 100.
 
+    :param vectorize: (optional)
+        If ``True``, ``logl`` and ``logp`` are expected to accept a list of
+        position vectors instead of just one. Note that ``pool`` will be
+        ignored if this is ``True``. (default: ``False``)
+
     """
     def __init__(self, nwalkers, dim, logl, logp,
                  ntemps=None, Tmax=None, betas=None,
@@ -222,7 +230,11 @@ class Sampler:
                  loglargs=[], logpargs=[],
                  loglkwargs={}, logpkwargs={},
                  adaptation_lag=10000, adaptation_time=100,
-                 random=None):
+                 random=None, vectorize=False):
+        self._vectorize = vectorize
+        if vectorize:
+            pool = None
+
         if random is None:
             self._random = np.random.mtrand.RandomState()
         else:
@@ -445,6 +457,9 @@ class Sampler:
                 yield p, logpost, logl
 
     def _evaluate(self, ps):
+        if self._vectorize:
+            return self._likeprior(ps)
+
         mapf = map if self.pool is None else self.pool.map
         results = list(mapf(self._likeprior, ps.reshape((-1, self.dim))))
 

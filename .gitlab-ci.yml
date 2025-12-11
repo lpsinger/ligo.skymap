@@ -258,6 +258,7 @@ test/linux/x86_64/python3.13:
     # Enter virtualenv so that we have a controlled version of Numpy
     - python${PYVERS} -m venv env
     - source env/bin/activate
+    - pip install 'numba<=0.62.1'  # FIXME: Numba has stopped distributing macOS x86_64 wheels. Remove once ligo.skymap drops builds for macOS x86_64.
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
     - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10
   artifacts:

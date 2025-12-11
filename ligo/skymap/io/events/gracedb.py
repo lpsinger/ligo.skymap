@@ -16,7 +16,6 @@
 import logging
 
 from igwn_ligolw import ligolw
-
 from ligo.gracedb import rest
 
 from .base import EventSource

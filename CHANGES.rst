@@ -5,7 +5,8 @@ Changelog
 2.4.2 (unreleased)
 ==================
 
-- No changes yet.
+- Include a vendored copy of the ``ptemcee`` package by Will Vousden and
+  update it to work with Numpy 2.x.
 
 2.4.2 (2025-11-25)
 ==================

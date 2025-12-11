@@ -32,12 +32,12 @@ except ImportError:
     MPI = None
 
 
-class _close_pool_message(object):
+class _close_pool_message:
     def __repr__(self):
         return "<Close pool message>"
 
 
-class _function_wrapper(object):
+class _function_wrapper:
     def __init__(self, function):
         self.function = function
 
@@ -47,7 +47,7 @@ def _error_function(task):
                        "function to apply.")
 
 
-class MPIPool(object):
+class MPIPool:
     """
     A pool that distributes tasks over a set of MPI processes. MPI is an
     API for distributed memory parallelism.  This pool will let you run

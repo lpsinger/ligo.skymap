@@ -62,7 +62,7 @@ def log_unit_sphere_volume(ndim):
         return (ndim + 1) / 2.0 * np.log(2.0) \
             + (ndim - 1) / 2.0 * np.log(np.pi) - logfactorial
 
-class LogLikeGaussian(object):
+class LogLikeGaussian:
     def __init__(self, icov, test_nan=False, test_inf=False):
         '''Initialize a gaussian PDF with the given inverse covariance
         matrix.  If not ``None``, ``cutoff`` truncates the PDF at the
@@ -85,7 +85,7 @@ class LogLikeGaussian(object):
 
         return f(x, self.icov)
 
-class LogPriorGaussian(object):
+class LogPriorGaussian:
     def __init__(self, icov, cutoff=None):
         self.icov = icov
         self.cutoff = cutoff
@@ -101,7 +101,7 @@ class LogPriorGaussian(object):
         else:
             return 0.0
 
-class Tests(object):
+class Tests:
     def setUp(self):
         np.seterr(all='raise')
 

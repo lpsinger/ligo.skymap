@@ -175,7 +175,7 @@ class Sampler:
 
     :param betas: (optional)
         Array giving the inverse temperatures, :math:`\\beta=1/T`, used in the ladder.  The default
-        is chosen according to :function:`default_beta_ladder` using ``ntemps`` and ``Tmax``.
+        is chosen according to :meth:`default_beta_ladder` using ``ntemps`` and ``Tmax``.
 
     :param ntemps: (optional)
         If set, the number of temperatures to use.

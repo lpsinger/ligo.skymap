@@ -28,4 +28,4 @@ from .interruptible_pool import InterruptiblePool
 from .mpi_pool import MPIPool
 from . import util
 
-__version__ = '1.0.0'
+__all__ = ['Sampler', 'default_beta_ladder', 'InterruptiblePool', 'MPIPool', 'util']

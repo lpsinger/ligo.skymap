@@ -118,6 +118,14 @@ Utilities
    util/sqlite
    tool/index
 
+Vendored External Codes
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   extern/ptemcee
+
 ******************
 Command Line Tools
 ******************

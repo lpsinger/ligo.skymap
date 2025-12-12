@@ -23,8 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from __future__ import (division, print_function, absolute_import, unicode_literals)
-
 from .sampler import *
 from .interruptible_pool import InterruptiblePool
 from .mpi_pool import MPIPool

@@ -1,3 +1,6 @@
+ptemcee License
+===============
+
 This project contains adaptations of the following parts of ptemcee:
 
 ligo/skymap/extern/ptemcee/*.py:
@@ -5,7 +8,7 @@ ligo/skymap/extern/ptemcee/*.py:
 
 These files are licensed under the terms of the following license.
 
----
+----
 
 The MIT License (MIT)
 

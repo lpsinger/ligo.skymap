@@ -186,6 +186,19 @@ Developer Info
    GitHub Mirror <https://github.com/lpsinger/ligo.skymap>
    Python Package Index <https://pypi.org/project/ligo.skymap>
 
+********
+Licenses
+********
+
+.. toctree::
+   :maxdepth: 1
+
+   licenses/LICENSE
+   licenses/CHEALPIX_LICENSE
+   licenses/NUMPY_LICENSE
+   licenses/PTEMCEE_LICENSE
+   licenses/TEMPLATE_LICENCE
+
 *****
 Index
 *****

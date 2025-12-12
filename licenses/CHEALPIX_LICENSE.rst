@@ -1,3 +1,6 @@
+chealpix License
+================
+
 This project contains copies of the following files from HEALPix
 (http://healpix.sourceforge.net):
 
@@ -6,7 +9,7 @@ cextern/chealpix/chealpix.{h,c}
 
 These files are licensed under the terms of the following license.
 
----
+----
 
 | !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 |

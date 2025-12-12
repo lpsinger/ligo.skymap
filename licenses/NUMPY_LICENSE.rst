@@ -1,3 +1,6 @@
+Numpy License
+=============
+
 This project contains adaptations of the following parts of Numpy
 (https://numpy.org):
 
@@ -7,7 +10,7 @@ ligo/skymap/extern/numpy/quantile.py:
 
 These files are licensed under the terms of the following license.
 
----
+----
 
 Copyright (c) 2005-2011, NumPy Developers.
 All rights reserved.

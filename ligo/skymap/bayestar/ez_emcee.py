@@ -136,7 +136,15 @@ def ez_emcee(
             random=np.random,
             **options,
         )
-        pos = np.random.uniform(lo, hi, (ntemps, nwalkers, ndim))
+        # Sample from uniform prior until all samples have nonzero likelihood.
+        pos = np.empty((ntemps * nwalkers, ndim))
+        bad = np.ones(ntemps * nwalkers, dtype=bool)
+        nbad = bad.size
+        while nbad > 0:
+            pos[bad] = np.random.uniform(lo, hi, (nbad, ndim))
+            bad[bad] = np.isneginf(sampler._evaluate(pos[bad])[0])
+            nbad = bad.sum()
+        pos = pos.reshape((ntemps, nwalkers, ndim))
 
         # Burn in
         progress.set_description("Burning in")

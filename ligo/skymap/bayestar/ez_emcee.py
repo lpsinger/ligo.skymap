@@ -81,9 +81,10 @@ def ez_emcee(
     Other parameters
     ----------------
     kwargs :
-        Extra keyword arguments for `ptemcee.Sampler`.
-        *Tip:* Consider setting the ``pool`` or ``vectorize`` keyword arguments
-        in order to speed up likelihood evaluations.
+        Extra keyword arguments for
+        :class:`ligo.skymap.extern.ptemcee.Sampler`. *Tip:* Consider setting
+        the ``pool`` or ``vectorize`` keyword arguments in order to speed up
+        likelihood evaluations.
 
     Notes
     -----

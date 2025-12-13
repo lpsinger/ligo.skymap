@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.4.2 (unreleased)
+2.4.3 (unreleased)
 ==================
 
 - Include a vendored copy of the ``ptemcee`` package by Will Vousden and

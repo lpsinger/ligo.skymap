@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copied and adapted from https://github.com/willvousden/ptemcee
 #
 # The MIT License (MIT)

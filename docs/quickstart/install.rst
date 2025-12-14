@@ -119,7 +119,9 @@ collection of waveform files by following the `instructions in LALSuite's
 README file <lalsuite-waveform-data>`_, or you can run the following command
 to download just the one file needed by ligo.skymap::
 
-    $ curl --create-dirs --output-dir ~/lalsuite-waveform-data -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5
+    $ mkdir -p ~/lalsuite-waveform-data
+    $ cd ~/lalsuite-waveform-data
+    $ curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5
 
 Then, add the following line to your shell profile script (``~/.profile``,
 ``~/.bashrc``, or similar)::

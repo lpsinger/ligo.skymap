@@ -27,6 +27,7 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from .. import omp
+from . import logging
 
 __all__ = ("progress_map", "progress_map_vectorized")
 
@@ -79,11 +80,14 @@ _jobs = 1
 _pool = None
 
 
-def _init_process():
-    """Disable OpenMP when using multiprocessing."""
+def _init_process(logging_kwargs):
+    # Disable OpenMP when using multiprocessing.
     global _in_pool
     omp.num_threads = 1
     _in_pool = True
+    # Propagate logging config from parent process.
+    if logging_kwargs is not None:
+        logging.basicConfig(**logging_kwargs)
 
 
 def progress_map(func, *iterables, jobs=1, **kwargs):
@@ -112,7 +116,7 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
         if jobs != _jobs:
             if _pool is not None:
                 _pool.close()
-            _pool = Pool(jobs, _init_process)
+            _pool = Pool(jobs, _init_process, initargs=(logging._basic_config_kwargs,))
             _jobs = jobs
 
         # Chunk size heuristic reproduced from

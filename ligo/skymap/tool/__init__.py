@@ -28,6 +28,7 @@ import numpy as np
 
 from .. import version
 from ..util import sqlite
+from ..util.logging import basicConfig
 
 version_string = version.__package__ + " " + version.version
 
@@ -242,7 +243,7 @@ def loglevel_type(value):
         value = int(value)
     except ValueError:
         value = value.upper()
-    logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", level=value)
+    basicConfig(format="%(asctime)s %(levelname)s %(message)s", level=value)
 
 
 class LogLevelAction(argparse._StoreAction):

@@ -127,7 +127,7 @@ class GWCosmo:
         # Construct waveform
         series = sngl_inspiral_psd(
             waveform,
-            f_low=f_low,
+            f_min=f_low,
             mass1=mass1,
             mass2=mass2,
             spin1z=spin1z,

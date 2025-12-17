@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.5.1 (unreleased)
+2.5.1 (2025-12-17)
 ==================
 
 - Propagate command-line logging settings to multiprocessing subprocesses.

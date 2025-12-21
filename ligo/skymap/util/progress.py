@@ -174,7 +174,7 @@ def progress_map_vectorized(func, *iterables, jobs=1, nout=1, **kwargs):
         if jobs != _jobs:
             if _pool is not None:
                 _pool.close()
-            _pool = Pool(jobs, _init_process)
+            _pool = Pool(jobs, _init_process, initargs=(logging._basic_config_kwargs,))
             _jobs = jobs
 
         # Chunk size heuristic reproduced from

@@ -113,11 +113,10 @@ for the purpose of generating localizations with BAYESTAR (e.g., for analysis
 of LIGO/Virgo/KAGRA data or for simulations).
 
 Some gravitational waveform approximants in LALSuite (notably, reduced order
-models) rely on `LALSuite extra waveform files <lalsuite-waveform-data>`_ that
-you must download and install separately. You can download the entire
-collection of waveform files by following the `instructions in LALSuite's
-README file <lalsuite-waveform-data>`_, or you can run the following command
-to download just the one file needed by ligo.skymap::
+models) rely on `LALSuite extra waveform files`_ that you must download and
+install separately. You can download the entire collection of waveform files by
+following the `instructions in LALSuite's README file`_, or you can run the
+following command to download just the one file needed by ligo.skymap::
 
     $ mkdir -p ~/lalsuite-waveform-data
     $ cd ~/lalsuite-waveform-data
@@ -130,4 +129,5 @@ Then, add the following line to your shell profile script (``~/.profile``,
 
 Then log out and log back in.
 
-.. _`lalsuite-waveform-data`: https://git.ligo.org/lscsoft/lalsuite#lalsuite-extra-waveform-files
+.. _`LALSuite extra waveform files`: https://git.ligo.org/lscsoft/lalsuite#lalsuite-extra-waveform-files
+.. _`instructions in LALSuite's README file`: `LALSuite extra waveform files`_

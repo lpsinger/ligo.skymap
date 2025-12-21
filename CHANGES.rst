@@ -2,7 +2,7 @@
 Changelog
 #########
 
-2.5.2 (unreleased)
+2.5.2 (2025-12-20)
 ==================
 
 - Fix a bug in progress_map_vectorized that was introduced in the version

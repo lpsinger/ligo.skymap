@@ -468,6 +468,8 @@ test/benchmark:
       CI_SERVER_PROTOCOL="$CI_SERVER_PROTOCOL" CI_JOB_TOKEN="$CI_JOB_TOKEN" \
       export LAL_DATA_PATH=/home/lalsimulation_data  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
       CI_SERVER_FQDN="$CI_SERVER_FQDN" condor_run \
+        -a MY.flock_local=True \
+        -a MY.DESIRED_Sites=none \
         -a request_disk=4G \
         -a request_memory=8G \
         -a request_cpus=48 \

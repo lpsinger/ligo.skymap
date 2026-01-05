@@ -30,7 +30,7 @@ from . import util
 
 def default_beta_ladder(ndim, ntemps=None, Tmax=None):
     """
-    Returns a ladder of :math:`\beta \equiv 1/T` under a geometric spacing that is determined by the
+    Returns a ladder of :math:`\beta \\equiv 1/T` under a geometric spacing that is determined by the
     arguments ``ntemps`` and ``Tmax``.  The temperature selection algorithm works as follows:
 
     Ideally, ``Tmax`` should be specified such that the tempered posterior looks like the prior at

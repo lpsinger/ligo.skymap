@@ -35,7 +35,7 @@ repos:
     rev: v0.14.10
     hooks:
       # Run the linter.
-      - id: ruff
+      - id: ruff-check
         args: ["--extend-select", "I", "--fix"]
       # Run the formatter.
       - id: ruff-format

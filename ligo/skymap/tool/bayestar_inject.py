@@ -620,8 +620,12 @@ def main(args=None):
         # Convert from sensitive distance to redshift and comoving distance.
         # FIXME: Replace this brute-force lookup table with a solver.
         z = np.linspace(0, max_z.max(), 10000)
-        ds = gwcosmo.sensitive_distance(z).to_value(units.Mpc)
-        dc = gwcosmo.cosmo.comoving_distance(z).to_value(units.Mpc)
+        ds = units.Quantity(
+            list(progress_map(gwcosmo.sensitive_distance, z, jobs=args.jobs))
+        ).to_value(units.Mpc)
+        dc = units.Quantity(
+            list(progress_map(gwcosmo.cosmo.comoving_distance, z, jobs=args.jobs))
+        ).to_value(units.Mpc)
         z_for_ds = interp1d(ds, z, kind="cubic", assume_sorted=True)
         dc_for_ds = interp1d(ds, dc, kind="cubic", assume_sorted=True)
         zp1 = 1 + z_for_ds(cols["distance"])

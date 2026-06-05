@@ -11,7 +11,7 @@ Changelog
 
 - Require astropy >= 7.0.0.
 
-- Require Numpy >= 2.2.0 in accordance with
+- Require Python >= 3.12 and Numpy >= 2.2.0 in accordance with
   `SPEC 0 — Minimum Supported Dependencies`__.
 
   __ https://scientific-python.org/specs/spec-0000/

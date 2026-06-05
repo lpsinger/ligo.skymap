@@ -3,7 +3,7 @@
 Installation
 ============
 
-.. important:: The `ligo.skymap` package requires `Python`_ 3.11 or later.
+.. important:: The `ligo.skymap` package requires `Python`_ 3.12 or later.
     See our :ref:`python-version-policy` for more details.
 
 On the Linux or macOS operating systems and on x86_64 or aarch64/arm64 systems,

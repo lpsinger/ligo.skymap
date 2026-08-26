@@ -90,7 +90,7 @@ def _init_process(logging_kwargs):
         logging.basicConfig(**logging_kwargs)
 
 
-def progress_map(func, *iterables, jobs=1, **kwargs):
+def progress_map(func, *iterables, jobs=1, total=None, **kwargs):
     """Map a function across iterables of arguments.
 
     Parameters
@@ -101,6 +101,8 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
         Input argument iterables.
     jobs : int
         Number of subprocesses.
+    total : int, optional
+        Optional hint for the total number of items to iterate over.
     kwargs : dict
         Additional keyword arguments passed to :obj:`tqdm.tqdm`.
 
@@ -109,7 +111,8 @@ def progress_map(func, *iterables, jobs=1, **kwargs):
     accurate progress information.
     """
     global _jobs, _pool
-    total = _get_total_estimate(*iterables)
+    if total is None:
+        total = _get_total_estimate(*iterables)
     if _in_pool or jobs == 1:
         yield from tqdm(map(func, *iterables), total=total, **kwargs)
     else:

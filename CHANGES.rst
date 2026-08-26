@@ -2,10 +2,10 @@
 Changelog
 #########
 
-2.5.5 (unreleased)
+2.6.0 (unreleased)
 ==================
 
-- No changes yet.
+- Add optional total argument to progress_map.
 
 2.5.4 (2026-06-06)
 ==================

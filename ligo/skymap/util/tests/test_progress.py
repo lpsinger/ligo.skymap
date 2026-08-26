@@ -18,9 +18,10 @@ def func2(x):
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])
-def test_map(jobs):
+@pytest.mark.parametrize("total", [None, 20])
+def test_map(jobs, total):
     x = np.arange(20)
-    result = list(progress_map(func, x, jobs=jobs))
+    result = list(progress_map(func, x, jobs=jobs, total=total))
     np.testing.assert_array_equal(result, np.square(x))
 
 
@@ -42,9 +43,12 @@ def test_no_nested_pools():
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])
-def test_indefinite(jobs):
+@pytest.mark.parametrize("total", [None, 3])
+def test_indefinite(jobs, total):
     """Test iteration over a collection of indefinite length."""
-    assert list(progress_map(np.square, (i for i in range(3)), jobs=jobs)) == [0, 1, 4]
+    assert list(
+        progress_map(np.square, (i for i in range(3)), jobs=jobs, total=total)
+    ) == [0, 1, 4]
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])

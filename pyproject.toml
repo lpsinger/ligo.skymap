@@ -3,7 +3,7 @@ requires = [
     "setuptools>=77",
     "setuptools_scm>=8",
     "extension-helpers",
-    "numpy>=2.0.0",
+    "numpy>=2.2.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -43,7 +43,7 @@ dependencies = [
     "ligo-gracedb>=2.0.1",
     "matplotlib>=3.9.1",  # https://github.com/matplotlib/matplotlib/pull/28289
     "networkx",
-    "numpy>=2.0.0",
+    "numpy>=2.2.0",
     "pillow>=2.5.0",
     "pytz",
     "reproject>=0.3.2",

@@ -7,6 +7,11 @@ Changelog
 
 - Add optional total argument to progress_map.
 
+- Require Numpy >= 2.2.0 in accordance with
+  `SPEC 0 — Minimum Supported Dependencies`__.
+
+  __ https://scientific-python.org/specs/spec-0000/
+
 2.5.4 (2026-06-06)
 ==================
 

@@ -36,7 +36,6 @@ from tqdm.auto import tqdm
 
 from .core import nest2uniq, uniq2ang, uniq2nest, uniq2order, uniq2pixarea
 from .core import rasterize as _rasterize
-from .util.numpy import add_newdoc_ufunc
 
 __all__ = (
     "nest2uniq",
@@ -49,9 +48,7 @@ __all__ = (
 )
 
 
-add_newdoc_ufunc(
-    nest2uniq,
-    """\
+nest2uniq.__doc__ = """
 Convert a pixel index from NESTED to NUNIQ ordering.
 
 Parameters
@@ -66,13 +63,10 @@ Returns
 uniq : `numpy.ndarray`
     NUNIQ pixel index
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    uniq2order,
-    """\
+uniq2order.__doc__ = """
 Determine the HEALPix resolution order of a HEALPix NESTED index.
 
 Parameters
@@ -85,13 +79,10 @@ Returns
 order : `numpy.ndarray`
     HEALPix resolution order, the logarithm base 2 of `nside`
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    uniq2pixarea,
-    """\
+uniq2pixarea.__doc__ = """
 Determine the area of a HEALPix NESTED index.
 
 Parameters
@@ -104,13 +95,10 @@ Returns
 area : `numpy.ndarray`
     The pixel's area in steradians
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    uniq2nest,
-    """\
+uniq2nest.__doc__ = """
 Convert a pixel index from NUNIQ to NESTED ordering.
 
 Parameters
@@ -125,8 +113,7 @@ order : `numpy.ndarray`
 ipix : `numpy.ndarray`
     NESTED pixel index
 
-""",
-)
+"""
 
 
 def rasterize(moc_data, order=None):
@@ -261,6 +248,3 @@ def bayestar_adaptive_grid(probdensity_func, *args, top_nside=16, rounds=8, **kw
 
     # Done!
     return table.Table([uniq, probdensity], names=["UNIQ", "PROBDENSITY"], copy=False)
-
-
-del add_newdoc_ufunc

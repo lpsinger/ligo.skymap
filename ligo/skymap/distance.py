@@ -52,7 +52,7 @@ from .core import (
 )
 from .core import volume_render as _volume_render
 from .healpix_tree import HEALPIX_MACHINE_ORDER
-from .util.numpy import add_newdoc_ufunc, require_contiguous_aligned
+from .util.numpy import require_contiguous_aligned
 
 __all__ = (
     "conditional_pdf",
@@ -72,9 +72,7 @@ __all__ = (
 )
 
 
-add_newdoc_ufunc(
-    conditional_pdf,
-    """\
+conditional_pdf.__doc__ = """
 Conditional distance probability density function (ansatz).
 
 Parameters
@@ -93,13 +91,10 @@ Returns
 pdf : `numpy.ndarray`
     Conditional probability density according to ansatz.
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    conditional_cdf,
-    """\
+conditional_cdf.__doc__ = """
 Cumulative conditional distribution of distance (ansatz).
 
 Parameters
@@ -147,13 +142,10 @@ the distribution).
 >>> result = conditional_cdf(np.inf, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(result, expected)
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    conditional_ppf,
-    """\
+conditional_ppf.__doc__ = """
 Point percent function (inverse cdf) of distribution of distance (ansatz).
 
 Parameters
@@ -186,13 +178,10 @@ Test against numerical estimate.
 >>> r16 = conditional_ppf(p, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(r16, expected_r16)
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    moments_to_parameters,
-    """\
+moments_to_parameters.__doc__ = """
 Convert ansatz moments to parameters.
 
 This function is the inverse of `parameters_to_moments`.
@@ -213,13 +202,10 @@ distsigma : `numpy.ndarray`
 distnorm : `numpy.ndarray`
     Distance normalization factor (Mpc^-2)
 
-""",
-)
+"""
 
 
-add_newdoc_ufunc(
-    parameters_to_moments,
-    """\
+parameters_to_moments.__doc__ = """
 Convert ansatz parameters to moments.
 
 This function is the inverse of `moments_to_parameters`.
@@ -279,8 +265,7 @@ Check some more arbitrary values using numerical quadrature:
 ...     np.testing.assert_approx_equal(std, expected_std, 5)
 ...     np.testing.assert_approx_equal(norm, expected_norm, 5)
 
-""",
-)
+"""
 
 
 _volume_render = require_contiguous_aligned(_volume_render)
@@ -389,9 +374,7 @@ def volume_render(x, y, max_distance, axis0, axis1, R, skymap):
     )
 
 
-add_newdoc_ufunc(
-    marginal_pdf,
-    """\
+marginal_pdf.__doc__ = """
 Calculate all-sky marginal pdf (ansatz).
 
 Parameters
@@ -423,14 +406,11 @@ Examples
 >>> pdf = marginal_pdf(r, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(pdf, pdf_expected, rtol=1e-4)
 
-""",
-)
+"""
 marginal_pdf = require_contiguous_aligned(marginal_pdf)
 
 
-add_newdoc_ufunc(
-    marginal_cdf,
-    """\
+marginal_cdf.__doc__ = """
 Calculate all-sky marginal cdf (ansatz).
 
 Parameters
@@ -476,14 +456,11 @@ For infinite positive distance, it returns the sum of prob
 >>> result = marginal_cdf(np.inf, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_almost_equal(result, expected)
 
-""",
-)
+"""
 marginal_cdf = require_contiguous_aligned(marginal_cdf)
 
 
-add_newdoc_ufunc(
-    marginal_ppf,
-    """\
+marginal_ppf.__doc__ = """
 Point percent function (inverse cdf) of marginal distribution of distance
 (ansatz).
 
@@ -517,8 +494,7 @@ Examples
 >>> r = marginal_ppf(cdf, prob, distmu, distsigma, distnorm)
 >>> np.testing.assert_allclose(r, r_expected, rtol=1e-4)
 
-""",
-)
+"""
 marginal_ppf = require_contiguous_aligned(marginal_ppf)
 
 
@@ -787,4 +763,4 @@ def parameters_to_marginal_moments(prob, distmu, distsigma):
     return rbar, np.sqrt(r2bar - np.square(rbar))
 
 
-del add_newdoc_ufunc, require_contiguous_aligned
+del require_contiguous_aligned

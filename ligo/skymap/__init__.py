@@ -41,7 +41,7 @@ class Itt:
     collection paused.
 
     See https://www.intel.com/content/www/us/en/docs/vtune-profiler/user-guide/2023-1/instrumentation-and-tracing-technology-apis.html
-    """  # noqa: E501
+    """
 
     def __enter__(self):
         from .core import itt_resume

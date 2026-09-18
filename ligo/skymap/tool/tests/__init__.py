@@ -11,7 +11,7 @@ from importlib.resources import as_file, files
 dist = "ligo.skymap"
 group = "console_scripts"
 
-__all__ = ("entry_points", "run_entry_point", "run_ligolw", "run_lalsuite")
+__all__ = ("entry_points", "run_entry_point", "run_lalsuite", "run_ligolw")
 
 entry_points = {
     entry_point.name: entry_point
@@ -75,16 +75,19 @@ def run_lalsuite(name, *args):
     else:
         # The tool has not been installed, so we have to find the underlying
         # binary inside the lalapps module.
-        with as_file(files("lalapps.bin").joinpath(name)) as path:
-            # Copy to a temporary file so that we can make it executable.
-            # For some reason, when eggs are extracted, permissions are not
-            # preserved.
-            with tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as tmp:
-                with open(path, "rb") as orig:
-                    shutil.copyfileobj(orig, tmp)
-                tmp.flush()
-                fd = tmp.fileno()
-                stat_result = os.fstat(fd)
-                mode = stat_result.st_mode | stat.S_IXUSR
-                os.fchmod(fd, mode)
-                subprocess.check_call([tmp.name, *args])
+        #
+        # Copy to a temporary file so that we can make it executable.
+        # For some reason, when eggs are extracted, permissions are not
+        # preserved.
+        with (
+            as_file(files("lalapps.bin").joinpath(name)) as path,
+            tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as tmp,
+        ):
+            with open(path, "rb") as orig:
+                shutil.copyfileobj(orig, tmp)
+            tmp.flush()
+            fd = tmp.fileno()
+            stat_result = os.fstat(fd)
+            mode = stat_result.st_mode | stat.S_IXUSR
+            os.fchmod(fd, mode)
+            subprocess.check_call([tmp.name, *args])

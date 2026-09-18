@@ -54,7 +54,7 @@ def _read_file_header(f, nbytes=16):
         f.seek(pos)
 
 
-def MagicEventSource(f, *args, **kwargs):  # noqa: N802
+def MagicEventSource(f, *args, **kwargs):
     """Read events from LIGO-LW XML, LIGO-LW SQlite, or HDF5 files. The format
     is determined automatically using the :manpage:`file(1)` command, and then
     the file is opened using :obj:`.ligolw.open`, :obj:`.sqlite.open`, or
@@ -85,7 +85,7 @@ def MagicEventSource(f, *args, **kwargs):  # noqa: N802
         ):
             opener = ligolw.open
         else:
-            raise IOError("Unknown file format")
+            raise OSError("Unknown file format")
     return opener(f, *args, **kwargs)
 
 

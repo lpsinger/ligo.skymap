@@ -162,7 +162,7 @@ def main(args=None):
             if opts.projection and opts.projection != iface + 1:
                 continue
 
-            progress.set_description("Plotting projection {0}".format(iface + 1))
+            progress.set_description(f"Plotting projection {iface + 1}")
 
             # Marginalize onto the given face
             density = volume_render(
@@ -249,7 +249,7 @@ def main(args=None):
             ax.text(
                 0.0625,
                 0.0625,
-                "{0:d} Mpc".format(int(np.round(0.5 * max_distance))),
+                f"{int(np.round(0.5 * max_distance)):d} Mpc",
                 fontsize=8,
                 transform=ax.transAxes,
                 verticalalignment="bottom",
@@ -310,7 +310,7 @@ def main(args=None):
             # Scale axes
             ax.set_xticks([0, max_distance])
             ax.set_xticklabels(
-                ["0", "{0:d}\nMpc".format(int(np.round(max_distance)))], fontsize=9
+                ["0", f"{int(np.round(max_distance)):d}\nMpc"], fontsize=9
             )
             ax.set_yticks([])
             ax.set_xlim(0, max_distance)
@@ -323,7 +323,7 @@ def main(args=None):
                 except KeyError:
                     pass
                 else:
-                    text.append("event ID: {}".format(objid))
+                    text.append(f"event ID: {objid}")
                 try:
                     instruments = skymap.meta["instruments"]
                 except KeyError:
@@ -337,9 +337,7 @@ def main(args=None):
                     pass
                 else:
                     text.append(
-                        "distance: {}±{} Mpc".format(
-                            int(np.round(distmean)), int(np.round(diststd))
-                        )
+                        f"distance: {int(np.round(distmean))}±{int(np.round(diststd))} Mpc"
                     )
                 ax.text(
                     0,

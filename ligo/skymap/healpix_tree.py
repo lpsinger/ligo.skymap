@@ -27,8 +27,8 @@ import numpy as np
 from astropy import units as u
 
 __all__ = (
-    "HEALPIX_MACHINE_ORDER",
     "HEALPIX_MACHINE_NSIDE",
+    "HEALPIX_MACHINE_ORDER",
     "HEALPixTree",
     "adaptive_healpix_histogram",
     "interpolate_nested",
@@ -67,9 +67,9 @@ class HEALPixTree:
                 HEALPixTree([], max_samples_per_pixel, max_order, order=order + 1)
                 for i in range(nchildren)
             ]
-            for ipix, samples in itertools.groupby(samples, self.key_for_order(order)):
+            for ipix, samples_ in itertools.groupby(samples, self.key_for_order(order)):
                 self.children[ipix % nchildren] = HEALPixTree(
-                    list(samples),
+                    list(samples_),
                     max_samples_per_pixel,
                     max_order,
                     order=order + 1,
@@ -330,7 +330,7 @@ def _reconstruct_nested_breadthfirst(m, extra):
             a = b[:, 0].reshape(-1, 1)
             b = b[:, 1:]
             aseen = seen.reshape(-1, skip)
-            eq = ((a == b) | ((a != a) & (b != b))).all(1) & (~aseen).all(1)
+            eq = ((a == b) | ((a != a) & (b != b))).all(1) & (~aseen).all(1)  # noqa: PLR0124
         else:
             eq = ~seen
         for ipix in np.flatnonzero(eq):

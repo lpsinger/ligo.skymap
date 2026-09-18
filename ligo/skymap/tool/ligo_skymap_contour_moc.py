@@ -74,7 +74,7 @@ def main(args=None):
         uniq = skymap["UNIQ"]
         probdensity = skymap["PROBDENSITY"]
 
-        level, ipix = ah.uniq_to_level_ipix(uniq)
+        level, _ = ah.uniq_to_level_ipix(uniq)
         area = ah.nside_to_pixel_area(ah.level_to_nside(level)).to_value(u.steradian)
 
         prob = probdensity * area

@@ -29,9 +29,9 @@ from astropy.coordinates import (
 __all__ = (
     "find_greedy_credible_levels",
     "interp_greedy_credible_levels",
-    "smooth_ud_grade",
-    "posterior_mean",
     "posterior_max",
+    "posterior_mean",
+    "smooth_ud_grade",
 )
 
 

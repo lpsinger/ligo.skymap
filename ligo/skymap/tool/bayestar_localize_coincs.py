@@ -221,7 +221,7 @@ def main(args=None):
 
         if count_sky_maps_failed > 0:
             raise RuntimeError(
-                "{0} sky map{1} did not converge".format(
+                "{} sky map{} did not converge".format(
                     count_sky_maps_failed, "s" if count_sky_maps_failed > 1 else ""
                 )
             )

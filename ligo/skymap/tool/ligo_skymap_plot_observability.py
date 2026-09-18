@@ -119,13 +119,11 @@ def main(args=None):
         from ..io import fits
 
         names = ("name", "longitude", "latitude", "height")
-        length0, *lengths = (
-            len(getattr(opts, "site_{}".format(name))) for name in names
-        )
+        length0, *lengths = (len(getattr(opts, f"site_{name}")) for name in names)
         if not all(length0 == length for length in lengths):
             p.error(
                 "these options require equal numbers of arguments: {}".format(
-                    ", ".join("--site-{}".format(name) for name in names)
+                    ", ".join(f"--site-{name}" for name in names)
                 )
             )
 
@@ -149,7 +147,7 @@ def main(args=None):
         prob = np.asarray(moc.uniq2pixarea(m["UNIQ"]) * m["PROBDENSITY"])
 
         constraints = [
-            getattr(AtNightConstraint, "twilight_{}".format(opts.twilight))(),
+            getattr(AtNightConstraint, f"twilight_{opts.twilight}")(),
             AirmassConstraint(opts.max_airmass),
         ]
 
@@ -161,7 +159,7 @@ def main(args=None):
         ax.set_xlim([times[0].plot_date, times[-1].plot_date])
         ax.xaxis.set_major_formatter(formatter)
         ax.xaxis.set_major_locator(locator)
-        ax.set_xlabel("Time from {0} [UTC]".format(min(times).datetime.date()))
+        ax.set_xlabel(f"Time from {min(times).datetime.date()} [UTC]")
         plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
         ax.set_yticks(np.arange(len(observers)))
         ax.set_yticklabels([observer.name for observer in observers])

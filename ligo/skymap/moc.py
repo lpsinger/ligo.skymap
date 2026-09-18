@@ -38,13 +38,13 @@ from .core import nest2uniq, uniq2ang, uniq2nest, uniq2order, uniq2pixarea
 from .core import rasterize as _rasterize
 
 __all__ = (
+    "bayestar_adaptive_grid",
     "nest2uniq",
+    "rasterize",
+    "uniq2ang",
     "uniq2nest",
     "uniq2order",
     "uniq2pixarea",
-    "uniq2ang",
-    "rasterize",
-    "bayestar_adaptive_grid",
 )
 
 

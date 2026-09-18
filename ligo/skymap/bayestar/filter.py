@@ -191,14 +191,14 @@ def truncated_ifft(y, nsamples_out=None):
       ...
     ValueError: Input is too short: you gave me an input of length 1024, but you asked for an IFFT of length 1025.
 
-    """  # noqa: E501
+    """
     nsamples = len(y)
     if nsamples_out is None:
         nsamples_out = nsamples
     elif nsamples_out > nsamples:
         raise ValueError(
-            "Input is too short: you gave me an input of length {0}, "
-            "but you asked for an IFFT of length {1}.".format(nsamples, nsamples_out)
+            f"Input is too short: you gave me an input of length {nsamples}, "
+            f"but you asked for an IFFT of length {nsamples_out}."
         )
     elif nsamples & (nsamples - 1):
         raise NotImplementedError(
@@ -405,7 +405,7 @@ def abs2(y):
     return np.square(y.real) + np.square(y.imag)
 
 
-class vectorize_swig_psd_func:  # noqa: N801
+class vectorize_swig_psd_func:
     """Create a vectorized Numpy function from a SWIG-wrapped PSD function.
     SWIG does not provide enough information for Numpy to determine the number
     of input arguments, so we can't just use np.vectorize.

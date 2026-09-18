@@ -38,8 +38,8 @@ log = logging.getLogger()
 __all__ = (
     "BoundedKDE",
     "Clustered2DSkyKDE",
-    "Clustered3DSkyKDE",
     "Clustered2Plus1DSkyKDE",
+    "Clustered3DSkyKDE",
 )
 
 
@@ -320,8 +320,8 @@ class ClusteredKDE:
     def _map(self, func, items, *args, **kwargs):
         return progress_map(func, items, jobs=self.jobs)
 
-    def _map_vectorized(self, func, items, *args, **kwargs):
-        return progress_map_vectorized(func, items, jobs=self.jobs, *args, **kwargs)
+    def _map_vectorized(self, func, items, **kwargs):
+        return progress_map_vectorized(func, items, jobs=self.jobs, **kwargs)
 
 
 class SkyKDE(ClusteredKDE):
@@ -348,13 +348,13 @@ class SkyKDE(ClusteredKDE):
 # instance objects to be picklable.
 
 
-class _Clustered2DSkyKDEMeta(type):  # noqa: N802
+class _Clustered2DSkyKDEMeta(type):
     """Metaclass to make dynamically created subclasses of Clustered2DSkyKDE
     picklable.
     """
 
 
-def _Clustered2DSkyKDEMeta_pickle(cls):  # noqa: N802
+def _Clustered2DSkyKDEMeta_pickle(cls):
     """Pickle dynamically created subclasses of Clustered2DSkyKDE."""
     return type, (cls.__name__, cls.__bases__, {"frame": cls.frame})
 
@@ -363,7 +363,7 @@ def _Clustered2DSkyKDEMeta_pickle(cls):  # noqa: N802
 copyreg.pickle(_Clustered2DSkyKDEMeta, _Clustered2DSkyKDEMeta_pickle)
 
 
-def _Clustered2DSkyKDE_factory(name, frame):  # noqa: N802
+def _Clustered2DSkyKDE_factory(name, frame):
     """Unpickle instances of dynamically created subclasses of
     Clustered2DSkyKDE.
 
@@ -410,7 +410,7 @@ class Clustered2DSkyKDE(SkyKDE, metaclass=_Clustered2DSkyKDEMeta):
 
     def __new__(cls, pts, *args, **kwargs):
         frame = EigenFrame.for_coords(SkyCoord(*pts.T, unit=u.rad))
-        name = "{:s}_{:x}".format(cls.__name__, id(frame))
+        name = f"{cls.__name__:s}_{id(frame):x}"
         new_cls = type(name, (cls,), {"frame": frame})
         return super().__new__(new_cls)
 

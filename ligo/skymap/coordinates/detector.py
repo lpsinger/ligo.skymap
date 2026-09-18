@@ -61,7 +61,7 @@ References
        Gravitational-wave Transient GW150914." ApJL 826, L13.
        :doi:`10.3847/2041-8205/826/1/L13`
 
-"""  # noqa: E501
+"""
 
 import numpy as np
 from astropy import units as u

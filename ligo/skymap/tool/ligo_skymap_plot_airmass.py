@@ -185,7 +185,7 @@ def main(args=None):
 
     ax.legend(
         [Patch(facecolor=cmap.to_rgba(level)) for level in levels],
-        ["{}%".format(level) for level in levels],
+        [f"{level}%" for level in levels],
     )
     # ax.set_title('{} from {}'.format(m.meta['objid'], observer.name))
 
@@ -244,7 +244,7 @@ def main(args=None):
         ax2.xaxis.set_major_formatter(dates.DateFormatter("%H:%M", tz=tzinfo))
         plt.setp(ax2.get_xticklabels(), rotation=-30, ha="right")
         ax2.set_xlabel(
-            "Time from {} [{}]".format(min(times).to_datetime(tzinfo).date(), timezone)
+            f"Time from {min(times).to_datetime(tzinfo).date()} [{timezone}]"
         )
 
     if opts.verbose:
@@ -253,10 +253,10 @@ def main(args=None):
         table = Table(masked=True)
         table["time"] = times
         table["sun_alt"] = np.ma.masked_greater_equal(observer.sun_altaz(times).alt, 0)
-        table["sun_alt"].format = lambda x: "{}".format(int(np.round(x)))
+        table["sun_alt"].format = lambda x: f"{int(np.round(x))}"
         for p, data in sorted(zip(percentiles, airmass)):
             table[str(p)] = np.ma.masked_invalid(data)
-            table[str(p)].format = lambda x: "{:.01f}".format(np.around(x, 1))
+            table[str(p)].format = lambda x: f"{np.around(x, 1):.01f}"
         table.write(sys.stdout, format="ascii.fixed_width")
 
     # Show or save output.

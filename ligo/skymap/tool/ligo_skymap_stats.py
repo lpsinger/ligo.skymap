@@ -223,8 +223,8 @@ def process(fitsfilename, db, contours, modes, areas, cosmology):
         searched_vol,
         searched_prob_vol,
         contour_vols,
-        probdensity,
-        probdensity_vol,
+        _probdensity,
+        _probdensity_vol,
     ) = crossmatch(
         sky_map,
         true_coord,
@@ -289,14 +289,14 @@ def main(args=None):
                 "offset",
             ]
         colnames += ["runtime", "distmean", "diststd", "log_bci", "log_bsn"]
-        colnames += ["area({0:g})".format(_) for _ in opts.contour]
-        colnames += ["prob({0:g})".format(_) for _ in opts.area]
-        colnames += ["dist({0:g})".format(_) for _ in opts.contour]
-        colnames += ["vol({0:g})".format(_) for _ in opts.contour]
+        colnames += [f"area({_:g})" for _ in opts.contour]
+        colnames += [f"prob({_:g})" for _ in opts.area]
+        colnames += [f"dist({_:g})" for _ in opts.contour]
+        colnames += [f"vol({_:g})" for _ in opts.contour]
         if opts.modes:
             if opts.database is not None:
                 colnames += ["searched_modes"]
-            colnames += ["modes({0:g})".format(p) for p in opts.contour]
+            colnames += [f"modes({p:g})" for p in opts.contour]
         print(*colnames, sep="\t", file=opts.output)
 
         func = partial(

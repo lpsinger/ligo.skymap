@@ -28,7 +28,7 @@ from .base import Event, EventSource, SingleEvent
 __all__ = ("HDFEventSource",)
 
 
-class _psd_segment(segment):  # noqa: N801
+class _psd_segment(segment):
     def __new__(cls, psd, *args):
         return segment.__new__(cls, *args)
 
@@ -48,7 +48,7 @@ def _hdf_file(f):
 def _classify_hdf_file(f, sample):
     if sample in f:
         return "coincs"
-    for key, value in f.items():
+    for value in f.values():
         if isinstance(value, h5py.Group):
             if "psds" in value:
                 return "psds"
@@ -81,7 +81,7 @@ class HDFEventSource(EventSource):
         key = itemgetter(0)
         files = [_hdf_file(f) for f in files]
         files = sorted([(_classify_hdf_file(f, sample), f) for f in files], key=key)
-        files = {key: list(v[1] for v in value) for key, value in groupby(files, key)}
+        files = {key: [v[1] for v in value] for key, value in groupby(files, key)}
 
         try:
             (coinc_file,) = files["coincs"]
@@ -116,8 +116,7 @@ class HDFEventSource(EventSource):
         self._template_ids = coinc_group["template_id"]
         self._timeslide_ids = coinc_group.get("timeslide_id", np.zeros(len(self)))
         self._trigger_ids = [
-            coinc_group["trigger_id{}".format(detector_num)]
-            for detector_num in detector_nums
+            coinc_group[f"trigger_id{detector_num}"] for detector_num in detector_nums
         ]
 
         triggers = {}
@@ -241,9 +240,7 @@ class HDFSingleEvent(SingleEvent):
             psd = self._psds[self._psds.find(self.zerolag_time)].psd
         except ValueError:
             raise ValueError(
-                "No PSD found for detector {} at zero-lag GPS time {}".format(
-                    self.detector, self.zerolag_time
-                )
+                f"No PSD found for detector {self.detector} at zero-lag GPS time {self.zerolag_time}"
             )
 
         dyn_range_fac = psd.file.attrs["dynamic_range_factor"]

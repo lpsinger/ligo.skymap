@@ -186,9 +186,10 @@ The following example demonstrates most of the features of this module.
         markersize=30,
         markeredgewidth=3)
 
-"""  # noqa: E501
+"""
 
 from itertools import product
+from typing import ClassVar
 from warnings import warn
 
 import numpy as np
@@ -249,7 +250,7 @@ class WCSInsetConnectionPatch(ConnectionPatch):
     coordinates *is* a circle. It will have noticeable artifacts if the
     projection is very distorted."""
 
-    _corners_map = {1: 3, 2: 1, 3: 0, 4: 2}
+    _corners_map: ClassVar = {1: 3, 2: 1, 3: 0, 4: 2}
 
     def __init__(self, ax, ax_inset, loc, **kwargs):
         try:
@@ -416,8 +417,8 @@ class AutoScaledWCSAxes(WCSAxes):
             "linewidth": rcParams["axes.linewidth"],
             **kwargs,
         }
-        for ax in (self, ax):
-            ax.add_patch(
+        for ax_ in (self, ax):
+            ax_.add_patch(
                 SphericalCircle(*args, **kwargs, transform=ax.get_transform("world"))
             )
 
@@ -508,7 +509,7 @@ class AutoScaledWCSAxes(WCSAxes):
                 self.transAxes,
                 ha="center",
                 va="center",
-                arrowprops=dict(arrowstyle="<-", shrinkA=0.0, shrinkB=0.0),
+                arrowprops={"arrowstyle": "<-", "shrinkA": 0.0, "shrinkB": 0.0},
             )
             for n, label, ha, va in zip(
                 scale, "EN", ["right", "center"], ["center", "bottom"]
@@ -618,7 +619,7 @@ class AutoScaledWCSAxes(WCSAxes):
         -------
         contours : `matplotlib.contour.QuadContourSet`
 
-        """  # noqa: E501
+        """
         img = self._reproject_hpx(
             data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
         )
@@ -657,7 +658,7 @@ class AutoScaledWCSAxes(WCSAxes):
         -------
         contours : `matplotlib.contour.QuadContourSet`
 
-        """  # noqa: E501
+        """
         img = self._reproject_hpx(
             data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
         )
@@ -696,7 +697,7 @@ class AutoScaledWCSAxes(WCSAxes):
         -------
         image : `matplotlib.image.AxesImage`
 
-        """  # noqa: E501
+        """
         img = self._reproject_hpx(
             data, hdu_in=hdu_in, order=order, nested=nested, field=field, smooth=smooth
         )
@@ -719,11 +720,11 @@ class ScaleBar(FancyArrowPatch):
         ) + ax.coords.frame.transform
         dx = minimize_scalar(self._func, args=xy, bounds=[0, 1 - x], method="bounded").x
         custom_kwargs = kwargs
-        kwargs = dict(
-            capstyle="round",
-            color="black",
-            linewidth=rcParams["lines.linewidth"],
-        )
+        kwargs = {
+            "capstyle": "round",
+            "color": "black",
+            "linewidth": rcParams["lines.linewidth"],
+        }
         kwargs.update(custom_kwargs)
         super().__init__(
             xy,
@@ -738,7 +739,7 @@ class ScaleBar(FancyArrowPatch):
 
     def label(self, **kwargs):
         (x0, y), (x1, _) = self._posA_posB
-        s = " {0.value:g}{0.unit:unicode}".format(self._length)
+        s = f" {self._length.value:g}{self._length.unit:unicode}"
         return self._ax.text(
             0.5 * (x0 + x1),
             y,

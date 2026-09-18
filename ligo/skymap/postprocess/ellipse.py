@@ -318,7 +318,7 @@ def find_ellipse(prob, cl=90, projection="ARC", nest=False):
     Or even for multiple credible levels:
     >>> print(*find_ellipse(prob, cl=[50, 90]))  # doctest: +FLOAT_CMP
     0.0 0.0 [37.05420765 64.77564486] [19.16895502 33.50986302] 9.217477126726351 [2182.55801354 6372.42573159]
-    """  # noqa: E501
+    """
     try:
         prob["UNIQ"]
     except (IndexError, KeyError, ValueError):

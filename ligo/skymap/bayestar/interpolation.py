@@ -336,5 +336,5 @@ def interpolate_max(imax, y, window_length, method="catmull-rom-amp-phase"):
     ymax_interp : complex
         The interpolated value at the maximum.
 
-    """  # noqa: E501
+    """
     return _interpolants[method](imax, np.asarray(y), window_length)

@@ -228,7 +228,7 @@ def main(args=None):
             except KeyError:
                 pass
             else:
-                text.append("event ID: {}".format(objid))
+                text.append(f"event ID: {objid}")
 
             try:
                 instruments = skymap.meta["instruments"]
@@ -246,7 +246,7 @@ def main(args=None):
                 for i, p in zip(ii, pp):
                     # FIXME: use Unicode symbol instead of TeX '$^2$'
                     # because of broken fonts on Scientific Linux 7.
-                    text.append("{:d}% area: {} deg²".format(p, _format_area(i)))
+                    text.append(f"{p:d}% area: {_format_area(i)} deg²")
             ax.text(1, 1, "\n".join(text), transform=ax.transAxes, ha="right")
 
         # Plot sky map.

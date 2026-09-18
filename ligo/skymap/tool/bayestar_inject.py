@@ -357,7 +357,7 @@ def parser():
 
 def main(args=None):
     p = parser()
-    with p.parse_args(args) as args:
+    with p.parse_args(args) as args:  # noqa: PLR1704
         import warnings
 
         import lal.series

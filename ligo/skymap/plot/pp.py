@@ -166,15 +166,13 @@ class PPPlot(axes.Axes):
             self.plot([x, x, 0], [0, y, y], "--", color="black", linewidth=0.5)
             if y < x:
                 self.plot([x, y], [y, y], "-", color="black", linewidth=1)
-                self.text(
-                    x, y, " {0:.02f} ".format(np.around(x - y, 2)), ha="left", va="top"
-                )
+                self.text(x, y, f" {np.around(x - y, 2):.02f} ", ha="left", va="top")
             else:
                 self.plot([x, x], [x, y], "-", color="black", linewidth=1)
                 self.text(
                     x,
                     y,
-                    " {0:.02f} ".format(np.around(y - x, 2)),
+                    f" {np.around(y - x, 2):.02f} ",
                     ha="right",
                     va="bottom",
                 )
@@ -258,9 +256,7 @@ class PPPlot(axes.Axes):
 
         if annotate:
             percent_sign = r"\%" if matplotlib.rcParams["text.usetex"] else "%"
-            label = "target {0:g}{1:s}\nconfidence band".format(
-                100 * alpha, percent_sign
-            )
+            label = f"target {100 * alpha:g}{percent_sign:s}\nconfidence band"
 
             self.annotate(
                 label,
@@ -272,13 +268,13 @@ class PPPlot(axes.Axes):
                 horizontalalignment="right",
                 verticalalignment="bottom",
                 fontsize=fontsize,
-                arrowprops=dict(
-                    arrowstyle="->",
-                    shrinkA=0,
-                    shrinkB=2,
-                    linewidth=0.5,
-                    connectionstyle="angle,angleA=0,angleB=45,rad=0",
-                ),
+                arrowprops={
+                    "arrowstyle": "->",
+                    "shrinkA": 0,
+                    "shrinkB": 2,
+                    "linewidth": 0.5,
+                    "connectionstyle": "angle,angleA=0,angleB=45,rad=0",
+                },
             )
 
         return self.fill_betweenx(p, ci_lo, ci_hi, **kwargs)

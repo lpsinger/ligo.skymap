@@ -18,12 +18,12 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Mapping
 
-__all__ = ("EventSource", "Event", "SingleEvent")
+__all__ = ("Event", "EventSource", "SingleEvent")
 
 
 def _fmt(obj, keys):
-    kvs = ", ".join("{}={!r}".format(key, getattr(obj, key)) for key in keys)
-    return "<{}({})>".format(obj.__class__.__name__, kvs)
+    kvs = ", ".join(f"{key}={getattr(obj, key)!r}" for key in keys)
+    return f"<{obj.__class__.__name__}({kvs})>"
 
 
 class EventSource(Mapping):
@@ -39,8 +39,8 @@ class EventSource(Mapping):
         except (NotImplementedError, TypeError):
             contents = "..."
         else:
-            contents = "...{} items...".format(length)
-        return "<{}({{{}}})>".format(self.__class__.__name__, contents)
+            contents = f"...{length} items..."
+        return f"<{self.__class__.__name__}({{{contents}}})>"
 
     def __repr__(self):
         try:
@@ -48,10 +48,8 @@ class EventSource(Mapping):
         except NotImplementedError:
             contents = "..."
         else:
-            contents = ", ".join(
-                "{}: {!r}".format(key, value) for key, value in self.items()
-            )
-        return "{}({{{}}})".format(self.__class__.__name__, contents)
+            contents = ", ".join(f"{key}: {value!r}" for key, value in self.items())
+        return f"{self.__class__.__name__}({{{contents}}})"
 
 
 class Event(metaclass=ABCMeta):

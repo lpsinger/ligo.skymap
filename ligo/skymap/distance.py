@@ -55,20 +55,19 @@ from .healpix_tree import HEALPIX_MACHINE_ORDER
 from .util.numpy import require_contiguous_aligned
 
 __all__ = (
-    "conditional_pdf",
+    "cartesian_kde_to_moments",
     "conditional_cdf",
+    "conditional_kde",
+    "conditional_pdf",
     "conditional_ppf",
+    "marginal_cdf",
+    "marginal_pdf",
+    "marginal_ppf",
     "moments_to_parameters",
     "parameters_to_moments",
-    "volume_render",
-    "marginal_pdf",
-    "marginal_cdf",
-    "marginal_ppf",
-    "ud_grade",
-    "conditional_kde",
-    "cartesian_kde_to_moments",
     "principal_axes",
-    "parameters_to_moments",
+    "ud_grade",
+    "volume_render",
 )
 
 
@@ -351,7 +350,7 @@ def volume_render(x, y, max_distance, axis0, axis1, R, skymap):
     >>> P_expected = norm.pdf(x) * norm.pdf(y) * (norm.cdf(dmax) - norm.cdf(-dmax))
     >>> np.testing.assert_allclose(P, P_expected, rtol=1e-4)
 
-    """  # noqa: E501
+    """
     skymap = Table(skymap)
     uniq = skymap.columns.pop("UNIQ")
     nside = 1 << np.int64(moc.uniq2order(uniq.max()))
@@ -704,7 +703,7 @@ def principal_axes(prob, distmu, distsigma, nest=False):
     mass = prob[good] * (np.square(diststd) + np.square(distmean))
     xyz = np.asarray(hp.pix2vec(nside, ipix, nest=nest))
     cov = np.dot(xyz * mass, xyz.T)
-    L, V = np.linalg.eigh(cov)
+    _, V = np.linalg.eigh(cov)
     if np.linalg.det(V) < 0:
         V = -V
     return V
@@ -726,7 +725,7 @@ def principal_axes_moc(skymap):
     xyz = np.asarray(hp.pix2vec(nside, ipix, nest=True))
 
     cov = np.dot(xyz * mass, xyz.T)
-    L, V = np.linalg.eigh(cov)
+    _, V = np.linalg.eigh(cov)
     if np.linalg.det(V) < 0:
         V = -V
     return V

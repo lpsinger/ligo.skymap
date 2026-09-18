@@ -93,10 +93,10 @@ def main(args=None):
                 return -np.log10(table["far"])
 
             def key_to_dir(key):
-                return "far_1e{}".format(-key)
+                return f"far_1e{-key}"
 
             def key_to_title(key):
-                return r"$\mathrm{{FAR}} \leq 10^{{{}}}$ Hz".format(-key)
+                return rf"$\mathrm{{FAR}} \leq 10^{{{-key}}}$ Hz"
 
         elif opts.group_by == "snr":
 
@@ -104,10 +104,10 @@ def main(args=None):
                 return table["snr"]
 
             def key_to_dir(key):
-                return "snr_{}".format(key)
+                return f"snr_{key}"
 
             def key_to_title(key):
-                return r"$\mathrm{{SNR}} \geq {}$".format(key)
+                return rf"$\mathrm{{SNR}} \geq {key}$"
 
         else:
 
@@ -184,7 +184,7 @@ def main(args=None):
                 nsamples = {len(d) for d in filtered}
                 if len(nsamples) == 1:
                     (nsamples,) = nsamples
-                    title += " ({} events)".format(nsamples)
+                    title += f" ({nsamples} events)"
                 else:
                     nsamples = None
 

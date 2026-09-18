@@ -149,7 +149,7 @@ def main(args=None):
 
         # Loop over all sngl_inspiral <-> sngl_inspiral coincs.
         for int_coinc_event_id, event in event_source.items():
-            coinc_event_id = "coinc_event:coinc_event_id:{}".format(int_coinc_event_id)
+            coinc_event_id = f"coinc_event:coinc_event_id:{int_coinc_event_id}"
 
             log.info("%s:preparing", coinc_event_id)
 
@@ -178,8 +178,8 @@ def main(args=None):
             max_abs_t = 2 * snrs.data.shape[1] / sample_rate
             xmin = [0, -1, min_distance, -1, 0, 0]
             xmax = [2 * np.pi, 1, max_distance, 1, 2 * np.pi, 2 * max_abs_t]
-            names = "ra dec distance inclination twopsi time".split()
-            transformed_names = "ra sin_dec distance u twopsi time".split()
+            names = ["ra", "dec", "distance", "inclination", "twopsi", "time"]
+            transformed_names = ["ra", "sin_dec", "distance", "u", "twopsi", "time"]
             forward_transforms = [
                 identity,
                 np.sin,
@@ -196,19 +196,19 @@ def main(args=None):
                 identity,
                 identity,
             ]
-            kwargs = dict(
-                min_distance=min_distance,
-                max_distance=max_distance,
-                prior_distance_power=prior_distance_power,
-                cosmology=cosmology,
-                gmst=gmst,
-                sample_rate=sample_rate,
-                epochs=epochs,
-                snrs=snrs,
-                responses=responses,
-                locations=locations,
-                horizons=horizons,
-            )
+            kwargs = {
+                "min_distance": min_distance,
+                "max_distance": max_distance,
+                "prior_distance_power": prior_distance_power,
+                "cosmology": cosmology,
+                "gmst": gmst,
+                "sample_rate": sample_rate,
+                "epochs": epochs,
+                "snrs": snrs,
+                "responses": responses,
+                "locations": locations,
+                "horizons": horizons,
+            }
 
             # Fix parameters
             for i, key in reversed(list(enumerate(["ra", "dec", "distance"]))):
@@ -248,7 +248,7 @@ def main(args=None):
 
             hdf5.write_samples(
                 chain,
-                os.path.join(opts.output, "{}.hdf5".format(int_coinc_event_id)),
+                os.path.join(opts.output, f"{int_coinc_event_id}.hdf5"),
                 path="/bayestar/posterior_samples",
                 overwrite=True,
             )

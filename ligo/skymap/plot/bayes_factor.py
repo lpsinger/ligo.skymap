@@ -78,7 +78,7 @@ def plot_bayes_factor(
         ax.set_yticks([])
         ax.set_title(title)
         ax.set_ylabel(
-            r"$\ln\,{}$".format(var_label),
+            rf"$\ln\,{var_label}$",
             rotation=0,
             rotation_mode="anchor",
             ha="right",

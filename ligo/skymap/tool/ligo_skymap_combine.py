@@ -56,7 +56,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:
+    with parser().parse_args(args) as args:  # noqa: PLR1704
         from textwrap import wrap
 
         import astropy_healpix as ah
@@ -152,7 +152,7 @@ def main(args=None):
         for i, x in enumerate(input_skymaps):
             out_kwargs["HISTORY"].append("")
             out_kwargs["HISTORY"].append(
-                "Headers of HDUs 0 and 1 of input file {:d}:".format(i)
+                f"Headers of HDUs 0 and 1 of input file {i:d}:"
             )
             out_kwargs["HISTORY"].append("")
             for line in (

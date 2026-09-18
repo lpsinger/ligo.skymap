@@ -43,7 +43,7 @@ def pytest_configure(config):
 # To ignore some specific deprecation warning messages for Python version
 # MAJOR.MINOR or later, add:
 #     warnings_to_ignore_by_pyver={(MAJOR, MINOR): ['Message to ignore']}
-# from astropy.tests.helper import enable_deprecations_as_exceptions  # noqa
+# from astropy.tests.helper import enable_deprecations_as_exceptions
 # enable_deprecations_as_exceptions()
 
 

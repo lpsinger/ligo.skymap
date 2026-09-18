@@ -88,13 +88,13 @@ def parser():
             choices=psd_names,
             metavar="func",
             default=SUPPRESS,
-            help="PSD function for {0} detector".format(name),
+            help=f"PSD function for {name} detector",
         )
         scale_group.add_argument(
             "--" + prefix + "-scale",
             type=float,
             default=SUPPRESS,
-            help="Scale range for {0} detector".format(name),
+            help=f"Scale range for {name} detector",
         )
 
     return parser

@@ -89,9 +89,7 @@ def test_flatten(tmpdir, order_in, d_order_in, fraction_in, nside_out):
         args.extend(["--nside", str(nside_out)])
     run_entry_point(*args)
 
-    (prob, distmu, distsigma, distnorm), _ = read_sky_map(
-        output_filename, distances=True
-    )
+    (prob, distmu, distsigma, _), _ = read_sky_map(output_filename, distances=True)
     distmean, diststd = parameters_to_marginal_moments(prob, distmu, distsigma)
 
     if nside_out is not None:

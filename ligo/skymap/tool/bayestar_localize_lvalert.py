@@ -144,7 +144,7 @@ def main(args=None):
                 event_source, opts.disable_detector
             )
 
-        for graceid in event_source.keys():
+        for graceid in event_source:
             try:
                 event = event_source[graceid]
             except:  # noqa: E722
@@ -180,7 +180,7 @@ def main(args=None):
                 if not opts.enable_multiresolution:
                     sky_map = rasterize(sky_map)
                 sky_map.meta["objid"] = str(graceid)
-                sky_map.meta["url"] = "{}/{}".format(base_url, graceid)
+                sky_map.meta["url"] = f"{base_url}/{graceid}"
                 log.info("sky localization complete")
 
                 # upload FITS file

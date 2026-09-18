@@ -30,8 +30,8 @@ from PIL.Image import DecompressionBombWarning
 from reproject import reproject_interp
 
 __all__ = (
-    "bluemarble",
     "blackmarble",
+    "bluemarble",
     "coastlines",
     "mellinger",
     "reproject_interp_rgb",
@@ -89,7 +89,7 @@ def mellinger():
         ax.imshow(backdrop_reprojected)
 
     """
-    url = "https://web.archive.org/web/20160317214047/http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits"  # noqa: E501
+    url = "https://web.archive.org/web/20160317214047/http://galaxy.phy.cmich.edu/~axel/mwpan2/mwpan2_RGB_3600.fits"
     (hdu,) = fits.open(url, cache=True)
     return hdu
 
@@ -135,27 +135,27 @@ def bluemarble(t, resolution="low"):
 
     url = (
         "https://eoimages.gsfc.nasa.gov/images/imagerecords/74000/74117/"
-        "world.200408.3x{}.png".format(variants[resolution])
+        f"world.200408.3x{variants[resolution]}.png"
     )
     img = big_imread(download_file(url, cache=True))
     height, width, ndim = img.shape
     gmst_deg = Time(t).sidereal_time("mean", "greenwich").deg
     header = fits.Header(
-        dict(
-            NAXIS=3,
-            NAXIS1=ndim,
-            NAXIS2=width,
-            NAXIS3=height,
-            CRPIX2=width / 2,
-            CRPIX3=height / 2,
-            CRVAL2=gmst_deg % 360,
-            CRVAL3=0,
-            CDELT2=360 / width,
-            CDELT3=-180 / height,
-            CTYPE2="RA---CAR",
-            CTYPE3="DEC--CAR",
-            RADESYSa="ICRS",
-        ).items()
+        [
+            ("NAXIS", 3),
+            ("NAXIS1", ndim),
+            ("NAXIS2", width),
+            ("NAXIS3", height),
+            ("CRPIX2", width / 2),
+            ("CRPIX3", height / 2),
+            ("CRVAL2", gmst_deg % 360),
+            ("CRVAL3", 0),
+            ("CDELT2", 360 / width),
+            ("CDELT3", -180 / height),
+            ("CTYPE2", "RA---CAR"),
+            ("CTYPE3", "DEC--CAR"),
+            ("RADESYSa", "ICRS"),
+        ]
     )
     return fits.ImageHDU(img[:, :, :], header)
 
@@ -199,27 +199,27 @@ def blackmarble(t, resolution="low"):
 
     url = (
         "http://eoimages.gsfc.nasa.gov/images/imagerecords/79000/79765/"
-        "dnb_land_ocean_ice.2012.{}_geo.tif".format(variants[resolution])
+        f"dnb_land_ocean_ice.2012.{variants[resolution]}_geo.tif"
     )
     img = big_imread(download_file(url, cache=True))
     height, width, ndim = img.shape
     gmst_deg = Time(t).sidereal_time("mean", "greenwich").deg
     header = fits.Header(
-        dict(
-            NAXIS=3,
-            NAXIS1=ndim,
-            NAXIS2=width,
-            NAXIS3=height,
-            CRPIX2=width / 2,
-            CRPIX3=height / 2,
-            CRVAL2=gmst_deg % 360,
-            CRVAL3=0,
-            CDELT2=360 / width,
-            CDELT3=-180 / height,
-            CTYPE2="RA---CAR",
-            CTYPE3="DEC--CAR",
-            RADESYSa="ICRS",
-        ).items()
+        [
+            ("NAXIS", 3),
+            ("NAXIS1", ndim),
+            ("NAXIS2", width),
+            ("NAXIS3", height),
+            ("CRPIX2", width / 2),
+            ("CRPIX3", height / 2),
+            ("CRVAL2", gmst_deg % 360),
+            ("CRVAL3", 0),
+            ("CDELT2", 360 / width),
+            ("CDELT3", -180 / height),
+            ("CTYPE2", "RA---CAR"),
+            ("CTYPE3", "DEC--CAR"),
+            ("RADESYSa", "ICRS"),
+        ]
     )
     return fits.ImageHDU(img[:, :, :], header)
 

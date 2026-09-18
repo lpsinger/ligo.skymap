@@ -30,7 +30,7 @@ def fmt(x, sigfigs, force_scientific=False):
     places = sigfigs - int(np.floor(np.log10(x)))
     x_rounded = np.around(x, places)
     if places <= 0 and not force_scientific:
-        return "{:d}".format(int(x_rounded))
+        return f"{int(x_rounded):d}"
     else:
         s = ("{:." + str(sigfigs) + "e}").format(x_rounded)
         return re.sub(r"^(.*)e\+?(-?)0*(\d+)$", r"$\1 \\times 10^{\2\3}$", s)
@@ -70,7 +70,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:
+    with parser().parse_args(args) as args:  # noqa: PLR1704
         # Late imports.
         from astropy.table import Table
         from matplotlib import pyplot as plt
@@ -115,9 +115,9 @@ def main(args=None):
         for p, area, vol in zip(
             args.contour, result.contour_areas, result.contour_vols
         ):
-            text = "{:g}%\n{} deg$^2$".format(p, fmt(area, 2))
+            text = f"{p:g}%\n{fmt(area, 2)} deg$^2$"
             if "DISTMU" in skymap.colnames:
-                text += "\n{} Mpc$^3$".format(fmt(vol, 2, force_scientific=True))
+                text += f"\n{fmt(vol, 2, force_scientific=True)} Mpc$^3$"
             ax.annotate(
                 text,
                 (1e-2 * p, 1e-2 * p),
@@ -126,18 +126,18 @@ def main(args=None):
                 textcoords="offset points",
                 horizontalalignment="right",
                 backgroundcolor="white",
-                arrowprops=dict(
-                    connectionstyle="bar,angle=0,fraction=0",
-                    arrowstyle="-|>",
-                    linewidth=2,
-                    color="black",
-                ),
+                arrowprops={
+                    "connectionstyle": "bar,angle=0,fraction=0",
+                    "arrowstyle": "-|>",
+                    "linewidth": 2,
+                    "color": "black",
+                },
             )
             area = searched_area_func(1e-2 * p)
-            text = "{:g}%\n{} deg$^2$".format(p, fmt(area, 2))
+            text = f"{p:g}%\n{fmt(area, 2)} deg$^2$"
             if "DISTMU" in skymap.colnames:
                 vol = searched_vol_func(1e-2 * p)
-                text += "\n{} Mpc$^3$".format(fmt(vol, 2, force_scientific=True))
+                text += f"\n{fmt(vol, 2, force_scientific=True)} Mpc$^3$"
             ax.annotate(
                 text,
                 (1e-2 * p, 1e-2 * p),
@@ -147,12 +147,12 @@ def main(args=None):
                 horizontalalignment="right",
                 verticalalignment="center",
                 backgroundcolor="white",
-                arrowprops=dict(
-                    connectionstyle="bar,angle=0,fraction=0",
-                    arrowstyle="-|>",
-                    linewidth=2,
-                    color="black",
-                ),
+                arrowprops={
+                    "connectionstyle": "bar,angle=0,fraction=0",
+                    "arrowstyle": "-|>",
+                    "linewidth": 2,
+                    "color": "black",
+                },
             )
         ax.set_xlabel("searched probability")
         ax.set_ylabel("cumulative fraction of posterior samples")

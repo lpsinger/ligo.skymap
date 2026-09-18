@@ -134,11 +134,11 @@ def _find_table(group, tablename):
     group.visititems(visitor)
 
     if len(results) == 0:
-        raise KeyError("Table not found: {0}".format(tablename))
+        raise KeyError(f"Table not found: {tablename}")
 
     if len(results) > 1:
         raise KeyError(
-            "Multiple tables called {0} exist: {1}".format(
+            "Multiple tables called {} exist: {}".format(
                 tablename, ", ".join(sorted(results.keys()))
             )
         )
@@ -202,7 +202,7 @@ def read_samples(filename, path=None, tablename=POSTERIOR_SAMPLES):
 
     # Restore vary types.
     for i, column in enumerate(table.columns.values()):
-        column.meta["vary"] = table.meta.get("FIELD_{0}_VARY".format(i), OUTPUT)
+        column.meta["vary"] = table.meta.get(f"FIELD_{i}_VARY", OUTPUT)
 
     # Restore fixed columns from table attributes.
     for key, value in table.meta.items():
@@ -274,7 +274,7 @@ def write_samples(table, filename, metadata=None, **kwargs):
     ...         table, os.path.join(dir, 'test.hdf5'), path='bat/baz',
     ...         metadata={'bat/baz': {'widget': 'shoephone'}})
 
-    """  # noqa: W291
+    """
     # Copy the table so that we do not modify the original.
     table = table.copy()
 
@@ -291,14 +291,12 @@ def write_samples(table, filename, metadata=None, **kwargs):
             np.testing.assert_array_equal(
                 column[1:],
                 column[0],
-                "Column {0} is a fixed column, but its values are not identical".format(
-                    column.name
-                ),
+                f"Column {column.name} is a fixed column, but its values are not identical",
             )
             table.meta[colname] = column[0]
             del table[colname]
     for i, column in enumerate(table.columns.values()):
-        table.meta["FIELD_{0}_VARY".format(i)] = column.meta.pop("vary")
+        table.meta[f"FIELD_{i}_VARY"] = column.meta.pop("vary")
     table.write(filename, format="hdf5", **kwargs)
     if metadata:
         with h5py.File(filename, "r+") as hdf:
@@ -308,7 +306,5 @@ def write_samples(table, filename, metadata=None, **kwargs):
                         hdf[internal_path].attrs[key] = value
                     except KeyError:
                         raise KeyError(
-                            "Unable to set metadata {0}[{1}] = {2}".format(
-                                internal_path, key, value
-                            )
+                            f"Unable to set metadata {internal_path}[{key}] = {value}"
                         )

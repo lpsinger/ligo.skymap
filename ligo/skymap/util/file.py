@@ -36,7 +36,7 @@ def rename(src, dst):
                 os.close(tmpfid)
                 shutil.copy2(src, tmpdst)
                 os.rename(tmpdst, dst)
-            except:  # noqa: E722
+            except:
                 os.remove(tmpdst)
                 raise
         else:

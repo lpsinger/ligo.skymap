@@ -9,7 +9,7 @@ from . import run_entry_point
 @pytest.mark.parametrize("groupby", [None, "far", "snr"])
 def test_plot_stats(tmpdir, groupby, ndatasets):
     """Test ligo-skymap-plot-stats."""
-    filenames = [str(tmpdir / "{}.out".format(i)) for i in range(ndatasets)]
+    filenames = [str(tmpdir / f"{i}.out") for i in range(ndatasets)]
     n = 250
 
     for filename in filenames:

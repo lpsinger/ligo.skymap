@@ -95,5 +95,5 @@ def test_from_samples_without_distance(samples_without_distance, capsys, tmpdir)
         run_entry_point(
             "ligo-skymap-from-samples", samples_without_distance, "-o", str(tmpdir)
         )
-    out, err = capsys.readouterr()
+    _, err = capsys.readouterr()
     assert "does not have a distance column named 'dist' or 'distance'" in err

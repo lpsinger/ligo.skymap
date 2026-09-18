@@ -22,6 +22,7 @@ import operator
 import os
 from collections import defaultdict
 from functools import lru_cache
+from typing import ClassVar
 
 import lal
 import lal.series
@@ -61,7 +62,7 @@ def _read_xml(f, fallbackpath=None):
     elif isinstance(f, (str, os.PathLike)):
         try:
             doc = load_filename(f, contenthandler=ContentHandler)
-        except IOError as e:
+        except OSError as e:
             if e.errno == errno.ENOENT and fallbackpath and not os.path.isabs(f):
                 f = os.path.join(fallbackpath, f)
                 doc = load_filename(f, contenthandler=ContentHandler)
@@ -113,17 +114,25 @@ class LigoLWEventSource(dict, EventSource):
 
     def __str__(self):
         contents = repr(self)
-        return "<{}>".format(contents)
+        return f"<{contents}>"
 
     def __repr__(self):
         contents = super().__repr__()
-        return "{}({})".format(self.__class__.__name__, contents)
+        return f"{self.__class__.__name__}({contents})"
 
-    _template_keys = """mass1 mass2
-                        spin1x spin1y spin1z spin2x spin2y spin2z
-                        f_final""".split()
+    _template_keys: ClassVar = (
+        "mass1",
+        "mass2",
+        "spin1x",
+        "spin1y",
+        "spin1z",
+        "spin2x",
+        "spin2y",
+        "spin2z",
+        "f_final",
+    )
 
-    _invert_phases = {
+    _invert_phases: ClassVar = {
         "pycbc": False,
         "gstlal_inspiral": True,
         "gstlal_inspiral_coinc_extractor": True,
@@ -140,10 +149,8 @@ class LigoLWEventSource(dict, EventSource):
             return cls._invert_phases[program]
         except KeyError:
             raise KeyError(
-                (
-                    'The pipeline "{}" is unknown, so the phase '
-                    "convention could not be deduced."
-                ).format(program)
+                f'The pipeline "{program}" is unknown, so the phase '
+                "convention could not be deduced."
             )
 
     def _psds_for_file(self, f):

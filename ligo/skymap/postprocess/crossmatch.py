@@ -28,14 +28,14 @@ from .. import distance, moc
 from .cosmology import dVC_dVL_for_DL
 from .util import interp_greedy_credible_levels
 
-__all__ = ("crossmatch", "CrossmatchResult")
+__all__ = ("CrossmatchResult", "crossmatch")
 
 
 def flood_fill(nside, ipix, m, nest=False):
     """Stack-based flood fill algorithm in HEALPix coordinates.
 
     Based on <http://en.wikipedia.org/w/index.php?title=Flood_fill&oldid=566525693#Alternative_implementations>.
-    """  # noqa: E501
+    """
     # Initialize stack with starting pixel index.
     stack = [ipix]
     while stack:
@@ -314,7 +314,7 @@ def crossmatch(
      23.1281000000000 -31.1109200000000        ---   320.62700000000001
     Length = 1479 rows
 
-    """  # noqa: E501
+    """
     # Astropy coordinates that are constructed without distance have
     # a distance field that is unity (dimensionless).
     if coordinates is None:

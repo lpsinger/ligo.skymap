@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from igwn_ligolw import lsctables as lsctables
+from igwn_ligolw import lsctables
 from igwn_ligolw import utils as ligolw_utils
 from lalinspiral.thinca import InspiralCoincDef
 
@@ -137,7 +137,7 @@ def localize_lvalert(coinc_without_inj, psd, tmpdir, monkeypatch):
             ]
             return open(mock_filename, "rb")
 
-        def writeLog(self, *args, **kwargs):  # noqa: N802
+        def writeLog(self, *args, **kwargs):
             pass
 
     monkeypatch.setattr("ligo.gracedb.rest.GraceDb", MockGraceDb)
@@ -158,9 +158,9 @@ def test_bayestar(localize_coincs, localize_lvalert, coinc_sqlite, tmpdir):
     skymap2, meta2 = io.read_sky_map(localize_lvalert, distances=True)
     for col1, col2 in zip(skymap1, skymap2):
         np.testing.assert_allclose(col1, col2)
-    for key in "gps_time origin vcs_version".split():
+    for key in ["gps_time", "origin", "vcs_version"]:
         assert meta1[key] == meta2[key]
-    for key in "distmean diststd log_bci log_bsn".split():
+    for key in ["distmean", "diststd", "log_bci", "log_bsn"]:
         np.testing.assert_allclose(meta1[key], meta2[key])
 
     # Test ligo-skymap-stats.

@@ -36,7 +36,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:
+    with parser().parse_args(args) as args:  # noqa: PLR1704
         import logging
         import warnings
 

@@ -51,7 +51,7 @@ class StopwatchTimes:
         )
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(real={self.real!r}, user={self.user!r}, sys={self.sys!r})"  # noqa: E501
+        return f"{self.__class__.__name__}(real={self.real!r}, user={self.user!r}, sys={self.sys!r})"
 
     def __str__(self):
         real, user, sys = (

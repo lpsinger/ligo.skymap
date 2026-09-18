@@ -21,7 +21,7 @@ from matplotlib.markers import MarkerStyle
 from matplotlib.path import Path
 from matplotlib.transforms import Affine2D
 
-__all__ = ("earth", "sun", "moon", "reticle")
+__all__ = ("earth", "moon", "reticle", "sun")
 
 
 earth = Path.unit_circle()
@@ -126,7 +126,7 @@ def moon(phase, shadow=False):
         )
         ax.set_ylim(-0.5, 4.5)
 
-    """  # noqa: E501
+    """
     angle = np.deg2rad(90 - phase)
     sign = np.sign(np.cos(angle))
     arc = Path.arc(90, 270, 9)

@@ -24,10 +24,10 @@ def mock_gracedb(monkeypatch):
 
     class MockGraceDb(ExitStack):
         def files(self, graceid, filename):
-            path = os.path.join(DATA_PATH, "{}_{}".format(graceid, filename))
+            path = os.path.join(DATA_PATH, f"{graceid}_{filename}")
             try:
                 return stack.enter_context(open(path, "rb"))
-            except IOError as e:
+            except OSError as e:
                 if e.errno != errno.ENOENT:
                     raise
                 return stack.enter_context(gzip.GzipFile(path + ".gz", "rb"))
@@ -248,10 +248,10 @@ def test_detector_disabled(mock_gracedb):
     )
     raising_source = events.detector_disabled.open(base_source, ["H1, L1"])
     for event in nonraising_source.values():
-        event.singles
+        event.singles  # noqa: B018
     for event in raising_source.values():
         with raises(events.DetectorDisabledError, expected_message):
-            event.singles
+            event.singles  # noqa: B018
 
     # Now test that exceptions are raised when they are called for.
     expected_message = (
@@ -263,10 +263,10 @@ def test_detector_disabled(mock_gracedb):
     )
     raising_source = events.detector_disabled.open(base_source, ["H1", "L1", "V1"])
     for event in nonraising_source.values():
-        event.singles
+        event.singles  # noqa: B018
     for event in raising_source.values():
         with raises(events.DetectorDisabledError, expected_message):
-            event.singles
+            event.singles  # noqa: B018
 
 
 def test_hdf(tmpdir):
@@ -288,8 +288,8 @@ def test_hdf(tmpdir):
             bank_file.attrs["parameters"] = []
 
         for i, ifo in enumerate(ifos):
-            coinc_file.attrs["detector_{}".format(i + 1)] = ifo
-            coinc_group["trigger_id{}".format(i + 1)] = np.arange(5)
+            coinc_file.attrs[f"detector_{i + 1}"] = ifo
+            coinc_group[f"trigger_id{i + 1}"] = np.arange(5)
 
             filename = str(tmpdir / (ifo + "_triggers.hdf"))
             filenames.append(filename)

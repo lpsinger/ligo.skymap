@@ -34,7 +34,7 @@ def ez_emcee(
     nwalkers=None,
     nburnin=500,
     args=(),
-    kwargs={},
+    kwargs=None,
     **options,
 ):
     r'''Fire-and-forget MCMC sampling using `ptemcee.Sampler`, featuring
@@ -113,7 +113,7 @@ def ez_emcee(
 
     .. image:: eggbox.png
 
-    '''  # noqa: E501
+    '''
     lo = np.asarray(lo)
     hi = np.asarray(hi)
     ndim = len(lo)
@@ -131,7 +131,7 @@ def ez_emcee(
             logp,
             ntemps=ntemps,
             loglargs=args,
-            loglkwargs=kwargs,
+            loglkwargs={} if kwargs is None else kwargs,
             logpargs=[lo, hi],
             random=np.random,
             **options,
@@ -148,7 +148,7 @@ def ez_emcee(
 
         # Burn in
         progress.set_description("Burning in")
-        for pos, _, _ in sampler.sample(pos, iterations=nburnin, storechain=False):
+        for pos, _, _ in sampler.sample(pos, iterations=nburnin, storechain=False):  # noqa: B020
             progress.update()
 
         sampler.reset()
@@ -157,7 +157,7 @@ def ez_emcee(
             # Advance the chain
             progress.total = nburnin + max(sampler.time + nsteps, nindep * acl)
             progress.set_description("Sampling")
-            for pos, _, _ in sampler.sample(pos, iterations=nsteps):
+            for pos, _, _ in sampler.sample(pos, iterations=nsteps):  # noqa: B020
                 progress.update()
 
             # Refresh convergence statistics

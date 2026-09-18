@@ -100,14 +100,14 @@ class GlobAction(argparse._StoreAction):
         elif self.nargs == argparse.ZERO_OR_MORE:
             msg = None
         elif int(self.nargs) != nvalues:
-            msg = "expected exactly %s file" % self.nargs
+            msg = f"expected exactly {self.nargs} file"
             if self.nargs != 1:
                 msg += "s"
         else:
             msg = None
         if msg is not None:
             msg += ", but found "
-            msg += "{} file".format(nvalues)
+            msg += f"{nvalues} file"
             if nvalues != 1:
                 msg += "s"
             raise argparse.ArgumentError(self, msg)
@@ -326,7 +326,7 @@ class ArgumentParser(argparse.ArgumentParser):
         usage=None,
         description=None,
         epilog=None,
-        parents=[],
+        parents=[],  # noqa: B006
         prefix_chars="-",
         fromfile_prefix_chars=None,
         argument_default=None,

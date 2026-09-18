@@ -48,5 +48,5 @@ if __name__ == "__main__":  # pragma: no cover
 
     for line in __doc__.splitlines():
         print("#", line)
-    for L, a, b in zip(L, a, b):
-        print(*lab_to_rgb(L, a, b), sep=",")
+    for args in zip(L, a, b):
+        print(*lab_to_rgb(*args), sep=",")

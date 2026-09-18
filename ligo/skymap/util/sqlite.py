@@ -27,9 +27,7 @@ def _open_a(string):
 
 
 def _open_r(string):
-    return sqlite3.connect(
-        "file:{}?mode=ro".format(string), check_same_thread=False, uri=True
-    )
+    return sqlite3.connect(f"file:{string}?mode=ro", check_same_thread=False, uri=True)
 
 
 def _open_w(string):
@@ -103,7 +101,7 @@ def open(string, mode):
     try:
         return opener(string)
     except (OSError, sqlite3.Error) as e:
-        raise OSError("Failed to open database {}: {}".format(string, e))
+        raise OSError(f"Failed to open database {string}: {e}")
 
 
 def get_filename(connection):

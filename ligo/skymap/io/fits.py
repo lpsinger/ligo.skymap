@@ -69,7 +69,7 @@ The :meth:`read_sky_map` function accepts several optional keyword arguments
 that you can use to populate `standard or conventional FITS header keys`_:
 
 .. _`standard or conventional FITS header keys`: https://fits.gsfc.nasa.gov/fits_dictionary.html
-"""  # noqa: E501
+"""
 
 import itertools
 import logging
@@ -379,7 +379,7 @@ def write_sky_map(filename, m, **kwargs):
     VCSREV  = 'bar     '           / Software revision (Git)
     DATE-BLD= '2018-01-01T00:00:00' / Software build date
 
-    """  # noqa: E501
+    """
     log.debug("normalizing metadata")
     if isinstance(m, Table) or (isinstance(m, np.ndarray) and m.dtype.names):
         m = Table(m, copy=False)
@@ -521,9 +521,7 @@ def read_sky_map(filename, nest=False, distances=False, moc=False, **kwargs):
         elif value == "NUNIQ":
             pass
         else:
-            raise ValueError(
-                "ORDERING card in header has unknown value: {0}".format(value)
-            )
+            raise ValueError(f"ORDERING card in header has unknown value: {value}")
 
     for fits_key, rows in itertools.groupby(FITS_META_MAPPING, lambda row: row[1]):
         try:

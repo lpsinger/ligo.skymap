@@ -17,7 +17,7 @@
 
 from .base import Event, EventSource
 
-__all__ = ("DetectorDisabledEventSource", "DetectorDisabledError")
+__all__ = ("DetectorDisabledError", "DetectorDisabledEventSource")
 
 
 class DetectorDisabledError(ValueError):

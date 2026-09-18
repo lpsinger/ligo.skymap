@@ -6,14 +6,14 @@ import matplotlib
 from astropy.coordinates import ICRS, CartesianRepresentation, SkyCoord
 
 matplotlib.use("agg")
-import healpy as hp  # noqa: E402
-import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
-import pytest  # noqa: E402
-from astropy import units as u  # noqa: E402
+import healpy as hp
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from astropy import units as u
 
-from ..bayes_factor import plot_bayes_factor  # noqa: E402
-from ..marker import reticle  # noqa: E402
+from ..bayes_factor import plot_bayes_factor
+from ..marker import reticle
 
 skip_if_macos_arm64 = pytest.mark.skipif(
     platform.system() == "Darwin" and platform.machine() == "arm64",
@@ -101,7 +101,7 @@ def test_allsky_axes(rcparams, coordsys, units, proj):
     # the value is equal to the right ascension.
     nside = 8
     npix = ah.nside_to_npix(nside)
-    ra, dec = hp.pix2ang(nside, np.arange(npix), lonlat=True)
+    ra, _ = hp.pix2ang(nside, np.arange(npix), lonlat=True)
     img = np.sin(np.deg2rad(ra))
 
     # Plot, show grid, and return figure.
@@ -212,5 +212,5 @@ def test_center_galactic(rcparams, frame):
 
 @pytest.mark.mpl_image_compare(tolerance=1.5)
 def test_plot_bayes_factor():
-    fig, ax = plot_bayes_factor(6.3, title="BAYESTAR is awesome")
+    fig, _ = plot_bayes_factor(6.3, title="BAYESTAR is awesome")
     return fig

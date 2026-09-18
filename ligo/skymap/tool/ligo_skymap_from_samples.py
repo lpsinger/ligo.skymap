@@ -143,7 +143,7 @@ def parser():
 
 def main(args=None):
     _parser = parser()
-    with _parser.parse_args(args) as args:
+    with _parser.parse_args(args) as args:  # noqa: PLR1704
         # Late imports
         import os
         import pickle
@@ -184,7 +184,7 @@ def main(args=None):
             data = io.read_samples(
                 args.samples.name, path=args.path, tablename=args.tablename
             )
-        except IOError:
+        except OSError:
             # FIXME: remove this code path once we support only HDF5
             data = Table.read(args.samples, format="ascii")
             _remap_colnames(data)
@@ -206,13 +206,13 @@ def main(args=None):
             if dist is None:
                 if args.enable_distance_map:
                     _parser.error(
-                        "The posterior samples file '{}' does not "
+                        f"The posterior samples file '{args.samples.name}' does not "
                         "have a distance column named 'dist' or "
                         "'distance'. Cannot generate distance map. "
                         "If you do not intend to generate a "
                         "distance map, then add the "
                         "'--disable-distance-map' command line "
-                        "argument.".format(args.samples.name)
+                        "argument."
                     )
                 pts = np.column_stack((data["ra"], data["dec"]))
             else:

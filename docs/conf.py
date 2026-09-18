@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This file is adapted from the Astropy package template, which is licensed
 # under a 3-clause BSD style license - see licenses/TEMPLATE_LICENSE.rst
 #
@@ -33,7 +32,7 @@ import tomllib
 from importlib import import_module
 
 try:
-    from sphinx_astropy.conf.v1 import *  # noqa: F403
+    from sphinx_astropy.conf.v1 import *
 except ImportError:
     print(
         "ERROR: the documentation requires the sphinx-astropy package to be installed"
@@ -59,19 +58,19 @@ highlight_language = "python3"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns.append("_templates")  # noqa: F405
+exclude_patterns.append("_templates")
 
 # This is added to the end of RST files - a good place to put substitutions to
 # be used globally.
 rst_epilog += """
-"""  # noqa: F405
+"""
 
 # -- Project information ------------------------------------------------------
 
 # This does not *have* to match the package name, but typically does
 project = project_metadata["name"]
 author = project_metadata["authors"][0]["name"]
-copyright = "{0}, {1}".format(datetime.datetime.now().year, author)
+copyright = f"{datetime.datetime.now(datetime.UTC).year}, {author}"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -85,7 +84,7 @@ version = package.__version__.split("-", 1)[0]
 # The full version, including alpha/beta/rc tags.
 release = package.__version__
 
-extensions.extend(["sphinx.ext.extlinks"])  # noqa: F405
+extensions.extend(["sphinx.ext.extlinks"])
 
 
 # -- Options for HTML output --------------------------------------------------
@@ -136,7 +135,7 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "{0} v{1}".format(project, release)
+html_title = f"{project} v{release}"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = project + "doc"
@@ -163,7 +162,7 @@ man_pages = [("index", project.lower(), project + " Documentation", [author], 1)
 # -- Options for the edit_on_github extension ---------------------------------
 
 if project_metadata.get("edit_on_github"):
-    extensions += ["sphinx_astropy.ext.edit_on_github"]  # noqa: F405
+    extensions += ["sphinx_astropy.ext.edit_on_github"]
 
     edit_on_github_project = project_metadata["github_project"]
     edit_on_github_branch = "main"
@@ -226,7 +225,7 @@ modindex_common_prefix = [package.__name__ + "."]
 
 # -- Options for intersphinx --------------------------------------------------
 
-intersphinx_mapping.update(  # noqa: F405
+intersphinx_mapping.update(
     {
         "celery": ("https://docs.celeryq.dev/en/stable/", None),
         "gracedb": ("https://gracedb.ligo.org/documentation/", None),

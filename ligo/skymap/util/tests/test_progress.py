@@ -1,3 +1,4 @@
+from itertools import chain
 from os import getpid
 from time import sleep
 
@@ -18,10 +19,9 @@ def func2(x):
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])
-@pytest.mark.parametrize("total", [None, 20])
-def test_map(jobs, total):
+def test_map(jobs):
     x = np.arange(20)
-    result = list(progress_map(func, x, jobs=jobs, total=total))
+    result = list(progress_map(func, x, jobs=jobs))
     np.testing.assert_array_equal(result, np.square(x))
 
 
@@ -34,7 +34,7 @@ def map1(_):
 
 
 def map2():
-    return sum(progress_map(map1, range(8), jobs=8), [])
+    return chain.from_iterable(progress_map(map1, range(8), jobs=8))
 
 
 def test_no_nested_pools():
@@ -43,12 +43,9 @@ def test_no_nested_pools():
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])
-@pytest.mark.parametrize("total", [None, 3])
-def test_indefinite(jobs, total):
+def test_indefinite(jobs):
     """Test iteration over a collection of indefinite length."""
-    assert list(
-        progress_map(np.square, (i for i in range(3)), jobs=jobs, total=total)
-    ) == [0, 1, 4]
+    assert list(progress_map(np.square, (i for i in range(3)), jobs=jobs)) == [0, 1, 4]
 
 
 @pytest.mark.parametrize("jobs", [1, 8, None])

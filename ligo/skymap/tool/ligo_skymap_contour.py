@@ -46,7 +46,7 @@ def parser():
     parser.add_argument(
         "-i",
         "--interpolate",
-        choices="nearest nested bilinear".split(),
+        choices=["nearest", "nested", "bilinear"],
         default="nearest",
         help="resampling interpolation method",
     )

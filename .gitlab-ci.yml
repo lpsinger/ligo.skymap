@@ -138,6 +138,40 @@ wheel/macos/arm64:
     - cd "${CI_PROJECT_DIR}"
     - rm -rf "${WORKING_DIRECTORY}"
 
+#
+# FIXME: remove -bookworm and use the Python image for Debian stable.
+#
+# This works around an ICE in gcc 13 and 14 in `log_radial_integrator_init`
+# that occurs in the OpenMP for loops that populate variable-length arrays,
+# when compiled with `-fsanitize=undefined`. Here is a minimal reproducer:
+#
+#
+#   $ cat test.c
+#   static void foo(unsigned long n)
+#   {
+#       double z[n];
+#       #pragma omp parallel for
+#       for (unsigned long i = 0; i < n; i ++)
+#           z[i] = 0;
+#   }
+#   $ gcc -fopenmp -fsanitize=undefined -c test.c
+#   during GIMPLE pass: sanopt
+#   In function 'foo._omp_fn.0':
+#   cc1: internal compiler error: in force_gimple_operand_1, at gimplify-me.cc:79
+#   0xcdfa4f internal_error(char const*, ...)
+#           ???:0
+#   0xcdfb3b fancy_abort(char const*, int, char const*)
+#           ???:0
+#   0x118054f force_gimple_operand_1(tree_node*, gimple**, bool (*)(tree_node*), tree_node*)
+#           ???:0
+#   0x1180377 force_gimple_operand_gsi_1(gimple_stmt_iterator*, tree_node*, bool (*)(tree_node*), tree_node*, bool, gsi_iterator_update)
+#           ???:0
+#   0x86111f ubsan_expand_bounds_ifn(gimple_stmt_iterator*)
+#           ???:0
+#   Please submit a full bug report, with preprocessed source (by using -freport-bug).
+#   Please include the complete backtrace with any bug report.
+#   See <file:///usr/share/doc/gcc-14/README.Bugs> for instructions.
+#
 .deps: &deps
   stage: dist
   variables:
@@ -147,7 +181,7 @@ wheel/macos/arm64:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
       cat <<EOF > Dockerfile
-      FROM python:${CI_JOB_NAME#*python}
+      FROM python:${CI_JOB_NAME#*python}-bookworm
       RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
       RUN pip --no-cache-dir install pytest-cov gcovr\<8 pycobertura flake8 coverage 'pip>=24'
       COPY requirements.txt .

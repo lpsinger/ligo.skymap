@@ -103,6 +103,12 @@ def parser():
         "steps (must be a valid nside)",
     )
     parser.add_argument(
+        "--rounds",
+        type=int,
+        default=8,
+        help="number of HEALPix refinement steps",
+    )
+    parser.add_argument(
         "-j",
         "--jobs",
         type=int,
@@ -228,7 +234,7 @@ def main(args=None):
             skypost.jobs = args.jobs
 
         log.info("making skymap")
-        hpmap = skypost.as_healpix(top_nside=args.top_nside)
+        hpmap = skypost.as_healpix(top_nside=args.top_nside, rounds=args.rounds)
         stopwatch.stop()
         if not args.enable_multiresolution:
             hpmap = rasterize(hpmap)

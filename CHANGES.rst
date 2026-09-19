@@ -7,6 +7,8 @@ Changelog
 
 - Add optional total argument to progress_map.
 
+- Add ``--rounds`` option to ``ligo-skymap-from-samples``.
+
 - Require Numpy >= 2.2.0 in accordance with
   `SPEC 0 — Minimum Supported Dependencies`__.
 

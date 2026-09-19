@@ -375,7 +375,7 @@ class DirType:
             try:
                 os.makedirs(string, exist_ok=True)
             except OSError as e:
-                raise argparse.ArgumentTypeError(e.message)
+                raise argparse.ArgumentTypeError(str(e))
         else:
             try:
                 os.listdir(string)

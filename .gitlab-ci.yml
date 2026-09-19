@@ -138,6 +138,28 @@ wheel/macos/arm64:
     - cd "${CI_PROJECT_DIR}"
     - rm -rf "${WORKING_DIRECTORY}"
 
+.deps: &deps
+  stage: dist
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_SLUG
+    GIT_STRATEGY: none
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - |
+      cat <<EOF > Dockerfile
+      FROM python:${CI_JOB_NAME#*python}
+      RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
+      RUN pip --no-cache-dir install pytest-cov gcovr\<8 pycobertura flake8 coverage 'pip>=24'
+      COPY requirements.txt .
+      RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
+      EOF
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+  needs:
+    - requirements
+  tags:
+    - executor-docker
+
 #
 # FIXME: remove -bookworm and use the Python image for Debian stable.
 #
@@ -172,27 +194,8 @@ wheel/macos/arm64:
 #   Please include the complete backtrace with any bug report.
 #   See <file:///usr/share/doc/gcc-14/README.Bugs> for instructions.
 #
-.deps: &deps
-  stage: dist
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_SLUG
-    GIT_STRATEGY: none
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - |
-      cat <<EOF > Dockerfile
-      FROM python:${CI_JOB_NAME#*python}-bookworm
-      RUN apt-get update && apt-get -y install --no-install-recommends libchealpix-dev libgsl-dev pkg-config && rm -rf /var/lib/apt/lists/*
-      RUN pip --no-cache-dir install pytest-cov gcovr\<8 pycobertura flake8 coverage 'pip>=24'
-      COPY requirements.txt .
-      RUN pip --no-cache-dir install -r requirements.txt && rm -f requirements.txt
-      EOF
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
-  needs:
-    - requirements
-  tags:
-    - executor-docker
+deps-x86_64/python3.12-bookworm:
+  <<: *deps
 
 deps-aarch64/python3.12:
   <<: *deps
@@ -344,7 +347,7 @@ test/dev-deps:
 
 test/coverage:
   stage: test
-  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12:$CI_COMMIT_REF_SLUG
+  image: $CI_REGISTRY_IMAGE/deps-x86_64/python3.12-bookworm:$CI_COMMIT_REF_SLUG
   variables:
     # -UNDEBUG
     #     enable C assertions
@@ -379,7 +382,7 @@ test/coverage:
     - cp index.html coverage.xml ${CI_PROJECT_DIR}
     - if [[ "$FAILED" ]]; then false; fi
   needs:
-    - deps-x86_64/python3.12
+    - deps-x86_64/python3.12-bookworm
     - sdist
   artifacts:
     paths:

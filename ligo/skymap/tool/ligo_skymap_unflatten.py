@@ -38,20 +38,20 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:  # noqa: PLR1704
+    with parser().parse_args(args) as opts:
         import warnings
 
         from astropy.io import fits
 
         from ..io import read_sky_map, write_sky_map
 
-        hdus = fits.open(args.input)
+        hdus = fits.open(opts.input)
         ordering = hdus[1].header["ORDERING"]
         expected_orderings = {"NESTED", "RING"}
         if ordering not in expected_orderings:
             msg = "Expected the FITS file {} to have ordering {}, but it is {}"
             warnings.warn(
-                msg.format(args.input.name, " or ".join(expected_orderings), ordering)
+                msg.format(opts.input.name, " or ".join(expected_orderings), ordering)
             )
         table = read_sky_map(hdus, moc=True)
-        write_sky_map(args.output.name, table)
+        write_sky_map(opts.output.name, table)

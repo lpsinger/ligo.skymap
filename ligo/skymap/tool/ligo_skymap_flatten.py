@@ -36,7 +36,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:  # noqa: PLR1704
+    with parser().parse_args(args) as opts:
         import logging
         import warnings
 
@@ -48,22 +48,22 @@ def main(args=None):
 
         log = logging.getLogger()
 
-        if args.nside is None:
+        if opts.nside is None:
             order = None
         else:
-            order = ah.nside_to_level(args.nside)
+            order = ah.nside_to_level(opts.nside)
 
-        log.info("reading FITS file %s", args.input.name)
-        hdus = fits.open(args.input)
+        log.info("reading FITS file %s", opts.input.name)
+        hdus = fits.open(opts.input)
         ordering = hdus[1].header["ORDERING"]
         expected_ordering = "NUNIQ"
         if ordering != expected_ordering:
             msg = "Expected the FITS file {} to have ordering {}, but it is {}"
-            warnings.warn(msg.format(args.input.name, expected_ordering, ordering))
+            warnings.warn(msg.format(opts.input.name, expected_ordering, ordering))
         log.debug("converting original FITS file to Astropy table")
         table = read_sky_map(hdus, moc=True)
         log.debug("flattening HEALPix tree")
         table = rasterize(table, order=order)
-        log.info("writing FITS file %s", args.output.name)
-        write_sky_map(args.output.name, table, nest=True)
+        log.info("writing FITS file %s", opts.output.name)
+        write_sky_map(opts.output.name, table, nest=True)
         log.debug("done")

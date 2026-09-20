@@ -70,7 +70,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:  # noqa: PLR1704
+    with parser().parse_args(args) as opts:
         # Late imports.
         from astropy.table import Table
         from matplotlib import pyplot as plt
@@ -81,15 +81,15 @@ def main(args=None):
         from ..postprocess import find_injection_moc
 
         # Read input.
-        skymap = io.read_sky_map(args.skymap.name, moc=True)
-        chain = io.read_samples(args.samples.name)
+        skymap = io.read_sky_map(opts.skymap.name, moc=True)
+        chain = io.read_samples(opts.samples.name)
 
         # If required, downselect to a smaller number of posterior samples.
-        if args.max_points is not None:
-            chain = Table(np.random.permutation(chain)[: args.max_points], copy=False)
+        if opts.max_points is not None:
+            chain = Table(np.random.permutation(chain)[: opts.max_points], copy=False)
 
         # Calculate P-P plot.
-        contours = np.asarray(args.contour)
+        contours = np.asarray(opts.contour)
         result = find_injection_moc(
             skymap, chain["ra"], chain["dec"], chain["dist"], contours=1e-2 * contours
         )
@@ -113,7 +113,7 @@ def main(args=None):
                 bounds_error=False,
             )
         for p, area, vol in zip(
-            args.contour, result.contour_areas, result.contour_vols
+            opts.contour, result.contour_areas, result.contour_vols
         ):
             text = f"{p:g}%\n{fmt(area, 2)} deg$^2$"
             if "DISTMU" in skymap.colnames:
@@ -156,9 +156,9 @@ def main(args=None):
             )
         ax.set_xlabel("searched probability")
         ax.set_ylabel("cumulative fraction of posterior samples")
-        ax.set_title(args.skymap.name)
+        ax.set_title(opts.skymap.name)
         ax.legend()
         ax.grid()
 
         # Show or save output.
-        args.output()
+        opts.output()

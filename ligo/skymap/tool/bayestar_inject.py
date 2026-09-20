@@ -357,7 +357,7 @@ def parser():
 
 def main(args=None):
     p = parser()
-    with p.parse_args(args) as args:  # noqa: PLR1704
+    with p.parse_args(args) as opts:
         import warnings
 
         import lal.series
@@ -366,36 +366,36 @@ def main(args=None):
         from igwn_ligolw import utils as ligolw_utils
         from scipy import stats
 
-        if args.min_snr is not None:
+        if opts.min_snr is not None:
             warnings.warn(
                 "The --min-snr threshold option is deprecated. "
                 "Please use the synonymous --snr-threshold option instead.",
                 UserWarning,
             )
-            args.snr_threshold = args.min_snr
+            opts.snr_threshold = opts.min_snr
 
         xmldoc = ligolw.Document()
         xmlroot = xmldoc.appendChild(ligolw.LIGO_LW())
-        process = register_to_xmldoc(xmldoc, p, args)
+        process = register_to_xmldoc(xmldoc, p, opts)
 
         # Read PSDs
         psds = list(
             lal.series.read_psd_xmldoc(
                 ligolw_utils.load_fileobj(
-                    args.reference_psd, contenthandler=lal.series.PSDContentHandler
+                    opts.reference_psd, contenthandler=lal.series.PSDContentHandler
                 )
             ).values()
         )
 
-        if len(psds) < args.min_triggers:
+        if len(psds) < opts.min_triggers:
             parser.error(
                 f"The number of PSDs ({len(psds)}) must be greater than or "
-                f"equal to the value of --min-triggers ({args.min_triggers})."
+                f"equal to the value of --min-triggers ({opts.min_triggers})."
             )
 
-        gwcosmo = GWCosmo(getattr(cosmology, args.cosmology))
+        gwcosmo = GWCosmo(getattr(cosmology, opts.cosmology))
 
-        if args.distribution:
+        if opts.distribution:
             ns_mass_min = 1.0
             ns_mass_max = 2.0
             bh_mass_min = 5.0
@@ -429,27 +429,27 @@ def main(args=None):
                 bh_broad_spin_min, bh_broad_spin_max - bh_broad_spin_min
             )
 
-            if args.distribution.startswith("bns_"):
+            if opts.distribution.startswith("bns_"):
                 m1_min = m2_min = ns_mass_min
                 m1_max = m2_max = ns_mass_max
-                if args.distribution.endswith("_astro"):
+                if opts.distribution.endswith("_astro"):
                     x1_min = x2_min = ns_astro_spin_min
                     x1_max = x2_max = ns_astro_spin_max
                     m1_dist = m2_dist = ns_astro_mass_dist
                     x1_dist = x2_dist = ns_astro_spin_dist
-                elif args.distribution.endswith("_broad"):
+                elif opts.distribution.endswith("_broad"):
                     x1_min = x2_min = ns_broad_spin_min
                     x1_max = x2_max = ns_broad_spin_max
                     m1_dist = m2_dist = ns_broad_mass_dist
                     x1_dist = x2_dist = ns_broad_spin_dist
                 else:  # pragma: no cover
                     assert_not_reached()
-            elif args.distribution.startswith("nsbh_"):
+            elif opts.distribution.startswith("nsbh_"):
                 m1_min = bh_mass_min
                 m1_max = bh_mass_max
                 m2_min = ns_mass_min
                 m2_max = ns_mass_max
-                if args.distribution.endswith("_astro"):
+                if opts.distribution.endswith("_astro"):
                     x1_min = bh_astro_spin_min
                     x1_max = bh_astro_spin_max
                     x2_min = ns_astro_spin_min
@@ -458,7 +458,7 @@ def main(args=None):
                     m2_dist = ns_astro_mass_dist
                     x1_dist = bh_astro_spin_dist
                     x2_dist = ns_astro_spin_dist
-                elif args.distribution.endswith("_broad"):
+                elif opts.distribution.endswith("_broad"):
                     x1_min = bh_broad_spin_min
                     x1_max = bh_broad_spin_max
                     x2_min = ns_broad_spin_min
@@ -469,15 +469,15 @@ def main(args=None):
                     x2_dist = ns_broad_spin_dist
                 else:  # pragma: no cover
                     assert_not_reached()
-            elif args.distribution.startswith("bbh_"):
+            elif opts.distribution.startswith("bbh_"):
                 m1_min = m2_min = bh_mass_min
                 m1_max = m2_max = bh_mass_max
-                if args.distribution.endswith("_astro"):
+                if opts.distribution.endswith("_astro"):
                     x1_min = x2_min = bh_astro_spin_min
                     x1_max = x2_max = bh_astro_spin_max
                     m1_dist = m2_dist = bh_astro_mass_dist
                     x1_dist = x2_dist = bh_astro_spin_dist
-                elif args.distribution.endswith("_broad"):
+                elif opts.distribution.endswith("_broad"):
                     x1_min = x2_min = bh_broad_spin_min
                     x1_max = x2_max = bh_broad_spin_max
                     m1_dist = m2_dist = bh_broad_mass_dist
@@ -499,16 +499,16 @@ def main(args=None):
             # Calculate the maximum distance on the grid.
             max_z = gwcosmo.get_max_z(
                 psds,
-                args.waveform,
-                args.f_low,
-                args.snr_threshold,
-                args.min_triggers,
+                opts.waveform,
+                opts.f_low,
+                opts.snr_threshold,
+                opts.min_triggers,
                 *np.meshgrid(m1, m2, x1, x2, indexing="ij"),
-                jobs=args.jobs,
+                jobs=opts.jobs,
             )
-            if args.max_distance is not None:
+            if opts.max_distance is not None:
                 new_max_z = cosmology.z_at_value(
-                    gwcosmo.cosmo.luminosity_distance, args.max_distance * units.Mpc
+                    gwcosmo.cosmo.luminosity_distance, opts.max_distance * units.Mpc
                 )
                 max_z[max_z > new_max_z] = new_max_z
             max_distance = gwcosmo.sensitive_distance(max_z).to_value(units.Mpc)
@@ -529,34 +529,34 @@ def main(args=None):
 
             # Draw random grid cells
             dist = stats.rv_discrete(values=(np.arange(len(probs)), probs))
-            indices = np.unravel_index(dist.rvs(size=args.nsamples), max_distance.shape)
+            indices = np.unravel_index(dist.rvs(size=opts.nsamples), max_distance.shape)
 
             # Draw random intrinsic params from each cell
             cols = {}
             cols["mass1"], cols["mass2"], cols["spin1z"], cols["spin2z"] = [
-                dist.ppf(stats.uniform(cdf_lo[i], cdf[i]).rvs(size=args.nsamples))
+                dist.ppf(stats.uniform(cdf_lo[i], cdf[i]).rvs(size=opts.nsamples))
                 for i, dist, cdf_lo, cdf in zip(indices, dists, cdf_los, cdfs)
             ]
-        elif args.distribution_samples:
+        elif opts.distribution_samples:
             # Load distribution samples.
-            samples = Table.read(args.distribution_samples)
+            samples = Table.read(opts.distribution_samples)
 
             # Calculate the maximum sensitive distance for each sample.
             max_z = gwcosmo.get_max_z(
                 psds,
-                args.waveform,
-                args.f_low,
-                args.snr_threshold,
-                args.min_triggers,
+                opts.waveform,
+                opts.f_low,
+                opts.snr_threshold,
+                opts.min_triggers,
                 samples["mass1"],
                 samples["mass2"],
                 samples["spin1z"],
                 samples["spin2z"],
-                jobs=args.jobs,
+                jobs=opts.jobs,
             )
-            if args.max_distance is not None:
+            if opts.max_distance is not None:
                 new_max_z = cosmology.z_at_value(
-                    gwcosmo.cosmo.luminosity_distance, args.max_distance * units.Mpc
+                    gwcosmo.cosmo.luminosity_distance, opts.max_distance * units.Mpc
                 )
                 max_z[max_z > new_max_z] = new_max_z
             max_distance = gwcosmo.sensitive_distance(max_z).to_value(units.Mpc)
@@ -573,10 +573,10 @@ def main(args=None):
             # stats.rv_discrete.rvs has quadratic memory usage, number of
             # values times number of samples, which might cause us to run out
             # of memory if we did it all at once.
-            n_batches = max(args.nsamples * len(probs) // 1_000_000_000, 1)
+            n_batches = max(opts.nsamples * len(probs) // 1_000_000_000, 1)
             batch_sizes = [
                 len(subarray)
-                for subarray in np.array_split(np.empty(args.nsamples), n_batches)
+                for subarray in np.array_split(np.empty(opts.nsamples), n_batches)
             ]
             indices = np.concatenate(
                 [dist.rvs(size=batch_size) for batch_size in batch_sizes]
@@ -589,7 +589,7 @@ def main(args=None):
         else:
             assert_not_reached()
 
-        volumetric_rate = args.nsamples / volume * units.year**-1 * units.Mpc**-3
+        volumetric_rate = opts.nsamples / volume * units.year**-1 * units.Mpc**-3
 
         # Swap binary components as needed to ensure that mass1 >= mass2.
         # Note that the .copy() is important.
@@ -606,25 +606,25 @@ def main(args=None):
 
         # Draw random extrinsic parameters
         cols["distance"] = stats.powerlaw(a=3, scale=max_distance[indices]).rvs(
-            size=args.nsamples
+            size=opts.nsamples
         )
-        cols["longitude"] = stats.uniform(0, 2 * np.pi).rvs(size=args.nsamples)
-        cols["latitude"] = np.arcsin(stats.uniform(-1, 2).rvs(size=args.nsamples))
-        cols["inclination"] = np.arccos(stats.uniform(-1, 2).rvs(size=args.nsamples))
-        cols["polarization"] = stats.uniform(0, 2 * np.pi).rvs(size=args.nsamples)
-        cols["coa_phase"] = stats.uniform(-np.pi, 2 * np.pi).rvs(size=args.nsamples)
+        cols["longitude"] = stats.uniform(0, 2 * np.pi).rvs(size=opts.nsamples)
+        cols["latitude"] = np.arcsin(stats.uniform(-1, 2).rvs(size=opts.nsamples))
+        cols["inclination"] = np.arccos(stats.uniform(-1, 2).rvs(size=opts.nsamples))
+        cols["polarization"] = stats.uniform(0, 2 * np.pi).rvs(size=opts.nsamples)
+        cols["coa_phase"] = stats.uniform(-np.pi, 2 * np.pi).rvs(size=opts.nsamples)
         cols["time_geocent"] = stats.uniform(1e9, units.year.to(units.second)).rvs(
-            size=args.nsamples
+            size=opts.nsamples
         )
 
         # Convert from sensitive distance to redshift and comoving distance.
         # FIXME: Replace this brute-force lookup table with a solver.
         z = np.linspace(0, max_z.max(), 10000)
         ds = units.Quantity(
-            list(progress_map(gwcosmo.sensitive_distance, z, jobs=args.jobs))
+            list(progress_map(gwcosmo.sensitive_distance, z, jobs=opts.jobs))
         ).to_value(units.Mpc)
         dc = units.Quantity(
-            list(progress_map(gwcosmo.cosmo.comoving_distance, z, jobs=args.jobs))
+            list(progress_map(gwcosmo.cosmo.comoving_distance, z, jobs=opts.jobs))
         ).to_value(units.Mpc)
         z_for_ds = interp1d(ds, z, kind="cubic", assume_sorted=True)
         dc_for_ds = interp1d(ds, dc, kind="cubic", assume_sorted=True)
@@ -644,8 +644,8 @@ def main(args=None):
                     dict.fromkeys(sims.validcolumns, None),
                     process_id=process.process_id,
                     simulation_id=sims.get_next_id(),
-                    waveform=args.waveform,
-                    f_lower=args.f_low,
+                    waveform=opts.waveform,
+                    f_lower=opts.f_low,
                     **dict(zip(cols.keys(), row)),
                 )
             )
@@ -655,4 +655,4 @@ def main(args=None):
         process.set_end_time_now()
 
         # Write output file.
-        write_fileobj(xmldoc, args.output)
+        write_fileobj(xmldoc, opts.output)

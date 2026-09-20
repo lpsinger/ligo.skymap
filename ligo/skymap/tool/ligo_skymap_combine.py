@@ -56,7 +56,7 @@ def parser():
 
 
 def main(args=None):
-    with parser().parse_args(args) as args:  # noqa: PLR1704
+    with parser().parse_args(args) as opts:
         from textwrap import wrap
 
         import astropy_healpix as ah
@@ -70,7 +70,7 @@ def main(args=None):
 
         input_skymaps = []
         dist_mu = dist_sigma = dist_norm = None
-        for input_file in args.input:
+        for input_file in opts.input:
             with fits.open(input_file) as hdus:
                 header = hdus[0].header.copy()
                 header.extend(hdus[1].header)
@@ -111,8 +111,8 @@ def main(args=None):
         combined_prob /= norm
 
         out_kwargs = {"gps_creation_time": Time.now().gps, "nest": True}
-        if args.origin is not None:
-            out_kwargs["origin"] = args.origin
+        if opts.origin is not None:
+            out_kwargs["origin"] = opts.origin
 
         # average the various input event times
         input_gps = [x[2]["gps_time"] for x in input_skymaps if "gps_time" in x[2]]
@@ -160,4 +160,4 @@ def main(args=None):
             ):
                 out_kwargs["HISTORY"].extend(wrap(line, 72))
 
-        write_sky_map(args.output, out_data, **out_kwargs)
+        write_sky_map(opts.output, out_data, **out_kwargs)

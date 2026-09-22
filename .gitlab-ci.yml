@@ -415,10 +415,9 @@ test/review:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF
-      shopt -s nullglob
       cd public_html/$CI_JOB_ID
       export LAL_DATA_PATH=/home/lalsimulation_data  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
-      export PIP_INSTALL_PACKAGE="*.whl"
+      export PIP_INSTALL_PACKAGE="$(find -name '*.whl')"
       if [ -z "$PIP_INSTALL_PACKAGE" ]; then
         echo "No wheel found"
         exit 1

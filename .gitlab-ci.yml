@@ -418,7 +418,7 @@ test/review:
       shopt -s nullglob
       cd public_html/$CI_JOB_ID
       export LAL_DATA_PATH=/home/lalsimulation_data  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
-      export PIP_INSTALL_PACKAGE="*.whl"
+      export PIP_INSTALL_PACKAGE="\*.whl"
       if [ -z "$PIP_INSTALL_PACKAGE" ]; then
         echo "No wheel found"
         exit 1

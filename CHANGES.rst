@@ -9,6 +9,8 @@ Changelog
 
 - Add ``--rounds`` option to ``ligo-skymap-from-samples``.
 
+- Require astropy >= 7.0.0.
+
 - Require Numpy >= 2.2.0 in accordance with
   `SPEC 0 — Minimum Supported Dependencies`__.
 

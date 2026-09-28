@@ -402,7 +402,7 @@ test/review:
     - cit
   variables:
     GIT_STRATEGY: none
-    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+    REMOTE_HOST: skymap.testing@citlogin3.ligo.caltech.edu
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
     - ssh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_JOB_ID"

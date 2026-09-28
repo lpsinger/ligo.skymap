@@ -412,6 +412,10 @@ test/review:
     - scp *.whl $REMOTE_HOST:public_html/$CI_JOB_ID
     - echo -e "\e[0Ksection_end:`date +%s`:remote_install\r\e[0K"
 
+    - echo -e "\e[0Ksection_start:`date +%s`:waveform\r\e[0KCopy Download LALSuite Waveform Data
+    - curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5
+    - echo -e "\e[0Ksection_end:`date +%s`:waveform\r\e[0K"
+
     - echo -e "\e[0Ksection_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF

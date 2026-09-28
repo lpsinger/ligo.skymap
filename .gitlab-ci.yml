@@ -414,7 +414,7 @@ test/review:
 
     - echo -e "\e[0Ksection_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
-      ssh -T $REMOTE_HOST "bash -e" <<EOF
+      ssh -T $REMOTE_HOST "bash -ex" <<EOF
       shopt -s nullglob
       cd public_html/$CI_JOB_ID
       curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001

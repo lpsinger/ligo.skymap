@@ -525,7 +525,7 @@ static PyObject *rasterize(
     Py_END_ALLOW_THREADS
     if (!out)
     {
-        PyErr_SetString(PyExc_MemoryError, "Out of memory");
+        PyErr_NoMemory();
         goto done;
     }
 
@@ -841,7 +841,7 @@ static PyObject *sky_map_toa_phoa_snr(
     {
         /* The only remaining way for bayestar_sky_map_toa_phoa_snr to
          * return NULL is if a call to malloc failed. */
-        PyErr_SetString(PyExc_MemoryError, "Out of memory");
+        PyErr_NoMemory();
         goto fail;
     }
 

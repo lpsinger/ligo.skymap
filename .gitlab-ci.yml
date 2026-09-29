@@ -405,25 +405,24 @@ test/review:
     REMOTE_HOST: skymap.testing@citlogin3.ligo.caltech.edu
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
-    - ssh -T $REMOTE_HOST "mkdir -p public_html && git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public public_html/$CI_JOB_ID"
+    - ssh -T $REMOTE_HOST "git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public /scratch/skymap.testing/$CI_JOB_ID"
     - echo -e "\e[0Ksection_end:`date +%s`:remote_clone\r\e[0K"
 
     - echo -e "\e[0Ksection_start:`date +%s`:remote_install\r\e[0KCopy Python packages to cluster"
-    - scp *.whl $REMOTE_HOST:public_html/$CI_JOB_ID
+    - scp *.whl $REMOTE_HOST:/scratch/skymap.testing/$CI_JOB_ID
     - echo -e "\e[0Ksection_end:`date +%s`:remote_install\r\e[0K"
 
     - echo -e "\e[0Ksection_start:`date +%s`:remote_submit\r\e[0KRunning HTCondor workflow on cluster"
     - |
       ssh -T $REMOTE_HOST "bash -ex" <<EOF
-      shopt -s nullglob
-      cd public_html/$CI_JOB_ID
+      cd /scratch/skymap.testing/$CI_JOB_ID
+      python3.11 -m venv env
+      source env/bin/activate
+      pip install *.whl
+      pip install -r requirements.txt
       curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
-      export PIP_INSTALL_PACKAGE=\$(ls | grep whl)
-      if [ -z "\$PIP_INSTALL_PACKAGE" ]; then
-        echo "No wheel found"
-        exit 1
-      fi
-      condor_submit_dag -include_env LAL_DATA_PATH -include_env PIP_INSTALL_PACKAGE -append accounting_group_user=leo.singer -batch-name pipeline/$CI_JOB_ID htcondor/acceptance-tests.dag
+      export LAL_DATA_PATH=$(pwd)
+      condor_submit_dag -include_env PATH -include_env LAL_DATA_PATH -append accounting_group_user=leo.singer -batch-name pipeline/$CI_JOB_ID htcondor/acceptance-tests.dag
       tail --follow=descriptor --retry htcondor/acceptance-tests.dag.dagman.out &
       condor_wait htcondor/acceptance-tests.dag.dagman.log
       kill %
@@ -431,11 +430,11 @@ test/review:
     - echo -e "\e[0Ksection_end:`date +%s`:remote_submit\r\e[0K"
 
     - echo -e "\e[0Ksection_start:`date +%s`:remote_retrieve\r\e[0KRetrieving artifacts from cluster"
-    - scp -r $REMOTE_HOST:public_html/$CI_JOB_ID/site site
+    - scp -r $REMOTE_HOST:/scratch/skymap.testing/$CI_JOB_ID/site site
     - echo -e "\e[0Ksection_end:`date +%s`:remote_retrieve\r\e[0K"
 
     - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
-    - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"
+    - ssh -T $REMOTE_HOST "rm -rf /scratch/skymap.testing/$CI_JOB_ID"
     - echo -e "\e[0Ksection_end:`date +%s`:remote_cleanup\r\e[0K"
 
   artifacts:

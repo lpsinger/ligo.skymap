@@ -421,7 +421,7 @@ test/review:
       pip install *.whl
       pip install -r requirements.txt
       curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
-      export LAL_DATA_PATH=$(pwd)
+      export LAL_DATA_PATH=\$(pwd)
       condor_submit_dag -include_env PATH -include_env LAL_DATA_PATH -append accounting_group_user=leo.singer -batch-name pipeline/$CI_JOB_ID htcondor/acceptance-tests.dag
       tail --follow=descriptor --retry htcondor/acceptance-tests.dag.dagman.out &
       condor_wait htcondor/acceptance-tests.dag.dagman.log

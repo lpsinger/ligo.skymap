@@ -462,17 +462,17 @@ test/benchmark:
   script:
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF
-      mkdir -p public_html
-      git clone $CI_REPOSITORY_URL public_html/$CI_JOB_ID
-      cd public_html/$CI_JOB_ID
+      git clone $CI_REPOSITORY_URL /scratch/skymap.testing/$CI_JOB_ID
+      cd /scratch/skymap.testing/$CI_JOB_ID
       git checkout $CI_COMMIT_REF_NAME
       EOF
     - scp *.whl $REMOTE_HOST:public_html/$CI_JOB_ID
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF
-      cd public_html/$CI_JOB_ID
+      cd /scratch/skymap.testing/$CI_JOB_ID
       CI_SERVER_PROTOCOL="$CI_SERVER_PROTOCOL" CI_JOB_TOKEN="$CI_JOB_TOKEN" \
-      export LAL_DATA_PATH=/home/lalsimulation_data  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
+      curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
+      export LAL_DATA_PATH=\$(pwd)
       CI_SERVER_FQDN="$CI_SERVER_FQDN" condor_run \
         -a MY.flock_local=True \
         -a MY.DESIRED_Sites=none \
@@ -485,7 +485,7 @@ test/benchmark:
         -a MY.Benchmarking_Mix=True \
         ./.gitlab/benchmark.sh *.whl
       EOF
-    - scp $REMOTE_HOST:public_html/$CI_JOB_ID/{benchmark.svg,roofline.html,perf.svg} ./
+    - scp $REMOTE_HOST:/scratch/skymap.testing/$CI_JOB_ID/{benchmark.svg,roofline.html,perf.svg} ./
   after_script:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
     - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"

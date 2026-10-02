@@ -22,7 +22,7 @@ git clone https://git.ligo.org/leo-singer/ligo-skymap-benchmark.git
 section_end "clone"
 
 section_start "venv" "Creating Python virtual environment"
-python3.12 -m venv env
+/cvmfs/software.igwn.org/conda/bin/python3.14 -m venv env
 source env/bin/activate
 pip install pandas
 section_end "venv"

@@ -479,7 +479,7 @@ test/benchmark:
         -a request_disk=4G \
         -a request_memory=8G \
         -a request_cpus=48 \
-        -a accounting_group=ligo.dev.o4.cbc.pe.bayestar \
+        -a accounting_group=ligo.dev.o5.cbc.pe.bayestar \
         -a accounting_group_user=leo.singer \
         -a Requirements=TARGET.machine==\"node2100.cluster.ldas.cit\" \
         -a MY.Benchmarking_Mix=True \

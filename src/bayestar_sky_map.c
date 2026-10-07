@@ -395,9 +395,6 @@ static void log_radial_integrator_free(log_radial_integrator *integrator)
 __attribute__ ((malloc, malloc(log_radial_integrator_free)))
 static log_radial_integrator *log_radial_integrator_init(double r1, double r2, int k, int cosmology, double pmax, size_t size)
 {
-    log_radial_integrator *integrator;
-    bicubic_interp *region0 = NULL;
-    cubic_interp *region1 = NULL, *region2 = NULL;
     const double alpha = 4;
     const double p0 = 0.5 * (k >= 0 ? r2 : r1);
     const double xmax = log(pmax);
@@ -421,10 +418,8 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
 
     /* const double umax = xmax - vmax; */ /* unused */
 
-    int interrupted;
+    int interrupted = 0;
     OMP_BEGIN_INTERRUPTIBLE
-    integrator = malloc(sizeof(*integrator));
-
     #pragma omp taskloop collapse(2) shared(z0)
     for (size_t ix = 0; ix < size; ix ++)
     {
@@ -442,23 +437,21 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
             z0[ix][iy] = log_radial_integral(r1, r2, p, b, k, cosmology);
         }
     }
-
     if (OMP_WAS_INTERRUPTED)
-        goto done;
-
-    region0 = bicubic_interp_init(*z0, size, size, xmin, ymin, d, d);
+        interrupted = 1;
+    OMP_END_INTERRUPTIBLE
+    if (interrupted)
+        GSL_ERROR_NULL("interrupted", GSL_EFAILED);
 
     for (size_t i = 0; i < size; i ++)
         z1[i] = z0[i][size - 1];
-    region1 = cubic_interp_init(z1, size, xmin, d);
-
     for (size_t i = 0; i < size; i ++)
         z2[i] = z0[i][size - 1 - i];
-    region2 = cubic_interp_init(z2, size, umin, d);
 
-done:
-    interrupted = OMP_WAS_INTERRUPTED;
-    OMP_END_INTERRUPTIBLE
+    log_radial_integrator *integrator = malloc(sizeof(*integrator));
+    bicubic_interp *region0 = bicubic_interp_init(*z0, size, size, xmin, ymin, d, d);
+    cubic_interp *region1 = cubic_interp_init(z1, size, xmin, d);
+    cubic_interp *region2 = cubic_interp_init(z2, size, umin, d);
 
     if (UNLIKELY(!(integrator && region0 && region1 && region2))) {
         free(integrator);
@@ -466,12 +459,6 @@ done:
         free(region1);
         free(region2);
         GSL_ERROR_NULL("not enough memory to allocate integrator", GSL_ENOMEM);
-    } else if (UNLIKELY(interrupted)) {
-        free(integrator);
-        free(region0);
-        free(region1);
-        free(region2);
-        return NULL;
     }
 
     integrator->region0 = region0;

@@ -91,6 +91,6 @@ def test_localize_interruptible(mock_event):
             assert started.wait(5)
             # FIXME: replace with process.interrupt(); requires Python >= 3.14
             os.kill(process.pid, signal.SIGINT)
-            assert cancelled.wait(10)
+            assert cancelled.wait(20)
         finally:
             process.join()

@@ -1,6 +1,3 @@
-import multiprocessing
-import os
-import signal
 from collections import namedtuple
 
 import lal
@@ -67,32 +64,3 @@ def test_localize_1_detector(mock_event):
     # FIXME: work out what this should be
     rasterized = rasterize(skymap)
     assert rasterized
-
-
-def run_interruptible(event, started, cancelled):
-    started.set()
-    try:
-        localize(event)
-    except KeyboardInterrupt:
-        cancelled.set()
-
-
-@pytest.mark.flaky(reruns=5)
-def test_localize_interruptible(mock_event):
-    """Test that localize() stops swiftly and gracefully when interrupted."""
-    with multiprocessing.Manager():
-        started = multiprocessing.Event()
-        cancelled = multiprocessing.Event()
-        process = multiprocessing.Process(
-            target=run_interruptible, args=(mock_event, started, cancelled)
-        )
-        try:
-            process.start()
-            assert started.wait(5)
-            # FIXME: replace with process.interrupt(); requires Python >= 3.14
-            os.kill(process.pid, signal.SIGINT)
-            assert cancelled.wait(10)
-        finally:
-            process.kill()
-            process.join()
-            process.close()

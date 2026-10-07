@@ -38,7 +38,6 @@
 #include "bayestar_sky_map.h"
 #include "cubic_interp.h"
 #include "find_floor.h"
-#include "omp_interruptible.h"
 
 #ifdef WITH_ITTNOTIFY
 #include <ittnotify.h>
@@ -280,12 +279,9 @@ static void volume_render_loop(
     gsl_error_handler_t *old_handler = gsl_set_error_handler_off();
     const npy_intp n = dimensions[0];
 
-    OMP_BEGIN_INTERRUPTIBLE
     #pragma omp parallel for
     for (npy_intp i = 0; i < n; i ++)
     {
-        if (OMP_WAS_INTERRUPTED)
-            OMP_EXIT_LOOP_EARLY
         /* Alignment of the ufunc arguments is enforced by the ufunc API. See
          * https://numpy.org/doc/stable/user/basics.ufuncs.html#use-of-internal-buffers. */
         *ALIGNED_POINTER(double,  &args[12][i * steps[12]]) = bayestar_volume_render(
@@ -302,7 +298,6 @@ static void volume_render_loop(
          ALIGNED_POINTER(double,   &args[10][i * steps[10]]),
          ALIGNED_POINTER(double,   &args[11][i * steps[11]]));
     }
-    OMP_END_INTERRUPTIBLE
 
     gsl_set_error_handler(old_handler);
 }
@@ -822,27 +817,9 @@ static PyObject *sky_map_toa_phoa_snr(
     Py_END_ALLOW_THREADS
     gsl_set_error_handler(old_handler);
 
-    /* Give the Python interpreter a chance to check for pending signals
-     * and raise a KeyboardInterrupt if necessary.
-     *
-     * Why do we need to call free(pixels) below? Here's why. Chances are that
-     * any interrupt occurred while bayestar_sky_map_toa_phoa_snr was in one of
-     * its OpenMP parallel sections, in which case the function intercepted
-     * the signal, terminated the parallel section early, and returned NULL.
-     * However, it is possible (though unlikely) that the interrupt could have
-     * occurred during the brief serial sections and that the function could
-     * have run successfully to completion. In that case, we still need to
-     * return NULL to Python and report the exception! */
-    if (PyErr_CheckSignals() || PyErr_Occurred())
-    {
-        free(pixels);
-        pixels = NULL;
-        goto fail;
-    }
-
     if (!pixels)
     {
-        /* The only remaining way for bayestar_sky_map_toa_phoa_snr to
+        /* The only way for bayestar_sky_map_toa_phoa_snr to
          * return NULL is if a call to malloc failed. */
         PyErr_NoMemory();
         goto fail;

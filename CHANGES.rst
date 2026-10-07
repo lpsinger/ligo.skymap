@@ -16,6 +16,14 @@ Changelog
 
   __ https://scientific-python.org/specs/spec-0000/
 
+- The internal BAYESTAR C routine will no longer halt early if you interrupt
+  it by typing control-C or by sending the process in which it is running a
+  SIGINT signal. Instead, it will run to completion and a KeyboardInterrupt
+  will be raised as soon as it execution returns to Python.
+
+  The early cancellation introduced in version 2.1.0 had lots of bugs and
+  corner cases, and fixing them could comporomise performance.
+
 2.5.4 (2026-06-06)
 ==================
 

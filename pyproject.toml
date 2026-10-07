@@ -59,7 +59,6 @@ test = [
     "pytest-astropy",
     "pytest-benchmark",
     "pytest-mpl",
-    "pytest-rerunfailures",
 ]
 docs = [
     "sphinx >= 4.0",

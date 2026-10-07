@@ -67,7 +67,6 @@
 #include "bayestar_sky_map.h"
 #include "bayestar_distance.h"
 #include "bayestar_moc.h"
-#include "omp_interruptible.h"
 
 #include <assert.h>
 #include <float.h>
@@ -418,16 +417,11 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
 
     /* const double umax = xmax - vmax; */ /* unused */
 
-    int interrupted = 0;
-    OMP_BEGIN_INTERRUPTIBLE
     #pragma omp taskloop collapse(2) shared(z0)
     for (size_t ix = 0; ix < size; ix ++)
     {
         for (size_t iy = 0; iy < size; iy ++)
         {
-            if (OMP_WAS_INTERRUPTED)
-                OMP_EXIT_LOOP_EARLY;
-
             const double x = xmin + ix * d;
             const double y = ymin + iy * d;
             const double p = exp(x);
@@ -437,11 +431,6 @@ static log_radial_integrator *log_radial_integrator_init(double r1, double r2, i
             z0[ix][iy] = log_radial_integral(r1, r2, p, b, k, cosmology);
         }
     }
-    if (OMP_WAS_INTERRUPTED)
-        interrupted = 1;
-    OMP_END_INTERRUPTIBLE
-    if (interrupted)
-        GSL_ERROR_NULL("interrupted", GSL_EFAILED);
 
     for (size_t i = 0; i < size; i ++)
         z1[i] = z0[i][size - 1];
@@ -939,8 +928,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     }
     const unsigned long npix0 = len;
 
-    OMP_BEGIN_INTERRUPTIBLE
-
     /* Logarithm of the normalization factor for the prior. */
     const double log_norm = -log(
             2                           /* inclination */
@@ -961,9 +948,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         #pragma omp parallel for schedule(guided)
         for (unsigned long i = 0; i < npix0; i ++)
         {
-            if (OMP_WAS_INTERRUPTED)
-                OMP_EXIT_LOOP_EARLY;
-
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
                 pixels[i].value, gmst, nifos, nsamples, sample_rate, epochs,
                 snrs, responses, locations, horizons, rescale_loglikelihood);
@@ -978,9 +962,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
             }
         }
         ITT_TASK_END(itt_domain);
-
-        if (OMP_WAS_INTERRUPTED)
-            goto done;
 
         const double log_weight = log_norm + log(uniq2pixarea64(pixels[0].uniq));
 
@@ -1002,17 +983,11 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
         #pragma omp parallel for schedule(guided)
         for (unsigned long i = len - npix0; i < len; i ++)
         {
-            if (OMP_WAS_INTERRUPTED)
-                OMP_EXIT_LOOP_EARLY;
-
             bayestar_sky_map_toa_phoa_snr_pixel(integrators, 1, pixels[i].uniq,
                 pixels[i].value, gmst, nifos, nsamples, sample_rate, epochs,
                 snrs, responses, locations, horizons, rescale_loglikelihood);
         }
         ITT_TASK_END(itt_domain);
-
-        if (OMP_WAS_INTERRUPTED)
-            goto done;
 
         /* Sort pixels by ascending posterior probability. */
         bayestar_pixels_sort_prob(pixels, len);
@@ -1023,9 +998,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
     #pragma omp parallel for schedule(guided)
     for (unsigned long i = 0; i < len; i ++)
     {
-        if (OMP_WAS_INTERRUPTED)
-            OMP_EXIT_LOOP_EARLY;
-
         bayestar_sky_map_toa_phoa_snr_pixel(&integrators[1], 2, pixels[i].uniq,
             &pixels[i].value[1], gmst, nifos, nsamples, sample_rate, epochs,
             snrs, responses, locations, horizons, rescale_loglikelihood);
@@ -1035,12 +1007,6 @@ bayestar_pixel *bayestar_sky_map_toa_phoa_snr(
 done:
     for (unsigned char k = 0; k < 3; k ++)
         log_radial_integrator_free(integrators[k]);
-
-    if (OMP_WAS_INTERRUPTED)
-    {
-        free(pixels);
-        pixels = NULL;
-    }
 
     if (pixels)
     {
@@ -1094,8 +1060,6 @@ done:
         /* Done! */
         *out_len = len;
     }
-
-    OMP_END_INTERRUPTIBLE
 
     return pixels;
 }

@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Python.h must be included first.
+// See https://docs.python.org/3/c-api/intro.html#include-files.
+#include <Python.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -26,7 +30,6 @@
 #include <chealpix.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_nan.h>
-#include <Python.h>
 #include <numpy/arrayobject.h>
 #include <numpy/ufuncobject.h>
 #include "warnings.h"

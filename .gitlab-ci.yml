@@ -470,10 +470,9 @@ test/benchmark:
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF
       cd /scratch/skymap.testing/$CI_JOB_ID
-      CI_SERVER_PROTOCOL="$CI_SERVER_PROTOCOL" CI_JOB_TOKEN="$CI_JOB_TOKEN" \
       curl -OL https://zenodo.org/records/14999310/files/SEOBNRv4ROM_v3.0.hdf5  # FIXME: workaround for https://git.ligo.org/computing/helpdesk/-/issues/7001
       export LAL_DATA_PATH=\$(pwd)
-      CI_SERVER_FQDN="$CI_SERVER_FQDN" condor_run \
+      condor_run \
         -a MY.flock_local=True \
         -a MY.DESIRED_Sites=none \
         -a request_disk=4G \

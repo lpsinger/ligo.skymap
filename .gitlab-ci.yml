@@ -216,7 +216,7 @@ docs:
   stage: test
   script:
     - pip install $(echo ${CI_PROJECT_DIR}/*.whl)[test]
-    - pytest -x --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10 -v
+    - pytest --pyargs ligo.skymap --doctest-plus --doctest-ufunc --mpl --mpl-results-path ${CI_PROJECT_DIR}/pytest-mpl-results --mpl-generate-summary=html --omp-get-num-threads --durations=10 -v
   artifacts:
     paths:
       - pytest-mpl-results/

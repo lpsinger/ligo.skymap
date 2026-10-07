@@ -93,4 +93,6 @@ def test_localize_interruptible(mock_event):
             os.kill(process.pid, signal.SIGINT)
             assert cancelled.wait(10)
         finally:
+            process.kill()
             process.join()
+            process.close()

@@ -28,7 +28,7 @@ def require_contiguous_aligned(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        n = func.nin
+        n = func.nin  # codespell:ignore nin
         args = [
             arg
             if i >= n or np.isscalar(arg)

@@ -566,7 +566,7 @@ class AutoScaledWCSAxes(WCSAxes):
                     warn(
                         "You requested bilinear interpolation of a "
                         "multi-order sky map, but only nearest-neighbor "
-                        "interpolation is currently spported",
+                        "interpolation is currently supported",
                         UserWarning,
                     )
                 img, mask = reproject_from_healpix_moc(data, self.header)

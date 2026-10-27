@@ -285,7 +285,7 @@ def get_random_parser():
     parser = argparse.ArgumentParser(add_help=False)
     group = parser.add_argument_group(
         "random number generator options",
-        "Options that affect the Numpy pseudo-random number genrator",
+        "Options that affect the Numpy pseudo-random number generator",
     )
     group.add_argument(
         "--seed",

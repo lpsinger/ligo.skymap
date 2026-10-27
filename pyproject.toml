@@ -125,6 +125,10 @@ filterwarnings = [
     "error::pytest.PytestUnraisableExceptionWarning",
 ]
 
+[tool.codespell]
+skip = "*.xml"
+exclude-file = ".codespell-ignore-lines"
+
 [tool.coverage.run]
 source = ["{packagename}"]
 omit = [

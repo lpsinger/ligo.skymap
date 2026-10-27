@@ -39,3 +39,9 @@ repos:
         args: ["--extend-select", "I", "--fix"]
       # Run the formatter.
       - id: ruff-format
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli

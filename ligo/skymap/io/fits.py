@@ -210,7 +210,13 @@ FITS_META_MAPPING = (
         normalize_objid,
         normalize_objid,
     ),
-    ("url", "REFERENC", "URL of this event", identity, identity),
+    (
+        "url",
+        "REFERENC",  # codespell:ignore referenc
+        "URL of this event",
+        identity,
+        identity,
+    ),
     (
         "instruments",
         "INSTRUME",

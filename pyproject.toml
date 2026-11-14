@@ -66,7 +66,7 @@ docs = [
     "sphinxcontrib-mermaid >= 0.7.1",  # https://github.com/mgaitan/sphinxcontrib-mermaid/issues/72
 ]
 dpgmm = [
-    "figaro>=1.7.8; python_version < '3.15'"
+    "figaro>=1.7.8; python_version < '3.15'",
 ]
 
 [project.urls]

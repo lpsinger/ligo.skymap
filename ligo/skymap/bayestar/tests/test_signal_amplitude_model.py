@@ -140,7 +140,11 @@ def test_bayestar_signal_amplitude_model(
     # Work out complex amplitude by comparing with "template" waveform
     expected = np.sum(Htemplate.data.data.conj() * Hsignal.data.data)
 
-    assert abs(expected) == approx(abs_expected, abs=1.5 * np.finfo(np.float32).eps)
-    assert abs(result) == approx(abs_expected, abs=1.5 * np.finfo(np.float32).eps)
-    assert result.real == approx(expected.real, abs=4 * np.finfo(np.float32).eps)
-    assert result.imag == approx(expected.imag, abs=4 * np.finfo(np.float32).eps)
+    assert abs(expected) == approx(
+        abs_expected, abs=1.5 * float(np.finfo(np.float32).eps)
+    )
+    assert abs(result) == approx(
+        abs_expected, abs=1.5 * float(np.finfo(np.float32).eps)
+    )
+    assert result.real == approx(expected.real, abs=4 * float(np.finfo(np.float32).eps))
+    assert result.imag == approx(expected.imag, abs=4 * float(np.finfo(np.float32).eps))

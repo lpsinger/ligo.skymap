@@ -71,6 +71,10 @@ class MatplotlibFigureType(argparse.FileType):
         from matplotlib import pyplot as plt
 
         if string == "-":
+            if not sys.stdin.isatty():
+                raise argparse.ArgumentTypeError(
+                    "not running interactively; specify -o/--output"
+                )
             plt.switch_backend(matplotlib.rcParamsOrig["backend"])
             return self.__show
         else:

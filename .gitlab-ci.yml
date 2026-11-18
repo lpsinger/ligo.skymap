@@ -122,7 +122,7 @@ wheel/macos/x86_64:
 wheel/macos/arm64:
   <<: *wheel-macos
   tags:
-    - macos_monterey_arm64
+    - macos_sequoia_arm64
 
 #
 # Build Docker containers for dependencies listed in requirements.txt,

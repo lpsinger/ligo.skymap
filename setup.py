@@ -72,4 +72,8 @@ if (
 ):
     use_scm_version["local_scheme"] = "no-local-version"
 
-setup(use_scm_version=use_scm_version, ext_modules=get_extensions())
+setup(
+    use_scm_version=use_scm_version,
+    ext_modules=get_extensions(),
+    options={"bdist_wheel": {"py_limited_api": "cp312"}},
+)

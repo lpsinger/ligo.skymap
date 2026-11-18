@@ -276,6 +276,7 @@ def crossmatch(
     of all its entries:
 
     >>> vizier = VizierClass(
+    ...     vizier_server="vizier.cfa.harvard.edu",
     ...     row_limit=-1,
     ...     columns=['recno', 'GWGC', '_RAJ2000', '_DEJ2000', 'Dist'])
     >>> cat, = vizier.get_catalogs('VII/281/glade2')

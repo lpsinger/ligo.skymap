@@ -52,7 +52,7 @@ from ligo.skymap.util.math import derivative
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "cosmology",
-    choices=astropy.cosmology.parameters.available,
+    choices=astropy.cosmology.available,
     default="Planck15",
     nargs="?",
     help="Cosmological model",

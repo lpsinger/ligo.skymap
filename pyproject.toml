@@ -124,6 +124,11 @@ filterwarnings = [
     "error:unclosed file:ResourceWarning",
     "error::pytest.PytestUnraisableExceptionWarning",
 ]
+norecursedirs = [
+    ".gitlab",
+    ".venv",
+    "docs",
+]
 
 [tool.codespell]
 skip = "*.xml"

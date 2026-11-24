@@ -311,7 +311,6 @@ def main(args=None):
         # glue, LAL and pylal imports.
         import igwn_segments as segments
         import lal
-        import lal.series
         import lalsimulation
         from igwn_ligolw import ligolw
         from igwn_ligolw import utils as ligolw_utils
@@ -331,6 +330,7 @@ def main(args=None):
         from igwn_ligolw.utils.search_summary import append_search_summary
         from lalinspiral.inspinjfind import InspiralSCExactCoincDef
         from lalinspiral.thinca import InspiralCoincDef
+        from lalmetaio.series import build_COMPLEX8TimeSeries, read_psd_xmldoc
         from tqdm import tqdm
 
         from ..bayestar import filter
@@ -340,10 +340,8 @@ def main(args=None):
         from ..util.progress import progress_map
 
         # Read PSDs.
-        xmldoc = ligolw_utils.load_fileobj(
-            opts.reference_psd, contenthandler=lal.series.PSDContentHandler
-        )
-        psds = lal.series.read_psd_xmldoc(xmldoc, root_name=None)
+        xmldoc = ligolw_utils.load_fileobj(opts.reference_psd)
+        psds = read_psd_xmldoc(xmldoc, root_name=None)
         psds = {
             key: filter.InterpolatedPSD(filter.abscissa(psd), psd.data.data)
             for key, psd in psds.items()
@@ -540,9 +538,7 @@ def main(args=None):
                     sngl_inspiral_table.append(sngl_inspiral)
 
                     if opts.enable_snr_series:
-                        elem = lal.series.build_COMPLEX8TimeSeries(
-                            series, encoding="base64"
-                        )
+                        elem = build_COMPLEX8TimeSeries(series, encoding="base64")
                         elem.appendChild(
                             Param.from_pyvalue("event_id", sngl_inspiral.event_id)
                         )

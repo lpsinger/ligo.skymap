@@ -25,7 +25,6 @@ from functools import lru_cache
 from typing import ClassVar
 
 import lal
-import lal.series
 from igwn_ligolw.ligolw import LIGO_LW, Array, Element, LIGOLWContentHandler, Param
 from igwn_ligolw.lsctables import (
     CoincDefTable,
@@ -39,6 +38,7 @@ from igwn_ligolw.lsctables import (
 )
 from igwn_ligolw.utils import load_filename, load_fileobj
 from lalinspiral.thinca import InspiralCoincDef
+from lalmetaio.series import parse_COMPLEX8TimeSeries, read_psd_xmldoc
 
 from ...util import ilwd
 from .base import Event, EventSource, SingleEvent
@@ -155,7 +155,7 @@ class LigoLWEventSource(dict, EventSource):
 
     def _psds_for_file(self, f):
         doc, _ = _read_xml(f, self._fallbackpath)
-        return lal.series.read_psd_xmldoc(doc, root_name=None)
+        return read_psd_xmldoc(doc, root_name=None)
 
     def _make_events(self, doc, psd_file, coinc_def):
         # Look up necessary tables.
@@ -290,7 +290,7 @@ class LigoLWEventSource(dict, EventSource):
             except (AttributeError, ValueError):
                 continue
             else:
-                yield event_id, lal.series.parse_COMPLEX8TimeSeries(elem)
+                yield event_id, parse_COMPLEX8TimeSeries(elem)
 
 
 class LigoLWEvent(Event):

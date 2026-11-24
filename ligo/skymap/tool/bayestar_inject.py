@@ -360,10 +360,10 @@ def main(args=None):
     with p.parse_args(args) as opts:
         import warnings
 
-        import lal.series
         from astropy.table import Table
         from igwn_ligolw import ligolw, lsctables
         from igwn_ligolw import utils as ligolw_utils
+        from lalmetaio.series import read_psd_xmldoc
         from scipy import stats
 
         if opts.min_snr is not None:
@@ -380,11 +380,7 @@ def main(args=None):
 
         # Read PSDs
         psds = list(
-            lal.series.read_psd_xmldoc(
-                ligolw_utils.load_fileobj(
-                    opts.reference_psd, contenthandler=lal.series.PSDContentHandler
-                )
-            ).values()
+            read_psd_xmldoc(ligolw_utils.load_fileobj(opts.reference_psd)).values()
         )
 
         if len(psds) < opts.min_triggers:

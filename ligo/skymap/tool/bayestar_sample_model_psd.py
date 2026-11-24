@@ -103,9 +103,10 @@ def parser():
 def main(args=None):
     _parser = parser()
     with _parser.parse_args(args) as opts:
-        import lal.series
+        import lal
         import lalsimulation
         import numpy as np
+        from lalmetaio.series import make_psd_xmldoc
 
         from ..bayestar.filter import vectorize_swig_psd_func
 
@@ -150,6 +151,6 @@ def main(args=None):
             series.data.data *= scale
             psds[detector] = series
 
-        xmldoc = lal.series.make_psd_xmldoc(psds, encoding="base64")
+        xmldoc = make_psd_xmldoc(psds, encoding="base64")
         register_to_xmldoc(xmldoc, _parser, opts)
         write_fileobj(xmldoc, opts.output)

@@ -241,8 +241,8 @@ def main(args=None):
                                 bins=bins,
                                 label=label,
                             )
+                        ax.legend(loc="upper left")
                     ax.grid()
-                    ax.legend(loc="upper left")
                     fig.savefig(
                         os.path.join(subdir, colname + "_hist"), metadata=metadata
                     )

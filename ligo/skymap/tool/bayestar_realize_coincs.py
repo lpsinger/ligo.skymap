@@ -384,7 +384,7 @@ def main(args=None):
         )
 
         # Add search summary to output file.
-        all_time = segments.segment([lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9)])
+        all_time = segments.segment(lal.LIGOTimeGPS(0), lal.LIGOTimeGPS(2e9))
         append_search_summary(xmldoc, process, inseg=all_time, outseg=all_time)
 
         # Create a time slide entry.  Needed for coinc_event rows.

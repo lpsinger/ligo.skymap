@@ -413,7 +413,7 @@ lint:
 # Acceptance tests.
 #
 
-test/review:
+.ssh: &ssh
   stage: test
   image: containers.ligo.org/emfollow/ssh-kerberos
   when: manual
@@ -423,7 +423,12 @@ test/review:
     - cit
   variables:
     GIT_STRATEGY: none
-    REMOTE_HOST: skymap.testing@citlogin3.ligo.caltech.edu
+    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+  after_script:
+    - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"
+
+test/review:
+  <<: *ssh
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_clone\r\e[0KCloning HTCondor workflow on cluster"
     - ssh -T $REMOTE_HOST "git clone --depth=1 --recurse-submodules --shallow-submodules https://git.ligo.org/leo-singer/ligo-skymap-acceptance-tests-public /scratch/skymap.testing/$CI_JOB_ID"
@@ -453,11 +458,6 @@ test/review:
     - echo -e "\e[0Ksection_start:`date +%s`:remote_retrieve\r\e[0KRetrieving artifacts from cluster"
     - scp -r $REMOTE_HOST:/scratch/skymap.testing/$CI_JOB_ID/site site
     - echo -e "\e[0Ksection_end:`date +%s`:remote_retrieve\r\e[0K"
-
-    - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
-    - ssh -T $REMOTE_HOST "rm -rf /scratch/skymap.testing/$CI_JOB_ID"
-    - echo -e "\e[0Ksection_end:`date +%s`:remote_cleanup\r\e[0K"
-
   artifacts:
     paths:
       - site
@@ -470,16 +470,7 @@ test/review:
 #
 
 test/benchmark:
-  stage: test
-  image: containers.ligo.org/emfollow/ssh-kerberos
-  when: manual
-  needs:
-    - wheel/linux/x86_64
-  tags:
-    - cit
-  variables:
-    GIT_STRATEGY: none
-    REMOTE_HOST: skymap.testing@ldas-grid.ligo.caltech.edu
+  <<: *ssh
   script:
     - |
       ssh -T $REMOTE_HOST "bash -e" <<EOF
@@ -507,10 +498,6 @@ test/benchmark:
         ./.gitlab/benchmark.sh *.whl
       EOF
     - scp $REMOTE_HOST:/scratch/skymap.testing/$CI_JOB_ID/{benchmark.svg,roofline.html,perf.svg} ./
-  after_script:
-    - echo -e "\e[0Ksection_start:`date +%s`:remote_cleanup\r\e[0KCleaning up files on cluster"
-    - ssh -T $REMOTE_HOST "rm -rf public_html/$CI_JOB_ID"
-    - echo -e "\e[0Ksection_end:`date +%s`:remote_cleanup\r\e[0K"
   artifacts:
     paths:
       - benchmark.svg

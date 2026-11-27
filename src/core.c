@@ -1060,6 +1060,8 @@ static int m_clear(PyObject *self) {
 } while(0)
 
 static int m_exec(PyObject *module) {
+    import_array1(-1);
+    import_umath1(-1);
     gsl_set_error_handler_off();
 
     m_state *state = PyModule_GetState(module);
@@ -1210,7 +1212,5 @@ static PyModuleDef moduledef = {
 PyMODINIT_FUNC PyInit_core(void); /* Silence -Wmissing-prototypes */
 PyMODINIT_FUNC PyInit_core(void)
 {
-    import_array();
-    import_umath();
     return PyModuleDef_Init(&moduledef);
 }
